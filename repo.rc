@@ -1,0 +1,92 @@
+
+repo
+{
+	lock
+	{
+		global /home/lex/istu/dev/its/repo/test/repo.lock
+	}
+	dir
+	{
+		tmp /tmp
+		source /home/lex/istu/dev/its/repo/test/source_dir
+		package /home/lex/istu/dev/its/repo/test/package_dir
+	}
+	name
+	{
+		file
+		{
+			tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp
+			depends depends
+			src src.txz
+			pkg pkg.tar.gz
+			time time
+		}
+		dir
+		{
+			src src
+			build build
+			pkg pkg
+		}
+	}
+	suffix
+	{
+		src .txz
+		pkg .tar.gz ;changed name
+	}
+	repository http://localhost/~lex/repo
+	command
+	{
+		example
+		{
+			t curl
+			c ; class, connects all directly
+			{
+				t text
+				p 1 ; positional placeholder
+				n name ; named placeholder ; ??? not supported
+				t
+			}
+			p 0
+		}
+		fetch
+		{
+			t curl
+			t -s
+			t -f
+			p 0
+			t -o
+			p 1
+		}
+		unpack
+		{
+			t tar
+			t xJf
+			p 0
+			t -C
+			p 1
+		}
+		configure
+		{
+			t cmake
+			p 0
+		}
+		compile
+		{
+			t make
+		}
+		pack
+		{
+			t make
+			t package
+		}
+		extract
+		{
+			t tar
+			t xzf
+			p 0
+			t -C
+			p 1
+		}
+	}
+}
+
