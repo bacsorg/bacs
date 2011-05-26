@@ -41,7 +41,7 @@ else(SEND_ERROR)
 	message( "Unknown platform")
 endif()
 
-add_library(its_pkg SHARED repository.cpp repository_native.cpp executor.cpp ${impl_dir}/execute.cpp)
+add_library(its_pkg SHARED repository.cpp repository_native.cpp executor.cpp tempfile.cpp ${impl_dir}/execute.cpp)
 
 add_executable(${PROJECT_NAME} main.cpp)
 #target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${xmlrpc_link_lib})

@@ -106,6 +106,8 @@ bool its::repository::dfs(const std::string &package, std::map<std::string, std:
 
 void check_dir(const boost::filesystem::path &dir)
 {
+	if (!dir.is_absolute())
+		throw std::runtime_error("you have to use absolute path, but \""+dir.native()+"\" used");
 	SLOG("checking "<<dir);
 	if (!boost::filesystem::is_directory(dir))
 	{

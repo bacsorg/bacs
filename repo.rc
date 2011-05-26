@@ -7,7 +7,7 @@ repo
 	}
 	dir
 	{
-		tmp /tmp
+		tmp /tmp/its_repo_tmp ; for build
 		source /home/lex/istu/dev/its/repo/test/source_dir
 		package /home/lex/istu/dev/its/repo/test/package_dir
 	}
@@ -15,7 +15,7 @@ repo
 	{
 		file
 		{
-			tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp
+			tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp ; for small files
 			depends depends
 			src src.txz
 			pkg pkg.tar.gz
