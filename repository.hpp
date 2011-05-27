@@ -48,6 +48,7 @@ namespace its
 			void pack(const std::string &package, const boost::filesystem::path &build_dir);
 		public:
 			std::vector<std::string> depends(const std::string &package);
+			std::map<std::string, std::string> depend_keys(const std::string &package);
 			bool source_outdated(const std::string &package);
 			bool package_outdated(const std::string &package);
 			void extract(const std::string &package, const boost::filesystem::path &destination);

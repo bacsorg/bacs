@@ -48,7 +48,7 @@ repo
 			}
 			p 0
 		}
-		fetch
+		_fetch
 		{
 			t curl
 			t -s
@@ -56,6 +56,14 @@ repo
 			p 0
 			t -o
 			p 1
+		}
+		fetch
+		{
+			t wget
+			t -q
+			t -O
+			p 1
+			p 0
 		}
 		unpack
 		{

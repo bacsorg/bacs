@@ -1,6 +1,8 @@
 #include "repository.hpp"
 #include "executor.hpp"
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/info_parser.hpp>
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -14,7 +16,7 @@ void reset_dir(const boost::filesystem::path &dir)
 	if (boost::filesystem::exists(dir))
 		boost::filesystem::remove_all(dir);
 	boost::filesystem::create_directory(dir);
-	DLOG("directory "<<dir<<" was created");
+	SLOG("directory "<<dir<<" was reset");
 }
 
 its::repository::native::native(const boost::property_tree::ptree *config_): config(config_){}
@@ -64,12 +66,12 @@ void its::repository::native::configure(const std::string &package, const boost:
 	reset_dir(build);
 	its::executor exec(config->get_child("command.configure"));
 	exec.current_path(build).add_argument((build.parent_path()/config->get<std::string>("name.dir.src")).native());
-	std::vector<std::string> deps = depends(package);
+	std::map<std::string, std::string> deps = depend_keys(package);
 	for (auto i = deps.cbegin(); i!=deps.cend(); ++i)
 	{
-		reset_dir(build/(*i));
-		extract(*i, build/(*i));
-		exec.add_argument("-DDEPEND_"+(*i)+"="+(build/(*i)).native());
+		reset_dir(build/(i->second));
+		extract(i->second, build/i->second);
+		exec.add_argument("-DDEPEND_"+i->first+"="+(build/i->second).native());
 	}
 	exec();
 }
@@ -99,25 +101,31 @@ void its::repository::native::pack(const std::string &package, const boost::file
 
 std::vector<std::string> its::repository::native::depends(const std::string &package)
 {
+	auto map = depend_keys(package);
+	std::vector<std::string> deps(map.size());
+	deps.resize(0);
+	for (auto i = map.cbegin(); i!=map.cend(); ++i)
+		deps.push_back(i->second);
+	return deps;
+}
+
+std::map<std::string, std::string> its::repository::native::depend_keys(const std::string &package)
+{
 	SLOG("trying to get depends for \""<<package<<"\"");
 	its::tempfile dfile(config->get<std::string>("name.file.tmp"));
 	SLOG("\""<<package<<"\" depends will be downloaded to "<<dfile.path());
 	its::executor::exec(config->get_child("command.fetch"), config->get<std::string>("repository")+"/"+package+"/"+config->get<std::string>("name.file.depends"), dfile.native());
-	std::vector<std::string> deps;
-	boost::filesystem::ifstream din(dfile.path());
-	std::string tstr;
-	while (std::getline(din, tstr))
+	boost::property_tree::ptree deps;
+	boost::property_tree::info_parser::read_info(dfile.native(), deps);
+	std::map<std::string, std::string> map;
+	for (auto i = deps.begin(); i!=deps.end(); ++i)
 	{
-		if (!tstr.empty())
-		{
-			SLOG(package<<": found dependencie=\""<<tstr<<"\"");
-			deps.push_back(tstr);
-		}
+		if (map.find(i->first)!=map.end())
+			throw std::runtime_error("dublicate dependencies: \""+i->first+"\"");
+		map[i->first] = i->second.get_value<std::string>();
 	}
-	if (din.bad())
-		throw std::runtime_error("file error [bad()] \""+dfile.path().native()+"\"");
-	SLOG("found \""<<deps.size()<<"\" dependencies");
-	return deps;
+	SLOG("found \""<<map.size()<<"\" dependencies");
+	return map;
 }
 
 bool equal_files(const boost::filesystem::path &file1, const boost::filesystem::path &file2)
@@ -172,8 +180,9 @@ void its::repository::native::extract(const std::string &package, const boost::f
 void its::repository::native::clean()
 {
 	DLOG(starting cache clean);
-	DLOG(########);
-	DLOG(# TODO #);
-	DLOG(########);
+	reset_dir(config->get<std::string>("dir.source"));
+	reset_dir(config->get<std::string>("dir.package"));
+	reset_dir(config->get<std::string>("dir.tmp"));
+	DLOG(cache was cleaned);
 }
 

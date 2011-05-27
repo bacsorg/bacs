@@ -3,12 +3,13 @@
 
 #include <string>
 
+#include <boost/noncopyable.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem.hpp>
 
 namespace its
 {
-	class tempfile
+	class tempfile: private boost::noncopyable
 	{
 	public:
 		tempfile();
