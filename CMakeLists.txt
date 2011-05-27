@@ -2,6 +2,10 @@ project(repo)
 
 cmake_minimum_required(VERSION 2.8)
 
+if (NOT DEFINED BUNSAN_COMMON_DIR)
+	message(SEND_ERROR "you have to define BUNSAN_COMMON_DIR variable")
+endif()
+
 set(
 	xmlrpc_link_lib
 	xmlrpc++
@@ -29,7 +33,9 @@ message("We have to check pthread library on win* platform")
 
 add_definitions(-std=c++0x -pthread -g)
 
-include_directories(.)
+add_subdirectory(${BUNSAN_COMMON_DIR} ${PROJECT_BINARY_DIR}/common)
+
+include_directories(. ${BUNSAN_COMMON_DIR})
 
 if (UNIX)
 	set(impl_dir impl/unix)
