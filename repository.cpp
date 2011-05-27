@@ -29,7 +29,7 @@ its::repository::repository(const boost::property_tree::ptree &config_): config(
 
 void check_package_name(const std::string &package)
 {
-	if (!boost::algorithm::all(package, [](char c){return c=='_' || ('0'<=c && c<='9') || ('a'<=c && c<='z') || ('A'<=c || c<='Z');}))
+	if (!boost::algorithm::all(package, [](char c){return c=='_' || ('0'<=c && c<='9') || ('a'<=c && c<='z') || ('A'<=c && c<='Z');}))
 		throw std::runtime_error("illegal package name \""+package+"\"");
 }
 
@@ -37,7 +37,7 @@ void its::repository::extract(const std::string &package, const boost::filesyste
 {
 	//boost::interprocess::sharable_lock<boost::interprocess::file_lock> lk(flock);
 	check_package_name(package);
-	SLOG("extract \""<<package<<"\" to \""<<destination<<"\"");
+	SLOG("extract \""<<package<<"\" to "<<destination);
 	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
 	boost::interprocess::scoped_lock<std::mutex> lk2(slock);
 	DLOG(trying to update);
@@ -132,6 +132,7 @@ void its::repository::check_dirs()
 	check_dir(config.get<std::string>("dir.source"));
 	check_dir(config.get<std::string>("dir.package"));
 	check_dir(config.get<std::string>("dir.tmp"));
+	DLOG(checked);
 }
 
 enum class state{out, in, visited};
