@@ -31,10 +31,12 @@ void its::repository::native::fetch(const std::string &package)
 	std::string url = config->get<std::string>("repository")+"/"+package+"/";
 	boost::filesystem::path output = config->get<std::string>("dir.source");
 	output /= package;
-	bunsan::reset_dir(output);// TODO autoremove on fail
+	bunsan::tempfile output_tmp(output);// guard to remove output dir if something fails
+	bunsan::reset_dir(output);
 	fetcher(url+config->get<std::string>("name.file.src"), (output/config->get<std::string>("name.file.src")).native());
 	fetcher(url+config->get<std::string>("name.file.time"), (output/config->get<std::string>("name.file.time")).native());
 	fetcher(url+config->get<std::string>("name.file.depends"), (output/config->get<std::string>("name.file.depends")).native());
+	output_tmp.auto_remove(false);// everythin is ok, so we don't need to remove output dir
 }
 
 void its::repository::native::unpack(const std::string &package, const boost::filesystem::path &build_dir)
@@ -122,8 +124,12 @@ std::map<std::string, std::string> its::repository::native::depend_keys(const st
 
 bool equal_files(const boost::filesystem::path &file1, const boost::filesystem::path &file2)
 {
-	// XXX: ERROR FOUND
+	// TODO: not checke
 	boost::filesystem::ifstream fin1(file1, std::ios_base::in | std::ios_base::binary), fin2(file2, std::ios_base::in | std::ios_base::binary);
+	if (!fin1.good())
+		throw std::runtime_error("bad file \""+file1.native()+"\"");
+	if (!fin2.good())
+		throw std::runtime_error("bad file \""+file2.native()+"\"");
 	char c1, c2;
 	while (fin1.get(c1) && fin2.get(c2) && c1==c2);
 	bool eq = c1==c2;
@@ -139,7 +145,7 @@ bool its::repository::native::source_outdated(const std::string &package)
 	bunsan::executor::exec(config->get_child("command.fetch"), config->get<std::string>("repository")+"/"+package+"/"+config->get<std::string>("name.file.time"), tmp->native());
 	boost::filesystem::path src = config->get<std::string>("dir.source");
 	src = src/package/config->get<std::string>("name.file.time");
-	return !equal_files(tmp->path(), src);
+	return !boost::filesystem::exists(src) || !equal_files(tmp->path(), src);
 }
 
 bool its::repository::native::package_outdated(const std::string &package)
@@ -149,7 +155,7 @@ bool its::repository::native::package_outdated(const std::string &package)
 	src = src/package/config->get<std::string>("name.file.time");
 	boost::filesystem::path pkg = config->get<std::string>("dir.package");
 	pkg = pkg/package/config->get<std::string>("name.file.time");
-	return !equal_files(src, pkg);
+	return !boost::filesystem::exists(pkg) || !equal_files(src, pkg);
 }
 
 void its::repository::native::extract(const std::string &package, const boost::filesystem::path &destination)
