@@ -31,6 +31,10 @@ namespace its
 		 * \todo It seems that such method should be, but semantics can be different.
 		 */
 		void clean();
+		/*!
+		 * \brief Checks package name, if it is not valid std::runtime_error will be thrown
+		 */
+		static void check_package_name(const std::string &package);
 	private:
 		class native: private boost::noncopyable
 		{
@@ -52,7 +56,6 @@ namespace its
 			bool source_outdated(const std::string &package);
 			bool package_outdated(const std::string &package);
 			void extract(const std::string &package, const boost::filesystem::path &destination);
-			void clean();
 		private:
 			const boost::property_tree::ptree *config;
 		};

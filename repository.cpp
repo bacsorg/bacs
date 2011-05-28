@@ -27,7 +27,7 @@ its::repository::repository(const boost::property_tree::ptree &config_): config(
 	flock.reset(new boost::interprocess::file_lock(config.get<std::string>("lock.global").c_str()));
 }
 
-void check_package_name(const std::string &package)
+void its::repository::check_package_name(const std::string &package)
 {
 	if (!boost::algorithm::all(package, [](char c){return c=='_' || ('0'<=c && c<='9') || ('a'<=c && c<='z') || ('A'<=c && c<='Z');}))
 		throw std::runtime_error("illegal package name \""+package+"\"");
@@ -45,15 +45,6 @@ void its::repository::extract(const std::string &package, const boost::filesyste
 	native ntv(&config);
 	DLOG(trying to extract);
 	ntv.extract(package, destination);
-}
-
-void its::repository::clean()
-{
-	DLOG(trying to clean cache);
-	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
-	boost::interprocess::scoped_lock<std::mutex> lk2(slock);
-	native ntv(&config);
-	ntv.clean();
 }
 
 void its::repository::update(const std::string &package)
@@ -133,6 +124,17 @@ void its::repository::check_dirs()
 	check_dir(config.get<std::string>("dir.package"));
 	check_dir(config.get<std::string>("dir.tmp"));
 	DLOG(checked);
+}
+
+void its::repository::clean()
+{
+	DLOG(trying to clean cache);
+	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
+	boost::interprocess::scoped_lock<std::mutex> lk2(slock);
+	bunsan::reset_dir(config.get<std::string>("dir.source"));
+	bunsan::reset_dir(config.get<std::string>("dir.package"));
+	bunsan::reset_dir(config.get<std::string>("dir.tmp"));
+	DLOG(cleaned);
 }
 
 enum class state{out, in, visited};

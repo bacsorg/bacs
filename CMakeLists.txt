@@ -37,19 +37,9 @@ add_subdirectory(${BUNSAN_COMMON_DIR} ${PROJECT_BINARY_DIR}/common)
 
 include_directories(. ${BUNSAN_COMMON_DIR})
 
-if (UNIX)
-	set(impl_dir impl/unix)
-elseif(WIN32)
-	set(impl_dir impl/win32)
-elseif(APPLE)
-	set(impl_dir impl/apple)
-else(SEND_ERROR)
-	message( "Unknown platform")
-endif()
-
-add_library(its_pkg SHARED repository.cpp repository_native.cpp executor.cpp tempfile.cpp ${impl_dir}/execute.cpp)
+add_library(its_pkg SHARED repository.cpp repository_native.cpp)
 
 add_executable(${PROJECT_NAME} main.cpp)
 #target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${xmlrpc_link_lib})
-target_link_libraries(${PROJECT_NAME} its_pkg ${Boost_LIBRARIES} ${xmlrpc_link_lib})
+target_link_libraries(${PROJECT_NAME} bunsan_common its_pkg ${Boost_LIBRARIES} ${xmlrpc_link_lib})
 
