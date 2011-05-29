@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 		desc.add_options()
 			("help,h", "Print this information")
 			("version,V", "Program version")
-			("config,c", boost::program_options::value<std::string>(&config_file)->default_value("repo.rc"), "Configuration file")
+			("config,c", boost::program_options::value<std::string>(&config_file)->default_value("pm.rc"), "Configuration file")
 			("clean", "Clean repository")
 			("package,p", boost::program_options::value<std::string>(&package), "Package name")
 			("extract,e", boost::program_options::value<std::string>(&extract_to), "Extract package to location");
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 		boost::property_tree::info_parser::read_info(config_file, config);
 		//boost::property_tree::xml_parser::write_xml("/tmp/out", config);
 		//return 0;
-		its::repository repo(config.get_child("repo"));
+		bunsan::pm::repository repo(config.get_child("pm"));
 		if (vm.count("clean"))
 		{
 			std::cerr<<"Attempt to clean repository"<<std::endl;

@@ -10,11 +10,11 @@
 #include "util.hpp"
 #include "tempfile.hpp"
 
-its::repository::native::native(const boost::property_tree::ptree *config_): config(config_){}
+bunsan::pm::repository::native::native(const boost::property_tree::ptree *config_): config(config_){}
 
-void its::repository::native::build(const std::string &package)
+void bunsan::pm::repository::native::build(const std::string &package)
 {
-	its::repository::check_package_name(package);
+	bunsan::pm::repository::check_package_name(package);
 	bunsan::tempfile_ptr build_dir = bunsan::tempfile::in_dir(config->get<std::string>("dir.tmp"));
 	bunsan::reset_dir(build_dir->path());
 	unpack(package, build_dir->path());
@@ -23,9 +23,9 @@ void its::repository::native::build(const std::string &package)
 	pack(package, build_dir->path());
 }
 
-void its::repository::native::fetch(const std::string &package)
+void bunsan::pm::repository::native::fetch(const std::string &package)
 {
-	its::repository::check_package_name(package);
+	bunsan::pm::repository::check_package_name(package);
 	SLOG("starting \""<<package<<"\" "<<__func__);
 	bunsan::executor fetcher(config->get_child("command.fetch"));
 	std::string url = config->get<std::string>("repository")+"/"+package+"/";
@@ -39,7 +39,7 @@ void its::repository::native::fetch(const std::string &package)
 	output_tmp.auto_remove(false);// everythin is ok, so we don't need to remove output dir
 }
 
-void its::repository::native::unpack(const std::string &package, const boost::filesystem::path &build_dir)
+void bunsan::pm::repository::native::unpack(const std::string &package, const boost::filesystem::path &build_dir)
 {
 	SLOG("starting \""<<package<<"\" "<<__func__);
 	boost::filesystem::path build = build_dir;
@@ -51,7 +51,7 @@ void its::repository::native::unpack(const std::string &package, const boost::fi
 		build.native());
 }
 
-void its::repository::native::configure(const std::string &package, const boost::filesystem::path &build_dir)
+void bunsan::pm::repository::native::configure(const std::string &package, const boost::filesystem::path &build_dir)
 {
 	SLOG("starting \""<<package<<"\" "<<__func__);
 	boost::filesystem::path build = build_dir;
@@ -69,7 +69,7 @@ void its::repository::native::configure(const std::string &package, const boost:
 	exec();
 }
 
-void its::repository::native::compile(const std::string &package, const boost::filesystem::path &build_dir)
+void bunsan::pm::repository::native::compile(const std::string &package, const boost::filesystem::path &build_dir)
 {
 	SLOG("starting \""<<package<<"\" "<<__func__);
 	boost::filesystem::path build = build_dir;
@@ -77,7 +77,7 @@ void its::repository::native::compile(const std::string &package, const boost::f
 	bunsan::executor::exec_from(build, config->get_child("command.compile"));
 }
 
-void its::repository::native::pack(const std::string &package, const boost::filesystem::path &build_dir)
+void bunsan::pm::repository::native::pack(const std::string &package, const boost::filesystem::path &build_dir)
 {
 	SLOG("starting \""<<package<<"\" "<<__func__);
 	boost::filesystem::path build = build_dir;
@@ -92,7 +92,7 @@ void its::repository::native::pack(const std::string &package, const boost::file
 	boost::filesystem3::copy(srcdir/config->get<std::string>("name.file.time"), pkgdir/config->get<std::string>("name.file.time"));
 }
 
-std::vector<std::string> its::repository::native::depends(const std::string &package)
+std::vector<std::string> bunsan::pm::repository::native::depends(const std::string &package)
 {
 	auto map = depend_keys(package);
 	std::vector<std::string> deps(map.size());
@@ -102,7 +102,7 @@ std::vector<std::string> its::repository::native::depends(const std::string &pac
 	return deps;
 }
 
-std::map<std::string, std::string> its::repository::native::depend_keys(const std::string &package)
+std::map<std::string, std::string> bunsan::pm::repository::native::depend_keys(const std::string &package)
 {
 	SLOG("trying to get depends for \""<<package<<"\"");
 	bunsan::tempfile_ptr dfile = bunsan::tempfile::from_model(config->get<std::string>("name.file.tmp"));
@@ -113,7 +113,7 @@ std::map<std::string, std::string> its::repository::native::depend_keys(const st
 	std::map<std::string, std::string> map;
 	for (auto i = deps.begin(); i!=deps.end(); ++i)
 	{
-		its::repository::check_package_name(i->second.get_value<std::string>());
+		bunsan::pm::repository::check_package_name(i->second.get_value<std::string>());
 		if (map.find(i->first)!=map.end())
 			throw std::runtime_error("dublicate dependencies: \""+i->first+"\"");
 		map[i->first] = i->second.get_value<std::string>();
@@ -138,9 +138,9 @@ bool equal_files(const boost::filesystem::path &file1, const boost::filesystem::
 	return eq;
 }
 
-bool its::repository::native::source_outdated(const std::string &package)
+bool bunsan::pm::repository::native::source_outdated(const std::string &package)
 {
-	its::repository::check_package_name(package);
+	bunsan::pm::repository::check_package_name(package);
 	bunsan::tempfile_ptr tmp = bunsan::tempfile::from_model(config->get<std::string>("name.file.tmp"));
 	bunsan::executor::exec(config->get_child("command.fetch"), config->get<std::string>("repository")+"/"+package+"/"+config->get<std::string>("name.file.time"), tmp->native());
 	boost::filesystem::path src = config->get<std::string>("dir.source");
@@ -148,9 +148,9 @@ bool its::repository::native::source_outdated(const std::string &package)
 	return !boost::filesystem::exists(src) || !equal_files(tmp->path(), src);
 }
 
-bool its::repository::native::package_outdated(const std::string &package)
+bool bunsan::pm::repository::native::package_outdated(const std::string &package)
 {
-	its::repository::check_package_name(package);
+	bunsan::pm::repository::check_package_name(package);
 	boost::filesystem::path src = config->get<std::string>("dir.source");
 	src = src/package/config->get<std::string>("name.file.time");
 	boost::filesystem::path pkg = config->get<std::string>("dir.package");
@@ -158,9 +158,9 @@ bool its::repository::native::package_outdated(const std::string &package)
 	return !boost::filesystem::exists(pkg) || !equal_files(src, pkg);
 }
 
-void its::repository::native::extract(const std::string &package, const boost::filesystem::path &destination)
+void bunsan::pm::repository::native::extract(const std::string &package, const boost::filesystem::path &destination)
 {
-	its::repository::check_package_name(package);
+	bunsan::pm::repository::check_package_name(package);
 	SLOG("starting \""<<package<<"\" "<<__func__);
 	bunsan::reset_dir(destination);
 	bunsan::tempfile_ptr tmp = bunsan::tempfile::in_dir(destination);

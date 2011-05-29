@@ -1,4 +1,4 @@
-project(repo)
+project(bunsan_pm)
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -37,9 +37,9 @@ add_subdirectory(${BUNSAN_COMMON_DIR} ${PROJECT_BINARY_DIR}/common)
 
 include_directories(. ${BUNSAN_COMMON_DIR})
 
-add_library(its_pkg SHARED repository.cpp repository_native.cpp)
+add_library(${PROJECT_NAME} SHARED repository.cpp repository_native.cpp)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(repo main.cpp)
 #target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${xmlrpc_link_lib})
-target_link_libraries(${PROJECT_NAME} bunsan_common its_pkg ${Boost_LIBRARIES} ${xmlrpc_link_lib})
+target_link_libraries(repo bunsan_common ${PROJECT_NAME} ${Boost_LIBRARIES} ${xmlrpc_link_lib})
 

@@ -21,19 +21,19 @@
 
 #include "util.hpp"
 
-its::repository::repository(const boost::property_tree::ptree &config_): config(config_)
+bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): config(config_)
 {
 	DLOG(creating repository instance);
 	flock.reset(new boost::interprocess::file_lock(config.get<std::string>("lock.global").c_str()));
 }
 
-void its::repository::check_package_name(const std::string &package)
+void bunsan::pm::repository::check_package_name(const std::string &package)
 {
 	if (!boost::algorithm::all(package, [](char c){return c=='_' || ('0'<=c && c<='9') || ('a'<=c && c<='z') || ('A'<=c && c<='Z');}))
 		throw std::runtime_error("illegal package name \""+package+"\"");
 }
 
-void its::repository::extract(const std::string &package, const boost::filesystem::path &destination)
+void bunsan::pm::repository::extract(const std::string &package, const boost::filesystem::path &destination)
 {
 	//boost::interprocess::sharable_lock<boost::interprocess::file_lock> lk(flock);
 	check_package_name(package);
@@ -47,7 +47,7 @@ void its::repository::extract(const std::string &package, const boost::filesyste
 	ntv.extract(package, destination);
 }
 
-void its::repository::update(const std::string &package)
+void bunsan::pm::repository::update(const std::string &package)
 {
 	SLOG("updating \""<<package<<"\"");
 	check_dirs();
@@ -58,7 +58,7 @@ void its::repository::update(const std::string &package)
 	dfs(package, status, lock);
 }
 
-bool its::repository::dfs(const std::string &package, std::map<std::string, std::shared_future<bool>> &status, std::mutex &lock)
+bool bunsan::pm::repository::dfs(const std::string &package, std::map<std::string, std::shared_future<bool>> &status, std::mutex &lock)
 {
 	native ntv(&config);
 	std::vector<std::string> deps = ntv.depends(package);
@@ -66,7 +66,7 @@ bool its::repository::dfs(const std::string &package, std::map<std::string, std:
 	{
 		std::unique_lock<std::mutex> lk(lock);
 		if (status.find(*i)==status.end())
-			status[*i] = std::async(&its::repository::dfs, this, *i, std::ref(status), std::ref(lock));
+			status[*i] = std::async(&bunsan::pm::repository::dfs, this, *i, std::ref(status), std::ref(lock));
 	}
 	bool updated = false;
 	for (auto i = deps.cbegin(); i!=deps.cend(); ++i)
@@ -117,7 +117,7 @@ void check_dir(const boost::filesystem::path &dir)
 	}
 }
 
-void its::repository::check_dirs()
+void bunsan::pm::repository::check_dirs()
 {
 	DLOG(checking directories);
 	check_dir(config.get<std::string>("dir.source"));
@@ -126,7 +126,7 @@ void its::repository::check_dirs()
 	DLOG(checked);
 }
 
-void its::repository::clean()
+void bunsan::pm::repository::clean()
 {
 	DLOG(trying to clean cache);
 	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
@@ -163,14 +163,14 @@ void check_cycle(const std::string &package, std::map<std::string, state> &statu
 	status[package] = state::visited;
 }
 
-void its::repository::check_cycle(const std::string &package)
+void bunsan::pm::repository::check_cycle(const std::string &package)
 {
 	SLOG("trying to find circular dependencies starting with \""<<package<<"\"");
 	std::map<std::string, state> status;
 	native ntv(&config);
-	::check_cycle(package, status, std::bind(&its::repository::native::depends, &ntv, std::placeholders::_1));
+	::check_cycle(package, status, std::bind(&bunsan::pm::repository::native::depends, &ntv, std::placeholders::_1));
 	DLOG((circular dependencies was not found, that is good!));
 }
 
-std::mutex its::repository::slock;
+std::mutex bunsan::pm::repository::slock;
 

@@ -13,7 +13,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/interprocess/sync/file_lock.hpp>
 
-namespace its
+namespace bunsan{namespace pm
 {
 	class repository: private boost::noncopyable
 	{
@@ -78,7 +78,7 @@ namespace its
 		 */
 		bool dfs(const std::string &package, std::map<std::string, std::shared_future<bool>> &status, std::mutex &lock);
 	};
-}
+}}
 
 #endif //REPOSITORY_HPP
 
