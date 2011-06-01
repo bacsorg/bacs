@@ -41,11 +41,8 @@ int main(int argc, char **argv)
 		}
 		DLOG(config parse);
 		boost::property_tree::ptree config;
-		//boost::property_tree::xml_parser::read_xml(config_file, config);
-		boost::property_tree::info_parser::read_info(config_file, config);
-		//boost::property_tree::xml_parser::write_xml("/tmp/out", config);
-		//return 0;
-		bunsan::pm::repository repo(config.get_child("pm"));
+		bunsan::read_info(config_file, config);
+		bunsan::pm::repository repo(config);
 		if (vm.count("clean"))
 		{
 			std::cerr<<"Attempt to clean repository"<<std::endl;

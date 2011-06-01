@@ -37,9 +37,9 @@ add_subdirectory(${BUNSAN_COMMON_DIR} ${PROJECT_BINARY_DIR}/common)
 
 include_directories(. ${BUNSAN_COMMON_DIR})
 
-add_library(${PROJECT_NAME} SHARED repository.cpp repository_native.cpp)
+add_library(${PROJECT_NAME} STATIC repository.cpp repository_native.cpp)
+target_link_libraries(${PROJECT_NAME} bunsan_common ${Boost_LIBRARIES} ${xmlrpc_link_lib})
 
 add_executable(repo main.cpp)
-#target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${xmlrpc_link_lib})
-target_link_libraries(repo bunsan_common ${PROJECT_NAME} ${Boost_LIBRARIES} ${xmlrpc_link_lib})
+target_link_libraries(repo ${PROJECT_NAME})
 
