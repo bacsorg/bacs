@@ -62,19 +62,19 @@ bool bunsan::pm::repository::dfs(const std::string &package, std::map<std::strin
 {
 	native ntv(&config);
 	std::vector<std::string> deps = ntv.depends(package);
-	for (auto i = deps.cbegin(); i!=deps.cend(); ++i)
+	for (const auto &i: deps)
 	{
 		std::unique_lock<std::mutex> lk(lock);
-		if (status.find(*i)==status.end())
-			status[*i] = std::async(&bunsan::pm::repository::dfs, this, *i, std::ref(status), std::ref(lock));
+		if (status.find(i)==status.end())
+			status[i] = std::async(&bunsan::pm::repository::dfs, this, i, std::ref(status), std::ref(lock));
 	}
 	bool updated = false;
-	for (auto i = deps.cbegin(); i!=deps.cend(); ++i)
+	for (const auto &i: deps)
 	{
 		std::shared_future<bool> future;
 		{
 			std::unique_lock<std::mutex> lk(lock);
-			future = status.at(*i);
+			future = status.at(i);
 		}
 		if (future.get())
 			updated = true;
@@ -147,9 +147,9 @@ void check_cycle(const std::string &package, std::map<std::string, state> &statu
 	{
 	case state::out:
 		status[package] = state::in;
-		for (auto i = deps.cbegin(); i!=deps.cend(); ++i)
+		for (const auto &i: deps)
 		{
-			check_cycle(*i, status, dget);
+			check_cycle(i, status, dget);
 		}
 		break;
 	case state::in:

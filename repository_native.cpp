@@ -60,11 +60,11 @@ void bunsan::pm::repository::native::configure(const std::string &package, const
 	bunsan::executor exec(config->get_child("command.configure"));
 	exec.current_path(build).add_argument((build.parent_path()/config->get<std::string>("name.dir.src")).native());
 	std::map<std::string, std::string> deps = depend_keys(package);
-	for (auto i = deps.cbegin(); i!=deps.cend(); ++i)
+	for (const auto &i: deps)
 	{
-		bunsan::reset_dir(build/(i->second));
-		extract(i->second, build/i->second);
-		exec.add_argument("-DDEPEND_"+i->first+"="+(build/i->second).native());
+		bunsan::reset_dir(build/(i.second));
+		extract(i.second, build/i.second);
+		exec.add_argument("-DDEPEND_"+i.first+"="+(build/i.second).native());
 	}
 	exec();
 }
@@ -97,8 +97,8 @@ std::vector<std::string> bunsan::pm::repository::native::depends(const std::stri
 	auto map = depend_keys(package);
 	std::vector<std::string> deps(map.size());
 	deps.resize(0);
-	for (auto i = map.cbegin(); i!=map.cend(); ++i)
-		deps.push_back(i->second);
+	for (const auto &i: map)
+		deps.push_back(i.second);
 	return deps;
 }
 
@@ -111,12 +111,12 @@ std::map<std::string, std::string> bunsan::pm::repository::native::depend_keys(c
 	boost::property_tree::ptree deps;
 	boost::property_tree::info_parser::read_info(dfile->native(), deps);
 	std::map<std::string, std::string> map;
-	for (auto i = deps.begin(); i!=deps.end(); ++i)
+	for (const auto &i: deps)
 	{
-		bunsan::pm::repository::check_package_name(i->second.get_value<std::string>());
-		if (map.find(i->first)!=map.end())
-			throw std::runtime_error("dublicate dependencies: \""+i->first+"\"");
-		map[i->first] = i->second.get_value<std::string>();
+		bunsan::pm::repository::check_package_name(i.second.get_value<std::string>());
+		if (map.find(i.first)!=map.end())
+			throw std::runtime_error("dublicate dependencies: \""+i.first+"\"");
+		map[i.first] = i.second.get_value<std::string>();
 	}
 	SLOG("found \""<<map.size()<<"\" dependencies");
 	return map;
