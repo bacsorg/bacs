@@ -19,7 +19,7 @@ set(
 )
 
 # BOOST
-set (Boost_USE_STATIC_LIBS ON)
+set (Boost_USE_STATIC_LIBS OFF)
 set (Boost_USE_MULTITHREADED ON)
 find_package (Boost COMPONENTS system filesystem serialization iostreams unit_test_framework program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
@@ -33,11 +33,13 @@ message("We have to check pthread library on win* platform")
 
 add_definitions(-std=c++0x -pthread -g)
 
-add_subdirectory(${BUNSAN_COMMON_DIR} ${PROJECT_BINARY_DIR}/common EXCLUDE_FROM_ALL)
+if (NOT TARGET bunsan_common)
+	add_subdirectory(${BUNSAN_COMMON_DIR} ${PROJECT_BINARY_DIR}/common EXCLUDE_FROM_ALL)
+endif()
 
 include_directories(. ${BUNSAN_COMMON_DIR})
 
-add_library(${PROJECT_NAME} STATIC repository.cpp repository_native.cpp)
+add_library(${PROJECT_NAME} SHARED repository.cpp repository_native.cpp)
 target_link_libraries(${PROJECT_NAME} bunsan_common ${Boost_LIBRARIES} ${xmlrpc_link_lib})
 
 add_executable(bunsan_repo main.cpp)
