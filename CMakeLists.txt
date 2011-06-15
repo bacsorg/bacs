@@ -40,7 +40,7 @@ endif()
 include_directories(. ${BUNSAN_COMMON_DIR})
 
 add_library(${PROJECT_NAME} SHARED repository.cpp repository_native.cpp)
-target_link_libraries(${PROJECT_NAME} bunsan_common ${Boost_LIBRARIES} ${xmlrpc_link_lib})
+target_link_libraries(${PROJECT_NAME} bunsan_common)
 
 add_executable(bunsan_repo main.cpp)
 target_link_libraries(bunsan_repo ${PROJECT_NAME})
