@@ -45,6 +45,9 @@ target_link_libraries(${PROJECT_NAME} bunsan_common ${Boost_LIBRARIES} ${xmlrpc_
 add_executable(bunsan_repo main.cpp)
 target_link_libraries(bunsan_repo ${PROJECT_NAME})
 
+add_library(bunsan_pm_c SHARED bunsan_pm_c.cpp)
+target_link_libraries(bunsan_pm_c bunsan_pm)
+
 # install
 
 file(GLOB headers . "*.hpp")
