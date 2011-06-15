@@ -53,6 +53,6 @@ target_link_libraries(bunsan_pm_c bunsan_pm)
 file(GLOB headers . "*.hpp")
 install(FILES ${headers} DESTINATION include/bunsan/pm)
 
-install(TARGETS ${PROJECT_NAME} DESTINATION lib)
+install(TARGETS ${PROJECT_NAME} bunsan_pm_c DESTINATION lib)
 install(TARGETS bunsan_repo DESTINATION bin)
 
