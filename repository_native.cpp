@@ -88,7 +88,7 @@ void bunsan::pm::repository::native::configure(const std::string &package, const
 		{
 			bunsan::reset_dir(build/(i.second));
 			extract(i.second, build/i.second);
-			exec.add_argument("-DDEPEND_"+i.first+"="+(build/i.second).native());
+			exec.add_argument("-D"+i.first+"="+(build/i.second).native());
 		}
 		exec();
 	}
