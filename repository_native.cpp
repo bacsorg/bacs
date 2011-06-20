@@ -46,7 +46,7 @@ void bunsan::pm::repository::native::fetch(const std::string &package)
 		fetcher(url+config->get<std::string>("name.file.src"), (output/config->get<std::string>("name.file.src")).native());
 		fetcher(url+config->get<std::string>("name.file.time"), (output/config->get<std::string>("name.file.time")).native());
 		fetcher(url+config->get<std::string>("name.file.depends"), (output/config->get<std::string>("name.file.depends")).native());
-		output_tmp.auto_remove(false);// everythin is ok, so we don't need to remove output dir
+		output_tmp.auto_remove(false);// everything is ok, so we don't need to remove output dir
 	}
 	catch (std::exception &e)
 	{
@@ -176,7 +176,7 @@ std::map<std::string, std::string> bunsan::pm::repository::native::depend_keys(c
 
 bool equal_files(const boost::filesystem::path &file1, const boost::filesystem::path &file2)
 {
-	// TODO: not check
+	// TODO: not checked
 	boost::filesystem::ifstream fin1(file1, std::ios_base::in | std::ios_base::binary), fin2(file2, std::ios_base::in | std::ios_base::binary);
 	if (!fin1.good())
 		throw std::runtime_error("bad file \""+file1.native()+"\"");
