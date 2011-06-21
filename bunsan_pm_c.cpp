@@ -1,12 +1,13 @@
-#include "bunsan_pm_c.hpp"
+#include "bunsan/pm/bunsan_pm_c.hpp"
 
 #include <cstring>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
-#include "repository.hpp"
-#include "util.hpp"
+#include "bunsan/util.hpp"
+
+#include "bunsan/pm/repository.hpp"
 
 void *bunsan_pm_create(char *error, size_t ebufsize, const char *config)
 {

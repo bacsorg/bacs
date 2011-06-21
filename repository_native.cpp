@@ -1,4 +1,4 @@
-#include "repository.hpp"
+#include "bunsan/pm/repository.hpp"
 
 #include <stdexcept>
 
@@ -8,9 +8,9 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-#include "executor.hpp"
-#include "util.hpp"
-#include "tempfile.hpp"
+#include "bunsan/executor.hpp"
+#include "bunsan/util.hpp"
+#include "bunsan/tempfile.hpp"
 
 class pm_error: public std::runtime_error
 {

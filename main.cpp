@@ -6,9 +6,9 @@
 //#include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
-#include "repository.hpp"
+#include "bunsan/util.hpp"
 
-#include "util.hpp"
+#include "bunsan/pm/repository.hpp"
 
 int main(int argc, char **argv)
 {

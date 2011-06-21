@@ -1,4 +1,4 @@
-#include "repository.hpp"
+#include "bunsan/pm/repository.hpp"
 
 #include <stdexcept>
 #include <string>
@@ -19,7 +19,7 @@
 #include <boost/interprocess/sync/sharable_lock.hpp>
 #include <boost/filesystem.hpp>
 
-#include "util.hpp"
+#include "bunsan/util.hpp"
 
 bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): config(config_)
 {

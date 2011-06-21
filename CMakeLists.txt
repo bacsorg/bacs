@@ -2,10 +2,6 @@ project(bunsan_pm)
 
 cmake_minimum_required(VERSION 2.8)
 
-if (NOT DEFINED BUNSAN_COMMON_DIR)
-	message(SEND_ERROR "you have to define BUNSAN_COMMON_DIR variable")
-endif()
-
 set(
 	xmlrpc_link_lib
 	xmlrpc++
@@ -33,14 +29,10 @@ message("We have to check pthread library on win* platform")
 
 add_definitions(-std=c++0x -pthread -g -D_GLIBCXX_USE_NANOSLEEP)
 
-if (NOT TARGET bunsan_common)
-	add_subdirectory(${BUNSAN_COMMON_DIR} ${PROJECT_BINARY_DIR}/common EXCLUDE_FROM_ALL)
-endif()
-
-include_directories(. ${BUNSAN_COMMON_DIR})
+include_directories(include)
 
 add_library(${PROJECT_NAME} SHARED repository.cpp repository_native.cpp)
-target_link_libraries(${PROJECT_NAME} bunsan_common)
+target_link_libraries(${PROJECT_NAME} bunsan_common ${Boost_LIBRARIES})
 
 add_executable(bunsan_repo main.cpp)
 target_link_libraries(bunsan_repo ${PROJECT_NAME})
@@ -50,9 +42,7 @@ target_link_libraries(bunsan_pm_c bunsan_pm)
 
 # install
 
-file(GLOB headers . "*.hpp")
-install(FILES ${headers} DESTINATION include/bunsan/pm)
-
+install(DIRECTORY include DESTINATION .)
 install(TARGETS ${PROJECT_NAME} bunsan_pm_c DESTINATION lib)
 install(TARGETS bunsan_repo DESTINATION bin)
 
