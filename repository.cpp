@@ -153,7 +153,7 @@ void check_cycle(const std::string &package, std::map<std::string, state> &statu
 		}
 		break;
 	case state::in:
-		throw std::runtime_error("cycle dependencies in \""+package+"\"");
+		throw std::runtime_error("circular dependencies starting with \""+package+"\"");
 		break;
 	case state::visited:
 		break;
