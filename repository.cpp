@@ -80,7 +80,7 @@ bool bunsan::pm::repository::dfs(const std::string &package, std::map<std::strin
 			updated = true;
 	}
 	SLOG("updated=\""<<updated<<"\"");
-	SLOG("starting updating \""<<package<<"\"");
+	SLOG("starting \""<<package<<"\" update");
 	if (ntv.source_outdated(package))
 	{
 		updated = true;
