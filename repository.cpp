@@ -126,30 +126,33 @@ void bunsan::pm::repository::clean()
 	DLOG(cleaned);
 }
 
-enum class state{out, in, visited};
-void check_cycle(const std::string &package, std::map<std::string, state> &status, std::function<std::vector<std::string> (const std::string &)> dget)
+namespace
 {
-	if (status.find(package)==status.end())
-		status[package] = state::out;
-	std::vector<std::string> deps = dget(package);
-	switch (status[package])
+	enum class state{out, in, visited};
+	void check_cycle(const std::string &package, std::map<std::string, state> &status, std::function<std::vector<std::string> (const std::string &)> dget)
 	{
-	case state::out:
-		status[package] = state::in;
-		for (const auto &i: deps)
+		if (status.find(package)==status.end())
+			status[package] = state::out;
+		std::vector<std::string> deps = dget(package);
+		switch (status[package])
 		{
-			check_cycle(i, status, dget);
+		case state::out:
+			status[package] = state::in;
+			for (const auto &i: deps)
+			{
+				check_cycle(i, status, dget);
+			}
+			break;
+		case state::in:
+			throw std::runtime_error("circular dependencies starting with \""+package+"\"");
+			break;
+		case state::visited:
+			break;
+		default:
+			assert(false);
 		}
-		break;
-	case state::in:
-		throw std::runtime_error("circular dependencies starting with \""+package+"\"");
-		break;
-	case state::visited:
-		break;
-	default:
-		assert(false);
+		status[package] = state::visited;
 	}
-	status[package] = state::visited;
 }
 
 void bunsan::pm::repository::check_cycle(const std::string &package)
@@ -157,8 +160,7 @@ void bunsan::pm::repository::check_cycle(const std::string &package)
 	SLOG("trying to find circular dependencies starting with \""<<package<<"\"");
 	std::map<std::string, state> status;
 	native ntv(config);
-	// XXX update_meta
-	std::set<std::string> updated;
+	std::set<std::string> updated;// we update meta info once
 	::check_cycle(package, status,
 		[&updated, &ntv](const std::string &package)
 		{
