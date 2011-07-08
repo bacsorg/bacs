@@ -39,8 +39,9 @@ namespace bunsan{namespace pm
 		class native: private boost::noncopyable
 		{
 		public:
-			explicit native(const boost::property_tree::ptree *config_);
-			void fetch(const std::string &package);
+			explicit native(const boost::property_tree::ptree &config_);
+			void fetch_source(const std::string &package);
+			bool update_meta(const std::string &package);
 			/*!
 			 * \brief unpack, configure, compile, pack
 			 */
@@ -57,13 +58,13 @@ namespace bunsan{namespace pm
 			bool package_outdated(const std::string &package);
 			void extract(const std::string &package, const boost::filesystem::path &destination);
 		private:
-			const boost::property_tree::ptree *config;
+			const boost::property_tree::ptree &config;
 		};
 		std::unique_ptr<boost::interprocess::file_lock> flock;
 		static std::mutex slock;
 		const boost::property_tree::ptree config;
 		// private functions
-		/// check system drectory existance and create them if they are missing
+		/// check system directories existance and create them if they are missing
 		void check_dirs();
 		/// update logic
 		void update(const std::string &package);

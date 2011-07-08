@@ -35,14 +35,13 @@ void bunsan::pm::repository::check_package_name(const std::string &package)
 
 void bunsan::pm::repository::extract(const std::string &package, const boost::filesystem::path &destination)
 {
-	//boost::interprocess::sharable_lock<boost::interprocess::file_lock> lk(flock);
 	check_package_name(package);
 	SLOG("extract \""<<package<<"\" to "<<destination);
 	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
 	boost::interprocess::scoped_lock<std::mutex> lk2(slock);
 	DLOG(trying to update);
 	update(package);
-	native ntv(&config);
+	native ntv(config);
 	DLOG(trying to extract);
 	ntv.extract(package, destination);
 }
@@ -60,7 +59,7 @@ void bunsan::pm::repository::update(const std::string &package)
 
 bool bunsan::pm::repository::dfs(const std::string &package, std::map<std::string, std::shared_future<bool>> &status, std::mutex &lock)
 {
-	native ntv(&config);
+	native ntv(config);
 	std::vector<std::string> deps = ntv.depends(package);
 	for (const auto &i: deps)
 	{
@@ -84,7 +83,7 @@ bool bunsan::pm::repository::dfs(const std::string &package, std::map<std::strin
 	if (ntv.source_outdated(package))
 	{
 		updated = true;
-		ntv.fetch(package);
+		ntv.fetch_source(package);
 	}
 	if (updated || ntv.package_outdated(package))
 	{
@@ -167,8 +166,19 @@ void bunsan::pm::repository::check_cycle(const std::string &package)
 {
 	SLOG("trying to find circular dependencies starting with \""<<package<<"\"");
 	std::map<std::string, state> status;
-	native ntv(&config);
-	::check_cycle(package, status, std::bind(&bunsan::pm::repository::native::depends, &ntv, std::placeholders::_1));
+	native ntv(config);
+	// XXX update_meta
+	std::set<std::string> updated;
+	::check_cycle(package, status,
+		[&updated, &ntv](const std::string &package)
+		{
+			if (updated.find(package)==updated.end())
+			{
+				updated.insert(package);
+				ntv.update_meta(package);
+			}
+			return ntv.depends(package);
+		});
 	DLOG((circular dependencies was not found, that is good!));
 }
 
