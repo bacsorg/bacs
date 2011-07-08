@@ -29,7 +29,7 @@ message("We have to check pthread library on win* platform")
 
 add_definitions(-std=c++0x -pthread -g -D_GLIBCXX_USE_NANOSLEEP)
 
-include_directories(include)
+include_directories(. include)
 
 add_library(${PROJECT_NAME} SHARED repository.cpp repository_native.cpp)
 target_link_libraries(${PROJECT_NAME} bunsan_common bunsan_compatibility ${Boost_LIBRARIES})
