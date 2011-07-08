@@ -51,32 +51,21 @@ void bunsan::pm::repository::update(const std::string &package)
 	SLOG("updating \""<<package<<"\"");
 	check_dirs();
 	check_cycle(package);
-	std::map<std::string, std::shared_future<bool>> status;
-	std::mutex lock;
-	DLOG(starting parallel build);
-	dfs(package, status, lock);
+	std::map<std::string, bool> status;
+	DLOG(starting build);
+	dfs(package, status);
 }
 
-bool bunsan::pm::repository::dfs(const std::string &package, std::map<std::string, std::shared_future<bool>> &status, std::mutex &lock)
+bool bunsan::pm::repository::dfs(const std::string &package, std::map<std::string, bool> &status)
 {
 	native ntv(config);
 	std::vector<std::string> deps = ntv.depends(package);
-	for (const auto &i: deps)
-	{
-		std::unique_lock<std::mutex> lk(lock);
-		if (status.find(i)==status.end())
-			status[i] = std::async(&bunsan::pm::repository::dfs, this, i, std::ref(status), std::ref(lock));
-	}
 	bool updated = false;
-	for (const auto &i: deps)
+	for (const auto &i: ntv.depends(package))
 	{
-		std::shared_future<bool> future;
-		{
-			std::unique_lock<std::mutex> lk(lock);
-			future = status.at(i);
-		}
-		if (future.get())
-			updated = true;
+		if (status.find(i)==status.end())
+			status[i] = dfs(i, status);
+		updated = updated || status[i];
 	}
 	SLOG("updated=\""<<updated<<"\"");
 	SLOG("starting \""<<package<<"\" update");

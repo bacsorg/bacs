@@ -5,7 +5,6 @@
 #include <map>
 #include <vector>
 #include <memory>
-#include <future>
 #include <mutex>
 
 #include <boost/noncopyable.hpp>
@@ -77,7 +76,7 @@ namespace bunsan{namespace pm
 		 * \brief parallel update implementation
 		 * \return true if package was updated
 		 */
-		bool dfs(const std::string &package, std::map<std::string, std::shared_future<bool>> &status, std::mutex &lock);
+		bool dfs(const std::string &package, std::map<std::string, bool> &status);
 	};
 }}
 
