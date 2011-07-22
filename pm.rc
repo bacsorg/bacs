@@ -24,6 +24,7 @@ name
 		src src
 		build build
 		pkg pkg
+		depends_time depends_time
 	}
 }
 suffix
@@ -31,7 +32,8 @@ suffix
 	src .txz
 	pkg .tar.gz ;changed name
 }
-repository "http://localhost/~lex/repo"
+;repository "http://localhost/~lex/repo"
+repository "/home/lex/public_html/repo"
 command
 {
 	example
@@ -55,13 +57,20 @@ command
 		t -o
 		p 1
 	}
-	fetch
+	_fetch
 	{
 		t wget
 		t -q
 		t -O
 		p 1
 		p 0
+	}
+	fetch
+	{
+		t cp
+		t -f
+		p 0
+		p 1
 	}
 	unpack
 	{
@@ -79,6 +88,7 @@ command
 	compile
 	{
 		t make
+		t -j3
 	}
 	pack
 	{
