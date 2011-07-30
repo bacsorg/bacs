@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <set>
 #include <vector>
 #include <memory>
 #include <mutex>
@@ -11,6 +12,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/interprocess/sync/file_lock.hpp>
+
+#include "bunsan/pm/entry.hpp"
 
 namespace bunsan{namespace pm
 {
@@ -23,17 +26,13 @@ namespace bunsan{namespace pm
 		 *
 		 * \todo We can do implicit update.
 		 */
-		void extract(const std::string &package, const boost::filesystem::path &destination);
+		void extract(const entry &package, const boost::filesystem::path &destination);
 		/*!
 		 * \brief Run clean up actions, may have negative effect on performance because of cleaning the cache, but can free disk space.
 		 *
 		 * \todo It seems that such method should be, but semantics can be different.
 		 */
 		void clean();
-		/*!
-		 * \brief Checks package name, if it is not valid std::runtime_error will be thrown
-		 */
-		static void check_package_name(const std::string &package);
 	private:
 		class native;
 		std::unique_ptr<boost::interprocess::file_lock> flock;
@@ -43,17 +42,10 @@ namespace bunsan{namespace pm
 		/// check system directories existance and create them if they are missing
 		void check_dirs();
 		/// update logic
-		void update(const std::string &package);
-		/*!
-		 * \brief check cycle dependencies
-		 * \throw std::runtime_error if found
-		 */
-		void check_cycle(const std::string &package);
-		/*!
-		 * \brief parallel update implementation
-		 * \return true if package was updated
-		 */
-		bool dfs(const std::string &package, std::map<std::string, bool> &status);
+		void update(const entry &package);
+		void update_imports(const entry &package, std::set<entry> &updated, std::set<entry> &in);
+		//void update_depends(const entry &package, std::map<entry, std::pair<int, bool> > &status, std::set<entry> &updated);
+		void update_depends(const entry &package, std::map<entry, bool> &status, std::set<entry> &updated, std::set<entry> &in);
 	};
 }}
 

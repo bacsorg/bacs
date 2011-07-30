@@ -28,16 +28,9 @@ bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): 
 	flock.reset(new boost::interprocess::file_lock(config.get<std::string>("lock.global").c_str()));
 }
 
-void bunsan::pm::repository::check_package_name(const std::string &package)
+void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
 {
-	if (!boost::algorithm::all(package, [](char c){return c=='_' || ('0'<=c && c<='9') || ('a'<=c && c<='z') || ('A'<=c && c<='Z');}))
-		throw std::runtime_error("illegal package name \""+package+"\"");
-}
-
-void bunsan::pm::repository::extract(const std::string &package, const boost::filesystem::path &destination)
-{
-	check_package_name(package);
-	SLOG("extract \""<<package<<"\" to "<<destination);
+	SLOG("extract "<<package<<" to "<<destination);
 	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
 	boost::interprocess::scoped_lock<std::mutex> lk2(slock);
 	DLOG(trying to update);
@@ -47,41 +40,67 @@ void bunsan::pm::repository::extract(const std::string &package, const boost::fi
 	ntv.extract(package, destination);
 }
 
-void bunsan::pm::repository::update(const std::string &package)
+void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 {
-	SLOG("updating \""<<package<<"\"");
+	SLOG("updating "<<package);
 	check_dirs();
-	check_cycle(package);
-	std::map<std::string, bool> status;
 	DLOG(starting build);
-	dfs(package, status);
+	std::set<entry> updated, in;
+	std::map<entry, bool> status;
+	update_depends(package, status, updated, in);
 }
 
-bool bunsan::pm::repository::dfs(const std::string &package, std::map<std::string, bool> &status)
+void bunsan::pm::repository::update_imports(const entry &package, std::set<entry> &updated, std::set<entry> &in)
 {
-	native ntv(config);
-	std::vector<std::string> deps = ntv.depends(package);
-	bool updated = false;
-	for (const auto &i: ntv.depends(package))
+	if (in.find(package)!=in.end())
+		throw std::runtime_error("circular imports starting with \""+package.name()+"\"");
+	in.insert(package);
 	{
-		if (status.find(i)==status.end())
-			status[i] = dfs(i, status);
-		updated = updated || status[i];
-	}
-	SLOG("updated=\""<<updated<<"\"");
-	SLOG("starting \""<<package<<"\" update");
-	if (ntv.source_outdated(package))
-	{
-		updated = true;
+		native ntv(config);
+		ntv.update_index(package);
 		ntv.fetch_source(package);
+		for (const auto &i: ntv.imports(package))
+		{
+			if (updated.find(i.second)==updated.end())
+			{
+				update_imports(i.second, updated, in);
+				updated.insert(i.second);
+			}
+		}
 	}
-	if (updated || ntv.package_outdated(package))
+	in.erase(package);
+}
+
+void bunsan::pm::repository::update_depends(const entry &package, std::map<entry, bool> &status, std::set<entry> &updated, std::set<entry> &in)
+{
+	auto it = status.find(package);
+	if (it==status.end())
 	{
-		updated = true;
-		ntv.build(package);
+		status[package] = false;
+		it = status.find(package);
+		if (in.find(package)!=in.end())
+			throw std::runtime_error("circular dependencies starting with \""+package.name()+"\"");
+		in.insert(package);
+		{
+			std::set<entry> in_;
+			update_imports(package, updated, in_);
+			native ntv(config);
+			for (const auto &i: ntv.depends(package))
+			{
+				update_depends(i.second, status, updated, in);
+				it->second = it->second || status.at(package);
+			}
+			SLOG("updated=\""<<it->second<<"\"");
+			SLOG("starting "<<package<<" update");
+			if (it->second || ntv.package_outdated(package))
+			{
+				ntv.build(package);
+				it->second = true;
+			}
+			SLOG(package<<" was "<<(it->second?"updated":"not updated"));
+		}
+		in.erase(package);
 	}
-	SLOG("\""<<package<<"\" was "<<(updated?"updated":"not updated"));
-	return updated;
 }
 
 void check_dir(const boost::filesystem::path &dir)
@@ -124,54 +143,6 @@ void bunsan::pm::repository::clean()
 	bunsan::reset_dir(config.get<std::string>("dir.package"));
 	bunsan::reset_dir(config.get<std::string>("dir.tmp"));
 	DLOG(cleaned);
-}
-
-namespace
-{
-	enum class state{out, in, visited};
-	void check_cycle(const std::string &package, std::map<std::string, state> &status, std::function<std::vector<std::string> (const std::string &)> dget)
-	{
-		if (status.find(package)==status.end())
-			status[package] = state::out;
-		std::vector<std::string> deps = dget(package);
-		switch (status[package])
-		{
-		case state::out:
-			status[package] = state::in;
-			for (const auto &i: deps)
-			{
-				check_cycle(i, status, dget);
-			}
-			break;
-		case state::in:
-			throw std::runtime_error("circular dependencies starting with \""+package+"\"");
-			break;
-		case state::visited:
-			break;
-		default:
-			assert(false);
-		}
-		status[package] = state::visited;
-	}
-}
-
-void bunsan::pm::repository::check_cycle(const std::string &package)
-{
-	SLOG("trying to find circular dependencies starting with \""<<package<<"\"");
-	std::map<std::string, state> status;
-	native ntv(config);
-	std::set<std::string> updated;// we update meta info once
-	::check_cycle(package, status,
-		[&updated, &ntv](const std::string &package)
-		{
-			if (updated.find(package)==updated.end())
-			{
-				updated.insert(package);
-				ntv.update_meta(package);
-			}
-			return ntv.depends(package);
-		});
-	DLOG((circular dependencies was not found, that is good!));
 }
 
 std::mutex bunsan::pm::repository::slock;

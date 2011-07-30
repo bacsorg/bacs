@@ -7,23 +7,22 @@ class bunsan::pm::repository::native: private boost::noncopyable
 {
 public:
 	explicit native(const boost::property_tree::ptree &config_);
-	void fetch_source(const std::string &package);
-	bool update_meta(const std::string &package);
+	void fetch_source(const entry &package);
+	void update_index(const entry &package);
 	/*!
 	 * \brief unpack, configure, compile, pack
 	 */
-	void build(const std::string &package);
+	void build(const entry &package);
 private:
-	void unpack(const std::string &package, const boost::filesystem::path &build_dir);
-	void configure(const std::string &package, const boost::filesystem::path &build_dir);
-	void compile(const std::string &package, const boost::filesystem::path &build_dir);
-	void pack(const std::string &package, const boost::filesystem::path &build_dir);
+	void unpack(const entry &package, const boost::filesystem::path &build_dir);
+	void configure(const entry &package, const boost::filesystem::path &build_dir);
+	void compile(const entry &package, const boost::filesystem::path &build_dir);
+	void pack(const entry &package, const boost::filesystem::path &build_dir);
 public:
-	std::vector<std::string> depends(const std::string &package);
-	std::map<std::string, std::string> depend_keys(const std::string &package);
-	bool source_outdated(const std::string &package);
-	bool package_outdated(const std::string &package);
-	void extract(const std::string &package, const boost::filesystem::path &destination);
+	std::map<std::string, entry> depends(const entry &package);
+	std::multimap<boost::filesystem::path, entry> imports(const entry &package);
+	bool package_outdated(const entry &package);
+	void extract(const entry &package, const boost::filesystem::path &destination);
 private:
 	const boost::property_tree::ptree &config;
 };

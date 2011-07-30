@@ -14,10 +14,10 @@ name
 	file
 	{
 		tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp ; for small files
-		depends depends
+		index index
+		hash hash
 		src src.txz
 		pkg pkg.tar.gz
-		time time
 	}
 	dir
 	{

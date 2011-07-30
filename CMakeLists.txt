@@ -31,7 +31,7 @@ add_definitions(-std=c++0x -pthread -g -D_GLIBCXX_USE_NANOSLEEP)
 
 include_directories(include)
 
-add_library(${PROJECT_NAME} SHARED src/lib/repository.cpp src/lib/repository_native.cpp)
+add_library(${PROJECT_NAME} SHARED src/lib/repository.cpp src/lib/repository_native.cpp src/lib/entry.cpp src/lib/hash.cpp)
 target_link_libraries(${PROJECT_NAME} bunsan_common bunsan_compatibility ${Boost_LIBRARIES})
 
 add_executable(bunsan_repo src/main.cpp)
@@ -45,4 +45,9 @@ target_link_libraries(bunsan_pm_c bunsan_pm)
 install(DIRECTORY include DESTINATION .)
 install(TARGETS ${PROJECT_NAME} bunsan_pm_c DESTINATION lib)
 install(TARGETS bunsan_repo DESTINATION bin)
+
+# testing
+
+enable_testing()
+add_subdirectory(tests ${PROJECT_BINARY_DIR}/tests)
 
