@@ -83,6 +83,7 @@ command
 	configure
 	{
 		t cmake
+		t -DCMAKE_MODULE_PATH=/home/lex/istu/dev/bunsan/pm
 		p 0
 	}
 	compile
