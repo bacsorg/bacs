@@ -16,15 +16,15 @@ name
 		tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp ; for small files
 		index index
 		hash hash
-		src src.txz
 		pkg pkg.tar.gz
 	}
 	dir
 	{
-		src src
+		source source
 		build build
-		pkg pkg
+		depends depends
 		depends_time depends_time
+		pkg pkg
 	}
 }
 suffix

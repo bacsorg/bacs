@@ -14,6 +14,7 @@ public:
 	 */
 	void build(const entry &package);
 private:
+	void unpack_import(const entry &package, const boost::filesystem::path &destination);
 	void unpack(const entry &package, const boost::filesystem::path &build_dir);
 	void configure(const entry &package, const boost::filesystem::path &build_dir);
 	void compile(const entry &package, const boost::filesystem::path &build_dir);
