@@ -15,7 +15,7 @@
 #include "bunsan/util.hpp"
 #include "bunsan/tempfile.hpp"
 
-#include "bunsan/pm/hash.hpp"
+#include "bunsan/pm/checksum.hpp"
 
 void bunsan::pm::repository::native::build(const entry &package)
 {
@@ -37,7 +37,7 @@ namespace
 
 	bool outdated(const boost::filesystem::path &file, const std::string &checksum)
 	{
-		return !boost::filesystem::exists(file) || bunsan::pm::hash(file)!=checksum;
+		return !boost::filesystem::exists(file) || bunsan::pm::checksum(file)!=checksum;
 	}
 }
 
@@ -47,10 +47,10 @@ void bunsan::pm::repository::native::update_index(const entry &package)
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		bunsan::executor fetcher(config.get_child(command_fetch));
-		bunsan::tempfile_ptr hash_ptr = bunsan::tempfile::from_model(value(name_file_tmp));
+		bunsan::tempfile_ptr checksum_ptr = bunsan::tempfile::from_model(value(name_file_tmp));
 		try
 		{
-			fetcher(remote_resource(package, value(name_file_hash)), hash_ptr->path());
+			fetcher(remote_resource(package, value(name_file_checksum)), checksum_ptr->path());
 		}
 		catch (std::exception &e)
 		{
@@ -59,10 +59,10 @@ void bunsan::pm::repository::native::update_index(const entry &package)
 		boost::filesystem::path output = package.local_resource(value(dir_source));
 		if (!boost::filesystem::is_directory(output))
 			boost::filesystem::create_directories(output);
-		bunsan::compatibility::boost::filesystem::copy_file(hash_ptr->path(), output/value(name_file_hash));
-		boost::property_tree::ptree hash;
-		read_hash(package, hash);
-		if (outdated(output/value(name_file_index), hash.get<std::string>(name_file_index)))
+		bunsan::compatibility::boost::filesystem::copy_file(checksum_ptr->path(), output/value(name_file_checksum));
+		boost::property_tree::ptree checksum;
+		read_checksum(package, checksum);
+		if (outdated(output/value(name_file_index), checksum.get<std::string>(name_file_index)))
 			fetcher(remote_resource(package, value(name_file_index)), output/value(name_file_index));
 	}
 	catch (pm_error &e)
@@ -83,13 +83,13 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
 		const std::string src_sfx = value(suffix_src);
 		bunsan::executor fetcher(config.get_child(command_fetch));
 		boost::filesystem::path output = package.remote_resource(value(dir_source));
-		boost::property_tree::ptree index, hash;
+		boost::property_tree::ptree index, checksum;
 		read_index(package, index);
-		read_hash(package, hash);
+		read_checksum(package, checksum);
 		for (const auto &i: index.get_child(child_sources))
 		{
 			std::string src = i.second.get_value<std::string>();
-			if (outdated(output/(src+src_sfx), hash.get<std::string>(src)))
+			if (outdated(output/(src+src_sfx), checksum.get<std::string>(src)))
 				fetcher(remote_resource(package, src+src_sfx), output/(src+src_sfx));
 		}
 	}

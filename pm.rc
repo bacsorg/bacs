@@ -15,7 +15,7 @@ name
 	{
 		tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp ; for small files
 		index index
-		hash hash
+		checksum checksum
 		pkg pkg.tar.gz
 	}
 	dir

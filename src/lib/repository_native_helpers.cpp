@@ -13,9 +13,9 @@ void bunsan::pm::repository::native::read_index(const entry &package, boost::pro
 	boost::property_tree::read_info(local_resource(package, value(name_file_index)).native(), ptree);
 }
 
-void bunsan::pm::repository::native::read_hash(const entry &package, boost::property_tree::ptree &ptree)
+void bunsan::pm::repository::native::read_checksum(const entry &package, boost::property_tree::ptree &ptree)
 {
-	boost::property_tree::read_info(local_resource(package, value(name_file_hash)).native(), ptree);
+	boost::property_tree::read_info(local_resource(package, value(name_file_checksum)).native(), ptree);
 }
 
 std::string bunsan::pm::repository::native::remote_resource(const entry &package, const std::string &name)

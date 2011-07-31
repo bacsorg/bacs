@@ -26,7 +26,7 @@ private:
 	boost::filesystem::path local_resource(const entry &package, const std::string &name);
 	std::string value(const std::string &key);
 	void read_index(const entry &package, boost::property_tree::ptree &ptree);
-	void read_hash(const entry &package, boost::property_tree::ptree &ptree);
+	void read_checksum(const entry &package, boost::property_tree::ptree &ptree);
 public:
 	std::map<std::string, entry> depends(const entry &package);
 	std::multimap<boost::filesystem::path, entry> imports(const entry &package);

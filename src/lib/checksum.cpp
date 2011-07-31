@@ -1,11 +1,11 @@
-#include "bunsan/pm/hash.hpp"
+#include "bunsan/pm/checksum.hpp"
 
 #include <sstream>
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/crc.hpp>
 
-std::string bunsan::pm::hash(const boost::filesystem::path &file)
+std::string bunsan::pm::checksum(const boost::filesystem::path &file)
 {
 	boost::crc_32_type crc;
 	boost::filesystem::ifstream in(file, std::ios_base::binary);// TODO error control
