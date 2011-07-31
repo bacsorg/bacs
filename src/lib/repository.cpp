@@ -22,10 +22,11 @@
 
 #include "bunsan/util.hpp"
 
-bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): config(config_)
+bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): ntv(0), config(config_)
 {
 	DLOG(creating repository instance);
 	flock.reset(new boost::interprocess::file_lock(config.get<std::string>("lock.global").c_str()));
+	ntv = new native(config);
 }
 
 void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
@@ -35,15 +36,14 @@ void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boo
 	boost::interprocess::scoped_lock<std::mutex> lk2(slock);
 	DLOG(trying to update);
 	update(package);
-	native ntv(config);
 	DLOG(trying to extract);
-	ntv.extract(package, destination);
+	ntv->extract(package, destination);
 }
 
 void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 {
 	SLOG("updating "<<package);
-	check_dirs();
+	ntv->check_dirs();
 	DLOG(starting build);
 	std::set<entry> updated, in;
 	std::map<entry, bool> status;
@@ -56,10 +56,9 @@ void bunsan::pm::repository::update_imports(const entry &package, std::set<entry
 		throw std::runtime_error("circular imports starting with \""+package.name()+"\"");
 	in.insert(package);
 	{
-		native ntv(config);
-		ntv.update_index(package);
-		ntv.fetch_source(package);
-		for (const auto &i: ntv.imports(package))
+		ntv->update_index(package);
+		ntv->fetch_source(package);
+		for (const auto &i: ntv->imports(package))
 		{
 			if (updated.find(i.second)==updated.end())
 			{
@@ -84,17 +83,16 @@ void bunsan::pm::repository::update_depends(const entry &package, std::map<entry
 		{
 			std::set<entry> in_;
 			update_imports(package, updated, in_);
-			native ntv(config);
-			for (const auto &i: ntv.depends(package))
+			for (const auto &i: ntv->depends(package))
 			{
 				update_depends(i.second, status, updated, in);
 				it->second = it->second || status.at(package);
 			}
 			SLOG("updated=\""<<it->second<<"\"");
 			SLOG("starting "<<package<<" update");
-			if (it->second || ntv.package_outdated(package))
+			if (it->second || ntv->package_outdated(package))
 			{
-				ntv.build(package);
+				ntv->build(package);
 				it->second = true;
 			}
 			SLOG(package<<" was "<<(it->second?"updated":"not updated"));
@@ -103,46 +101,16 @@ void bunsan::pm::repository::update_depends(const entry &package, std::map<entry
 	}
 }
 
-void check_dir(const boost::filesystem::path &dir)
-{
-	if (!dir.is_absolute())
-		throw std::runtime_error("you have to use absolute path, but \""+dir.native()+"\" used");
-	SLOG("checking "<<dir);
-	if (!boost::filesystem::is_directory(dir))
-	{
-		if (!boost::filesystem::exists(dir))
-		{
-			SLOG("directory "<<dir<<" was not found");
-		}
-		else
-		{
-			SLOG(dir<<" is not a directory: starting recursive remove");
-			boost::filesystem::remove_all(dir);
-		}
-		SLOG("trying to create "<<dir);
-		boost::filesystem::create_directory(dir);
-		DLOG(created);
-	}
-}
-
-void bunsan::pm::repository::check_dirs()
-{
-	DLOG(checking directories);
-	check_dir(config.get<std::string>("dir.source"));
-	check_dir(config.get<std::string>("dir.package"));
-	check_dir(config.get<std::string>("dir.tmp"));
-	DLOG(checked);
-}
-
 void bunsan::pm::repository::clean()
 {
-	DLOG(trying to clean cache);
 	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
 	boost::interprocess::scoped_lock<std::mutex> lk2(slock);
-	bunsan::reset_dir(config.get<std::string>("dir.source"));
-	bunsan::reset_dir(config.get<std::string>("dir.package"));
-	bunsan::reset_dir(config.get<std::string>("dir.tmp"));
-	DLOG(cleaned);
+	ntv->clean();
+}
+
+bunsan::pm::repository::~repository()
+{
+	delete ntv;
 }
 
 std::mutex bunsan::pm::repository::slock;

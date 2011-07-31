@@ -33,14 +33,14 @@ namespace bunsan{namespace pm
 		 * \todo It seems that such method should be, but semantics can be different.
 		 */
 		void clean();
+		~repository();
 	private:
 		class native;
+		native *ntv;
 		std::unique_ptr<boost::interprocess::file_lock> flock;
 		static std::mutex slock;
 		const boost::property_tree::ptree config;
 		// private functions
-		/// check system directories existance and create them if they are missing
-		void check_dirs();
 		/// update logic
 		void update(const entry &package);
 		void update_imports(const entry &package, std::set<entry> &updated, std::set<entry> &in);

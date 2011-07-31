@@ -1,4 +1,5 @@
 #include "repository_native.hpp"
+#include "repository_config.hpp"
 
 #include <stdexcept>
 
@@ -16,44 +17,9 @@
 
 #include "bunsan/pm/hash.hpp"
 
-namespace
-{
-	constexpr const char *child_depends = "depends";
-	constexpr const char *child_sources = "sources";
-	constexpr const char *child_imports = "imports";
-
-	constexpr const char *dir_tmp = "dir.tmp";
-	constexpr const char *dir_package = "dir.package";
-	constexpr const char *dir_source = "dir.source";
-
-	constexpr const char *name_file_tmp = "name.file.tmp";
-	constexpr const char *name_file_index = "name.file.index";
-	constexpr const char *name_file_hash = "name.file.hash";
-	constexpr const char *name_file_pkg = "name.file.pkg";
-
-	constexpr const char *name_dir_pkg = "name.dir.pkg";
-	constexpr const char *name_dir_source = "name.dir.source";
-	constexpr const char *name_dir_build = "name.dir.build";
-	constexpr const char *name_dir_depends = "name.dir.depends";
-
-	constexpr const char *suffix_src = "suffix.src";
-	constexpr const char *suffix_pkg = "suffix.pkg";
-
-	constexpr const char *command_fetch = "command.fetch";
-	constexpr const char *command_unpack = "command.unpack";
-	constexpr const char *command_configure = "command.configure";
-	constexpr const char *command_compile = "command.compile";
-	constexpr const char *command_pack = "command.pack";
-	constexpr const char *command_extract = "command.extract";
-
-	constexpr const char *repository_url = "repository";
-}
-
-bunsan::pm::repository::native::native(const boost::property_tree::ptree &config_): config(config_){}
-
 void bunsan::pm::repository::native::build(const entry &package)
 {
-	bunsan::tempfile_ptr build_dir = bunsan::tempfile::in_dir(config.get<std::string>(dir_tmp));
+	bunsan::tempfile_ptr build_dir = bunsan::tempfile::in_dir(value(dir_tmp));
 	bunsan::reset_dir(build_dir->path());
 	unpack(package, build_dir->path());
 	configure(package, build_dir->path());
@@ -81,24 +47,23 @@ void bunsan::pm::repository::native::update_index(const entry &package)
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		bunsan::executor fetcher(config.get_child(command_fetch));
-		bunsan::tempfile_ptr hash_ptr = bunsan::tempfile::from_model(config.get<std::string>(name_file_tmp));
+		bunsan::tempfile_ptr hash_ptr = bunsan::tempfile::from_model(value(name_file_tmp));
 		try
 		{
-			fetcher(package.remote_resource(config.get<std::string>(repository_url), config.get<std::string>(name_file_hash)), hash_ptr->path());
+			fetcher(remote_resource(package, value(name_file_hash)), hash_ptr->path());
 		}
 		catch (std::exception &e)
 		{
 			throw pm_error("Unable to download package meta info (no such package in repository)", e);
 		}
-		boost::filesystem::path output = package.local_resource(config.get<std::string>(dir_source));
+		boost::filesystem::path output = package.local_resource(value(dir_source));
 		if (!boost::filesystem::is_directory(output))
 			boost::filesystem::create_directories(output);
-		bunsan::compatibility::boost::filesystem::copy_file(hash_ptr->path(), output/config.get<std::string>(name_file_hash));
+		bunsan::compatibility::boost::filesystem::copy_file(hash_ptr->path(), output/value(name_file_hash));
 		boost::property_tree::ptree hash;
-		boost::property_tree::read_info((output/config.get<std::string>(name_file_hash)).native(), hash);
-		if (outdated(output/config.get<std::string>(name_file_index), hash.get<std::string>(name_file_index)))
-			fetcher(package.remote_resource(config.get<std::string>(repository_url), config.get<std::string>(name_file_index)),
-				output/config.get<std::string>(name_file_index));
+		read_hash(package, hash);
+		if (outdated(output/value(name_file_index), hash.get<std::string>(name_file_index)))
+			fetcher(remote_resource(package, value(name_file_index)), output/value(name_file_index));
 	}
 	catch (pm_error &e)
 	{
@@ -115,17 +80,17 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		const std::string src_sfx = config.get<std::string>(suffix_src);
+		const std::string src_sfx = value(suffix_src);
 		bunsan::executor fetcher(config.get_child(command_fetch));
-		boost::filesystem::path output = package.remote_resource(config.get<std::string>(dir_source));
+		boost::filesystem::path output = package.remote_resource(value(dir_source));
 		boost::property_tree::ptree index, hash;
-		boost::property_tree::read_info((output/config.get<std::string>(name_file_index)).native(), index);
-		boost::property_tree::read_info((output/config.get<std::string>(name_file_hash)).native(), hash);
+		read_index(package, index);
+		read_hash(package, hash);
 		for (const auto &i: index.get_child(child_sources))
 		{
 			std::string src = i.second.get_value<std::string>();
 			if (outdated(output/(src+src_sfx), hash.get<std::string>(src)))
-				fetcher(package.remote_resource(config.get<std::string>(repository_url)), output/(src+src_sfx));
+				fetcher(remote_resource(package, src+src_sfx), output/(src+src_sfx));
 		}
 	}
 	catch (std::exception &e)
@@ -159,12 +124,10 @@ void bunsan::pm::repository::native::unpack_import(const entry &package, const b
 	SLOG("starting "<<package<<" import unpack");
 	bunsan::executor extractor(config.get_child(command_unpack));
 	boost::property_tree::ptree index;
-	boost::property_tree::read_info(package.local_resource(config.get<std::string>(dir_source), config.get<std::string>(name_file_index)).native(), index);
+	read_index(package, index);
 	for (const auto &i: index.get_child(child_sources))
 	{
-		::extract(extractor,
-			package.local_resource(config.get<std::string>(dir_source), i.second.get_value<std::string>()+config.get<std::string>(suffix_src)),
-			destination/i.first);
+		::extract(extractor, local_resource(package, i.second.get_value<std::string>()+value(suffix_src)), destination/i.first);
 	}
 	for (const auto &i: index.get_child(child_imports))
 	{
@@ -177,7 +140,7 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		boost::filesystem::path src = build_dir/config.get<std::string>(name_dir_source);
+		boost::filesystem::path src = build_dir/value(name_dir_source);
 		bunsan::reset_dir(src);
 		unpack_import(package, src);
 	}
@@ -192,12 +155,12 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		boost::filesystem::path build = build_dir/config.get<std::string>(name_dir_build);
-		boost::filesystem::path deps = build_dir/config.get<std::string>(name_dir_depends);
+		boost::filesystem::path build = build_dir/value(name_dir_build);
+		boost::filesystem::path deps = build_dir/value(name_dir_depends);
 		bunsan::reset_dir(build);
 		bunsan::reset_dir(deps);
 		bunsan::executor exec(config.get_child(command_configure));
-		exec.current_path(build).add_argument(build_dir/config.get<std::string>(name_dir_source));
+		exec.current_path(build).add_argument(build_dir/value(name_dir_source));
 		for (const auto &i: depends(package))
 		{
 			bunsan::tempfile_ptr dep = bunsan::tempfile::in_dir(deps);
@@ -219,7 +182,7 @@ void bunsan::pm::repository::native::compile(const entry &package, const boost::
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		boost::filesystem::path build = build_dir/config.get<std::string>(name_dir_build);
+		boost::filesystem::path build = build_dir/value(name_dir_build);
 		bunsan::executor::exec_from(build, config.get_child(command_compile));
 	}
 	catch (std::exception &e)
@@ -235,24 +198,24 @@ void bunsan::pm::repository::native::pack(const entry &package, const boost::fil
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path build = build_dir;
-		build = build/config.get<std::string>("name.dir.build");
-		boost::filesystem::path pkgdir = config.get<std::string>("dir.package");
+		build = build/value("name.dir.build");
+		boost::filesystem::path pkgdir = value("dir.package");
 		pkgdir /= package;
 		bunsan::reset_dir(pkgdir);
-		boost::filesystem::path srcdir = config.get<std::string>("dir.source");
+		boost::filesystem::path srcdir = value("dir.source");
 		srcdir /= package;
 		bunsan::executor::exec_from(build, config.get_child("command.pack"));
 		bunsan::compatibility::boost::filesystem::copy_file
-			(build/config.get<std::string>("name.file.pkg"), pkgdir/config.get<std::string>("name.file.pkg"));
+			(build/value("name.file.pkg"), pkgdir/value("name.file.pkg"));
 		bunsan::compatibility::boost::filesystem::copy_file
-			(srcdir/config.get<std::string>("name.file.time"), pkgdir/config.get<std::string>("name.file.time"));
+			(srcdir/value("name.file.time"), pkgdir/value("name.file.time"));
 		// we should copy all depends times
-		boost::filesystem::path depends_time = pkgdir/config.get<std::string>("name.dir.depends_time");
+		boost::filesystem::path depends_time = pkgdir/value("name.dir.depends_time");
 		bunsan::reset_dir(depends_time);
-		boost::filesystem::path packages = config.get<std::string>("dir.source");
+		boost::filesystem::path packages = value("dir.source");
 		for (const auto &i: depends(package))
 			bunsan::compatibility::boost::filesystem::copy_file
-				(packages/i/config.get<std::string>("name.file.time"), depends_time/i);
+				(packages/i/value("name.file.time"), depends_time/i);
 	}
 	catch (std::exception &e)
 	{
@@ -267,8 +230,7 @@ std::map<std::string, bunsan::pm::entry> bunsan::pm::repository::native::depends
 	{
 		SLOG("trying to get depends for "<<package);
 		boost::property_tree::ptree index;
-		boost::property_tree::read_info(package.local_resource(config.get<std::string>(dir_source),
-			config.get<std::string>(name_file_index)).native(), index);
+		read_index(package, index);
 		std::map<std::string, entry> map;
 		for (const auto &i: index.get_child(child_depends))
 		{
@@ -292,8 +254,7 @@ std::multimap<boost::filesystem::path, bunsan::pm::entry> bunsan::pm::repository
 	{
 		SLOG("trying to get imports for "<<package);
 		boost::property_tree::ptree index;
-		boost::property_tree::read_info(package.local_resource(config.get<std::string>(dir_source),
-			config.get<std::string>(name_file_index)).native(), index);
+		read_index(package, index);
 		std::multimap<boost::filesystem::path, entry> map;
 		for (const auto &i: index.get_child(child_imports))
 		{
@@ -313,22 +274,22 @@ std::multimap<boost::filesystem::path, bunsan::pm::entry> bunsan::pm::repository
 bool bunsan::pm::repository::native::package_outdated(const entry &package)
 {
 	bunsan::pm::repository::check_package_name(package);
-	boost::filesystem::path src = config.get<std::string>("dir.source");
+	boost::filesystem::path src = value("dir.source");
 	boost::filesystem::path sources = src;
-	boost::filesystem::path pkg = config.get<std::string>("dir.package");
+	boost::filesystem::path pkg = value("dir.package");
 	src /= package;
 	pkg /= package;
 	bool outdated = false;
 	outdated = outdated || !boost::filesystem::exists(pkg);
-	outdated = outdated || !boost::filesystem::exists(pkg/config.get<std::string>("name.file.time"));
-	outdated = outdated || !boost::filesystem::exists(pkg/config.get<std::string>("name.file.pkg"));
-	outdated = outdated || !boost::filesystem::exists(pkg/config.get<std::string>("name.dir.depends_time"));
-	outdated = outdated || !equal_files(src/config.get<std::string>("name.file.time"), pkg/config.get<std::string>("name.file.time"));
+	outdated = outdated || !boost::filesystem::exists(pkg/value("name.file.time"));
+	outdated = outdated || !boost::filesystem::exists(pkg/value("name.file.pkg"));
+	outdated = outdated || !boost::filesystem::exists(pkg/value("name.dir.depends_time"));
+	outdated = outdated || !equal_files(src/value("name.file.time"), pkg/value("name.file.time"));
 	if (!outdated)
 		for (const auto &i: depends(package))
 		{
 			outdated = outdated ||
-				!equal_files(sources/i/config.get<std::string>("name.file.time"), pkg/config.get<std::string>("name.dir.depends_time")/i);
+				!equal_files(sources/i/value("name.file.time"), pkg/value("name.dir.depends_time")/i);
 			if (outdated)
 				break;
 		}
@@ -343,10 +304,7 @@ void bunsan::pm::repository::native::extract(const entry &package, const boost::
 		SLOG("starting "<<package<<" "<<__func__);
 		bunsan::executor extractor(config.get_child(command_extract));
 		bunsan::reset_dir(destination);
-		::extract(extractor,
-			package.local_resource(config.get<std::string>(dir_source), config.get<std::string>(name_file_pkg)),
-			destination,
-			config.get<std::string>(name_dir_pkg));
+		::extract(extractor, local_resource(package, value(name_file_pkg)), destination, value(name_dir_pkg));
 	}
 	catch (std::exception &e)
 	{
