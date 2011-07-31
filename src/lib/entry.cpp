@@ -11,7 +11,7 @@ bool bunsan::pm::entry::is_allowed_symbol(char c)
 	return ('0'<=c && c<='9') || ('a'<=c && c<='z') || ('A'<=c && c<='Z') || c=='_' || c=='-' || c=='.';
 }
 
-bool is_allowed_subpath(const std::string &subpath)
+bool bunsan::pm::entry::is_allowed_subpath(const std::string &subpath)
 {
 	return !subpath.empty() && subpath!="." && subpath!=".." && boost::algorithm::all(subpath, bunsan::pm::entry::is_allowed_symbol);
 }
