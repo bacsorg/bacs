@@ -3,7 +3,6 @@
 
 #include <boost/program_options.hpp>
 #include <boost/property_tree/ptree.hpp>
-//#include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
 #include "bunsan/util.hpp"
@@ -47,9 +46,8 @@ int main(int argc, char **argv)
 		{
 			std::cerr<<"Attempt to clean repository"<<std::endl;
 			repo.clean();
-			return 0;
 		}
-		if (vm.count("package"))
+		else if (vm.count("package"))
 		{
 			if (vm.count("extract"))
 			{//extracting
