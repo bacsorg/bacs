@@ -119,19 +119,33 @@ namespace
 	}
 }
 
-void bunsan::pm::repository::native::unpack_import(const entry &package, const boost::filesystem::path &destination)
+namespace
+{
+	bool has_child(const boost::property_tree::ptree &ptree, const boost::property_tree::ptree::path_type &path)
+	{
+		return ptree.get_child_optional(path);
+	}
+}
+
+void bunsan::pm::repository::native::unpack_import(const entry &package, const boost::filesystem::path &destination, boost::property_tree::ptree &snapshot)
 {
 	SLOG("starting "<<package<<" import unpack");
 	bunsan::executor extractor(config.get_child(command_unpack));
 	boost::property_tree::ptree index;
 	read_index(package, index);
+	if (!has_child(snapshot, package.ptree_path()))
+	{
+		boost::property_tree::ptree checksum;
+		read_checksum(package, checksum);
+		snapshot.put_child(package.ptree_path(), checksum);
+	}
 	for (const auto &i: index.get_child(child_sources))
 	{
 		::extract(extractor, local_resource(package, i.second.get_value<std::string>()+value(suffix_src)), destination/i.first);
 	}
 	for (const auto &i: index.get_child(child_imports))
 	{
-		unpack_import(i.second.get_value<std::string>(), destination/i.first);
+		unpack_import(i.second.get_value<std::string>(), destination/i.first, snapshot);
 	}
 }
 
@@ -141,8 +155,11 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path src = build_dir/value(name_dir_source);
+		boost::filesystem::path snp = build_dir/value(name_file_snapshot);//XXX
 		bunsan::reset_dir(src);
-		unpack_import(package, src);
+		boost::property_tree::ptree snapshot;
+		unpack_import(package, src, snapshot);
+		boost::property_tree::write_info(snp.native(), snapshot);
 	}
 	catch (std::exception &e)
 	{
@@ -157,6 +174,9 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path build = build_dir/value(name_dir_build);
 		boost::filesystem::path deps = build_dir/value(name_dir_depends);
+		boost::filesystem::path snp = build_dir/value(name_file_snapshot);//XXX
+		boost::property_tree::ptree snapshot;
+		boost::property_tree::read_info(snp.native(), snapshot);
 		bunsan::reset_dir(build);
 		bunsan::reset_dir(deps);
 		bunsan::executor exec(config.get_child(command_configure));
@@ -168,6 +188,7 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 			exec.add_argument("-D"+i.first+"="+dep->native());
 			dep->auto_remove(false);
 		}
+		boost::property_tree::write_info(snp.native(), snapshot);
 		exec();
 	}
 	catch (std::exception &e)

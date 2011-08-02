@@ -72,9 +72,32 @@ boost::filesystem::path bunsan::pm::entry::location() const
 	return location_;
 }
 
-std::string bunsan::pm::entry::name() const
+std::vector<std::string> bunsan::pm::entry::decomposition() const
 {
-	return location_.generic_string();
+	std::vector<std::string> path;
+	for (const auto &i: location_)
+	{
+		path.push_back(i.generic_string());
+	}
+	return path;
+}
+
+boost::property_tree::ptree::path_type bunsan::pm::entry::ptree_path() const
+{
+	return boost::property_tree::ptree::path_type(name('/'), '/');
+}
+
+std::string bunsan::pm::entry::name(char delimiter) const
+{
+	std::string buf;
+	for (const auto &i: location_)
+	{
+		buf += i.generic_string();
+		buf.push_back(delimiter);
+	}
+	if (!buf.empty())
+		buf.resize(buf.size()-1);
+	return buf;
 }
 
 void bunsan::pm::entry::swap(bunsan::pm::entry &e) throw()

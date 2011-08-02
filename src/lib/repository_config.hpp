@@ -14,6 +14,7 @@ namespace
 	constexpr const char *name_file_tmp = "name.file.tmp";
 	constexpr const char *name_file_index = "name.file.index";
 	constexpr const char *name_file_checksum = "name.file.checksum";
+	constexpr const char *name_file_snapshot = "name.file.snapshot";
 	constexpr const char *name_file_pkg = "name.file.pkg";
 
 	constexpr const char *name_dir_pkg = "name.dir.pkg";

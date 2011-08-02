@@ -19,5 +19,7 @@ int main()
 	assert(e.local_resource("repo")=="repo"/pname);
 	assert(e.local_resource("/repo")=="/repo"/pname);
 	assert(e.local_resource("/repo", "o_O")=="/repo"/pname/"o_O");
+	entry a("some//long/name");
+	assert(a==b);
 }
 

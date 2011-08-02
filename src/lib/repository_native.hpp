@@ -17,7 +17,7 @@ public:
 	void check_dirs();
 	void clean();
 private:
-	void unpack_import(const entry &package, const boost::filesystem::path &destination);
+	void unpack_import(const entry &package, const boost::filesystem::path &destination, boost::property_tree::ptree &snapshot);
 	void unpack(const entry &package, const boost::filesystem::path &build_dir);
 	void configure(const entry &package, const boost::filesystem::path &build_dir);
 	void compile(const entry &package, const boost::filesystem::path &build_dir);
