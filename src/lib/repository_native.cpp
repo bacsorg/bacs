@@ -1,3 +1,5 @@
+#include <bunsan/config.hpp>
+
 #include "repository_native.hpp"
 #include "repository_config.hpp"
 
@@ -8,8 +10,6 @@
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-
-#include "bunsan/compatibility/boost.hpp"
 
 #include "bunsan/executor.hpp"
 #include "bunsan/util.hpp"
@@ -57,12 +57,12 @@ void bunsan::pm::repository::native::update_index(const entry &package)
 			throw pm_error("Unable to download package meta info (no such package in repository)", e);
 		}
 		boost::filesystem::path output = package.local_resource(value(dir_source));
-		if (!boost::filesystem::is_directory(output))
-			boost::filesystem::create_directories(output);
-		bunsan::compatibility::boost::filesystem::copy_file(checksum_ptr->path(), output/value(name_file_checksum));
+		boost::filesystem::create_directories(output);
+		boost::filesystem::copy_file(checksum_ptr->path(), output/value(name_file_checksum),
+			boost::filesystem::copy_option::overwrite_if_exists);
 		boost::property_tree::ptree checksum;
 		read_checksum(package, checksum);
-		if (outdated(output/value(name_file_index), checksum.get<std::string>(name_file_index)))
+		if (outdated(output/value(name_file_index), checksum.get<std::string>(value(name_file_index))))
 			fetcher(remote_resource(package, value(name_file_index)), output/value(name_file_index));
 	}
 	catch (pm_error &e)
@@ -137,7 +137,8 @@ void bunsan::pm::repository::native::unpack_import(const entry &package, const b
 	if (snapshot.find(package.name())==snapshot.end())
 		read_checksum(package, snapshot[package.name()]);
 	for (const auto &i: index.get_child(child_sources))
-		::extract(extractor, source_resource(package, i.second.get_value<std::string>()+value(suffix_src)), destination/i.first);
+		::extract(extractor, source_resource(package, i.second.get_value<std::string>()+value(suffix_src)),
+			destination/i.first, i.second.get_value<std::string>());
 	for (const auto &i: index.get_child(child_imports))
 		unpack_import(i.second.get_value<std::string>(), destination/i.first, snapshot);
 }
@@ -155,7 +156,7 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
 		unpack_import(package, src, snp_imports_map);
 		for (const auto &i: snp_imports_map)
 			snp_imports.push_back(boost::property_tree::ptree::value_type(i.first, i.second));
-		snapshot.put_child(value(child_imports), snp_imports);
+		snapshot.put_child(child_imports, snp_imports);
 		boost::property_tree::write_info(snp.native(), snapshot);
 	}
 	catch (std::exception &e)
@@ -188,13 +189,13 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 			{
 				boost::property_tree::ptree snapshot_;
 				boost::property_tree::read_info(package_resource(i.second, value(name_file_snapshot)).native(), snapshot_);
-				snp_depends_map[i.first] = snapshot_.get_child(value(child_imports));
+				snp_depends_map[i.first] = snapshot_.get_child(child_imports);
 			}
 			dep->auto_remove(false);
 		}
 		for (const auto &i: snp_depends_map)
 			snp_depends.push_back(boost::property_tree::ptree::value_type(i.first, i.second));
-		snapshot.put_child(value(child_depends), snp_depends);
+		snapshot.put_child(child_depends, snp_depends);
 		boost::property_tree::write_info(snp.native(), snapshot);
 		exec();
 	}
@@ -227,8 +228,11 @@ void bunsan::pm::repository::native::pack(const entry &package, const boost::fil
 		boost::filesystem::path build = build_dir/value(name_dir_build);
 		boost::filesystem::path snp = build_dir/value(name_file_snapshot);
 		bunsan::executor::exec_from(build, config.get_child(command_pack));
-		bunsan::compatibility::boost::filesystem::copy_file(build/value(name_file_pkg), package_resource(package, value(name_file_pkg)));
-		bunsan::compatibility::boost::filesystem::copy_file(snp, package_resource(package, value(name_file_snapshot)));
+		boost::filesystem::create_directories(package.local_resource(value(dir_package)));
+		boost::filesystem::copy_file(build/value(name_file_pkg), package_resource(package, value(name_file_pkg)),
+			boost::filesystem::copy_option::overwrite_if_exists);
+		boost::filesystem::copy_file(snp, package_resource(package, value(name_file_snapshot)),
+			boost::filesystem::copy_option::overwrite_if_exists);
 	}
 	catch (std::exception &e)
 	{
@@ -305,7 +309,7 @@ bool bunsan::pm::repository::native::package_outdated(const entry &package)
 				return false;
 			boost::property_tree::ptree snapshot;
 			boost::property_tree::read_info(snp.native(), snapshot);
-			boost::property_tree::ptree &snp_imports = snapshot.get_child(value(child_imports));
+			boost::property_tree::ptree &snp_imports = snapshot.get_child(child_imports);
 			std::map<std::string, boost::property_tree::ptree> current_imports_map, built_imports_map;
 			build_imports_map(package, current_imports_map);
 			for (const auto &i: snp_imports)
@@ -329,7 +333,7 @@ void bunsan::pm::repository::native::extract(const entry &package, const boost::
 		SLOG("starting "<<package<<" "<<__func__);
 		bunsan::executor extractor(config.get_child(command_extract));
 		bunsan::reset_dir(destination);
-		::extract(extractor, source_resource(package, value(name_file_pkg)), destination, value(name_dir_pkg));
+		::extract(extractor, package_resource(package, value(name_file_pkg)), destination, value(name_dir_pkg));
 	}
 	catch (std::exception &e)
 	{

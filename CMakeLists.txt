@@ -33,7 +33,7 @@ include_directories(include)
 
 aux_source_directory(src/lib lib_srcs)
 add_library(${PROJECT_NAME} SHARED ${lib_srcs})
-target_link_libraries(${PROJECT_NAME} bunsan_common bunsan_compatibility ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} bunsan_common ${Boost_LIBRARIES})
 
 add_executable(bunsan_repo src/main.cpp)
 target_link_libraries(bunsan_repo ${PROJECT_NAME})
