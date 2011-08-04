@@ -185,7 +185,11 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 			extract(i.second, dep->path());
 			exec.add_argument("-D"+i.first+"="+dep->native());
 			if (snp_depends_map.find(i.first)==snp_depends_map.end())
-				boost::property_tree::read_info(package_resource(i.second, value(name_file_snapshot)).native(), snp_depends_map[i.first]);
+			{
+				boost::property_tree::ptree snapshot_;
+				boost::property_tree::read_info(package_resource(i.second, value(name_file_snapshot)).native(), snapshot_);
+				snp_depends_map[i.first] = snapshot_.get_child(value(child_imports));
+			}
 			dep->auto_remove(false);
 		}
 		for (const auto &i: snp_depends_map)
@@ -278,32 +282,45 @@ std::multimap<boost::filesystem::path, bunsan::pm::entry> bunsan::pm::repository
 	}
 }
 
-#if 0
 bool bunsan::pm::repository::native::package_outdated(const entry &package)
 {
-	bunsan::pm::repository::check_package_name(package);
-	boost::filesystem::path src = value("dir.source");
-	boost::filesystem::path sources = src;
-	boost::filesystem::path pkg = value("dir.package");
-	src /= package;
-	pkg /= package;
-	bool outdated = false;
-	outdated = outdated || !boost::filesystem::exists(pkg);
-	outdated = outdated || !boost::filesystem::exists(pkg/value("name.file.time"));
-	outdated = outdated || !boost::filesystem::exists(pkg/value("name.file.pkg"));
-	outdated = outdated || !boost::filesystem::exists(pkg/value("name.dir.depends_time"));
-	outdated = outdated || !equal_files(src/value("name.file.time"), pkg/value("name.file.time"));
-	if (!outdated)
-		for (const auto &i: depends(package))
+	if (!boost::filesystem::exists(package_resource(package, value(name_file_pkg))))
+		return true;
+	boost::property_tree::ptree index;
+	read_index(package, index);
+	std::function<void(const entry &, std::map<std::string, boost::property_tree::ptree> &)> build_imports_map =
+		[this, &build_imports_map](const entry &package, std::map<std::string, boost::property_tree::ptree> &map)
 		{
-			outdated = outdated ||
-				!equal_files(sources/i/value("name.file.time"), pkg/value("name.dir.depends_time")/i);
-			if (outdated)
-				break;
-		}
-	return outdated;
+			if (map.find(package.name())==map.end())
+			{
+				read_checksum(package, map[package.name()]);
+				for (const auto &i: imports(package))
+					build_imports_map(i.second, map);
+			}
+		};
+	auto equal_imports = [this, &build_imports_map](const entry &package)->bool
+		{
+			boost::filesystem::path snp = package_resource(package, value(name_file_snapshot));
+			if (!boost::filesystem::exists(snp))
+				return false;
+			boost::property_tree::ptree snapshot;
+			boost::property_tree::read_info(snp.native(), snapshot);
+			boost::property_tree::ptree &snp_imports = snapshot.get_child(value(child_imports));
+			std::map<std::string, boost::property_tree::ptree> current_imports_map, built_imports_map;
+			build_imports_map(package, current_imports_map);
+			for (const auto &i: snp_imports)
+				built_imports_map[i.first] = i.second;
+			return current_imports_map==built_imports_map;
+		};
+	// imports
+	if (!equal_imports(package))
+		return true;
+	// depends
+	for (const auto &i: depends(package))// depend set and snp_depends are the same because package has the same index as before
+		if (!equal_imports(i.first))
+			return true;
+	return false;
 }
-#endif
 
 void bunsan::pm::repository::native::extract(const entry &package, const boost::filesystem::path &destination)
 {
