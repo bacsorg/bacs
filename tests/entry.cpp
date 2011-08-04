@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/info_parser.hpp>
 
 #include "bunsan/pm/entry.hpp"
 
@@ -23,7 +24,7 @@ int main()
 	assert(e.local_resource("/repo")=="/repo"/pname);
 	assert(e.local_resource("/repo", "o_O")=="/repo"/pname/"o_O");
 	entry a("some//long/name");
-	assert(a==b);
+	assert(a==e);
 	using std::stringstream;
 	using boost::property_tree::read_info;
 	using boost::property_tree::ptree;
