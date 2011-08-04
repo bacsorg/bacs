@@ -1,4 +1,7 @@
+#include <sstream>
 #include <cassert>
+
+#include <boost/property_tree/ptree.hpp>
 
 #include "bunsan/pm/entry.hpp"
 
@@ -21,5 +24,18 @@ int main()
 	assert(e.local_resource("/repo", "o_O")=="/repo"/pname/"o_O");
 	entry a("some//long/name");
 	assert(a==b);
+	using std::stringstream;
+	using boost::property_tree::read_info;
+	using boost::property_tree::ptree;
+	stringstream in("some\n"
+			"{\n"
+			"\tlong\n"
+			"\t{\n"
+			"\t\tname \"hello world\""
+			"\t}\n"
+			"}\n");
+	ptree pt;
+	read_info(in, pt);
+	assert(pt.get<std::string>(e.ptree_path())=="hello world");
 }
 
