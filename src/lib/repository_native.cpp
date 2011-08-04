@@ -215,38 +215,22 @@ void bunsan::pm::repository::native::compile(const entry &package, const boost::
 	}
 }
 
-#if 0
 void bunsan::pm::repository::native::pack(const entry &package, const boost::filesystem::path &build_dir)
 {
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		boost::filesystem::path build = build_dir;
-		build = build/value("name.dir.build");
-		boost::filesystem::path pkgdir = value("dir.package");
-		pkgdir /= package;
-		bunsan::reset_dir(pkgdir);
-		boost::filesystem::path srcdir = value("dir.source");
-		srcdir /= package;
-		bunsan::executor::exec_from(build, config.get_child("command.pack"));
-		bunsan::compatibility::boost::filesystem::copy_file
-			(build/value("name.file.pkg"), pkgdir/value("name.file.pkg"));
-		bunsan::compatibility::boost::filesystem::copy_file
-			(srcdir/value("name.file.time"), pkgdir/value("name.file.time"));
-		// we should copy all depends times
-		boost::filesystem::path depends_time = pkgdir/value("name.dir.depends_time");
-		bunsan::reset_dir(depends_time);
-		boost::filesystem::path packages = value("dir.source");
-		for (const auto &i: depends(package))
-			bunsan::compatibility::boost::filesystem::copy_file
-				(packages/i/value("name.file.time"), depends_time/i);
+		boost::filesystem::path build = build_dir/value(name_dir_build);
+		boost::filesystem::path snp = build_dir/value(name_file_snapshot);
+		bunsan::executor::exec_from(build, config.get_child(command_pack));
+		bunsan::compatibility::boost::filesystem::copy_file(build/value(name_file_pkg), package_resource(package, value(name_file_pkg)));
+		bunsan::compatibility::boost::filesystem::copy_file(snp, package_resource(package, value(name_file_snapshot)));
 	}
 	catch (std::exception &e)
 	{
 		throw pm_error("Unable to pack package", e);
 	}
 }
-#endif
 
 std::map<std::string, bunsan::pm::entry> bunsan::pm::repository::native::depends(const entry &package)
 {
