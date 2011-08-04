@@ -38,7 +38,7 @@ target_link_libraries(${PROJECT_NAME} bunsan_common ${Boost_LIBRARIES})
 add_executable(bunsan_repo src/main.cpp)
 target_link_libraries(bunsan_repo ${PROJECT_NAME})
 
-add_library(bunsan_pm_c SHARED src/lib/bunsan_pm_c.cpp)
+add_library(bunsan_pm_c SHARED src/bunsan_pm_c.cpp)
 target_link_libraries(bunsan_pm_c bunsan_pm)
 
 # install
