@@ -10,12 +10,12 @@ std::string bunsan::pm::repository::native::value(const std::string &key)
 
 void bunsan::pm::repository::native::read_index(const entry &package, boost::property_tree::ptree &ptree)
 {
-	boost::property_tree::read_info(local_resource(package, value(name_file_index)).native(), ptree);
+	boost::property_tree::read_info(source_resource(package, value(name_file_index)).native(), ptree);
 }
 
 void bunsan::pm::repository::native::read_checksum(const entry &package, boost::property_tree::ptree &ptree)
 {
-	boost::property_tree::read_info(local_resource(package, value(name_file_checksum)).native(), ptree);
+	boost::property_tree::read_info(source_resource(package, value(name_file_checksum)).native(), ptree);
 }
 
 std::string bunsan::pm::repository::native::remote_resource(const entry &package, const std::string &name)
@@ -23,9 +23,14 @@ std::string bunsan::pm::repository::native::remote_resource(const entry &package
 	return package.remote_resource(value(repository_url), name);
 }
 
-boost::filesystem::path bunsan::pm::repository::native::local_resource(const entry &package, const std::string &name)
+boost::filesystem::path bunsan::pm::repository::native::source_resource(const entry &package, const std::string &name)
 {
 	return package.local_resource(value(dir_source), name);
+}
+
+boost::filesystem::path bunsan::pm::repository::native::package_resource(const entry &package, const std::string &name)
+{
+	return package.local_resource(value(dir_package), name);
 }
 
 bunsan::pm::repository::native::native(const boost::property_tree::ptree &config_): config(config_){}

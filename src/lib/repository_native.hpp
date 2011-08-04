@@ -23,7 +23,8 @@ private:
 	void compile(const entry &package, const boost::filesystem::path &build_dir);
 	void pack(const entry &package, const boost::filesystem::path &build_dir);
 	std::string remote_resource(const entry &package, const std::string &name);
-	boost::filesystem::path local_resource(const entry &package, const std::string &name);
+	boost::filesystem::path source_resource(const entry &package, const std::string &name);
+	boost::filesystem::path package_resource(const entry &package, const std::string &name);
 	std::string value(const std::string &key);
 	void read_index(const entry &package, boost::property_tree::ptree &ptree);
 	void read_checksum(const entry &package, boost::property_tree::ptree &ptree);

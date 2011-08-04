@@ -141,7 +141,7 @@ void bunsan::pm::repository::native::unpack_import(const entry &package, const b
 	}
 	for (const auto &i: index.get_child(child_sources))
 	{
-		::extract(extractor, local_resource(package, i.second.get_value<std::string>()+value(suffix_src)), destination/i.first);
+		::extract(extractor, source_resource(package, i.second.get_value<std::string>()+value(suffix_src)), destination/i.first);
 	}
 	for (const auto &i: index.get_child(child_imports))
 	{
@@ -155,10 +155,11 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path src = build_dir/value(name_dir_source);
-		boost::filesystem::path snp = build_dir/value(name_file_snapshot);//XXX
+		boost::filesystem::path snp = build_dir/value(name_file_snapshot);
 		bunsan::reset_dir(src);
-		boost::property_tree::ptree snapshot;
-		unpack_import(package, src, snapshot);
+		boost::property_tree::ptree snapshot, snp_imports;
+		unpack_import(package, src, snp_imports);
+		snapshot.put_child(value(child_imports), snp_imports);
 		boost::property_tree::write_info(snp.native(), snapshot);
 	}
 	catch (std::exception &e)
@@ -174,8 +175,8 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path build = build_dir/value(name_dir_build);
 		boost::filesystem::path deps = build_dir/value(name_dir_depends);
-		boost::filesystem::path snp = build_dir/value(name_file_snapshot);//XXX
-		boost::property_tree::ptree snapshot;
+		boost::filesystem::path snp = build_dir/value(name_file_snapshot);
+		boost::property_tree::ptree snapshot, snp_depends;
 		boost::property_tree::read_info(snp.native(), snapshot);
 		bunsan::reset_dir(build);
 		bunsan::reset_dir(deps);
@@ -186,8 +187,12 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 			bunsan::tempfile_ptr dep = bunsan::tempfile::in_dir(deps);
 			extract(i.second, dep->path());
 			exec.add_argument("-D"+i.first+"="+dep->native());
+			boost::property_tree::ptree i_snapshot;
+			boost::property_tree::read_info(package_resource(i.second, value(name_file_snapshot)).native(), i_snapshot);
+			snp_depends.put_child(i.second.ptree_path(), i_snapshot.get_child(value(child_imports)));
 			dep->auto_remove(false);
 		}
+		snapshot.put_child(value(child_depends), snp_depends);
 		boost::property_tree::write_info(snp.native(), snapshot);
 		exec();
 	}
@@ -325,7 +330,7 @@ void bunsan::pm::repository::native::extract(const entry &package, const boost::
 		SLOG("starting "<<package<<" "<<__func__);
 		bunsan::executor extractor(config.get_child(command_extract));
 		bunsan::reset_dir(destination);
-		::extract(extractor, local_resource(package, value(name_file_pkg)), destination, value(name_dir_pkg));
+		::extract(extractor, source_resource(package, value(name_file_pkg)), destination, value(name_dir_pkg));
 	}
 	catch (std::exception &e)
 	{
