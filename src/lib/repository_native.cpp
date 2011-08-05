@@ -101,29 +101,26 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
 
 namespace
 {
-	void move_all_from(const boost::filesystem::path &source, const boost::filesystem::path &destination)
+	void merge_dir(const boost::filesystem::path &source, const boost::filesystem::path &destination)
 	{
+		SLOG("merging dirs: source = "<<source<<", destination = "<<destination);
 		for (auto i = boost::filesystem::directory_iterator(source); i!=boost::filesystem::directory_iterator(); ++i)
 		{
-			SLOG("moving "<<i->path()<<" to "<<destination/(i->path().filename()));
-			boost::filesystem::rename(i->path(), destination/(i->path().filename()));
+			boost::filesystem::path src = i->path(), dst = destination/i->path().filename();
+			if (boost::filesystem::is_directory(src) && boost::filesystem::is_directory(dst))
+				merge_dir(src, dst);
+			else
+				boost::filesystem::rename(src, dst);
 		}
 	}
 	void extract(const bunsan::executor &extractor, const boost::filesystem::path &source,
 		const boost::filesystem::path &destination, const boost::filesystem::path &subsource=boost::filesystem::path())
 	{
+		boost::filesystem::create_directories(destination);
 		bunsan::tempfile_ptr tmp = bunsan::tempfile::in_dir(destination);
 		bunsan::reset_dir(tmp->path());
 		extractor(source, tmp->path());
-		move_all_from(tmp->path()/subsource, destination);
-	}
-}
-
-namespace
-{
-	bool has_child(const boost::property_tree::ptree &ptree, const boost::property_tree::ptree::path_type &path)
-	{
-		return ptree.get_child_optional(path);
+		merge_dir(tmp->path()/subsource, destination);
 	}
 }
 
