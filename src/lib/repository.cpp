@@ -72,6 +72,7 @@ void bunsan::pm::repository::update_imports(const entry &package, std::set<entry
 
 void bunsan::pm::repository::update_depends(const entry &package, std::map<entry, bool> &status, std::set<entry> &updated, std::set<entry> &in)
 {
+	SLOG("+"<<__func__<<"("<<package<<", ...)");
 	auto it = status.find(package);
 	if (it==status.end())
 	{
@@ -86,12 +87,12 @@ void bunsan::pm::repository::update_depends(const entry &package, std::map<entry
 			for (const auto &i: ntv->depends(package))
 			{
 				update_depends(i.second, status, updated, in);
-				it->second = it->second || status.at(package);
+				it->second = it->second || status.at(i.second);
 			}
-			SLOG("updated=\""<<it->second<<"\"");
-			SLOG("starting "<<package<<" update");
+			SLOG(package<<".updated=\""<<it->second<<"\"");
 			if (it->second || ntv->package_outdated(package))
 			{
+				SLOG("starting "<<package<<" update");
 				ntv->build(package);
 				it->second = true;
 			}
@@ -99,6 +100,7 @@ void bunsan::pm::repository::update_depends(const entry &package, std::map<entry
 		}
 		in.erase(package);
 	}
+	SLOG("-"<<__func__<<"("<<package<<", ...)");
 }
 
 void bunsan::pm::repository::clean()

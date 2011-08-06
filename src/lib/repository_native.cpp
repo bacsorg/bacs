@@ -286,7 +286,10 @@ std::multimap<boost::filesystem::path, bunsan::pm::entry> bunsan::pm::repository
 bool bunsan::pm::repository::native::package_outdated(const entry &package)
 {
 	if (!boost::filesystem::exists(package_resource(package, value(name_file_pkg))))
+	{
+		SLOG("\""<<value(name_file_pkg)<<"\" was not found for "<<package<<" => outdated");
 		return true;
+	}
 	boost::property_tree::ptree index;
 	read_index(package, index);
 	std::function<void(const entry &, std::map<std::string, boost::property_tree::ptree> &)> build_imports_map =
@@ -303,7 +306,10 @@ bool bunsan::pm::repository::native::package_outdated(const entry &package)
 		{
 			boost::filesystem::path snp = package_resource(package, value(name_file_snapshot));
 			if (!boost::filesystem::exists(snp))
+			{
+				SLOG("snapshot was not found for "<<package<<" => not equal");
 				return false;
+			}
 			boost::property_tree::ptree snapshot;
 			boost::property_tree::read_info(snp.native(), snapshot);
 			boost::property_tree::ptree &snp_imports = snapshot.get_child(child_imports);
@@ -315,11 +321,18 @@ bool bunsan::pm::repository::native::package_outdated(const entry &package)
 		};
 	// imports
 	if (!equal_imports(package))
+	{
+		SLOG("imports are not equal for "<<package<<" => outdated");
 		return true;
+	}
 	// depends
 	for (const auto &i: depends(package))// depend set and snp_depends are the same because package has the same index as before
-		if (!equal_imports(i.first))
+		if (!equal_imports(i.second))
+		{
+			SLOG("imports are not equal for "<<package<<" depend: "<<i.second<<" => outdated");
 			return true;
+		}
+	SLOG("package "<<package<<" is not outdated");
 	return false;
 }
 
