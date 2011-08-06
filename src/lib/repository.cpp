@@ -46,17 +46,16 @@ void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 	ntv->check_dirs();
 	DLOG(starting build);
 	std::set<entry> updated, in;
-	std::map<entry, bool> status;
-	update_depends(package, status, updated, in);
+	update_depends(package, updated, in);
 }
 
 void bunsan::pm::repository::update_imports(const entry &package, std::set<entry> &updated, std::set<entry> &in)
 {
+	SLOG("starting "<<package<<" "<<__func__);
 	if (in.find(package)!=in.end())
 		throw std::runtime_error("circular imports starting with \""+package.name()+"\"");
 	in.insert(package);
 	{
-		ntv->update_index(package);
 		ntv->fetch_source(package);
 		for (const auto &i: ntv->imports(package))
 		{
@@ -70,37 +69,28 @@ void bunsan::pm::repository::update_imports(const entry &package, std::set<entry
 	in.erase(package);
 }
 
-void bunsan::pm::repository::update_depends(const entry &package, std::map<entry, bool> &status, std::set<entry> &updated, std::set<entry> &in)
+void bunsan::pm::repository::update_depends(const entry &package, std::set<entry> &updated, std::set<entry> &in)
 {
-	SLOG("+"<<__func__<<"("<<package<<", ...)");
-	auto it = status.find(package);
-	if (it==status.end())
+	SLOG("starting "<<package<<" "<<__func__);
+	if (in.find(package)!=in.end())
+		throw std::runtime_error("circular dependencies starting with \""+package.name()+"\"");
+	in.insert(package);
+	if (ntv->package_outdated(package))
 	{
-		status[package] = false;
-		it = status.find(package);
-		if (in.find(package)!=in.end())
-			throw std::runtime_error("circular dependencies starting with \""+package.name()+"\"");
-		in.insert(package);
+		SLOG(package<<" is outdated, building all dependencies");
+		for (const auto &i: ntv->depends(package))
+			update_depends(i.second, updated, in);
+		// updates imports
 		{
 			std::set<entry> in_;
 			update_imports(package, updated, in_);
-			for (const auto &i: ntv->depends(package))
-			{
-				update_depends(i.second, status, updated, in);
-				it->second = it->second || status.at(i.second);
-			}
-			SLOG(package<<".updated=\""<<it->second<<"\"");
-			if (it->second || ntv->package_outdated(package))
-			{
-				SLOG("starting "<<package<<" update");
-				ntv->build(package);
-				it->second = true;
-			}
-			SLOG(package<<" was "<<(it->second?"updated":"not updated"));
 		}
-		in.erase(package);
+		SLOG("building "<<package);
+		ntv->build(package);
 	}
-	SLOG("-"<<__func__<<"("<<package<<", ...)");
+	else
+		SLOG(package<<" is up to date");
+	in.erase(package);
 }
 
 void bunsan::pm::repository::clean()

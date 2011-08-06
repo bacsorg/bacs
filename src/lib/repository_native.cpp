@@ -160,12 +160,11 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
 		boost::filesystem::path src = build_dir/value(name_dir_source);
 		boost::filesystem::path snp = build_dir/value(name_file_snapshot);
 		bunsan::reset_dir(src);
-		boost::property_tree::ptree snapshot, snp_imports;
-		std::map<std::string, boost::property_tree::ptree> snp_imports_map;
-		unpack_import(package, src, snp_imports_map);
-		for (const auto &i: snp_imports_map)
-			snp_imports.push_back(boost::property_tree::ptree::value_type(i.first, i.second));
-		snapshot.put_child(child_imports, snp_imports);
+		boost::property_tree::ptree snapshot;
+		std::map<std::string, boost::property_tree::ptree> snapshot_map;
+		unpack_import(package, src, snapshot_map);
+		for (const auto &i: snapshot_map)
+			snapshot.push_back(boost::property_tree::ptree::value_type(i.first, i.second));
 		boost::property_tree::write_info(snp.native(), snapshot);
 	}
 	catch (std::exception &e)
@@ -182,9 +181,11 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 		boost::filesystem::path build = build_dir/value(name_dir_build);
 		boost::filesystem::path deps = build_dir/value(name_dir_depends);
 		boost::filesystem::path snp = build_dir/value(name_file_snapshot);
-		boost::property_tree::ptree snapshot, snp_depends;
-		std::map<std::string, boost::property_tree::ptree> snp_depends_map;
+		boost::property_tree::ptree snapshot;
+		std::map<std::string, boost::property_tree::ptree> snapshot_map;
 		boost::property_tree::read_info(snp.native(), snapshot);
+		for (const auto &i: snapshot)
+			snapshot_map[i.first] = i.second;
 		bunsan::reset_dir(build);
 		bunsan::reset_dir(deps);
 		bunsan::executor exec(config.get_child(command_configure));
@@ -194,17 +195,19 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 			bunsan::tempfile_ptr dep = bunsan::tempfile::in_dir(deps);
 			extract(i.second, dep->path());
 			exec.add_argument("-D"+i.first+"="+dep->native());
-			if (snp_depends_map.find(i.first)==snp_depends_map.end())
+			// merges two snapshots
 			{
 				boost::property_tree::ptree snapshot_;
 				boost::property_tree::read_info(package_resource(i.second, value(name_file_snapshot)).native(), snapshot_);
-				snp_depends_map[i.first] = snapshot_.get_child(child_imports);
+				for (const auto &i: snapshot_)
+					if (snapshot_map.find(i.first)==snapshot_map.end())// we can assume that all packages have the same version
+						snapshot_map[i.first] = i.second;
 			}
 			dep->auto_remove(false);
 		}
-		for (const auto &i: snp_depends_map)
-			snp_depends.push_back(boost::property_tree::ptree::value_type(i.first, i.second));
-		snapshot.put_child(child_depends, snp_depends);
+		snapshot.clear();
+		for (const auto &i: snapshot_map)
+			snapshot.push_back(boost::property_tree::ptree::value_type(i.first, i.second));
 		boost::property_tree::write_info(snp.native(), snapshot);
 		exec();
 	}
@@ -302,50 +305,57 @@ bool bunsan::pm::repository::native::package_outdated(const entry &package)
 		SLOG("\""<<value(name_file_pkg)<<"\" was not found for "<<package<<" => outdated");
 		return true;
 	}
-	boost::property_tree::ptree index;
-	read_index(package, index);
+	boost::filesystem::path snp = package_resource(package, value(name_file_snapshot));
+	if (!boost::filesystem::exists(snp))
+	{
+		SLOG(snp.filename()<<" was not found for "<<package<<" => outdated");
+		return true;
+	}
+	std::map<std::string, boost::property_tree::ptree> snapshot_map, snapshot_map_;
+	std::set<entry> updated;
+	auto update =
+		[this, &updated](const entry &package)
+		{
+			if (updated.find(package)==updated.end())
+			{
+				update_index(package);
+				updated.insert(package);
+			}
+		};
 	std::function<void(const entry &, std::map<std::string, boost::property_tree::ptree> &)> build_imports_map =
-		[this, &build_imports_map](const entry &package, std::map<std::string, boost::property_tree::ptree> &map)
+		[this, &update, &build_imports_map](const entry &package, std::map<std::string, boost::property_tree::ptree> &map)
 		{
 			if (map.find(package.name())==map.end())
 			{
+				update(package);
 				read_checksum(package, map[package.name()]);
 				for (const auto &i: imports(package))
 					build_imports_map(i.second, map);
 			}
 		};
-	auto equal_imports = [this, &build_imports_map](const entry &package)->bool
+	std::function<void(const entry &, std::map<std::string, boost::property_tree::ptree> &, std::set<entry> &visited)> build_snapshot_map =
+		[this, &build_imports_map, &build_snapshot_map](const entry &package,
+								std::map<std::string, boost::property_tree::ptree> &map,
+								std::set<entry> &visited)
 		{
-			boost::filesystem::path snp = package_resource(package, value(name_file_snapshot));
-			if (!boost::filesystem::exists(snp))
+			if (visited.find(package)==visited.end())
 			{
-				SLOG("snapshot was not found for "<<package<<" => not equal");
-				return false;
+				build_imports_map(package, map);// update is run at least once in this function
+				for (const auto &i: depends(package))
+					build_snapshot_map(i.second, map, visited);
+				visited.insert(package);
 			}
-			boost::property_tree::ptree snapshot;
-			boost::property_tree::read_info(snp.native(), snapshot);
-			boost::property_tree::ptree &snp_imports = snapshot.get_child(child_imports);
-			std::map<std::string, boost::property_tree::ptree> current_imports_map, built_imports_map;
-			build_imports_map(package, current_imports_map);
-			for (const auto &i: snp_imports)
-				built_imports_map[i.first] = i.second;
-			return current_imports_map==built_imports_map;
 		};
-	// imports
-	if (!equal_imports(package))
+	std::set<entry> visited;
+	build_snapshot_map(package, snapshot_map_, visited);
+	// reads snapshot_map from built package
 	{
-		SLOG("imports are not equal for "<<package<<" => outdated");
-		return true;
+		boost::property_tree::ptree snapshot;
+		boost::property_tree::read_info(snp.native(), snapshot);
+		for (const auto &i: snapshot)
+			snapshot_map[i.first] = i.second;
 	}
-	// depends
-	for (const auto &i: depends(package))// depend set and snp_depends are the same because package has the same index as before
-		if (!equal_imports(i.second))
-		{
-			SLOG("imports are not equal for "<<package<<" depend: "<<i.second<<" => outdated");
-			return true;
-		}
-	SLOG("package "<<package<<" is not outdated");
-	return false;
+	return snapshot_map!=snapshot_map_;
 }
 
 void bunsan::pm::repository::native::extract(const entry &package, const boost::filesystem::path &destination)

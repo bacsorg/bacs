@@ -44,8 +44,7 @@ namespace bunsan{namespace pm
 		/// update logic
 		void update(const entry &package);
 		void update_imports(const entry &package, std::set<entry> &updated, std::set<entry> &in);
-		//void update_depends(const entry &package, std::map<entry, std::pair<int, bool> > &status, std::set<entry> &updated);
-		void update_depends(const entry &package, std::map<entry, bool> &status, std::set<entry> &updated, std::set<entry> &in);
+		void update_depends(const entry &package, std::set<entry> &updated, std::set<entry> &in);
 	};
 }}
 
