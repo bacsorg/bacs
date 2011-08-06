@@ -34,10 +34,18 @@ namespace
 	public:
 		pm_error(const std::string &msg, const std::exception &e): std::runtime_error("Error occured: \""+msg+"\" because \""+e.what()+"\""){}
 	};
-
 	bool outdated(const boost::filesystem::path &file, const std::string &checksum)
 	{
 		return !boost::filesystem::exists(file) || bunsan::pm::checksum(file)!=checksum;
+	}
+	void load(const bunsan::executor &fetcher, const std::string &source, const boost::filesystem::path &file, const std::string &checksum)
+	{
+		if (outdated(file, checksum))
+		{
+			fetcher(source, file);
+			if (outdated(file, checksum))
+				throw std::runtime_error("Error loading file \""+file.native()+"\": wrong checksum");
+		}
 	}
 }
 
@@ -62,8 +70,10 @@ void bunsan::pm::repository::native::update_index(const entry &package)
 			boost::filesystem::copy_option::overwrite_if_exists);
 		boost::property_tree::ptree checksum;
 		read_checksum(package, checksum);
-		if (outdated(output/value(name_file_index), checksum.get<std::string>(value(name_file_index))))
-			fetcher(remote_resource(package, value(name_file_index)), output/value(name_file_index));
+		load(fetcher,
+			remote_resource(package, value(name_file_index)),
+			output/value(name_file_index),
+			checksum.get<std::string>(value(name_file_index)));
 	}
 	catch (pm_error &e)
 	{
@@ -89,8 +99,10 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
 		for (const auto &i: index.get_child(child_sources))
 		{
 			std::string src = i.second.get_value<std::string>();
-			if (outdated(output/(src+src_sfx), checksum.get<std::string>(src)))
-				fetcher(remote_resource(package, src+src_sfx), output/(src+src_sfx));
+			load(fetcher,
+				remote_resource(package, src+src_sfx),
+				output/(src+src_sfx),
+				checksum.get<std::string>(src));
 		}
 	}
 	catch (std::exception &e)
