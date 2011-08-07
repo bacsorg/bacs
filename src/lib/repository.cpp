@@ -45,8 +45,37 @@ void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 	SLOG("updating "<<package);
 	ntv->check_dirs();
 	DLOG(starting build);
+	update_index_tree(package);
 	std::set<entry> updated, in;
 	update_depends(package, updated, in);
+}
+
+void bunsan::pm::repository::update_index_tree(const entry &package)
+{
+	std::set<entry> updated, visited;
+	std::function<void(const entry &)> update_imports_index =
+		[ntv, &updated, &update_imports_index](const entry &package)
+		{
+			if (updated.find(package)==updated.end())
+			{
+				ntv->update_index(package);
+				updated.insert(package);
+				for (const auto &i: ntv->imports(package))
+					update_imports_index(i.second);
+			}
+		};
+	std::function<void(const entry &)> update_depends_index =
+		[ntv, &visited, &update_depends_index, &update_imports_index](const entry &package)
+		{
+			if (visited.find(package)==visited.end())
+			{
+				update_imports_index(package);
+				visited.insert(package);
+				for (const auto &i: ntv->depends(package))
+					update_depends_index(package);
+			}
+		};
+	update_depends_index(package);
 }
 
 void bunsan::pm::repository::update_imports(const entry &package, std::set<entry> &updated, std::set<entry> &in)

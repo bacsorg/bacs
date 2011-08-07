@@ -31,6 +31,10 @@ private:
 public:
 	std::map<std::string, entry> depends(const entry &package);
 	std::multimap<boost::filesystem::path, entry> imports(const entry &package);
+	/*!
+	 * \return whether package is outdated
+	 * \pre full tree of dependencies and imports "index" files is up to date
+	 */
 	bool package_outdated(const entry &package);
 	void extract(const entry &package, const boost::filesystem::path &destination);
 private:

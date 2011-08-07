@@ -312,42 +312,31 @@ bool bunsan::pm::repository::native::package_outdated(const entry &package)
 		return true;
 	}
 	std::map<std::string, boost::property_tree::ptree> snapshot_map, snapshot_map_;
-	std::set<entry> updated;
-	auto update =
-		[this, &updated](const entry &package)
-		{
-			if (updated.find(package)==updated.end())
-			{
-				update_index(package);
-				updated.insert(package);
-			}
-		};
 	std::function<void(const entry &, std::map<std::string, boost::property_tree::ptree> &)> build_imports_map =
-		[this, &update, &build_imports_map](const entry &package, std::map<std::string, boost::property_tree::ptree> &map)
+		[this, &build_imports_map](const entry &package, std::map<std::string, boost::property_tree::ptree> &map)
 		{
 			if (map.find(package.name())==map.end())
 			{
-				update(package);
 				read_checksum(package, map[package.name()]);
 				for (const auto &i: imports(package))
 					build_imports_map(i.second, map);
 			}
 		};
-	std::function<void(const entry &, std::map<std::string, boost::property_tree::ptree> &, std::set<entry> &visited)> build_snapshot_map =
-		[this, &build_imports_map, &build_snapshot_map](const entry &package,
+	std::function<void(const entry &, std::map<std::string, boost::property_tree::ptree> &, std::set<entry> &visited)> build_depends_map =
+		[this, &build_imports_map, &build_depends_map](const entry &package,
 								std::map<std::string, boost::property_tree::ptree> &map,
 								std::set<entry> &visited)
 		{
 			if (visited.find(package)==visited.end())
 			{
-				build_imports_map(package, map);// update is run at least once in this function
-				for (const auto &i: depends(package))
-					build_snapshot_map(i.second, map, visited);
+				build_imports_map(package, map);
 				visited.insert(package);
+				for (const auto &i: depends(package))
+					build_depends_map(i.second, map, visited);
 			}
 		};
 	std::set<entry> visited;
-	build_snapshot_map(package, snapshot_map_, visited);
+	build_depends_map(package, snapshot_map_, visited);
 	// reads snapshot_map from built package
 	{
 		boost::property_tree::ptree snapshot;

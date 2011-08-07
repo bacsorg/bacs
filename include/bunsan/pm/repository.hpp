@@ -43,6 +43,8 @@ namespace bunsan{namespace pm
 		// private functions
 		/// update logic
 		void update(const entry &package);
+		/// updates package depends and imports "index" files tree
+		void update_index_tree(const entry &package);
 		void update_imports(const entry &package, std::set<entry> &updated, std::set<entry> &in);
 		void update_depends(const entry &package, std::set<entry> &updated, std::set<entry> &in);
 	};
