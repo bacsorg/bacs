@@ -72,7 +72,7 @@ void bunsan::pm::repository::update_index_tree(const entry &package)
 				update_imports_index(package);
 				visited.insert(package);
 				for (const auto &i: ntv->depends(package))
-					update_depends_index(package);
+					update_depends_index(i.second);
 			}
 		};
 	update_depends_index(package);
