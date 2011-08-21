@@ -23,8 +23,6 @@ name
 	{
 		source source
 		build build
-		depends depends
-		depends_time depends_time
 		pkg pkg
 	}
 }

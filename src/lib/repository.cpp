@@ -46,80 +46,69 @@ void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 	ntv->check_dirs();
 	DLOG(starting build);
 	update_index_tree(package);
-	std::set<entry> updated, in;
-	update_depends(package, updated, in);
+	std::set<entry> supdated, pupdated, pin;
+	update_package_imports(package, supdated, pupdated, pin);
 }
 
 void bunsan::pm::repository::update_index_tree(const entry &package)
 {
-	std::set<entry> updated, visited;
-	std::function<void(const entry &)> update_imports_index =
-		[ntv, &updated, &update_imports_index](const entry &package)
-		{
-			if (updated.find(package)==updated.end())
-			{
-				ntv->update_index(package);
-				updated.insert(package);
-				for (const auto &i: ntv->imports(package))
-					update_imports_index(i.second);
-			}
-		};
-	std::function<void(const entry &)> update_depends_index =
-		[ntv, &visited, &update_depends_index, &update_imports_index](const entry &package)
+	std::set<entry> visited;
+	std::function<void(const entry &)> update_index =
+		[ntv, &visited, &update_index](const entry &package)
 		{
 			if (visited.find(package)==visited.end())
 			{
-				update_imports_index(package);
+				ntv->update_index(package);
 				visited.insert(package);
-				for (const auto &i: ntv->depends(package))
-					update_depends_index(i.second);
+				for (const auto &i: ntv->source_imports(package))
+					update_index(i.second);
+				for (const auto &i: ntv->package_imports(package))
+					update_index(i.second);
 			}
 		};
-	update_depends_index(package);
+	update_index(package);
 }
 
-void bunsan::pm::repository::update_imports(const entry &package, std::set<entry> &updated, std::set<entry> &in)
+void bunsan::pm::repository::update_source_imports(const entry &package, std::set<entry> &supdated, std::set<entry> &pupdated, std::set<entry> &sin, std::set<entry> &pin)
 {
 	SLOG("starting "<<package<<" "<<__func__);
-	if (in.find(package)!=in.end())
-		throw std::runtime_error("circular imports starting with \""+package.name()+"\"");
-	in.insert(package);
+	if (sin.find(package)!=sin.end())
+		throw std::runtime_error("circular source imports starting with \""+package.name()+"\"");
+	sin.insert(package);
 	{
-		ntv->fetch_source(package);
-		for (const auto &i: ntv->imports(package))
+		if (supdated.find(package)==supdated.end())
 		{
-			if (updated.find(i.second)==updated.end())
-			{
-				update_imports(i.second, updated, in);
-				updated.insert(i.second);
-			}
+			ntv->fetch_source(package);
+			supdated.insert(package);
 		}
+		for (const auto &i: ntv->source_imports(package))
+			update_source_imports(i.second, supdated, pupdated, sin, pin);
+		for (const auto &i: ntv->package_imports(package))
+			update_package_imports(i.second, supdated, pupdated, pin);
 	}
-	in.erase(package);
+	sin.erase(package);
 }
 
-void bunsan::pm::repository::update_depends(const entry &package, std::set<entry> &updated, std::set<entry> &in)
+void bunsan::pm::repository::update_package_imports(const entry &package, std::set<entry> &supdated, std::set<entry> &pupdated, std::set<entry> &pin)
 {
 	SLOG("starting "<<package<<" "<<__func__);
-	if (in.find(package)!=in.end())
-		throw std::runtime_error("circular dependencies starting with \""+package.name()+"\"");
-	in.insert(package);
-	if (ntv->package_outdated(package))
+	if (pin.find(package)!=pin.end())
+		throw std::runtime_error("circular package imports starting with \""+package.name()+"\"");
+	pin.insert(package);
+	if (pupdated.find(package)==pupdated.end() && ntv->package_outdated(package))
 	{
-		SLOG(package<<" is outdated, building all dependencies");
-		for (const auto &i: ntv->depends(package))
-			update_depends(i.second, updated, in);
-		// updates imports
+		SLOG(package<<" is outdated, checking all imports");
 		{
-			std::set<entry> in_;
-			update_imports(package, updated, in_);
+			std::set<entry> sin;
+			update_source_imports(package, supdated, pupdated, sin, pin);
 		}
 		SLOG("building "<<package);
 		ntv->build(package);
 	}
 	else
 		SLOG(package<<" is up to date");
-	in.erase(package);
+	pupdated.insert(package);
+	pin.erase(package);
 }
 
 void bunsan::pm::repository::clean()

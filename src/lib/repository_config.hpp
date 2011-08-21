@@ -3,9 +3,9 @@
 
 namespace
 {
-	constexpr const char *child_depends = "depends";
-	constexpr const char *child_sources = "sources";
-	constexpr const char *child_imports = "imports";
+	constexpr const char *child_source = "source";
+	constexpr const char *child_import_source = "import.source";
+	constexpr const char *child_import_package = "import.package";
 
 	constexpr const char *dir_tmp = "dir.tmp";
 	constexpr const char *dir_package = "dir.package";
@@ -20,7 +20,6 @@ namespace
 	constexpr const char *name_dir_pkg = "name.dir.pkg";
 	constexpr const char *name_dir_source = "name.dir.source";
 	constexpr const char *name_dir_build = "name.dir.build";
-	constexpr const char *name_dir_depends = "name.dir.depends";
 
 	constexpr const char *suffix_src = "suffix.src";
 	constexpr const char *suffix_pkg = "suffix.pkg";

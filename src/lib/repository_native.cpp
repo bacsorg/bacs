@@ -29,11 +29,6 @@ void bunsan::pm::repository::native::build(const entry &package)
 
 namespace
 {
-	class pm_error: public std::runtime_error
-	{
-	public:
-		pm_error(const std::string &msg, const std::exception &e): std::runtime_error("Error occured: \""+msg+"\" because \""+e.what()+"\""){}
-	};
 	bool outdated(const boost::filesystem::path &file, const std::string &checksum)
 	{
 		return !boost::filesystem::exists(file) || bunsan::pm::checksum(file)!=checksum;
@@ -93,17 +88,13 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
 		const std::string src_sfx = value(suffix_src);
 		bunsan::executor fetcher(config.get_child(command_fetch));
 		boost::filesystem::path output = package.remote_resource(value(dir_source));
-		boost::property_tree::ptree index, checksum;
-		read_index(package, index);
+		boost::property_tree::ptree checksum;
 		read_checksum(package, checksum);
-		for (const auto &i: index.get_child(child_sources))
-		{
-			std::string src = i.second.get_value<std::string>();
+		for (const auto &i: sources(package))
 			load(fetcher,
-				remote_resource(package, src+src_sfx),
-				output/(src+src_sfx),
-				checksum.get<std::string>(src));
-		}
+				remote_resource(package, i.second+src_sfx),
+				output/(i.second+src_sfx),
+				checksum.get<std::string>(i.second));
 	}
 	catch (std::exception &e)
 	{
@@ -142,14 +133,32 @@ void bunsan::pm::repository::native::unpack_import(const entry &package, const b
 	SLOG("starting "<<package<<" import unpack");
 	bunsan::executor extractor(config.get_child(command_unpack));
 	boost::property_tree::ptree index;
-	read_index(package, index);
+	// extract sources
+	for (const auto &i: sources(package))
+		::extract(extractor, source_resource(package, i.second+value(suffix_src)), destination/i.first, i.second);
 	if (snapshot.find(package.name())==snapshot.end())
 		read_checksum(package, snapshot[package.name()]);
-	for (const auto &i: index.get_child(child_sources))
-		::extract(extractor, source_resource(package, i.second.get_value<std::string>()+value(suffix_src)),
-			destination/i.first, i.second.get_value<std::string>());
-	for (const auto &i: index.get_child(child_imports))
-		unpack_import(i.second.get_value<std::string>(), destination/i.first, snapshot);
+	// extract source imports
+	for (const auto &i: source_imports(package))
+		unpack_import(i.second, destination/i.first, snapshot);
+	// extract package imports
+	for (const auto &i: package_imports(package))
+	{
+		SLOG("starting "<<package<<" import extract");
+		boost::filesystem::path snp = package_resource(i.second, value(name_file_snapshot));
+		bunsan::executor extractor(config.get_child(command_extract));
+		::extract(extractor, package_resource(i.second, value(name_file_pkg)), destination/i.first, value(name_dir_pkg));
+		boost::property_tree::ptree snapshot_;
+		boost::property_tree::read_info(snp.native(), snapshot_);
+		for (const auto &j: snapshot_)// \todo is this check useful? if yes then we should perform same check in code above
+		{
+			auto it = snapshot.find(j.first);
+			if (it==snapshot.end())
+				snapshot[j.first] = j.second;
+			else if (it->second!=j.second)
+				throw std::runtime_error("Different package versions of \""+j.first+"\" in \""+i.second.name()+"\" extract");
+		}
+	}
 }
 
 void bunsan::pm::repository::native::unpack(const entry &package, const boost::filesystem::path &build_dir)
@@ -179,37 +188,8 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path build = build_dir/value(name_dir_build);
-		boost::filesystem::path deps = build_dir/value(name_dir_depends);
-		boost::filesystem::path snp = build_dir/value(name_file_snapshot);
-		boost::property_tree::ptree snapshot;
-		std::map<std::string, boost::property_tree::ptree> snapshot_map;
-		boost::property_tree::read_info(snp.native(), snapshot);
-		for (const auto &i: snapshot)
-			snapshot_map[i.first] = i.second;
 		bunsan::reset_dir(build);
-		bunsan::reset_dir(deps);
-		bunsan::executor exec(config.get_child(command_configure));
-		exec.current_path(build).add_argument(build_dir/value(name_dir_source));
-		for (const auto &i: depends(package))
-		{
-			bunsan::tempfile_ptr dep = bunsan::tempfile::in_dir(deps);
-			extract(i.second, dep->path());
-			exec.add_argument("-D"+i.first+"="+dep->native());
-			// merges two snapshots
-			{
-				boost::property_tree::ptree snapshot_;
-				boost::property_tree::read_info(package_resource(i.second, value(name_file_snapshot)).native(), snapshot_);
-				for (const auto &i: snapshot_)
-					if (snapshot_map.find(i.first)==snapshot_map.end())// we can assume that all packages have the same version
-						snapshot_map[i.first] = i.second;
-			}
-			dep->auto_remove(false);
-		}
-		snapshot.clear();
-		for (const auto &i: snapshot_map)
-			snapshot.push_back(boost::property_tree::ptree::value_type(i.first, i.second));
-		boost::property_tree::write_info(snp.native(), snapshot);
-		exec();
+		bunsan::executor::exec_from(build, config.get_child(command_configure), build_dir/value(name_dir_source));
 	}
 	catch (std::exception &e)
 	{
@@ -252,52 +232,6 @@ void bunsan::pm::repository::native::pack(const entry &package, const boost::fil
 	}
 }
 
-std::map<std::string, bunsan::pm::entry> bunsan::pm::repository::native::depends(const entry &package)
-{
-	try
-	{
-		SLOG("trying to get depends for "<<package);
-		boost::property_tree::ptree index;
-		read_index(package, index);
-		std::map<std::string, entry> map;
-		for (const auto &i: index.get_child(child_depends))
-		{
-			bunsan::pm::entry e(i.second.get_value<std::string>());
-			if (map.find(i.first)!=map.end())
-				throw std::runtime_error("dublicate dependencies: \""+i.first+"\"");
-			map.insert(std::map<std::string, entry>::value_type(i.first, e));
-		}
-		SLOG("found \""<<map.size()<<"\" dependencies");
-		return map;
-	}
-	catch (std::exception &e)
-	{
-		throw pm_error("Unable to read package depends", e);
-	}
-}
-
-std::multimap<boost::filesystem::path, bunsan::pm::entry> bunsan::pm::repository::native::imports(const entry &package)
-{
-	try
-	{
-		SLOG("trying to get imports for "<<package);
-		boost::property_tree::ptree index;
-		read_index(package, index);
-		std::multimap<boost::filesystem::path, entry> map;
-		for (const auto &i: index.get_child(child_imports))
-		{
-			bunsan::pm::entry e(i.second.get_value<std::string>());
-			map.insert(std::multimap<std::string, entry>::value_type(i.first, e));
-		}
-		SLOG("found \""<<map.size()<<"\" imports");
-		return map;
-	}
-	catch (std::exception &e)
-	{
-		throw pm_error("Unable to read package imports", e);
-	}
-}
-
 bool bunsan::pm::repository::native::package_outdated(const entry &package)
 {
 	if (!boost::filesystem::exists(package_resource(package, value(name_file_pkg))))
@@ -318,25 +252,13 @@ bool bunsan::pm::repository::native::package_outdated(const entry &package)
 			if (map.find(package.name())==map.end())
 			{
 				read_checksum(package, map[package.name()]);
-				for (const auto &i: imports(package))
+				for (const auto &i: source_imports(package))
+					build_imports_map(i.second, map);
+				for (const auto &i: package_imports(package))
 					build_imports_map(i.second, map);
 			}
 		};
-	std::function<void(const entry &, std::map<std::string, boost::property_tree::ptree> &, std::set<entry> &visited)> build_depends_map =
-		[this, &build_imports_map, &build_depends_map](const entry &package,
-								std::map<std::string, boost::property_tree::ptree> &map,
-								std::set<entry> &visited)
-		{
-			if (visited.find(package)==visited.end())
-			{
-				build_imports_map(package, map);
-				visited.insert(package);
-				for (const auto &i: depends(package))
-					build_depends_map(i.second, map, visited);
-			}
-		};
-	std::set<entry> visited;
-	build_depends_map(package, snapshot_map_, visited);
+	build_imports_map(package, snapshot_map_);
 	// reads snapshot_map from built package
 	{
 		boost::property_tree::ptree snapshot;

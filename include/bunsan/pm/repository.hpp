@@ -45,8 +45,15 @@ namespace bunsan{namespace pm
 		void update(const entry &package);
 		/// updates package depends and imports "index" files tree
 		void update_index_tree(const entry &package);
-		void update_imports(const entry &package, std::set<entry> &updated, std::set<entry> &in);
-		void update_depends(const entry &package, std::set<entry> &updated, std::set<entry> &in);
+		/*!
+		 * \param supdated packages which sources were fetched
+		 * \param pupdated packages which was checked with ntv->package_outdated(package)
+		 */
+		void update_source_imports(const entry &package, std::set<entry> &supdated, std::set<entry> &pupdated, std::set<entry> &sin, std::set<entry> &pin);
+		/*
+		 * \copydoc bunsan::pm::repository::update_source_imports
+		 */
+		void update_package_imports(const entry &package, std::set<entry> &supdated, std::set<entry> &pupdated, std::set<entry> &pin);
 	};
 }}
 

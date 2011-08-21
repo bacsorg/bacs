@@ -28,9 +28,12 @@ private:
 	std::string value(const std::string &key);
 	void read_index(const entry &package, boost::property_tree::ptree &ptree);
 	void read_checksum(const entry &package, boost::property_tree::ptree &ptree);
+	template <typename T>
+	std::multimap<boost::filesystem::path, T> read_pairs(const entry &package, const char *child);
+	std::multimap<boost::filesystem::path, std::string> sources(const entry &package);
 public:
-	std::map<std::string, entry> depends(const entry &package);
-	std::multimap<boost::filesystem::path, entry> imports(const entry &package);
+	std::multimap<boost::filesystem::path, entry> source_imports(const entry &package);
+	std::multimap<boost::filesystem::path, entry> package_imports(const entry &package);
 	/*!
 	 * \return whether package is outdated
 	 * \pre full tree of dependencies and imports "index" files is up to date
@@ -39,6 +42,11 @@ public:
 	void extract(const entry &package, const boost::filesystem::path &destination);
 private:
 	const boost::property_tree::ptree &config;
+	class pm_error: public std::runtime_error
+	{
+	public:
+		inline pm_error(const std::string &msg, const std::exception &e): std::runtime_error("Error occured: \""+msg+"\" because \""+e.what()+"\""){}
+	};
 };
 
 #endif //REPOSITORY_NATIVE_HPP
