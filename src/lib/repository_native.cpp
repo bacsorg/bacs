@@ -189,7 +189,7 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path build = build_dir/value(name_dir_build);
 		bunsan::reset_dir(build);
-		bunsan::executor::exec_from(build, config.get_child(command_configure), build_dir/value(name_dir_source));
+		bunsan::executor::exec_from(build, config.get_child(command_configure), build_dir/value(name_dir_source));// FIXME encapsulation fault
 	}
 	catch (std::exception &e)
 	{
