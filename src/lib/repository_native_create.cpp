@@ -32,8 +32,10 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 		std::string src_value = src_name+value(suffix_src);
 		boost::filesystem::path src = source/src_name;
 		boost::filesystem::path dst = source/(src_value);
+		if (!boost::filesystem::exists(source/src_name))
+			throw std::runtime_error("Source does not exists: \""+src_name+"\"");
 		creator(src_name, dst);
-		checksum[src_name] = bunsan::pm::checksum(src_value);
+		checksum[src_name] = bunsan::pm::checksum(source/src_value);
 		keep.insert(src_value);// we will also keep all source tarballs
 	}
 	{
