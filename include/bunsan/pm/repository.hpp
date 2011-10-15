@@ -22,6 +22,13 @@ namespace bunsan{namespace pm
 	public:
 		explicit repository(const boost::property_tree::ptree &config_);
 		/*!
+		 * \brief Create source package from source
+		 *
+		 * \param source path to source
+		 * \param strip remove unnecesarry sources from packed source
+		 */
+		void create(const boost::filesystem::path &source, bool strip=false);
+		/*!
 		 * \brief Extract package data to destination.
 		 *
 		 * \todo We can do implicit update.

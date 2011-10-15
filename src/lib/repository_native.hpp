@@ -7,6 +7,7 @@ class bunsan::pm::repository::native: private boost::noncopyable
 {
 public:
 	explicit native(const boost::property_tree::ptree &config_);
+	void create(const boost::filesystem::path &source, bool strip);
 	void fetch_source(const entry &package);
 	void update_index(const entry &package);
 	/*!

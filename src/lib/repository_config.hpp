@@ -30,6 +30,7 @@ namespace
 	constexpr const char *command_compile = "command.compile";
 	constexpr const char *command_pack = "command.pack";
 	constexpr const char *command_extract = "command.extract";
+	constexpr const char *command_create = "command.create";
 
 	constexpr const char *repository_url = "repository";
 }

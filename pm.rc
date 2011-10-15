@@ -103,5 +103,12 @@ command
 		t -C
 		p 1
 	}
+	create
+	{
+		t tar
+		t cJf
+		p 1
+		p 0
+	}
 }
 

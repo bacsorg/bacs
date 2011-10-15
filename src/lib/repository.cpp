@@ -29,6 +29,12 @@ bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): 
 	ntv = new native(config);
 }
 
+void bunsan::pm::repository::create(const boost::filesystem::path &source, bool strip)
+{
+	SLOG("creating source package from "<<source<<" with"<<(strip?"":"out")<<" stripping");
+	ntv->create(source, strip);
+}
+
 void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
 {
 	SLOG("extract "<<package<<" to "<<destination);

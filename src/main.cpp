@@ -14,6 +14,7 @@ int main(int argc, char **argv)
 	std::string config_file;
 	std::string extract_to;
 	std::string package;
+	std::string create;
 	try
 	{
 		//command line parse
@@ -24,7 +25,9 @@ int main(int argc, char **argv)
 			("config,c", boost::program_options::value<std::string>(&config_file)->default_value("pm.rc"), "Configuration file")
 			("clean", "Clean repository")
 			("package,p", boost::program_options::value<std::string>(&package), "Package name")
-			("extract,e", boost::program_options::value<std::string>(&extract_to), "Extract package to location");
+			("extract,e", boost::program_options::value<std::string>(&extract_to), "Extract package to location")
+			("create,r", boost::program_options::value<std::string>(&create), "Create source package from source")
+			("strip,s", "Strip source package from excess files.");
 		boost::program_options::variables_map vm;
 		boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
 		boost::program_options::notify(vm);
@@ -58,6 +61,11 @@ int main(int argc, char **argv)
 			{//package info
 				std::cerr<<"Package \""<<package<<"\""<<std::endl;
 			}
+		}
+		else if (vm.count("create"))
+		{
+			std::cerr<<"Attempt to create source package from source \""<<create<<"\""<<std::endl;
+			repo.create(create, vm.count("strip"));
 		}
 		//end parse
 	}
