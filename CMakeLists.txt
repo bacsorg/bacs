@@ -8,10 +8,9 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost COMPONENTS system filesystem serialization iostreams unit_test_framework program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
-message(AUTHOR_WARNING "We have to check pthread library on win* platform")
-message(AUTHOR_WARNING "We have to provide support for different compilers")
-
-add_definitions(-std=c++0x -pthread -g -D_GLIBCXX_USE_NANOSLEEP -Wall -Wextra)
+if (${CMAKE_COMPILER_IS_GNUCC})
+	add_definitions(-std=c++0x -pthread -g -D_GLIBCXX_USE_NANOSLEEP -Wall -Wextra)
+endif()
 
 include_directories(include)
 
