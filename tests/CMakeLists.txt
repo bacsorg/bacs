@@ -2,7 +2,7 @@ project(bunsan_pm_tests)
 
 cmake_minimum_required(VERSION 2.8)
 
-message("tests was included")
+message("tests were included")
 
 aux_source_directory(. test_srcs)
 
