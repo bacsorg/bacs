@@ -9,7 +9,13 @@ find_package(Boost COMPONENTS system filesystem serialization iostreams unit_tes
 include_directories(${Boost_INCLUDE_DIRS})
 
 if (${CMAKE_COMPILER_IS_GNUCC})
-	add_definitions(-std=c++0x -pthread -g -D_GLIBCXX_USE_NANOSLEEP -Wall -Wextra)
+	set(gcc_flags -g -Wall -Wextra)
+	if (${MINGW})
+		# MinGW has no pthread support
+		add_definitions(-std=c++0x ${gcc_flags})
+	else()
+		add_definitions(-std=c++0x -pthread ${gcc_flags})
+	endif()
 endif()
 
 include_directories(include)
