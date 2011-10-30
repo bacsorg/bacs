@@ -9,7 +9,6 @@
 #include <queue>
 #include <vector>
 #include <memory>
-#include <mutex>
 
 #include <cstdlib>
 #include <cassert>
@@ -39,7 +38,7 @@ void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boo
 {
 	SLOG("extract "<<package<<" to "<<destination);
 	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
-	boost::interprocess::scoped_lock<std::mutex> lk2(slock);
+	boost::mutex::scoped_lock lk2(slock);
 	DLOG(trying to update);
 	update(package);
 	DLOG(trying to extract);
@@ -120,7 +119,7 @@ void bunsan::pm::repository::update_package_imports(const entry &package, std::s
 void bunsan::pm::repository::clean()
 {
 	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
-	boost::interprocess::scoped_lock<std::mutex> lk2(slock);
+	boost::mutex::scoped_lock lk2(slock);
 	ntv->clean();
 }
 
@@ -128,6 +127,4 @@ bunsan::pm::repository::~repository()
 {
 	delete ntv;
 }
-
-std::mutex bunsan::pm::repository::slock;
 

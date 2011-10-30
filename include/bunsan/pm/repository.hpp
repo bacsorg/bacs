@@ -6,17 +6,25 @@
 #include <set>
 #include <vector>
 #include <memory>
-#include <mutex>
 
 #include <boost/noncopyable.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/interprocess/sync/file_lock.hpp>
 
 #include "bunsan/pm/entry.hpp"
 
 namespace bunsan{namespace pm
 {
+	/*!
+	 * \brief Class represents bunsan repository
+	 *
+	 * Creation of two different instances of this class
+	 * linked to one physical repository
+	 * will cause undefined behavior.
+	 * Objects of this class are thread-safe.
+	 */
 	class repository: private boost::noncopyable
 	{
 	public:
@@ -45,7 +53,7 @@ namespace bunsan{namespace pm
 		class native;
 		native *ntv;
 		std::unique_ptr<boost::interprocess::file_lock> flock;
-		static std::mutex slock;
+		boost::mutex slock;
 		const boost::property_tree::ptree config;
 		// private functions
 		/// update logic
