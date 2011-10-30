@@ -31,7 +31,7 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 		std::string src_name = i.second.get_value<std::string>();
 		std::string src_value = src_name+value(suffix_src);
 		boost::filesystem::path src = source/src_name;
-		boost::filesystem::path dst = source/(src_value);
+		boost::filesystem::path dst = boost::filesystem::absolute(source/(src_value));
 		if (!boost::filesystem::exists(source/src_name))
 			throw std::runtime_error("Source does not exists: \""+src_name+"\"");
 		creator(src_name, dst);
