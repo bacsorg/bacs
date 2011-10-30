@@ -25,7 +25,7 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 	bunsan::executor creator(config.get_child(command_create));
 	creator.current_path(source);// FIXME encapsulation fault
 	boost::property_tree::ptree index;
-	boost::property_tree::read_info(index_name.native(), index);
+	boost::property_tree::read_info(index_name.generic_string(), index);
 	for (const auto &i: index.get_child(child_source))
 	{
 		std::string src_name = i.second.get_value<std::string>();
@@ -42,12 +42,12 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 		boost::property_tree::ptree checksum_;
 		for (const auto &i: checksum)
 			checksum_.put(boost::property_tree::ptree::path_type(i.first, '\0'), i.second);
-		boost::property_tree::write_info(checksum_name.native(), checksum_);
+		boost::property_tree::write_info(checksum_name.generic_string(), checksum_);
 	}
 	if (strip)
 		for (boost::filesystem::directory_iterator i(source); i!=boost::filesystem::directory_iterator(); ++i)
 		{
-			if (keep.find(i->path().filename().native())==keep.end())
+			if (keep.find(i->path().filename().generic_string())==keep.end())
 			{
 				SLOG("Removing excess file from source package: "<<i->path());
 				boost::filesystem::remove_all(*i);

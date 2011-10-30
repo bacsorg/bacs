@@ -39,7 +39,7 @@ namespace
 		{
 			fetcher(source, file);
 			if (outdated(file, checksum))
-				throw std::runtime_error("Error loading file \""+file.native()+"\": wrong checksum");
+				throw std::runtime_error("Error loading file \""+file.generic_string()+"\": wrong checksum");
 		}
 	}
 }
@@ -149,7 +149,7 @@ void bunsan::pm::repository::native::unpack_import(const entry &package, const b
 		bunsan::executor extractor(config.get_child(command_extract));
 		::extract(extractor, package_resource(i.second, value(name_file_pkg)), destination/i.first, value(name_dir_pkg));
 		boost::property_tree::ptree snapshot_;
-		boost::property_tree::read_info(snp.native(), snapshot_);
+		boost::property_tree::read_info(snp.generic_string(), snapshot_);
 		for (const auto &j: snapshot_)// \todo is this check useful? if yes then we should perform same check in code above
 		{
 			auto it = snapshot.find(j.first);
@@ -174,7 +174,7 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
 		unpack_import(package, src, snapshot_map);
 		for (const auto &i: snapshot_map)
 			snapshot.push_back(boost::property_tree::ptree::value_type(i.first, i.second));
-		boost::property_tree::write_info(snp.native(), snapshot);
+		boost::property_tree::write_info(snp.generic_string(), snapshot);
 	}
 	catch (std::exception &e)
 	{
@@ -262,7 +262,7 @@ bool bunsan::pm::repository::native::package_outdated(const entry &package)
 	// reads snapshot_map from built package
 	{
 		boost::property_tree::ptree snapshot;
-		boost::property_tree::read_info(snp.native(), snapshot);
+		boost::property_tree::read_info(snp.generic_string(), snapshot);
 		for (const auto &i: snapshot)
 			snapshot_map[i.first] = i.second;
 	}

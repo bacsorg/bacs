@@ -10,12 +10,12 @@ std::string bunsan::pm::repository::native::value(const std::string &key)
 
 void bunsan::pm::repository::native::read_index(const entry &package, boost::property_tree::ptree &ptree)
 {
-	boost::property_tree::read_info(source_resource(package, value(name_file_index)).native(), ptree);
+	boost::property_tree::read_info(source_resource(package, value(name_file_index)).generic_string(), ptree);
 }
 
 void bunsan::pm::repository::native::read_checksum(const entry &package, boost::property_tree::ptree &ptree)
 {
-	boost::property_tree::read_info(source_resource(package, value(name_file_checksum)).native(), ptree);
+	boost::property_tree::read_info(source_resource(package, value(name_file_checksum)).generic_string(), ptree);
 }
 
 std::string bunsan::pm::repository::native::remote_resource(const entry &package, const std::string &name)
@@ -40,7 +40,7 @@ namespace
 	void check_dir(const boost::filesystem::path &dir)
 	{
 		if (!dir.is_absolute())
-			throw std::runtime_error("you have to use absolute path, but "+dir.native()+" was used");
+			throw std::runtime_error("you have to use absolute path, but "+dir.generic_string()+" was used");
 		SLOG("checking "<<dir);
 		if (!boost::filesystem::is_directory(dir))
 		{
