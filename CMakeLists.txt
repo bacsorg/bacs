@@ -2,6 +2,8 @@ project(bunsan_pm)
 
 cmake_minimum_required(VERSION 2.8)
 
+include(${CMAKE_SOURCE_DIR}/user-config.cmake OPTIONAL)
+
 # BOOST
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
