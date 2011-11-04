@@ -1,5 +1,6 @@
 #include "repository_native.hpp"
-#include "repository_config.hpp"
+#include "bunsan/pm/index.hpp"
+#include "bunsan/pm/config.hpp"
 
 #include <map>
 #include <set>
@@ -13,23 +14,23 @@
 
 void bunsan::pm::repository::native::create(const boost::filesystem::path &source, bool strip)
 {
-	boost::filesystem::path index_name = source/value(name_file_index);
-	boost::filesystem::path checksum_name = source/value(name_file_checksum);
+	boost::filesystem::path index_name = source/value(config::name::file::index);
+	boost::filesystem::path checksum_name = source/value(config::name::file::checksum);
 	std::map<std::string, std::string> checksum;
 	// we need to save index checksum
-	checksum[value(name_file_index)] = bunsan::pm::checksum(index_name);
+	checksum[value(config::name::file::index)] = bunsan::pm::checksum(index_name);
 	std::set<std::string> keep;
 	// we will keep index and checksum files
-	keep.insert(value(name_file_index));
-	keep.insert(value(name_file_checksum));
-	bunsan::executor creator(config.get_child(command_create));
+	keep.insert(value(config::name::file::index));
+	keep.insert(value(config::name::file::checksum));
+	bunsan::executor creator(config.get_child(config::command::create));
 	creator.current_path(source);// FIXME encapsulation fault
 	boost::property_tree::ptree index;
 	boost::property_tree::read_info(index_name.generic_string(), index);
-	for (const auto &i: index.get_child(child_source))
+	for (const auto &i: index.get_child(index::source::self))
 	{
 		std::string src_name = i.second.get_value<std::string>();
-		std::string src_value = src_name+value(suffix_src);
+		std::string src_value = src_name+value(config::suffix::src);
 		boost::filesystem::path src = source/src_name;
 		boost::filesystem::path dst = boost::filesystem::absolute(source/(src_value));
 		if (!boost::filesystem::exists(source/src_name))
