@@ -18,6 +18,7 @@
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/interprocess/sync/sharable_lock.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/assert.hpp>
 
 #include "bunsan/util.hpp"
 
@@ -51,8 +52,10 @@ void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 	ntv->check_dirs();
 	DLOG(starting build);
 	update_index_tree(package);
-	std::set<entry> supdated, pupdated, pin;
-	update_package_imports(package, supdated, pupdated, pin);
+	std::map<std::pair<entry, bool>, bool> updated;
+	std::set<std::pair<entry, bool>> in;
+	std::map<entry, boost::property_tree::ptree> snapshot;
+	update_package_depends(std::make_pair(package, true), updated, in, snapshot);
 }
 
 void bunsan::pm::repository::update_index_tree(const entry &package)
@@ -65,55 +68,99 @@ void bunsan::pm::repository::update_index_tree(const entry &package)
 			{
 				ntv->update_index(package);
 				visited.insert(package);
-				for (const auto &i: ntv->source_imports(package))
-					update_index(i.second);
-				for (const auto &i: ntv->package_imports(package))
-					update_index(i.second);
+				depends deps = ntv->read_depends(package);
+				for (const auto &i: deps.all())
+					update_index(i);
 			}
 		};
 	update_index(package);
 }
 
-void bunsan::pm::repository::update_source_imports(const entry &package, std::set<entry> &supdated, std::set<entry> &pupdated, std::set<entry> &sin, std::set<entry> &pin)
+namespace
 {
-	SLOG("starting "<<package<<" "<<__func__);
-	if (sin.find(package)!=sin.end())
-		throw std::runtime_error("circular source imports starting with \""+package.name()+"\"");
-	sin.insert(package);
+	template <typename Key, typename Value>
+	void merge_maps(std::map<Key, Value> &a, const std::map<Key, Value> &b)
 	{
-		if (supdated.find(package)==supdated.end())
+		for (const auto &i: b)
 		{
-			ntv->fetch_source(package);
-			supdated.insert(package);
+			auto iter = a.find(i.first);
+			if (iter!=a.end())
+				BOOST_ASSERT(iter->second==i.second);
+			else
+				a[i.first] = i.second;
 		}
-		for (const auto &i: ntv->source_imports(package))
-			update_source_imports(i.second, supdated, pupdated, sin, pin);
-		for (const auto &i: ntv->package_imports(package))
-			update_package_imports(i.second, supdated, pupdated, pin);
 	}
-	sin.erase(package);
 }
 
-void bunsan::pm::repository::update_package_imports(const entry &package, std::set<entry> &supdated, std::set<entry> &pupdated, std::set<entry> &pin)
+bool bunsan::pm::repository::update_package_depends(
+	const std::pair<entry, bool> &package,
+	std::map<std::pair<entry, bool>, bool> &updated,
+	std::set<std::pair<entry, bool>> &in,
+	std::map<entry, boost::property_tree::ptree> &snapshot)
 {
-	SLOG("starting "<<package<<" "<<__func__);
-	if (pin.find(package)!=pin.end())
-		throw std::runtime_error("circular package imports starting with \""+package.name()+"\"");
-	pin.insert(package);
-	if (pupdated.find(package)==pupdated.end() && ntv->package_outdated(package))
+	SLOG("starting "<<package.first<<" ("<<(package.second?"package":"source")<<") "<<__func__);
+	if (in.find(package)!=in.end())
+		throw std::runtime_error("circular dependencies starting with \""+package.first.name()+"\"");
 	{
-		SLOG(package<<" is outdated, checking all imports");
-		{
-			std::set<entry> sin;
-			update_source_imports(package, supdated, pupdated, sin, pin);
-		}
-		SLOG("building "<<package);
-		ntv->build(package);
+		auto iter = updated.find(package);
+		if (iter!=updated.end())
+			return iter->second;
 	}
-	else
-		SLOG(package<<" is up to date");
-	pupdated.insert(package);
-	pin.erase(package);
+	in.insert(package);
+	bool upd = false;
+	{
+		depends deps = ntv->read_depends(package.first);
+		if (package.second)
+		{// package
+			for (const auto &i: deps.package)
+			{
+				std::map<entry, boost::property_tree::ptree> snapshot_;
+				bool ret = update_package_depends(std::make_pair(i.second, true), updated, in, snapshot_);
+				upd = upd || ret;
+				::merge_maps(snapshot, snapshot_);
+			}
+			{
+				std::map<entry, boost::property_tree::ptree> snapshot_;
+				bool ret = update_package_depends(std::make_pair(package.first, false), updated, in, snapshot_);
+				upd = upd || ret;
+				::merge_maps(snapshot, snapshot_);
+			}
+			upd = upd || ntv->package_outdated(package.first, snapshot);
+			if (upd)
+			{
+				ntv->build(package.first, snapshot);
+			}
+		}
+		else
+		{// source
+			for (const auto &i: deps.source.import.package)
+			{
+				std::map<entry, boost::property_tree::ptree> snapshot_;
+				bool ret = update_package_depends(std::make_pair(i.second, true), updated, in, snapshot_);
+				upd = upd || ret;
+				::merge_maps(snapshot, snapshot_);
+			}
+			for (const auto &i: deps.source.import.source)
+			{
+				std::map<entry, boost::property_tree::ptree> snapshot_;
+				bool ret = update_package_depends(std::make_pair(i.second, false), updated, in, snapshot_);
+				upd = upd || ret;
+				::merge_maps(snapshot, snapshot_);
+			}
+			ntv->fetch_source(package.first);
+			{
+				boost::property_tree::ptree checksum;
+				ntv->read_checksum(package.first, checksum);
+				auto iter = snapshot.find(package.first);
+				if (iter!=snapshot.end())
+					BOOST_ASSERT(iter->second==checksum);
+				else
+					snapshot[package.first] =checksum;
+			}
+		}
+	}
+	in.erase(package);
+	return updated[package] = upd;
 }
 
 void bunsan::pm::repository::clean()
