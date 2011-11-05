@@ -6,39 +6,40 @@ platforms, so package is being built on every client machine.
 Building results are cached.
 
 \section building_sec Building
+\subsection entities_ssec Entities
 Package is a building result.
 We will distinguish the following entities:
-	- "package installation" -- the result of merging "package build" and other "package installations" (specified by package maintainer)
+	- <b>package installation</b> -- the result of merging <b>package build</b> and other <b>package installations</b> (specified by package maintainer)
 		- note, that package is installed in temporary directory and then is being packed
-		- "package installation" term will be used to name 
-	- "package build" -- the result of building "package sources"
-	- "package source" -- the result of extraction of "package self sources" and "package imports" merged together in one directory
-		- "package imports" -- union of "package source imports" and "package installation imports"
-			- "package installation import" -- extraction of "package installation" of specified package into "package source" directory
-			- "package source import" -- extraction of "package source" of specified package into "package source" directory
-		- "package self source" -- sources that belong to corresponding package
-	- "package checksum" -- checksum of all "package self sources" and "package index"
-	- "package index" -- configuration file of the corresponding package
-
+		- <b>package installation</b> term will be used to name
+	- <b>package build</b> -- the result of building <b>package sources</b>
+	- <b>package source</b> -- the result of extraction of <b>package self sources</b> and <b>package imports</b> merged together in one directory
+		- <b>package imports</b> -- union of <b>package source imports</b> and <b>package installation imports</b>
+			- <b>package installation import</b> -- extraction of <b>package installation</b> of specified package into <b>package source</b> directory
+			- <b>package source import</b> -- extraction of <b>package source</b> of specified package into <b>package source</b> directory
+		- <b>package self source</b> -- sources that belong to corresponding package
+	- <b>package checksum</b> -- checksum of all <b>package self sources</b> and <b>package index</b>
+	- <b>package index</b> -- configuration file of the corresponding package
+\subsection stages_ssec Stages
 Package building process can be separated into different stages:
-	- "package index" update -- we should synchronize with server to retrieve the latest data ("package checksum" is also updated at this stage)
-		- note, that we have to update all package dependencies "package indices"
+	- <b>package index</b> update -- we should synchronize with server to retrieve the latest data (<b>package checksum</b> is also updated at this stage)
+		- note, that we have to update all package dependencies <b>package indices</b>
 	- depth-first-search dependency build process
-	- package building -- creation of the "package build"
-		- "package source" extraction
-			- "package self source" extraction
-			- "package imports" extraction
+	- package building -- creation of the <b>package build</b>
+		- <b>package source</b> extraction
+			- <b>package self source</b> extraction
+			- <b>package imports</b> extraction
 		- configuration
 		- compilation
 		- packing
-	- "package installation" creation
-		- unpacking of "package build"
-		- merging with specified "package installations"
-		- packing into "package installation" entity
+	- <b>package installation</b> creation
+		- unpacking of <b>package build</b>
+		- merging with specified <b>package installations</b>
+		- packing into <b>package installation</b> entity
 
 \section example_sec Example
 
-Consider the following example: we have to build A "package installation".
+Consider the following example: we have to build A <b>package installation</b>.
 There are also B, C, D and E packages.
 
 \dot
@@ -122,14 +123,14 @@ There are also B, C, D and E packages.
 \enddot
 
 Note the following facts:
-	- "package self source" can be a list of sources, but graph complexity is not influenced by that.
-	- package can have arbitrary number of "package imports" of any kind specified above
-	- "package self sources" are always leaves.
-	- "package self source" and "package build" are inaccessible directly for import by other packages.
+	- <b>package self source</b> can be a list of sources, but graph complexity is not influenced by that.
+	- package can have arbitrary number of <b>package imports</b> of any kind specified above
+	- <b>package self sources</b> are always leaves.
+	- <b>package self source</b> and <b>package build</b> are inaccessible directly for import by other packages.
 	- dependency graph is always topological-sortable, otherwise packages are ill-formed
-	- "E installation" will not be built because nothing depends on it (building is lazy)
+	- <b>E installation</b> will not be built because nothing depends on it (building is lazy)
 	- everything will be built in topological-sort order
-	- "package self source", "package build" and "package installation" will be cached
+	- <b>package self source</b>, <b>package build</b> and <b>package installation</b> will be cached
 
 */
 
