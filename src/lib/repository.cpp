@@ -58,9 +58,10 @@ void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 	DLOG(starting build);
 	update_index_tree(package);
 	std::map<std::pair<entry, int>, bool> updated;
+	std::map<std::pair<entry, int>, std::map<entry, boost::property_tree::ptree>> snapshot_cache;
 	std::set<std::pair<entry, int>> in;
 	std::map<entry, boost::property_tree::ptree> snapshot;
-	update_package_depends(std::make_pair(package, package::installation), updated, in, snapshot);
+	update_package_depends(std::make_pair(package, package::installation), updated, in, snapshot, snapshot_cache);
 }
 
 void bunsan::pm::repository::update_index_tree(const entry &package)
@@ -81,35 +82,24 @@ void bunsan::pm::repository::update_index_tree(const entry &package)
 	update_index(package);
 }
 
-namespace
-{
-	template <typename Key, typename Value>
-	void merge_maps(std::map<Key, Value> &a, const std::map<Key, Value> &b)
-	{
-		for (const auto &i: b)
-		{
-			auto iter = a.find(i.first);
-			if (iter!=a.end())
-				BOOST_ASSERT(iter->second==i.second);
-			else
-				a[i.first] = i.second;
-		}
-	}
-}
-
 bool bunsan::pm::repository::update_package_depends(
 	const std::pair<entry, int> &package,
 	std::map<std::pair<entry, int>, bool> &updated,
 	std::set<std::pair<entry, int>> &in,
-	std::map<entry, boost::property_tree::ptree> &snapshot)
+	std::map<entry, boost::property_tree::ptree> &snapshot,
+	std::map<std::pair<entry, int>, std::map<entry, boost::property_tree::ptree>> &snapshot_cache)
 {
-	SLOG("starting "<<package.first<<" ("<<(package.second?"package":"source")<<") "<<__func__);
+	const char *type[] = {"installation", "build", "source"};
+	SLOG("starting "<<package.first<<" ("<<type[package.second]<<") "<<__func__);
 	if (in.find(package)!=in.end())
 		throw std::runtime_error("circular dependencies starting with \""+package.first.name()+"\"");
 	{
 		auto iter = updated.find(package);
 		if (iter!=updated.end())
+		{
+			snapshot = snapshot_cache.at(package);
 			return iter->second;
+		}
 	}
 	in.insert(package);
 	bool upd = false;
@@ -121,15 +111,15 @@ bool bunsan::pm::repository::update_package_depends(
 			for (const auto &i: deps.package)
 			{
 				std::map<entry, boost::property_tree::ptree> snapshot_;
-				bool ret = update_package_depends(std::make_pair(i.second, package::installation), updated, in, snapshot_);
+				bool ret = update_package_depends(std::make_pair(i.second, package::installation), updated, in, snapshot_, snapshot_cache);
 				upd = upd || ret;
-				::merge_maps(snapshot, snapshot_);
+				merge_maps(snapshot, snapshot_);
 			}
 			{
 				std::map<entry, boost::property_tree::ptree> snapshot_;
-				bool ret = update_package_depends(std::make_pair(package.first, package::build), updated, in, snapshot_);
+				bool ret = update_package_depends(std::make_pair(package.first, package::build), updated, in, snapshot_, snapshot_cache);
 				upd = upd || ret;
-				::merge_maps(snapshot, snapshot_);
+				merge_maps(snapshot, snapshot_);
 			}
 			upd = upd || ntv->installation_outdated(package.first, snapshot);
 			if (upd)
@@ -143,9 +133,9 @@ bool bunsan::pm::repository::update_package_depends(
 		{
 			{
 				std::map<entry, boost::property_tree::ptree> snapshot_;
-				bool ret = update_package_depends(std::make_pair(package.first, package::source), updated, in, snapshot_);
+				bool ret = update_package_depends(std::make_pair(package.first, package::source), updated, in, snapshot_, snapshot_cache);
 				upd = upd || ret;
-				::merge_maps(snapshot, snapshot_);
+				merge_maps(snapshot, snapshot_);
 			}
 			upd = upd || ntv->build_outdated(package.first, snapshot);
 			if (upd)
@@ -160,16 +150,16 @@ bool bunsan::pm::repository::update_package_depends(
 			for (const auto &i: deps.source.import.package)
 			{
 				std::map<entry, boost::property_tree::ptree> snapshot_;
-				bool ret = update_package_depends(std::make_pair(i.second, package::installation), updated, in, snapshot_);
+				bool ret = update_package_depends(std::make_pair(i.second, package::installation), updated, in, snapshot_, snapshot_cache);
 				upd = upd || ret;
-				::merge_maps(snapshot, snapshot_);
+				merge_maps(snapshot, snapshot_);
 			}
 			for (const auto &i: deps.source.import.source)
 			{
 				std::map<entry, boost::property_tree::ptree> snapshot_;
-				bool ret = update_package_depends(std::make_pair(i.second, package::source), updated, in, snapshot_);
+				bool ret = update_package_depends(std::make_pair(i.second, package::source), updated, in, snapshot_, snapshot_cache);
 				upd = upd || ret;
-				::merge_maps(snapshot, snapshot_);
+				merge_maps(snapshot, snapshot_);
 			}
 			// we will always try to fetch source
 			// native object will download source only if it is outdated or does not exist
@@ -181,7 +171,7 @@ bool bunsan::pm::repository::update_package_depends(
 				if (iter!=snapshot.end())
 					BOOST_ASSERT(iter->second==checksum);
 				else
-					snapshot[package.first] =checksum;
+					snapshot[package.first] = checksum;
 			}
 		}
 		break;
@@ -189,6 +179,7 @@ bool bunsan::pm::repository::update_package_depends(
 		BOOST_ASSERT(false);
 	}
 	in.erase(package);
+	snapshot_cache[package] = snapshot;
 	return updated[package] = upd;
 }
 
