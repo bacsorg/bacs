@@ -39,7 +39,7 @@ namespace bunsan{namespace pm
 		/*!
 		 * \brief Extract package data to destination.
 		 *
-		 * \todo We can do implicit update.
+		 * \todo We can do explicit update.
 		 */
 		void extract(const entry &package, const boost::filesystem::path &destination);
 		/*!
@@ -60,15 +60,13 @@ namespace bunsan{namespace pm
 		void update(const entry &package);
 		/// updates package depends and imports "index" files tree
 		void update_index_tree(const entry &package);
-		/*!
-		 * \param supdated packages which sources were fetched
-		 * \param pupdated packages which was checked with ntv->package_outdated(package)
-		 */
-		void update_source_imports(const entry &package, std::set<entry> &supdated, std::set<entry> &pupdated, std::set<entry> &sin, std::set<entry> &pin);
-		/*
-		 * \copydoc bunsan::pm::repository::update_source_imports
-		 */
-		void update_package_imports(const entry &package, std::set<entry> &supdated, std::set<entry> &pupdated, std::set<entry> &pin);
+		/// dfs topological-sort order update algorithm
+		bool update_package_depends(
+			const std::pair<entry, int> &package,
+			std::map<std::pair<entry, int>, bool> &updated,
+			std::set<std::pair<entry, int>> &in,
+			std::map<entry, boost::property_tree::ptree> &snapshot,
+			std::map<std::pair<entry, int>, std::map<entry, boost::property_tree::ptree>> &snapshot_cache);
 	};
 }}
 
