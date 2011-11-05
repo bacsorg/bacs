@@ -34,22 +34,64 @@ boost::filesystem::path bunsan::pm::repository::native::package_resource(const e
 	return package.local_resource(value(config::dir::package), name);
 }
 
+std::multimap<boost::filesystem::path, std::string> bunsan::pm::repository::native::sources(const entry &package)
+{
+	return read_depends(package).source.self;
+}
+
+void bunsan::pm::repository::native::pack(const bunsan::executor &packer_, const boost::filesystem::path &source, const boost::filesystem::path &destination)
+{
+	bunsan::executor packer = packer_;
+	packer.current_path(source.parent_path())(source.filename(), destination);// FIXME encapsulation fault
+}
+
 bunsan::pm::repository::native::native(const boost::property_tree::ptree &config_): config(config_){}
+
+void bunsan::pm::repository::native::write_snapshot(const boost::filesystem::path &path, const std::map<entry, boost::property_tree::ptree> &snapshot)
+{
+	boost::property_tree::ptree snapshot_;
+	for (const auto &i: snapshot)
+		snapshot_.push_back(boost::property_tree::ptree::value_type(i.first.name(), i.second));
+	boost::property_tree::write_info(path.generic_string(), snapshot_);
+}
+
+std::map<bunsan::pm::entry, boost::property_tree::ptree> bunsan::pm::repository::native::read_snapshot(const boost::filesystem::path &path)
+{
+	std::map<entry, boost::property_tree::ptree> snapshot;
+	boost::property_tree::ptree snapshot_;
+	boost::property_tree::read_info(path.generic_string(), snapshot_);
+	for (const auto &i: snapshot_)
+	{
+		auto iter = snapshot.find(i.first);
+		if (iter!=snapshot.end())
+			BOOST_ASSERT(iter->second==i.second);
+		else
+			snapshot[i.first] = i.second;
+	}
+	return snapshot;
+}
 
 bunsan::pm::depends bunsan::pm::repository::native::read_depends(const entry &package)
 {
-	boost::property_tree::ptree index;
-	read_index(package, index);
-	depends deps;
-	for (const auto &i: index.get_child(pm::index::package))
-		deps.package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-	for (const auto &i: index.get_child(pm::index::source::self))
-		deps.source.self.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-	for (const auto &i: index.get_child(pm::index::source::import::package))
-		deps.source.import.package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-	for (const auto &i: index.get_child(pm::index::source::import::source))
-		deps.source.import.source.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-	return deps;
+	try
+	{
+		boost::property_tree::ptree index;
+		read_index(package, index);
+		depends deps;
+		for (const auto &i: index.get_child(pm::index::package, boost::property_tree::ptree()))
+			deps.package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
+		for (const auto &i: index.get_child(pm::index::source::self, boost::property_tree::ptree()))
+			deps.source.self.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
+		for (const auto &i: index.get_child(pm::index::source::import::package, boost::property_tree::ptree()))
+			deps.source.import.package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
+		for (const auto &i: index.get_child(pm::index::source::import::source, boost::property_tree::ptree()))
+			deps.source.import.source.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
+		return deps;
+	}
+	catch (std::exception &e)
+	{
+		throw pm_error("Unable to read package depends", e);
+	}
 }
 
 namespace
@@ -75,6 +117,26 @@ namespace
 			DLOG(created);
 		}
 	}
+}
+
+bool bunsan::pm::repository::native::build_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot)
+{
+	boost::filesystem::path snp = package_resource(package, value(config::name::file::build_snapshot));
+	boost::filesystem::path build = package_resource(package, value(config::name::file::build));
+	if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(build))
+		return true;
+	std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
+	return snapshot!=snapshot_;
+}
+
+bool bunsan::pm::repository::native::installation_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot)
+{
+	boost::filesystem::path snp = package_resource(package, value(config::name::file::installation_snapshot));
+	boost::filesystem::path installation = package_resource(package, value(config::name::file::installation));
+	if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(installation))
+		return true;
+	std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
+	return snapshot!=snapshot_;
 }
 
 void bunsan::pm::repository::native::check_dirs()
