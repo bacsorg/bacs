@@ -1,0 +1,137 @@
+/*!
+\page package_page Package
+Package is a self-sufficient entity that can be used for specified purposes,
+such as executing, shared data. Packages can be used on different
+platforms, so package is being built on every client machine.
+Building results are cached.
+
+\section building_sec Building
+Package is a building result.
+We will distinguish the following entities:
+	- "package installation" -- the result of merging "package build" and other "package installations" (specified by package maintainer)
+		- note, that package is installed in temporary directory and then is being packed
+		- "package installation" term will be used to name 
+	- "package build" -- the result of building "package sources"
+	- "package source" -- the result of extraction of "package self sources" and "package imports" merged together in one directory
+		- "package imports" -- union of "package source imports" and "package installation imports"
+			- "package installation import" -- extraction of "package installation" of specified package into "package source" directory
+			- "package source import" -- extraction of "package source" of specified package into "package source" directory
+		- "package self source" -- sources that belong to corresponding package
+	- "package checksum" -- checksum of all "package self sources" and "package index"
+	- "package index" -- configuration file of the corresponding package
+
+Package building process can be separated into different stages:
+	- "package index" update -- we should synchronize with server to retrieve the latest data ("package checksum" is also updated at this stage)
+		- note, that we have to update all package dependencies "package indices"
+	- depth-first-search dependency build process
+	- package building -- creation of the "package build"
+		- "package source" extraction
+			- "package self source" extraction
+			- "package imports" extraction
+		- configuration
+		- compilation
+		- packing
+	- "package installation" creation
+		- unpacking of "package build"
+		- merging with specified "package installations"
+		- packing into "package installation" entity
+
+\section example_sec Example
+
+Consider the following example: we have to build A "package installation".
+There are also B, C, D and E packages.
+
+\dot
+	digraph G
+	{
+		{
+			node[color="red"];
+			Ainstall[label="A installation"];
+			Abuild[label="A build"];
+			Asource[label="A source"];
+			Aself[label="A self source"];
+		}
+		{
+			node[color="blue"];
+			Binstall[label="B installation"];
+			Bbuild[label="B build"];
+			Bsource[label="B source"];
+			Bself[label="B self source"];
+		}
+		{
+			node[color="purple"];
+			Cinstall[label="C installation"];
+			Cbuild[label="C build"];
+			Csource[label="C source"];
+			Cself[label="C self source"];
+		}
+		{
+			node[color="green"];
+			Dinstall[label="D installation"];
+			Dbuild[label="D build"];
+			Dsource[label="D source"];
+			Dself[label="D self source"];
+		}
+		{
+			node[color="magenta"];
+			{
+				node[color="gray", style="dotted"];
+				Einstall[label="E installation"];
+				Ebuild[label="E build"];
+			}
+			Esource[label="E source"];
+			Eself[label="E self source"];
+		}
+		{
+			{
+				Ainstall->Abuild;
+				Abuild->Asource;
+				Asource->Aself;
+			}
+			{
+				Binstall->Bbuild;
+				Bbuild->Bsource;
+				Bsource->Bself;
+			}
+			{
+				Cinstall->Cbuild;
+				Cbuild->Csource;
+				Csource->Cself;
+			}
+			{
+				Dinstall->Dbuild;
+				Dbuild->Dsource;
+				Dsource->Dself;
+			}
+			{
+				{
+					edge[style="dotted"];
+					Einstall->Ebuild;
+					Ebuild->Esource;
+				}
+				Esource->Eself;
+			}
+			Ainstall->Binstall;
+			Bsource->Dinstall;
+			Asource->Dinstall;
+			Binstall->Cinstall;
+			Asource->Csource;
+			Bsource->Esource;
+		}
+	}
+\enddot
+
+Note the following facts:
+	- "package self source" can be a list of sources, but graph complexity is not influenced by that.
+	- package can have arbitrary number of "package imports" of any kind specified above
+	- "package self sources" are always leaves.
+	- "package self source" and "package build" are inaccessible directly for import by other packages.
+	- dependency graph is always topological-sortable, otherwise packages are ill-formed
+	- "E installation" will not be built because nothing depends on it (building is lazy)
+	- everything will be built in topological-sort order
+	- "package self source", "package build" and "package installation" will be cached
+
+*/
+
+// vim:syntax=doxygen
+

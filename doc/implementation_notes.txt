@@ -1,0 +1,21 @@
+/*!
+\page implementation_notes_page Implementation notes
+
+\section checksum_sec Checksum algorithm
+Currently SHA512 used as hashing algorithm (Crypto++ library).
+crc32 boost implementation or any of hashing algorithms
+implemented in Crypto++ can easily be used instead.
+
+\section build_sec Building engine
+Implementation rely on cmake building engine. Currently it can't be easily replaced
+(source code changes may be required). We need program execution abstraction engine
+to encapsulate program executions in functors.
+
+\section dfs_sec Depth-first search implementation
+DFS is implemented in naive recursive manner with circular-dependencies checks
+and without stack-overflow checks, so the depth of depends is limited by stack size.
+
+*/
+
+// vim:syntax=doxygen
+

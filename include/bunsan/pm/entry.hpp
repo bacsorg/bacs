@@ -9,6 +9,7 @@
 
 namespace bunsan{namespace pm
 {
+	/// Represents \ref package_page "package" reference in repository.
 	class entry
 	{
 	public:
