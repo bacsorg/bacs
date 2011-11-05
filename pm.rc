@@ -16,23 +16,24 @@ name
 		tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp ; for small files
 		index index
 		checksum checksum
-		snapshot snapshot
-		pkg pkg.tar.gz
+		build build.tar.xz
+		installation installation.tar.xz
+		installation_snapshot installation_snapshot
+		build_snapshot build_snapshot
 	}
 	dir
 	{
 		source source
 		build build
-		pkg pkg
+		installation installation
 	}
 }
 suffix
 {
-	src .txz
-	pkg .tar.gz ;changed name
+	archive .txz
 }
-;repository "http://localhost/~lex/repo"
-repository "/home/lex/public_html/repo"
+;repository_url "http://localhost/~lex/repo"
+repository_url "/home/lex/public_html/repo"
 command
 {
 	example
@@ -71,6 +72,14 @@ command
 		p 0
 		p 1
 	}
+	pack
+	{
+		t tar
+		t cJf
+		p 1
+		p 0
+		t --exclude-vcs
+	}
 	unpack
 	{
 		t tar
@@ -82,33 +91,23 @@ command
 	configure
 	{
 		t cmake
-		t -DCMAKE_MODULE_PATH=/home/lex/istu/dev/bunsan/pm
+		t -DCMAKE_INSTALL_PREFIX=/
 		p 0
 	}
 	compile
 	{
 		t make
-		t -j3
+		;t -j3
 	}
-	pack
+	install
 	{
 		t make
-		t package
-	}
-	extract
-	{
-		t tar
-		t xzf
-		p 0
-		t -C
-		p 1
-	}
-	create
-	{
-		t tar
-		t cJf
-		p 1
-		p 0
+		t install
+		c
+		{
+			t DESTDIR=
+			p 0
+		}
 	}
 }
 
