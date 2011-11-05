@@ -43,8 +43,13 @@ void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boo
 	DLOG(trying to update);
 	update(package);
 	DLOG(trying to extract);
-	ntv->extract(package, destination);
+	ntv->extract_installation(package, destination);
 }
+
+namespace bunsan{namespace pm{namespace package
+{
+	enum {installation, build, source};
+}}}
 
 void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 {
@@ -52,10 +57,10 @@ void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 	ntv->check_dirs();
 	DLOG(starting build);
 	update_index_tree(package);
-	std::map<std::pair<entry, bool>, bool> updated;
-	std::set<std::pair<entry, bool>> in;
+	std::map<std::pair<entry, int>, bool> updated;
+	std::set<std::pair<entry, int>> in;
 	std::map<entry, boost::property_tree::ptree> snapshot;
-	update_package_depends(std::make_pair(package, true), updated, in, snapshot);
+	update_package_depends(std::make_pair(package, package::installation), updated, in, snapshot);
 }
 
 void bunsan::pm::repository::update_index_tree(const entry &package)
@@ -93,9 +98,9 @@ namespace
 }
 
 bool bunsan::pm::repository::update_package_depends(
-	const std::pair<entry, bool> &package,
-	std::map<std::pair<entry, bool>, bool> &updated,
-	std::set<std::pair<entry, bool>> &in,
+	const std::pair<entry, int> &package,
+	std::map<std::pair<entry, int>, bool> &updated,
+	std::set<std::pair<entry, int>> &in,
 	std::map<entry, boost::property_tree::ptree> &snapshot)
 {
 	SLOG("starting "<<package.first<<" ("<<(package.second?"package":"source")<<") "<<__func__);
@@ -108,45 +113,66 @@ bool bunsan::pm::repository::update_package_depends(
 	}
 	in.insert(package);
 	bool upd = false;
+	depends deps = ntv->read_depends(package.first);
+	switch (package.second)
 	{
-		depends deps = ntv->read_depends(package.first);
-		if (package.second)
-		{// package
+	case package::installation:
+		{
 			for (const auto &i: deps.package)
 			{
 				std::map<entry, boost::property_tree::ptree> snapshot_;
-				bool ret = update_package_depends(std::make_pair(i.second, true), updated, in, snapshot_);
+				bool ret = update_package_depends(std::make_pair(i.second, package::installation), updated, in, snapshot_);
 				upd = upd || ret;
 				::merge_maps(snapshot, snapshot_);
 			}
 			{
 				std::map<entry, boost::property_tree::ptree> snapshot_;
-				bool ret = update_package_depends(std::make_pair(package.first, false), updated, in, snapshot_);
+				bool ret = update_package_depends(std::make_pair(package.first, package::build), updated, in, snapshot_);
 				upd = upd || ret;
 				::merge_maps(snapshot, snapshot_);
 			}
-			upd = upd || ntv->package_outdated(package.first, snapshot);
+			upd = upd || ntv->installation_outdated(package.first, snapshot);
 			if (upd)
 			{
-				ntv->build(package.first, snapshot);
+				ntv->build_installation(package.first);
+				BOOST_ASSERT(!ntv->installation_outdated(package.first, snapshot));
 			}
 		}
-		else
-		{// source
+		break;
+	case package::build:
+		{
+			{
+				std::map<entry, boost::property_tree::ptree> snapshot_;
+				bool ret = update_package_depends(std::make_pair(package.first, package::source), updated, in, snapshot_);
+				upd = upd || ret;
+				::merge_maps(snapshot, snapshot_);
+			}
+			upd = upd || ntv->build_outdated(package.first, snapshot);
+			if (upd)
+			{
+				ntv->build(package.first);
+				BOOST_ASSERT(!ntv->build_outdated(package.first, snapshot));
+			}
+		}
+		break;
+	case package::source:
+		{
 			for (const auto &i: deps.source.import.package)
 			{
 				std::map<entry, boost::property_tree::ptree> snapshot_;
-				bool ret = update_package_depends(std::make_pair(i.second, true), updated, in, snapshot_);
+				bool ret = update_package_depends(std::make_pair(i.second, package::installation), updated, in, snapshot_);
 				upd = upd || ret;
 				::merge_maps(snapshot, snapshot_);
 			}
 			for (const auto &i: deps.source.import.source)
 			{
 				std::map<entry, boost::property_tree::ptree> snapshot_;
-				bool ret = update_package_depends(std::make_pair(i.second, false), updated, in, snapshot_);
+				bool ret = update_package_depends(std::make_pair(i.second, package::source), updated, in, snapshot_);
 				upd = upd || ret;
 				::merge_maps(snapshot, snapshot_);
 			}
+			// we will always try to fetch source
+			// native object will download source only if it is outdated or does not exist
 			ntv->fetch_source(package.first);
 			{
 				boost::property_tree::ptree checksum;
@@ -158,6 +184,9 @@ bool bunsan::pm::repository::update_package_depends(
 					snapshot[package.first] =checksum;
 			}
 		}
+		break;
+	default:
+		BOOST_ASSERT(false);
 	}
 	in.erase(package);
 	return updated[package] = upd;
