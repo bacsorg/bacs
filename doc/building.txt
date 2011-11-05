@@ -1,0 +1,47 @@
+/*!
+\page building_spage Building implementation notes
+
+\section stages_sec Stages
+Package building process can be separated into different stages:
+	- <b>package index</b> update -- we should synchronize with server to retrieve the latest data (<b>package checksum</b> is also updated at this stage)
+		- note, that we have to update all package dependencies <b>package indices</b>
+	- depth-first-search dependency build process
+	- package building -- creation of the <b>package build</b>
+		- <b>package source</b> extraction
+			- <b>package self source</b> extraction
+			- <b>package imports</b> extraction
+		- configuration
+		- compilation
+		- packing
+	- <b>package installation</b> building
+		- unpacking of <b>package build</b>
+		- merging with specified <b>package installations</b>
+		- packing into <b>package installation</b> entity
+
+\section algo_sec Building algorithms
+Please note that for platform-independent execution support we will move all file and directory names into \ref configuration_page "configuration" file.<br>
+Instead of real names configuration aliases will be used, such as <b>name::file::build</b> value will be taken from \ref configuration_page "configuration" file.
+\subsection package_building_ssec Package building
+- create temporary <b>${build}</b> directory
+- extract sources into <b>${build}/name::dir::source</b> directory accumulating checksums into <b>build_snapshot</b>
+- save <b>build_snapshot</b> into <b>${build}/name::file::build_snapshot</b>
+- configure sources to build in <b>${build}/name::dir::build</b>
+- build sources in <b>${build}/name::dir::build</b> directory
+- create <b>${build}/name::dir::installation</b> directory and install building results in it
+- pack <b>${build}/name::dir::installation</b> directory into <b>${build}/name::file::build</b>
+- copy <b>${build}/name::file::build</b> into <b>${package}/name::file::build</b>
+- copy <b>${build}/name::file::build_snapshot</b> into <b>${package}/name::file::build_snapshot</b>
+
+\subsection package_installation_ssec Package installation building
+- create temporary <b>${build}</b> directory
+- extract <b>${package}/name::file::build</b> into <b>${build}/name::dir::installation</b> directory
+- merge it with other package installation
+- merge <b>${build}/name::file::build_snapshot</b> with imported package installations snapshots into <b>${build}/name::file::installation_snapshot</b>
+- pack it into <b>${build}/name::file::installation</b>
+- copy <b>${build}/name::file::installation</b> into <b>${package}/name::file::installation</b>
+- copy <b>${build}/name::file::installation_snapshot</b> into <b>${package}/name::file::installation_snapshot</b>
+
+*/
+
+// vim:syntax=doxygen
+

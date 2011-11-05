@@ -20,22 +20,8 @@ We will distinguish the following entities:
 		- <b>package self source</b> -- sources that belong to corresponding package
 	- <b>package checksum</b> -- checksum of all <b>package self sources</b> and <b>package index</b>
 	- <b>package index</b> -- configuration file of the corresponding package
-\subsection stages_ssec Stages
-Package building process can be separated into different stages:
-	- <b>package index</b> update -- we should synchronize with server to retrieve the latest data (<b>package checksum</b> is also updated at this stage)
-		- note, that we have to update all package dependencies <b>package indices</b>
-	- depth-first-search dependency build process
-	- package building -- creation of the <b>package build</b>
-		- <b>package source</b> extraction
-			- <b>package self source</b> extraction
-			- <b>package imports</b> extraction
-		- configuration
-		- compilation
-		- packing
-	- <b>package installation</b> creation
-		- unpacking of <b>package build</b>
-		- merging with specified <b>package installations</b>
-		- packing into <b>package installation</b> entity
+
+\subpage building_spage
 
 \section depends_sec Generic dependencies graph for target package
 \dot
