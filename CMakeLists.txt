@@ -11,7 +11,7 @@ find_package(Boost COMPONENTS system filesystem serialization iostreams unit_tes
 include_directories(${Boost_INCLUDE_DIRS})
 
 if (${CMAKE_COMPILER_IS_GNUCC})
-	set(gcc_flags -g -Wall -Wextra)
+	set(gcc_flags -g -Wall -Wextra -Wfatal-errors)
 	if (${MINGW})
 		# MinGW has no pthread support
 		add_definitions(-std=c++0x ${gcc_flags})
