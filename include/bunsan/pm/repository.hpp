@@ -1,5 +1,5 @@
-#ifndef REPOSITORY_HPP
-#define REPOSITORY_HPP
+#ifndef BUNSAN_PM_REPOSITORY_HPP
+#define BUNSAN_PM_REPOSITORY_HPP
 
 #include <string>
 #include <map>
@@ -70,5 +70,5 @@ namespace bunsan{namespace pm
 	};
 }}
 
-#endif //REPOSITORY_HPP
+#endif //BUNSAN_PM_REPOSITORY_HPP
 
