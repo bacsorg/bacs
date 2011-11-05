@@ -13,7 +13,7 @@ namespace bunsan{namespace pm
 	class entry
 	{
 	public:
-		entry()=delete;
+		entry()=default;
 		entry(const std::string &name_);
 		entry(const char *name_);
 		entry(const entry &e);
