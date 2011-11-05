@@ -23,19 +23,18 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 	// we will keep index and checksum files
 	keep.insert(value(config::name::file::index));
 	keep.insert(value(config::name::file::checksum));
-	bunsan::executor creator(config.get_child(config::command::create));
-	creator.current_path(source);// FIXME encapsulation fault
+	bunsan::executor packer(config.get_child(config::command::pack));
 	boost::property_tree::ptree index;
 	boost::property_tree::read_info(index_name.generic_string(), index);
-	for (const auto &i: index.get_child(index::source::self))
+	for (const auto &i: index.get_child(index::source::self, boost::property_tree::ptree()))
 	{
 		std::string src_name = i.second.get_value<std::string>();
-		std::string src_value = src_name+value(config::suffix::src);
+		std::string src_value = src_name+value(config::suffix::archive);
 		boost::filesystem::path src = source/src_name;
 		boost::filesystem::path dst = boost::filesystem::absolute(source/(src_value));
 		if (!boost::filesystem::exists(source/src_name))
 			throw std::runtime_error("Source does not exists: \""+src_name+"\"");
-		creator(src_name, dst);
+		pack(packer, source/src_name, dst);
 		checksum[src_name] = bunsan::pm::checksum(source/src_value);
 		keep.insert(src_value);// we will also keep all source tarballs
 	}
