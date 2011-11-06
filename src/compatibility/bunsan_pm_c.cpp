@@ -1,4 +1,4 @@
-#include "bunsan/pm/bunsan_pm_c.hpp"
+#include "bunsan/pm/compatibility/repository.h"
 
 #include <cstring>
 
@@ -9,7 +9,7 @@
 
 #include "bunsan/pm/repository.hpp"
 
-void *bunsan_pm_create(char *error, size_t ebufsize, const char *config)
+void *bunsan_pm_new(char *error, size_t ebufsize, const char *config)
 {
 	try
 	{
@@ -68,7 +68,26 @@ int bunsan_pm_extract(char *error, size_t ebufsize, void *repository, const char
 	}
 }
 
-int bunsan_pm_remove(char *error, size_t ebufsize, void *repository)
+int bunsan_pm_create(char *error, size_t ebufsize, void *repository, const char *path, bool strip)
+{
+	try
+	{
+		static_cast<bunsan::pm::repository *>(repository)->create(path, strip);
+		return 0;
+	}
+	catch (std::exception &e)
+	{
+		strncpy(error, e.what(), ebufsize);
+		return -2;
+	}
+	catch (...)
+	{
+		strncpy(error, "Unknown error", ebufsize);
+		return -1;
+	}
+}
+
+int bunsan_pm_delete(char *error, size_t ebufsize, void *repository)
 {
 	try
 	{

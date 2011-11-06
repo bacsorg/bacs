@@ -29,13 +29,16 @@ target_link_libraries(${PROJECT_NAME} bunsan_common cryptopp ${Boost_LIBRARIES})
 add_executable(bunsan_repo src/main.cpp)
 target_link_libraries(bunsan_repo ${PROJECT_NAME})
 
-add_library(bunsan_pm_c SHARED src/bunsan_pm_c.cpp)
+add_library(bunsan_pm_c SHARED src/compatibility/bunsan_pm_c.cpp)
 target_link_libraries(bunsan_pm_c bunsan_pm)
+
+add_library(bunsan_pm_compatibility SHARED src/compatibility/repository.cpp)
+target_link_libraries(bunsan_pm_compatibility bunsan_pm)
 
 # install
 
 install(DIRECTORY include DESTINATION .)
-install(TARGETS ${PROJECT_NAME} bunsan_pm_c DESTINATION lib)
+install(TARGETS ${PROJECT_NAME} bunsan_pm_c bunsan_pm_compatibility DESTINATION lib)
 install(TARGETS bunsan_repo DESTINATION bin)
 
 # testing
