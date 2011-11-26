@@ -18,6 +18,7 @@
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/interprocess/sync/sharable_lock.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 #include <boost/assert.hpp>
 
 #include "bunsan/util.hpp"
@@ -25,7 +26,9 @@
 bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): ntv(0), config(config_)
 {
 	DLOG(creating repository instance);
-	flock.reset(new boost::interprocess::file_lock(config.get<std::string>("lock.global").c_str()));
+	boost::optional<std::string> lock_file = config.get_optional<std::string>("lock.global");
+	if (lock_file)
+		flock.reset(new boost::interprocess::file_lock(lock_file.get().c_str()));
 	ntv = new native(config);
 }
 
@@ -35,8 +38,20 @@ void bunsan::pm::repository::create(const boost::filesystem::path &source, bool 
 	ntv->create(source, strip);
 }
 
+namespace
+{
+	void require_lock(bool has, const char *func)
+	{
+		if (!has)
+			throw std::runtime_error((boost::format(
+				"You can't use %s function because "
+				"global file lock is undefined in config file")%func).str());
+	}
+}
+
 void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
 {
+	require_lock(static_cast<bool>(flock), __func__);
 	SLOG("extract "<<package<<" to "<<destination);
 	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
 	boost::mutex::scoped_lock lk2(slock);
@@ -185,10 +200,13 @@ bool bunsan::pm::repository::update_package_depends(
 
 void bunsan::pm::repository::clean()
 {
+	require_lock(static_cast<bool>(flock), __func__);
 	boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
 	boost::mutex::scoped_lock lk2(slock);
 	ntv->clean();
 }
+
+
 
 bunsan::pm::repository::~repository()
 {

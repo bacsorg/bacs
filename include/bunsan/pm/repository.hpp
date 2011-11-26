@@ -48,6 +48,18 @@ namespace bunsan{namespace pm
 		 * \todo It seems that such method should be, but semantics can be different.
 		 */
 		void clean();
+		/// Extract value from config as Ret
+		template <typename Ret, typename ... Args>
+		Ret config_get(Args &&...args) const
+		{
+			return config.get<Ret>(std::forward<Args>(args)...);
+		}
+		/// Extract value from config as boost::property_tree::ptree
+		template <typename ... Args>
+		boost::property_tree::ptree config_get_child(Args &&...args) const
+		{
+			return config.get_child(std::forward<Args>(args)...);
+		}
 		~repository();
 	private:
 		class native;
