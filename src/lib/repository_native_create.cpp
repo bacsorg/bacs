@@ -19,10 +19,7 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 	std::map<std::string, std::string> checksum;
 	// we need to save index checksum
 	checksum[value(config::name::file::index)] = bunsan::pm::checksum(index_name);
-	std::set<std::string> keep;
-	// we will keep index and checksum files
-	keep.insert(value(config::name::file::index));
-	keep.insert(value(config::name::file::checksum));
+	std::set<std::string> to_remove;
 	bunsan::executor packer(config.get_child(config::command::pack));
 	boost::property_tree::ptree index;
 	boost::property_tree::read_info(index_name.generic_string(), index);
@@ -36,7 +33,7 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 			throw std::runtime_error("Source does not exists: \""+src_name+"\"");
 		pack(packer, source/src_name, dst);
 		checksum[src_name] = bunsan::pm::checksum(source/src_value);
-		keep.insert(src_value);// we will also keep all source tarballs
+		to_remove.insert(src_name);// we will remove all sources
 	}
 	{
 		boost::property_tree::ptree checksum_;
@@ -44,10 +41,11 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 			checksum_.put(boost::property_tree::ptree::path_type(i.first, '\0'), i.second);
 		boost::property_tree::write_info(checksum_name.generic_string(), checksum_);
 	}
+	// we will remove all files at the end to provide exception guarantee that we will not remove anything accidentally
 	if (strip)
 		for (boost::filesystem::directory_iterator i(source); i!=boost::filesystem::directory_iterator(); ++i)
 		{
-			if (keep.find(i->path().filename().generic_string())==keep.end())
+			if (to_remove.find(i->path().filename().generic_string())!=to_remove.end())
 			{
 				SLOG("Removing excess file from source package: "<<i->path());
 				boost::filesystem::remove_all(*i);
