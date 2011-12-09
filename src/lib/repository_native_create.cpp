@@ -43,13 +43,11 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 	}
 	// we will remove all files at the end to provide exception guarantee that we will not remove anything accidentally
 	if (strip)
-		for (boost::filesystem::directory_iterator i(source); i!=boost::filesystem::directory_iterator(); ++i)
+		for (const auto &i: to_remove)
 		{
-			if (to_remove.find(i->path().filename().generic_string())!=to_remove.end())
-			{
-				SLOG("Removing excess file from source package: "<<i->path());
-				boost::filesystem::remove_all(*i);
-			}
+			boost::filesystem::path path = source/i;
+			SLOG("Removing excess file from source package: "<<path);
+			boost::filesystem::remove_all(path);
 		}
 }
 
