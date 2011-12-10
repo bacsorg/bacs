@@ -11,12 +11,12 @@ std::string bunsan::pm::repository::native::value(const std::string &key)
 
 void bunsan::pm::repository::native::read_index(const entry &package, boost::property_tree::ptree &ptree)
 {
-	boost::property_tree::read_info(source_resource(package, value(config::name::file::index)).generic_string(), ptree);
+	boost::property_tree::read_info(source_resource(package, value(config::name::file::index)).string(), ptree);
 }
 
 void bunsan::pm::repository::native::read_checksum(const entry &package, boost::property_tree::ptree &ptree)
 {
-	boost::property_tree::read_info(source_resource(package, value(config::name::file::checksum)).generic_string(), ptree);
+	boost::property_tree::read_info(source_resource(package, value(config::name::file::checksum)).string(), ptree);
 }
 
 std::string bunsan::pm::repository::native::remote_resource(const entry &package, const std::string &name)
@@ -52,14 +52,14 @@ void bunsan::pm::repository::native::write_snapshot(const boost::filesystem::pat
 	boost::property_tree::ptree snapshot_;
 	for (const auto &i: snapshot)
 		snapshot_.push_back(boost::property_tree::ptree::value_type(i.first.name(), i.second));
-	boost::property_tree::write_info(path.generic_string(), snapshot_);
+	boost::property_tree::write_info(path.string(), snapshot_);
 }
 
 std::map<bunsan::pm::entry, boost::property_tree::ptree> bunsan::pm::repository::native::read_snapshot(const boost::filesystem::path &path)
 {
 	std::map<entry, boost::property_tree::ptree> snapshot;
 	boost::property_tree::ptree snapshot_;
-	boost::property_tree::read_info(path.generic_string(), snapshot_);
+	boost::property_tree::read_info(path.string(), snapshot_);
 	for (const auto &i: snapshot_)
 	{
 		auto iter = snapshot.find(i.first);
@@ -99,7 +99,7 @@ namespace
 	void check_dir(const boost::filesystem::path &dir)
 	{
 		if (!dir.is_absolute())
-			throw std::runtime_error("you have to use absolute path, but "+dir.generic_string()+" was used");
+			throw std::runtime_error("you have to use absolute path, but "+dir.string()+" was used");
 		SLOG("checking "<<dir);
 		if (!boost::filesystem::is_directory(dir))
 		{

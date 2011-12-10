@@ -12,7 +12,7 @@ int main()
 	std::string name = "some/long/name";
 	entry e(name);
 	assert(e.name()==name);
-	assert(e.location().generic_string()==name);
+	assert(e.location().string()==name);
 	assert(e.remote_resource("/repo", "res")=="/repo/"+name+"/res");
 	assert(e.remote_resource("repo", "res")=="repo/"+name+"/res");
 	assert(e.remote_resource("", "res")==name+"/res");

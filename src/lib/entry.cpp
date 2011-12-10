@@ -34,9 +34,9 @@ void bunsan::pm::entry::build(const std::string &name_)
 		throw std::runtime_error(error);
 	for (const auto &i: location_)
 	{
-		if (!is_allowed_subpath(i.generic_string()))
+		if (!is_allowed_subpath(i.string()))
 			throw std::runtime_error(error);
-		tmp /= i.generic_string();
+		tmp /= i.string();
 	}
 	location_.swap(tmp);
 }
@@ -77,7 +77,7 @@ std::vector<std::string> bunsan::pm::entry::decomposition() const
 	std::vector<std::string> path;
 	for (const auto &i: location_)
 	{
-		path.push_back(i.generic_string());
+		path.push_back(i.string());
 	}
 	return path;
 }
@@ -92,7 +92,7 @@ std::string bunsan::pm::entry::name(char delimiter) const
 	std::string buf;
 	for (const auto &i: location_)
 	{
-		buf += i.generic_string();
+		buf += i.string();
 		buf.push_back(delimiter);
 	}
 	if (!buf.empty())
@@ -113,14 +113,14 @@ std::string bunsan::pm::entry::remote_resource(const std::string &repository, co
 	assert(!location_.empty());
 	for (const auto &i: location_)
 	{
-		full += i.generic_string();
+		full += i.string();
 			full.push_back('/');
 	}
 	full.resize(full.size()-1);//full.pop_back();
 	for (const auto &i: name)
 	{
 		full.push_back('/');
-		full += i.generic_string();
+		full += i.string();
 	}
 	return full;
 }

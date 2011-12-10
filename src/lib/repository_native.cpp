@@ -39,7 +39,7 @@ namespace
 		{
 			fetcher(source, file);
 			if (outdated(file, checksum))
-				throw std::runtime_error("Error loading file \""+file.generic_string()+"\": wrong checksum");
+				throw std::runtime_error("Error loading file \""+file.string()+"\": wrong checksum");
 		}
 	}
 }
