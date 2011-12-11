@@ -26,20 +26,20 @@ aux_source_directory(src/lib lib_srcs)
 add_library(${PROJECT_NAME} SHARED ${lib_srcs})
 target_link_libraries(${PROJECT_NAME} bunsan_common cryptopp ${Boost_LIBRARIES})
 
-add_executable(bunsan_repo src/main.cpp)
-target_link_libraries(bunsan_repo ${PROJECT_NAME})
+add_executable(${PROJECT_NAME}_repo src/main.cpp)
+target_link_libraries(${PROJECT_NAME}_repo ${PROJECT_NAME})
 
-add_library(bunsan_pm_c SHARED src/compatibility/bunsan_pm_c.cpp)
-target_link_libraries(bunsan_pm_c bunsan_pm)
+add_library(${PROJECT_NAME}_c SHARED src/compatibility/bunsan_pm_c.cpp)
+target_link_libraries(${PROJECT_NAME}_c ${PROJECT_NAME})
 
-add_library(bunsan_pm_compatibility SHARED src/compatibility/repository.cpp)
-target_link_libraries(bunsan_pm_compatibility bunsan_pm)
+add_library(${PROJECT_NAME}_compatibility SHARED src/compatibility/repository.cpp)
+target_link_libraries(${PROJECT_NAME}_compatibility ${PROJECT_NAME})
 
 # install
 
 install(DIRECTORY include DESTINATION .)
-install(TARGETS ${PROJECT_NAME} bunsan_pm_c bunsan_pm_compatibility DESTINATION lib)
-install(TARGETS bunsan_repo DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_c ${PROJECT_NAME}_compatibility DESTINATION lib)
+install(TARGETS ${PROJECT_NAME}_repo DESTINATION bin)
 
 # testing
 
