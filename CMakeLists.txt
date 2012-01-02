@@ -10,9 +10,9 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost COMPONENTS system filesystem serialization iostreams unit_test_framework program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
-if (${CMAKE_COMPILER_IS_GNUCC})
-	set(gcc_flags -g -Wall -Wextra -Wfatal-errors)
-	if (${MINGW})
+if(${CMAKE_COMPILER_IS_GNUCC})
+	set(gcc_flags -g -Wall -Wextra)
+	if(${MINGW})
 		# MinGW has no pthread support
 		add_definitions(-std=c++0x ${gcc_flags})
 	else()
@@ -38,8 +38,14 @@ target_link_libraries(${PROJECT_NAME}_compatibility ${PROJECT_NAME})
 # install
 
 install(DIRECTORY include DESTINATION .)
-install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_c ${PROJECT_NAME}_compatibility DESTINATION lib)
-install(TARGETS ${PROJECT_NAME}_repo DESTINATION bin)
+install(TARGETS
+	${PROJECT_NAME}
+	${PROJECT_NAME}_c
+	${PROJECT_NAME}_repo
+	${PROJECT_NAME}_compatibility
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib)
 
 # testing
 
