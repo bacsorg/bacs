@@ -26,6 +26,9 @@ namespace bunsan{namespace pm
 			std::multimap<boost::filesystem::path, std::string> self;
 		} source;
 		std::vector<entry> all() const;
+		// boost::property_tree::ptree convertions
+		explicit depends(const boost::property_tree::ptree &index);
+		explicit operator boost::property_tree::ptree() const;
 	};
 }}
 

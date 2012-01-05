@@ -77,15 +77,7 @@ bunsan::pm::depends bunsan::pm::repository::native::read_depends(const entry &pa
 	{
 		boost::property_tree::ptree index;
 		read_index(package, index);
-		depends deps;
-		for (const auto &i: index.get_child(pm::index::package, boost::property_tree::ptree()))
-			deps.package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-		for (const auto &i: index.get_child(pm::index::source::self, boost::property_tree::ptree()))
-			deps.source.self.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-		for (const auto &i: index.get_child(pm::index::source::import::package, boost::property_tree::ptree()))
-			deps.source.import.package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-		for (const auto &i: index.get_child(pm::index::source::import::source, boost::property_tree::ptree()))
-			deps.source.import.source.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
+		depends deps(index);
 		return deps;
 	}
 	catch (std::exception &e)
