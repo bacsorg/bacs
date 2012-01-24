@@ -11,6 +11,8 @@ find_package(Boost COMPONENTS system filesystem serialization iostreams unit_tes
 list(APPEND includes ${Boost_INCLUDE_DIRS})
 list(APPEND libraries ${Boost_LIBRARIES})
 
+list(APPEND libraries bunsan_common)
+
 if(${CMAKE_COMPILER_IS_GNUCC})
 	set(gcc_flags -g -std=c++0x -Wall -Wextra)
 	if(${MINGW})
