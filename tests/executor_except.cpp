@@ -5,7 +5,7 @@
 #include <boost/property_tree/info_parser.hpp>
 
 #include "bunsan/util.hpp"
-#include "bunsan/utility::executor.hpp"
+#include "bunsan/utility/executor.hpp"
 
 int main()
 {
