@@ -14,14 +14,6 @@
 
 namespace bunsan{namespace utility
 {
-	class return_code: public std::runtime_error
-	{
-	public:
-		explicit return_code(int code_);
-		operator int() const throw();
-	private:
-		int code;
-	};
 	class executor
 	{
 	public:
@@ -35,7 +27,7 @@ namespace bunsan{namespace utility
 		executor &operator=(executor &&)=default;
 		/*!
 		 * \brief run command with specified arguments
-		 * \throws return_code if return code is not zero
+		 * \throws bunsan::process::non_zero_exit_status
 		 */
 		void operator()() const;
 		/*!

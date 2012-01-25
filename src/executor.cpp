@@ -93,9 +93,7 @@ bunsan::utility::executor::executor(const boost::property_tree::ptree &command):
 void bunsan::utility::executor::operator()() const
 {
 	DLOG(trying to execute);
-	int code = sync();
-	if (code)
-		throw bunsan::utility::return_code(code);
+	bunsan::process::check_sync_execute(context());
 }
 
 bunsan::utility::executor &bunsan::utility::executor::add_argument(const std::string &arg)
@@ -203,15 +201,5 @@ int bunsan::utility::executor::sync() const
 {
 	DLOG(trying to execute);
 	return bunsan::process::sync_execute(context());
-}
-
-bunsan::utility::return_code::return_code(int code_):
-	std::runtime_error("command has finished with \""+boost::lexical_cast<std::string>(code_)+"\" return code"),
-	code(code_)
-{}
-
-bunsan::utility::return_code::operator int() const throw()
-{
-	return code;
 }
 
