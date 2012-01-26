@@ -53,12 +53,6 @@ void archivers::tar::unpack(
 	bunsan::process::check_sync_execute(ctx);
 }
 
-void archivers::tar::setup(const utility::config_type &config)
-{
-	for (const auto &i: config)
-		setarg(i.first, i.second.get_value<std::string>());
-}
-
 void archivers::tar::setarg(const std::string &key, const std::string &value)
 {
 	if (key=="format")

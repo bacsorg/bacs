@@ -20,8 +20,12 @@ namespace bunsan{namespace utility
 		 * \todo what will happen to previous settings?
 		 *
 		 * You can find options documentation in utility docs
+		 *
+		 * Default implementation will call
+		 * setarg(i.first, i.second.get_value<std::string>())
+		 * for every config child
 		 */
-		virtual void setup(const config_type &config)=0;
+		virtual void setup(const config_type &config);
 		/*!
 		 * \brief Set up utility option
 		 *

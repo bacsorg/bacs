@@ -17,7 +17,6 @@ namespace bunsan{namespace utility{namespace archivers
 		virtual void unpack(
 			const boost::filesystem::path &src,
 			const boost::filesystem::path &dst);
-		virtual void setup(const utility::config_type &config);
 		virtual void setarg(const std::string &key, const std::string &value);
 	private:
 		static bool factory_reg_hook;
