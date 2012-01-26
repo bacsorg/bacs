@@ -41,6 +41,6 @@ void fetchers::curl::fetch(const std::string &uri, const boost::filesystem::path
 
 void fetchers::curl::setarg(const std::string &key, const std::string &value)
 {
-	SLOG("unknown \"wget\" setarg key: \""<<key<<"\"");
+	SLOG("unknown \"curl\" setarg key: \""<<key<<"\"");
 }
 
