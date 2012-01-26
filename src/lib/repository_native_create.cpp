@@ -8,7 +8,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
-#include "bunsan/executor.hpp"
+#include "bunsan/utility/executor.hpp"
 
 #include "bunsan/pm/checksum.hpp"
 
@@ -20,7 +20,7 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 	// we need to save index checksum
 	checksum[value(config::name::file::index)] = bunsan::pm::checksum(index_name);
 	std::set<std::string> to_remove;
-	bunsan::executor packer(config.get_child(config::command::pack));
+	bunsan::utility::executor packer(config.get_child(config::command::pack));
 	boost::property_tree::ptree index;
 	boost::property_tree::read_info(index_name.string(), index);
 	for (const auto &i: index.get_child(index::source::self, boost::property_tree::ptree()))

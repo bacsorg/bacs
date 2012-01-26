@@ -10,7 +10,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-#include "bunsan/executor.hpp"
+#include "bunsan/utility/executor.hpp"
 #include "bunsan/util.hpp"
 #include "bunsan/tempfile.hpp"
 
@@ -33,7 +33,7 @@ namespace
 	{
 		return !boost::filesystem::exists(file) || bunsan::pm::checksum(file)!=checksum;
 	}
-	void load(const bunsan::executor &fetcher, const std::string &source, const boost::filesystem::path &file, const std::string &checksum)
+	void load(const bunsan::utility::executor &fetcher, const std::string &source, const boost::filesystem::path &file, const std::string &checksum)
 	{
 		if (outdated(file, checksum))
 		{
@@ -49,7 +49,7 @@ void bunsan::pm::repository::native::update_index(const entry &package)
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		bunsan::executor fetcher(config.get_child(config::command::fetch));
+		bunsan::utility::executor fetcher(config.get_child(config::command::fetch));
 		bunsan::tempfile_ptr checksum_ptr = bunsan::tempfile::from_model(value(config::name::file::tmp));
 		try
 		{
@@ -86,7 +86,7 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		const std::string src_sfx = value(config::suffix::archive);
-		bunsan::executor fetcher(config.get_child(config::command::fetch));
+		bunsan::utility::executor fetcher(config.get_child(config::command::fetch));
 		boost::filesystem::path output = package.remote_resource(value(config::dir::source));
 		boost::property_tree::ptree checksum;
 		read_checksum(package, checksum);
@@ -116,7 +116,7 @@ namespace
 				boost::filesystem::rename(src, dst);
 		}
 	}
-	void extract(const bunsan::executor &extractor, const boost::filesystem::path &source,
+	void extract(const bunsan::utility::executor &extractor, const boost::filesystem::path &source,
 		const boost::filesystem::path &destination, const boost::filesystem::path &subsource=boost::filesystem::path())
 	{
 		boost::filesystem::create_directories(destination);
@@ -131,7 +131,7 @@ void bunsan::pm::repository::native::unpack_source(const entry &package, const b
 	std::map<entry, boost::property_tree::ptree> &snapshot)
 {
 	SLOG("starting "<<package<<" import unpack");
-	bunsan::executor extractor(config.get_child(config::command::unpack));
+	bunsan::utility::executor extractor(config.get_child(config::command::unpack));
 	depends deps = read_depends(package);
 	// extract sources
 	for (const auto &i: deps.source.self)
@@ -154,7 +154,7 @@ void bunsan::pm::repository::native::unpack_source(const entry &package, const b
 	{
 		SLOG("starting "<<package<<" import extraction");
 		boost::filesystem::path snp = package_resource(i.second, value(config::name::file::installation_snapshot));
-		bunsan::executor extractor(config.get_child(config::command::unpack));
+		bunsan::utility::executor extractor(config.get_child(config::command::unpack));
 		extract_installation(i.second, destination/i.first, false);
 		std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
 		merge_maps(snapshot, snapshot_);
@@ -186,7 +186,10 @@ void bunsan::pm::repository::native::configure(const entry &package, const boost
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path build = build_dir/value(config::name::dir::build);
 		bunsan::reset_dir(build);
-		bunsan::executor::exec_from(build, config.get_child(config::command::configure), build_dir/value(config::name::dir::source));// FIXME encapsulation fault
+		bunsan::utility::executor::exec_from(
+			build,
+			config.get_child(config::command::configure),
+			build_dir/value(config::name::dir::source));// FIXME encapsulation fault
 	}
 	catch (std::exception &e)
 	{
@@ -201,7 +204,7 @@ void bunsan::pm::repository::native::compile(const entry &package, const boost::
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path build = build_dir/value(config::name::dir::build);
-		bunsan::executor::exec_from(build, config.get_child(config::command::compile));// FIXME encapsulation fault
+		bunsan::utility::executor::exec_from(build, config.get_child(config::command::compile));// FIXME encapsulation fault
 	}
 	catch (std::exception &e)
 	{
@@ -215,12 +218,12 @@ void bunsan::pm::repository::native::pack(const entry &package,	const boost::fil
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path snp = build_dir/value(config::name::file::build_snapshot);
-		bunsan::executor::exec_from(
+		bunsan::utility::executor::exec_from(
 			build_dir/value(config::name::dir::build),
 			config.get_child(config::command::install),
 			build_dir/value(config::name::dir::installation));
 		pack(
-			bunsan::executor(config.get_child(config::command::pack)),
+			bunsan::utility::executor(config.get_child(config::command::pack)),
 			build_dir/value(config::name::dir::installation),
 			build_dir/value(config::name::file::build));
 		boost::filesystem::create_directories(package.local_resource(value(config::dir::package)));
@@ -242,7 +245,7 @@ void bunsan::pm::repository::native::extract_build(const entry &package, const b
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		bunsan::executor extractor(config.get_child(config::command::unpack));
+		bunsan::utility::executor extractor(config.get_child(config::command::unpack));
 		bunsan::reset_dir(destination);
 		::extract(extractor, package_resource(package, value(config::name::file::build)), destination, value(config::name::dir::installation));
 	}
@@ -262,7 +265,8 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
 		boost::filesystem::path install_dir = build_dir->path()/value(config::name::dir::installation);
 		// unpack
 		extract_build(package, install_dir);
-		std::map<entry, boost::property_tree::ptree> snapshot = read_snapshot(package_resource(package, value(config::name::file::build_snapshot)));
+		std::map<entry, boost::property_tree::ptree> snapshot =
+			read_snapshot(package_resource(package, value(config::name::file::build_snapshot)));
 		depends deps = read_depends(package);
 		for (const auto &i: deps.package)
 		{
@@ -276,7 +280,7 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
 		write_snapshot(build_dir->path()/value(config::name::file::installation_snapshot), snapshot);
 		// pack
 		pack(
-			bunsan::executor(config.get_child(config::command::pack)),
+			bunsan::utility::executor(config.get_child(config::command::pack)),
 			install_dir,
 			build_dir->path()/value(config::name::file::installation));
 		boost::filesystem::copy_file(
@@ -299,7 +303,7 @@ void bunsan::pm::repository::native::extract_installation(const entry &package, 
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		bunsan::executor extractor(config.get_child(config::command::unpack));
+		bunsan::utility::executor extractor(config.get_child(config::command::unpack));
 		if (reset)
 			bunsan::reset_dir(destination);
 		else

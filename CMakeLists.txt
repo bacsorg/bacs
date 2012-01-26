@@ -24,7 +24,7 @@ include_directories(include)
 
 aux_source_directory(src/lib lib_srcs)
 add_library(${PROJECT_NAME} SHARED ${lib_srcs})
-target_link_libraries(${PROJECT_NAME} bunsan_common cryptopp ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} bunsan_common bunsan_utility cryptopp ${Boost_LIBRARIES})
 
 add_executable(${PROJECT_NAME}_repo src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_repo ${PROJECT_NAME})

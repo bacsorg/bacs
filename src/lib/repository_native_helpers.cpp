@@ -39,9 +39,12 @@ std::multimap<boost::filesystem::path, std::string> bunsan::pm::repository::nati
 	return read_depends(package).source.self;
 }
 
-void bunsan::pm::repository::native::pack(const bunsan::executor &packer_, const boost::filesystem::path &source, const boost::filesystem::path &destination)
+void bunsan::pm::repository::native::pack(
+	const bunsan::utility::executor &packer_,
+	const boost::filesystem::path &source,
+	const boost::filesystem::path &destination)
 {
-	bunsan::executor packer = packer_;
+	bunsan::utility::executor packer = packer_;
 	packer.current_path(source.parent_path())(source.filename(), destination);// FIXME encapsulation fault
 }
 
