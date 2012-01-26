@@ -9,6 +9,15 @@ namespace bunsan{namespace utility
 	class resolver
 	{
 	public:
+		/*!
+		 * \brief Object will use os-specified algorithms
+		 * for path resolving
+		 */
+		resolver();
+		/*!
+		 * \brief Object will use config-specified algorithms
+		 * for path resolving
+		 */
 		explicit resolver(const boost::property_tree::ptree &config);
 		resolver(const resolver &)=default;
 		resolver(resolver &&)=default;
