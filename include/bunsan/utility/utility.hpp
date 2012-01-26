@@ -23,6 +23,12 @@ namespace bunsan{namespace utility
 		 */
 		virtual void setup(const config_type &config)=0;
 		/*!
+		 * \brief Set up utility option
+		 *
+		 * Will override option value with same key
+		 */
+		virtual void setarg(const std::string &key, const std::string &value)=0;
+		/*!
 		 * \brief Does nothing
 		 *
 		 * Utility can have own destructor,
