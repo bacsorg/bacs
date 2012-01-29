@@ -13,16 +13,16 @@ void bunsan::utility::builder::pack(
 {
 	// tmp initialization
 	bunsan::reset_dir(bin);
-	bunsan::tempfile_ptr root_ = bunsan::tempfile::in_dir(bin);
-	bunsan::tempfile_ptr bin_ = bunsan::tempfile::in_dir(bin);
-	root_->auto_remove(false);
-	bin_->auto_remove(false);
-	bunsan::reset_dir(root_->path());
-	bunsan::reset_dir(bin_->path());
+	bunsan::tempfile root_ = bunsan::tempfile::in_dir(bin);
+	bunsan::tempfile bin_ = bunsan::tempfile::in_dir(bin);
+	root_.auto_remove(false);
+	bin_.auto_remove(false);
+	bunsan::reset_dir(root_.path());
+	bunsan::reset_dir(bin_.path());
 	// installation
-	install(src, bin, bin_->path());
+	install(src, bin_.path(), root_.path());
 	// packing
 	BOOST_ASSERT_MSG(archiver_, "Archiver pointer should not be null");
-	archiver_->pack_content(archive, root_->path());
+	archiver_->pack_content(archive, root_.path());
 }
 
