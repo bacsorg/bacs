@@ -59,6 +59,6 @@ void archivers::_7z::setarg(const std::string &key, const std::string &value)
 	if (key=="format")
 		m_format = value;
 	else
-		utility::setarg(key, value);
+		BOOST_THROW_EXCEPTION(unknown_option_error(key));
 }
 
