@@ -26,9 +26,9 @@ namespace bunsan{namespace utility
 		void swap(resolver &) throw();
 		// interface
 		boost::filesystem::path find_executable(
-			const boost::filesystem::path &exe);
+			const boost::filesystem::path &exe) const;
 		boost::filesystem::path find_library(
-			const boost::filesystem::path &lib);
+			const boost::filesystem::path &lib) const;
 	private:
 	};
 	inline void swap(resolver &a, resolver &b) throw()

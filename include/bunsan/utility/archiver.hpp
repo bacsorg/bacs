@@ -11,11 +11,11 @@ namespace bunsan{namespace utility
 	BUNSAN_FACTORY_BEGIN(archiver, const resolver &)
 	public:
 		virtual void pack(
-			const boost::filesystem::path &src,
-			const boost::filesystem::path &dst)=0;
+			const boost::filesystem::path &archive,
+			const boost::filesystem::path &dir)=0;
 		virtual void unpack(
-			const boost::filesystem::path &src,
-			const boost::filesystem::path &dst)=0;
+			const boost::filesystem::path &archive,
+			const boost::filesystem::path &dir)=0;
 	BUNSAN_FACTORY_END(archiver)
 }}
 

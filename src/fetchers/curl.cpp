@@ -3,7 +3,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 
-#include "bunsan/util.hpp"
 #include "bunsan/process/execute.hpp"
 #include "bunsan/system_error.hpp"
 
@@ -12,19 +11,18 @@ using namespace bunsan::utility;
 bool fetchers::curl::factory_reg_hook = fetcher::register_new("curl",
 	[](const resolver &resolver_)
 	{
-		fetcher_ptr ptr(new curl(resolver_));
+		fetcher_ptr ptr(new curl(resolver_.find_executable("curl")));
 		return ptr;
 	});
 
-fetchers::curl::curl(const resolver &resolver_): m_resolver(resolver_) {}
+fetchers::curl::curl(const boost::filesystem::path &exe): m_exe(exe) {}
 
 void fetchers::curl::fetch(const std::string &uri, const boost::filesystem::path &dst)
 {
-	const boost::filesystem::path exe = m_resolver.find_executable("curl");
 	bunsan::process::context ctx;
-	ctx.executable(exe);
+	ctx.executable(m_exe);
 	ctx.argv({
-		exe.filename().string(),
+		m_exe.filename().string(),
 		"--output",
 		boost::filesystem::absolute(dst).string(),
 		"--silent",
@@ -37,10 +35,5 @@ void fetchers::curl::fetch(const std::string &uri, const boost::filesystem::path
 		if (!touch.is_open())
 			bunsan::system_error(dst.string());
 	}
-}
-
-void fetchers::curl::setarg(const std::string &key, const std::string &value)
-{
-	SLOG("unknown \"curl\" setarg key: \""<<key<<"\"");
 }
 

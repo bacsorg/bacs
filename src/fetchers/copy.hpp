@@ -8,9 +8,8 @@ namespace bunsan{namespace utility{namespace fetchers
 	class copy: public fetcher
 	{
 	public:
-		explicit copy(const resolver &resolver_);
+		copy()=default;
 		virtual void fetch(const std::string &uri, const boost::filesystem::path &dst);
-		virtual void setarg(const std::string &key, const std::string &value);
 	private:
 		static bool factory_reg_hook_cp;
 		static bool factory_reg_hook_copy;

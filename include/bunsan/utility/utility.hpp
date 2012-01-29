@@ -2,9 +2,20 @@
 #define BUNSAN_UTILITY_UTILITY_HPP
 
 #include <boost/property_tree/ptree.hpp>
+#include <boost/any.hpp>
+
+#include "bunsan/utility/error.hpp"
 
 namespace bunsan{namespace utility
 {
+	class unknown_option_error: public virtual bunsan::utility::error
+	{
+	public:
+		explicit unknown_option_error(const std::string &option);
+		std::string option() const;
+	private:
+		typedef boost::error_info<struct error_option_tag, std::string> error_option;
+	};
 	/*!
 	 * \brief Abstract class that specifies the way
 	 * of options transmission + virtual destructor
@@ -29,9 +40,13 @@ namespace bunsan{namespace utility
 		/*!
 		 * \brief Set up utility option
 		 *
-		 * Will override option value with same key
+		 * Default implementation throws unknown_option_error(key) exception
 		 */
-		virtual void setarg(const std::string &key, const std::string &value)=0;
+		virtual void setarg(const std::string &key, const std::string &value);
+		/*!
+		 * \copydoc setarg
+		 */
+		virtual void setarg_any(const std::string &key, const boost::any &value);
 		/*!
 		 * \brief Does nothing
 		 *

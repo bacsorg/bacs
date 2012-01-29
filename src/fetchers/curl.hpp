@@ -7,11 +7,10 @@ namespace bunsan{namespace utility{namespace fetchers
 {
 	class curl: public fetcher
 	{
-		resolver m_resolver;
+		const boost::filesystem::path m_exe;
 	public:
-		explicit curl(const resolver &resolver_);
+		explicit curl(const boost::filesystem::path &exe);
 		virtual void fetch(const std::string &uri, const boost::filesystem::path &dst);
-		virtual void setarg(const std::string &key, const std::string &value);
 	private:
 		static bool factory_reg_hook;
 	};
