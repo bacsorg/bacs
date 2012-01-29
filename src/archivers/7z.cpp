@@ -22,18 +22,20 @@ BUNSAN_UTILITY_ARCHIVER_7Z(7zr)
 archivers::_7z::_7z(const boost::filesystem::path &exe):
 	m_exe(exe), m_format("7z") {}
 
-void archivers::_7z::pack(
+void archivers::_7z::pack_from(
+	const boost::filesystem::path &cwd,
 	const boost::filesystem::path &archive,
-	const boost::filesystem::path &dir)
+	const boost::filesystem::path &file)
 {
 	bunsan::process::context ctx;
 	ctx.executable(m_exe);
+	ctx.current_path(cwd);
 	ctx.argv({
 			m_exe.filename().string(),
 			"a",
 			"-t"+m_format,
 			archive.string(),
-			dir.string()
+			file.string()
 		});
 	bunsan::process::check_sync_execute(ctx);
 }

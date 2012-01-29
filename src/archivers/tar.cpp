@@ -15,21 +15,20 @@ bool archivers::tar::factory_reg_hook = archiver::register_new("tar",
 
 archivers::tar::tar(const boost::filesystem::path &exe): m_exe(exe) {}
 
-void archivers::tar::pack(
+void archivers::tar::pack_from(
+	const boost::filesystem::path &cwd,
 	const boost::filesystem::path &archive,
-	const boost::filesystem::path &dir)
+	const boost::filesystem::path &file)
 {
-	const boost::filesystem::path cwd = boost::filesystem::absolute(dir).parent_path();
-	const boost::filesystem::path dir_ = dir.filename();
 	bunsan::process::context ctx;
 	ctx.executable(m_exe);
 	ctx.argv({
 			m_exe.filename().string(),
 			"c"+m_format+"f",
-			boost::filesystem::absolute(archive).string(),
+			archive.string(),
 			"-C",
 			cwd.string(),
-			dir_.string()
+			file.string()
 		});
 	bunsan::process::check_sync_execute(ctx);
 }

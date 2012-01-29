@@ -12,6 +12,9 @@ namespace bunsan{namespace utility
 	public:
 		virtual void pack(
 			const boost::filesystem::path &archive,
+			const boost::filesystem::path &file)=0;
+		virtual void pack_content(
+			const boost::filesystem::path &archive,
 			const boost::filesystem::path &dir)=0;
 		virtual void unpack(
 			const boost::filesystem::path &archive,
