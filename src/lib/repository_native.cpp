@@ -19,12 +19,12 @@
 
 void bunsan::pm::repository::native::build(const entry &package)
 {
-	bunsan::tempfile_ptr build_dir = bunsan::tempfile::in_dir(value(config::dir::tmp));
-	bunsan::reset_dir(build_dir->path());
-	unpack(package, build_dir->path());
-	configure(package, build_dir->path());
-	compile(package, build_dir->path());
-	pack(package, build_dir->path());
+	bunsan::tempfile build_dir = bunsan::tempfile::in_dir(value(config::dir::tmp));
+	bunsan::reset_dir(build_dir.path());
+	unpack(package, build_dir.path());
+	configure(package, build_dir.path());
+	compile(package, build_dir.path());
+	pack(package, build_dir.path());
 }
 
 namespace
@@ -50,10 +50,10 @@ void bunsan::pm::repository::native::update_index(const entry &package)
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		bunsan::utility::executor fetcher(config.get_child(config::command::fetch));
-		bunsan::tempfile_ptr checksum_ptr = bunsan::tempfile::from_model(value(config::name::file::tmp));
+		bunsan::tempfile checksum_tmp = bunsan::tempfile::from_model(value(config::name::file::tmp));
 		try
 		{
-			fetcher(remote_resource(package, value(config::name::file::checksum)), checksum_ptr->path());
+			fetcher(remote_resource(package, value(config::name::file::checksum)), checksum_tmp.path());
 		}
 		catch (std::exception &e)
 		{
@@ -61,7 +61,7 @@ void bunsan::pm::repository::native::update_index(const entry &package)
 		}
 		boost::filesystem::path output = package.local_resource(value(config::dir::source));
 		boost::filesystem::create_directories(output);
-		boost::filesystem::copy_file(checksum_ptr->path(), output/value(config::name::file::checksum),
+		boost::filesystem::copy_file(checksum_tmp.path(), output/value(config::name::file::checksum),
 			boost::filesystem::copy_option::overwrite_if_exists);
 		boost::property_tree::ptree checksum;
 		read_checksum(package, checksum);
@@ -120,10 +120,10 @@ namespace
 		const boost::filesystem::path &destination, const boost::filesystem::path &subsource=boost::filesystem::path())
 	{
 		boost::filesystem::create_directories(destination);
-		bunsan::tempfile_ptr tmp = bunsan::tempfile::in_dir(destination);
-		bunsan::reset_dir(tmp->path());
-		extractor(source, tmp->path());
-		merge_dir(tmp->path()/subsource, destination);
+		bunsan::tempfile tmp = bunsan::tempfile::in_dir(destination);
+		bunsan::reset_dir(tmp.path());
+		extractor(source, tmp.path());
+		merge_dir(tmp.path()/subsource, destination);
 	}
 }
 
@@ -260,9 +260,9 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		bunsan::tempfile_ptr build_dir = bunsan::tempfile::in_dir(value(config::dir::tmp));
-		bunsan::reset_dir(build_dir->path());
-		boost::filesystem::path install_dir = build_dir->path()/value(config::name::dir::installation);
+		bunsan::tempfile build_dir = bunsan::tempfile::in_dir(value(config::dir::tmp));
+		bunsan::reset_dir(build_dir.path());
+		boost::filesystem::path install_dir = build_dir.path()/value(config::name::dir::installation);
 		// unpack
 		extract_build(package, install_dir);
 		std::map<entry, boost::property_tree::ptree> snapshot =
@@ -277,18 +277,18 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
 			merge_maps(snapshot, snapshot_);
 		}
 		// save snapshot
-		write_snapshot(build_dir->path()/value(config::name::file::installation_snapshot), snapshot);
+		write_snapshot(build_dir.path()/value(config::name::file::installation_snapshot), snapshot);
 		// pack
 		pack(
 			bunsan::utility::executor(config.get_child(config::command::pack)),
 			install_dir,
-			build_dir->path()/value(config::name::file::installation));
+			build_dir.path()/value(config::name::file::installation));
 		boost::filesystem::copy_file(
-			build_dir->path()/value(config::name::file::installation),
+			build_dir.path()/value(config::name::file::installation),
 			package_resource(package, value(config::name::file::installation)),
 			boost::filesystem::copy_option::overwrite_if_exists);
 		boost::filesystem::copy_file(
-			build_dir->path()/value(config::name::file::installation_snapshot),
+			build_dir.path()/value(config::name::file::installation_snapshot),
 			package_resource(package, value(config::name::file::installation_snapshot)),
 			boost::filesystem::copy_option::overwrite_if_exists);
 	}
