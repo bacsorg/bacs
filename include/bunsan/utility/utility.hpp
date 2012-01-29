@@ -40,7 +40,7 @@ namespace bunsan{namespace utility
 		/*!
 		 * \brief Set up utility option
 		 *
-		 * Default implementation throws unknown_option_error(key) exception
+		 * Default implementation throws unknown_option_error exception
 		 */
 		virtual void setarg(const std::string &key, const std::string &value);
 		/*!
