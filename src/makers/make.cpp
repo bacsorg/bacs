@@ -28,6 +28,7 @@ std::vector<std::string> makers::make::argv_(
 	}
 	if (m_threads)
 		argv.push_back("-j"+boost::lexical_cast<std::string>(m_threads.get()));
+	argv.insert(argv.end(), m_targets.begin(), m_targets.end());
 	argv.insert(argv.end(), targets.begin(), targets.end());
 	return argv;
 }
@@ -45,22 +46,30 @@ void makers::make::exec(
 
 /*!
 \verbatim
-define
+defines
 {
 	DESTDIR /some/path
+}
+targets
+{
+	"" install
 }
 threads 3
 \endverbatim
 */
 void makers::make::setup(const utility::config_type &config)
 {
-	m_threads.reset();
 	m_defines.clear();
+	m_targets.clear();
+	m_threads.reset();
 	for (const auto &i: config)
 	{
-		if (i.first=="define")
+		if (i.first=="defines")
 			for (const auto &j: i.second)
 				m_defines[j.first] = j.second.get_value<std::string>();
+		else if (i.first=="targets")
+			for (const auto &j: i.second)
+				m_targets.push_back(j.second.get_value<std::string>());
 		else if (i.first=="threads")
 			m_threads = i.second.get_value<std::size_t>();
 		else

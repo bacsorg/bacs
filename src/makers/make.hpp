@@ -14,6 +14,7 @@ namespace bunsan{namespace utility{namespace makers
 		const boost::filesystem::path m_exe;
 		boost::optional<std::size_t> m_threads;
 		std::unordered_map<std::string, std::string> m_defines;
+		std::vector<std::string> m_targets;
 	public:
 		explicit make(const boost::filesystem::path &exe);
 		virtual void exec(
