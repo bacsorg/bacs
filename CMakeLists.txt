@@ -41,6 +41,9 @@ list(APPEND srcs ${builders_srcs})
 aux_source_directory(src/fetchers fetchers_srcs)
 list(APPEND srcs ${fetchers_srcs})
 
+aux_source_directory(src/makers makers_srcs)
+list(APPEND srcs ${makers_srcs})
+
 include_directories(include ${includes})
 
 add_library(${PROJECT_NAME} SHARED ${srcs})
