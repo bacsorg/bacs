@@ -1,7 +1,9 @@
 #ifndef BUNSAN_PM_REPOSITORY_NATIVE_HPP
 #define BUNSAN_PM_REPOSITORY_NATIVE_HPP
 
-#include "bunsan/utility/executor.hpp"
+#include "bunsan/utility/archiver.hpp"
+#include "bunsan/utility/builder.hpp"
+#include "bunsan/utility/fetcher.hpp"
 
 #include "bunsan/pm/repository.hpp"
 #include "bunsan/pm/depends.hpp"
@@ -24,8 +26,6 @@ public:
 private:
 	void unpack_source(const entry &package, const boost::filesystem::path &destination, std::map<entry, boost::property_tree::ptree> &snapshot);
 	void unpack(const entry &package, const boost::filesystem::path &build_dir);
-	void configure(const entry &package, const boost::filesystem::path &build_dir);
-	void compile(const entry &package, const boost::filesystem::path &build_dir);
 	void pack(const entry &package, const boost::filesystem::path &build_dir);
 	std::string remote_resource(const entry &package, const std::string &name);
 	boost::filesystem::path source_resource(const entry &package, const std::string &name);
@@ -35,7 +35,6 @@ private:
 	std::multimap<boost::filesystem::path, std::string> sources(const entry &package);
 	std::map<entry, boost::property_tree::ptree> read_snapshot(const boost::filesystem::path &path);
 	void write_snapshot(const boost::filesystem::path &path, const std::map<entry, boost::property_tree::ptree> &snapshot);
-	void pack(const bunsan::utility::executor &packer_, const boost::filesystem::path &source, const boost::filesystem::path &destination);
 public:
 	bool installation_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot);
 	bool build_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot);
@@ -45,6 +44,11 @@ public:
 	void extract_installation(const entry &package, const boost::filesystem::path &destination, bool reset=true);
 private:
 	const boost::property_tree::ptree &config;
+	const bunsan::utility::resolver m_resolver;
+	bunsan::utility::archiver_ptr cache_archiver, source_archiver;
+	bunsan::utility::builder_ptr builder;
+	bunsan::utility::fetcher_ptr fetcher;
+private:
 	class pm_error: public std::runtime_error
 	{
 	public:

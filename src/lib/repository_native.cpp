@@ -10,7 +10,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-#include "bunsan/utility/executor.hpp"
 #include "bunsan/util.hpp"
 #include "bunsan/tempfile.hpp"
 
@@ -22,8 +21,6 @@ void bunsan::pm::repository::native::build(const entry &package)
 	bunsan::tempfile build_dir = bunsan::tempfile::in_dir(value(config::dir::tmp));
 	bunsan::reset_dir(build_dir.path());
 	unpack(package, build_dir.path());
-	configure(package, build_dir.path());
-	compile(package, build_dir.path());
 	pack(package, build_dir.path());
 }
 
@@ -33,11 +30,11 @@ namespace
 	{
 		return !boost::filesystem::exists(file) || bunsan::pm::checksum(file)!=checksum;
 	}
-	void load(const bunsan::utility::executor &fetcher, const std::string &source, const boost::filesystem::path &file, const std::string &checksum)
+	void load(const bunsan::utility::fetcher_ptr &fetcher, const std::string &source, const boost::filesystem::path &file, const std::string &checksum)
 	{
 		if (outdated(file, checksum))
 		{
-			fetcher(source, file);
+			fetcher->fetch(source, file);
 			if (outdated(file, checksum))
 				throw std::runtime_error("Error loading file \""+file.string()+"\": wrong checksum");
 		}
@@ -49,11 +46,10 @@ void bunsan::pm::repository::native::update_index(const entry &package)
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		bunsan::utility::executor fetcher(config.get_child(config::command::fetch));
 		bunsan::tempfile checksum_tmp = bunsan::tempfile::from_model(value(config::name::file::tmp));
 		try
 		{
-			fetcher(remote_resource(package, value(config::name::file::checksum)), checksum_tmp.path());
+			fetcher->fetch(remote_resource(package, value(config::name::file::checksum)), checksum_tmp.path());
 		}
 		catch (std::exception &e)
 		{
@@ -85,8 +81,7 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		const std::string src_sfx = value(config::suffix::archive);
-		bunsan::utility::executor fetcher(config.get_child(config::command::fetch));
+		const std::string src_sfx = value(config::suffix::source_archive);
 		boost::filesystem::path output = package.remote_resource(value(config::dir::source));
 		boost::property_tree::ptree checksum;
 		read_checksum(package, checksum);
@@ -116,13 +111,13 @@ namespace
 				boost::filesystem::rename(src, dst);
 		}
 	}
-	void extract(const bunsan::utility::executor &extractor, const boost::filesystem::path &source,
+	void extract(const bunsan::utility::archiver_ptr &extractor, const boost::filesystem::path &source,
 		const boost::filesystem::path &destination, const boost::filesystem::path &subsource=boost::filesystem::path())
 	{
 		boost::filesystem::create_directories(destination);
 		bunsan::tempfile tmp = bunsan::tempfile::in_dir(destination);
 		bunsan::reset_dir(tmp.path());
-		extractor(source, tmp.path());
+		extractor->unpack(source, tmp.path());
 		merge_dir(tmp.path()/subsource, destination);
 	}
 }
@@ -131,11 +126,10 @@ void bunsan::pm::repository::native::unpack_source(const entry &package, const b
 	std::map<entry, boost::property_tree::ptree> &snapshot)
 {
 	SLOG("starting "<<package<<" import unpack");
-	bunsan::utility::executor extractor(config.get_child(config::command::unpack));
 	depends deps = read_depends(package);
 	// extract sources
 	for (const auto &i: deps.source.self)
-		::extract(extractor, source_resource(package, i.second+value(config::suffix::archive)), destination/i.first, i.second);
+		::extract(source_archiver, source_resource(package, i.second+value(config::suffix::source_archive)), destination/i.first, i.second);
 	// dump package checksum into snapshot
 	{
 		auto iter = snapshot.find(package);
@@ -154,7 +148,6 @@ void bunsan::pm::repository::native::unpack_source(const entry &package, const b
 	{
 		SLOG("starting "<<package<<" import extraction");
 		boost::filesystem::path snp = package_resource(i.second, value(config::name::file::installation_snapshot));
-		bunsan::utility::executor extractor(config.get_child(config::command::unpack));
 		extract_installation(i.second, destination/i.first, false);
 		std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
 		merge_maps(snapshot, snapshot_);
@@ -179,53 +172,19 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
 	}
 }
 
-void bunsan::pm::repository::native::configure(const entry &package, const boost::filesystem::path &build_dir)
-{
-	try
-	{
-		SLOG("starting "<<package<<" "<<__func__);
-		boost::filesystem::path build = build_dir/value(config::name::dir::build);
-		bunsan::reset_dir(build);
-		bunsan::utility::executor::exec_from(
-			build,
-			config.get_child(config::command::configure),
-			build_dir/value(config::name::dir::source));// FIXME encapsulation fault
-	}
-	catch (std::exception &e)
-	{
-		throw pm_error("Unable to configure package", e);
-	}
-	
-}
-
-void bunsan::pm::repository::native::compile(const entry &package, const boost::filesystem::path &build_dir)
-{
-	try
-	{
-		SLOG("starting "<<package<<" "<<__func__);
-		boost::filesystem::path build = build_dir/value(config::name::dir::build);
-		bunsan::utility::executor::exec_from(build, config.get_child(config::command::compile));// FIXME encapsulation fault
-	}
-	catch (std::exception &e)
-	{
-		throw pm_error("Unable to compile package", e);
-	}
-}
-
-void bunsan::pm::repository::native::pack(const entry &package,	const boost::filesystem::path &build_dir)
+void bunsan::pm::repository::native::pack(const entry &package, const boost::filesystem::path &build_dir)
 {
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path snp = build_dir/value(config::name::file::build_snapshot);
-		bunsan::utility::executor::exec_from(
+		builder->install(
+			build_dir/value(config::name::dir::source),
 			build_dir/value(config::name::dir::build),
-			config.get_child(config::command::install),
 			build_dir/value(config::name::dir::installation));
-		pack(
-			bunsan::utility::executor(config.get_child(config::command::pack)),
-			build_dir/value(config::name::dir::installation),
-			build_dir/value(config::name::file::build));
+		cache_archiver->pack(
+			build_dir/value(config::name::file::build),
+			build_dir/value(config::name::dir::installation));
 		boost::filesystem::create_directories(package.local_resource(value(config::dir::package)));
 		boost::filesystem::copy_file(
 			build_dir/value(config::name::file::build),
@@ -245,9 +204,8 @@ void bunsan::pm::repository::native::extract_build(const entry &package, const b
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		bunsan::utility::executor extractor(config.get_child(config::command::unpack));
 		bunsan::reset_dir(destination);
-		::extract(extractor, package_resource(package, value(config::name::file::build)), destination, value(config::name::dir::installation));
+		::extract(cache_archiver, package_resource(package, value(config::name::file::build)), destination, value(config::name::dir::installation));
 	}
 	catch (std::exception &e)
 	{
@@ -279,10 +237,9 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
 		// save snapshot
 		write_snapshot(build_dir.path()/value(config::name::file::installation_snapshot), snapshot);
 		// pack
-		pack(
-			bunsan::utility::executor(config.get_child(config::command::pack)),
-			install_dir,
-			build_dir.path()/value(config::name::file::installation));
+		cache_archiver->pack(
+			build_dir.path()/value(config::name::file::installation),
+			install_dir);
 		boost::filesystem::copy_file(
 			build_dir.path()/value(config::name::file::installation),
 			package_resource(package, value(config::name::file::installation)),
@@ -303,12 +260,11 @@ void bunsan::pm::repository::native::extract_installation(const entry &package, 
 	try
 	{
 		SLOG("starting "<<package<<" "<<__func__);
-		bunsan::utility::executor extractor(config.get_child(config::command::unpack));
 		if (reset)
 			bunsan::reset_dir(destination);
 		else
 			boost::filesystem::create_directories(destination);
-		::extract(extractor, package_resource(package, value(config::name::file::installation)), destination, value(config::name::dir::installation));
+		::extract(cache_archiver, package_resource(package, value(config::name::file::installation)), destination, value(config::name::dir::installation));
 	}
 	catch (std::exception &e)
 	{

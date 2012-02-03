@@ -31,16 +31,31 @@ namespace bunsan{namespace pm{namespace config
 	}
 	namespace suffix
 	{
-		constexpr const char *archive = "suffix.archive";	///< suffix of archive files
+		constexpr const char *source_archive = "suffix.source_archive";		///< suffix of archive files
 	}
 	namespace command
 	{
-		constexpr const char *fetch = "command.fetch";		///< download command: fetch(source, destination)
-		constexpr const char *unpack = "command.unpack";	///< unpack command: unpack(source, destination)
-		constexpr const char *pack = "command.pack";		///< pack command, \todo encapsulation fault documentation
-		constexpr const char *configure = "command.configure";	///< configure command
-		constexpr const char *compile = "command.compile";	///< compilation command
-		constexpr const char *install = "command.install";	///< install command
+		constexpr const char *resolver = "resolver";
+		namespace builder
+		{
+			constexpr const char *type = "command.builder.type";
+			constexpr const char *config = "command.builder.config";
+		}
+		namespace fetcher
+		{
+			constexpr const char *type = "command.fetcher.type";
+			constexpr const char *config = "command.fetcher.config";
+		}
+		namespace source_archiver
+		{
+			constexpr const char *type = "command.source_archiver.type";
+			constexpr const char *config = "command.source_archiver.config";
+		}
+		namespace cache_archiver
+		{
+			constexpr const char *type = "command.cache_archiver.type";
+			constexpr const char *config = "command.cache_archiver.config";
+		}
 	}
 	constexpr const char *repository_url = "repository_url";	///< repository location
 }}}

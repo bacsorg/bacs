@@ -5,11 +5,11 @@
 #include <map>
 #include <set>
 
+#include <boost/filesystem/operations.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
-#include "bunsan/utility/executor.hpp"
-
+#include "bunsan/util.hpp"
 #include "bunsan/pm/checksum.hpp"
 
 void bunsan::pm::repository::native::create(const boost::filesystem::path &source, bool strip)
@@ -20,18 +20,17 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 	// we need to save index checksum
 	checksum[value(config::name::file::index)] = bunsan::pm::checksum(index_name);
 	std::set<std::string> to_remove;
-	bunsan::utility::executor packer(config.get_child(config::command::pack));
 	boost::property_tree::ptree index;
 	boost::property_tree::read_info(index_name.string(), index);
 	for (const auto &i: index.get_child(index::source::self, boost::property_tree::ptree()))
 	{
 		std::string src_name = i.second.get_value<std::string>();
-		std::string src_value = src_name+value(config::suffix::archive);
+		std::string src_value = src_name+value(config::suffix::source_archive);
 		boost::filesystem::path src = source/src_name;
 		boost::filesystem::path dst = boost::filesystem::absolute(source/(src_value));
 		if (!boost::filesystem::exists(source/src_name))
 			throw std::runtime_error("Source does not exists: \""+src_name+"\"");
-		pack(packer, source/src_name, dst);
+		source_archiver->pack(dst, source/src_name);
 		checksum[src_name] = bunsan::pm::checksum(source/src_value);
 		to_remove.insert(src_name);// we will remove all sources
 	}

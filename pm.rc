@@ -30,83 +30,55 @@ name
 }
 suffix
 {
-	archive .txz
+	source_archive .txz
 }
 ;repository_url "http://localhost/~lex/repo"
 repository_url "/home/lex/public_html/repo"
-command
+
+utility
 {
-	example
+	resolver
 	{
-		t curl
-		c ; class, connects all directly
+		#include "resolver.rc"
+	}
+	source_archiver
+	{
+		type tar
+		config
 		{
-			t text
-			p 1 ; positional placeholder
-			n name ; named placeholder ; ??? not supported
-			t
+			format J
+			;--exclude-vcs
 		}
-		p 0
 	}
-	_fetch
+	cache_archiver
 	{
-		t curl
-		t -s
-		t -f
-		p 0
-		t -o
-		p 1
-	}
-	_fetch
-	{
-		t wget
-		t -q
-		t -O
-		p 1
-		p 0
-	}
-	fetch
-	{
-		t cp
-		t -f
-		p 0
-		p 1
-	}
-	pack
-	{
-		t tar
-		t cJf
-		p 1
-		p 0
-		t --exclude-vcs
-	}
-	unpack
-	{
-		t tar
-		t xJf
-		p 0
-		t -C
-		p 1
-	}
-	configure
-	{
-		t cmake
-		t -DCMAKE_INSTALL_PREFIX=/
-		p 0
-	}
-	compile
-	{
-		t make
-		;t -j3
-	}
-	install
-	{
-		t make
-		t install
-		c
+		type tar
+		config
 		{
-			t DESTDIR=
-			p 0
+			format J
+		}
+	}
+	fetcher
+	{
+		;type curl
+		type copy
+	}
+	builder
+	{
+		type cmake
+		config
+		{
+			defines
+			{
+				CMAKE_INSTALL_PREFIX /
+			}
+			make_maker
+			{
+				threads 3
+			}
+			;install_maker
+			;{
+			;}
 		}
 	}
 }

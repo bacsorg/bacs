@@ -39,16 +39,27 @@ std::multimap<boost::filesystem::path, std::string> bunsan::pm::repository::nati
 	return read_depends(package).source.self;
 }
 
-void bunsan::pm::repository::native::pack(
-	const bunsan::utility::executor &packer_,
-	const boost::filesystem::path &source,
-	const boost::filesystem::path &destination)
+bunsan::pm::repository::native::native(const boost::property_tree::ptree &config_):
+	config(config_),
+	m_resolver(config.get_child(config::command::resolver))
 {
-	bunsan::utility::executor packer = packer_;
-	packer.current_path(source.parent_path())(source.filename(), destination);// FIXME encapsulation fault
+	using boost::property_tree::ptree;
+	using namespace config::command;
+	// creation
+	if (!(cache_archiver = bunsan::utility::archiver::instance(value(cache_archiver::type), m_resolver)))
+		throw std::runtime_error("Unable to create cache_archiver");
+	if (!(source_archiver = bunsan::utility::archiver::instance(value(source_archiver::type), m_resolver)))
+		throw std::runtime_error("Unable to create source_archiver");
+	if (!(builder = bunsan::utility::builder::instance(value(builder::type), m_resolver)))
+		throw std::runtime_error("Unable to create builder");
+	if (!(fetcher = bunsan::utility::fetcher::instance(value(fetcher::type), m_resolver)))
+		throw std::runtime_error("Unable to create fetcher");
+	// setup
+	cache_archiver->setup(config.get_child(cache_archiver::config, ptree()));
+	source_archiver->setup(config.get_child(source_archiver::config, ptree()));
+	builder->setup(config.get_child(builder::config, ptree()));
+	fetcher->setup(config.get_child(fetcher::config, ptree()));
 }
-
-bunsan::pm::repository::native::native(const boost::property_tree::ptree &config_): config(config_){}
 
 void bunsan::pm::repository::native::write_snapshot(const boost::filesystem::path &path, const std::map<entry, boost::property_tree::ptree> &snapshot)
 {
