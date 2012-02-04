@@ -47,7 +47,7 @@ utility
 		config
 		{
 			format J
-			;--exclude-vcs
+			exclude-vcs 1
 		}
 	}
 	cache_archiver
@@ -68,9 +68,12 @@ utility
 		type cmake
 		config
 		{
-			defines
+			cmake
 			{
-				CMAKE_INSTALL_PREFIX /
+				defines
+				{
+					CMAKE_INSTALL_PREFIX /
+				}
 			}
 			make_maker
 			{

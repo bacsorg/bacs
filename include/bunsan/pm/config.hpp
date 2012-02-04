@@ -35,26 +35,26 @@ namespace bunsan{namespace pm{namespace config
 	}
 	namespace command
 	{
-		constexpr const char *resolver = "resolver";
+		constexpr const char *resolver = "utility.resolver";
 		namespace builder
 		{
-			constexpr const char *type = "command.builder.type";
-			constexpr const char *config = "command.builder.config";
+			constexpr const char *type = "utility.builder.type";
+			constexpr const char *config = "utility.builder.config";
 		}
 		namespace fetcher
 		{
-			constexpr const char *type = "command.fetcher.type";
-			constexpr const char *config = "command.fetcher.config";
+			constexpr const char *type = "utility.fetcher.type";
+			constexpr const char *config = "utility.fetcher.config";
 		}
 		namespace source_archiver
 		{
-			constexpr const char *type = "command.source_archiver.type";
-			constexpr const char *config = "command.source_archiver.config";
+			constexpr const char *type = "utility.source_archiver.type";
+			constexpr const char *config = "utility.source_archiver.config";
 		}
 		namespace cache_archiver
 		{
-			constexpr const char *type = "command.cache_archiver.type";
-			constexpr const char *config = "command.cache_archiver.config";
+			constexpr const char *type = "utility.cache_archiver.type";
+			constexpr const char *config = "utility.cache_archiver.config";
 		}
 	}
 	constexpr const char *repository_url = "repository_url";	///< repository location

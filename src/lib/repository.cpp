@@ -206,8 +206,6 @@ void bunsan::pm::repository::clean()
 	ntv->clean();
 }
 
-
-
 bunsan::pm::repository::~repository()
 {
 	delete ntv;

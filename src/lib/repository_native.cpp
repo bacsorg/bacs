@@ -160,8 +160,14 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
 	{
 		SLOG("starting "<<package<<" "<<__func__);
 		boost::filesystem::path src = build_dir/value(config::name::dir::source);
+		boost::filesystem::path build = build_dir/value(config::name::dir::build);
+		boost::filesystem::path installation = build_dir/value(config::name::dir::installation);
 		boost::filesystem::path snp = build_dir/value(config::name::file::build_snapshot);
+		// create/clean directories
 		bunsan::reset_dir(src);
+		bunsan::reset_dir(build);
+		bunsan::reset_dir(installation);
+		// unpack source
 		std::map<entry, boost::property_tree::ptree> snapshot_map;
 		unpack_source(package, src, snapshot_map);
 		write_snapshot(snp, snapshot_map);
