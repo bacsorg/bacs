@@ -47,6 +47,7 @@ namespace bunsan{namespace utility{namespace builders
 	private:
 		boost::optional<std::size_t> m_generator;
 		std::map<std::string, std::string> m_cmake_defines;
+		utility::config_type m_make_maker_config, m_install_maker_config;
 		static const std::vector<generator> generators;
 		static bool factory_reg_hook;
 	};

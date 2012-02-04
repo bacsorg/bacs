@@ -116,6 +116,7 @@ void builders::cmake::make_(
 	case generator::type::makefile:
 		{
 			maker_ptr ptr = maker::instance("make", m_resolver);
+			ptr->setup(m_make_maker_config);
 			ptr->exec(bin, {});
 		}
 		break;
@@ -137,7 +138,7 @@ void builders::cmake::install_(
 	case generator::type::makefile:
 		{
 			maker_ptr ptr = maker::instance("make", m_resolver);
-			utility::config_type config;
+			utility::config_type config = m_install_maker_config;
 			config.put("defines.DESTDIR", boost::filesystem::absolute(root).string());
 			ptr->setup(config);
 			ptr->exec(bin, {"install"});
@@ -179,10 +180,14 @@ cmake
 	}
 	generator "Unix Makefiles"
 }
-FIXME
-;make
+; see generator documentation
+; probably one of following will be used:
+; bunsan::utility::maker::make
+make_maker
 {
-	; see make documentation
+}
+install_maker
+{
 }
 \endverbatim
 */
@@ -191,6 +196,8 @@ void builders::cmake::setup(const utility::config_type &config)
 	utility::config_type make_config;
 	m_generator.reset();
 	m_cmake_defines.clear();
+	m_make_maker_config.clear();
+	m_install_maker_config.clear();
 	for (const auto &i: config)
 	{
 		if (i.first=="cmake")
@@ -204,9 +211,10 @@ void builders::cmake::setup(const utility::config_type &config)
 				else
 					BOOST_THROW_EXCEPTION(unknown_option_error(i.first+"."+j.first));
 			}
-		else if (i.first=="make")
-			// TODO merge?
-			make_config = i.second;
+		else if (i.first=="make_maker")
+			m_make_maker_config = i.second;
+		else if (i.first=="install_maker")
+			m_install_maker_config = i.second;
 		else
 			BOOST_THROW_EXCEPTION(unknown_option_error(i.first));
 	}
