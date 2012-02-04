@@ -1,6 +1,8 @@
 #ifndef SRC_ARCHIVERS_TAR_HPP
 #define SRC_ARCHIVERS_TAR_HPP
 
+#include <unordered_set>
+
 #include "cwd_split.hpp"
 
 namespace bunsan{namespace utility{namespace archivers
@@ -9,6 +11,7 @@ namespace bunsan{namespace utility{namespace archivers
 	{
 		const boost::filesystem::path m_exe;
 		std::string m_format;
+		std::unordered_set<std::string> m_args;
 	public:
 		explicit tar(const boost::filesystem::path &exe);
 		virtual void unpack(
