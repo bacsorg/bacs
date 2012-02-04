@@ -34,6 +34,7 @@ void archivers::_7z::pack_from(
 			m_exe.filename().string(),
 			"a",
 			"-t"+m_format,
+			"--",
 			archive.string(),
 			file.string()
 		});
@@ -50,8 +51,9 @@ void archivers::_7z::unpack(
 			m_exe.filename().string(),
 			"x",
 			"-t"+m_format,
+			"-o"+dir.string(),
+			"--",
 			archive.string(),
-			"-o"+dir.string()
 		});
 	bunsan::process::check_sync_execute(ctx);
 }
