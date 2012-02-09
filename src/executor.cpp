@@ -53,7 +53,7 @@ void bunsan::utility::executor::process(string &arg, const boost::property_tree:
 	else
 	{
 		SLOG("unknown type \""<<arg_value.first<<"\"");
-		throw std::runtime_error("unknown ["+arg_value.first+"]");
+		BOOST_THROW_EXCEPTION(error("unknown ["+arg_value.first+"]"));
 	}
 	arg.push_back(tk);
 }
