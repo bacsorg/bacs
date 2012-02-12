@@ -1,47 +1,57 @@
 #include "bunsan/pm/entry.hpp"
 
-#include <stdexcept>
-
-#include <cassert>
-
+#include <boost/assert.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 bool bunsan::pm::entry::is_allowed_symbol(char c)
 {
-	return ('0'<=c && c<='9') || ('a'<=c && c<='z') || ('A'<=c && c<='Z') || c=='_' || c=='-' || c=='.';
+	return	('0'<=c && c<='9') ||
+		('a'<=c && c<='z') ||
+		('A'<=c && c<='Z') ||
+		c=='_' ||
+		c=='-' ||
+		c=='.';
 }
 
 bool bunsan::pm::entry::is_allowed_subpath(const std::string &subpath)
 {
-	return !subpath.empty() && subpath!="." && subpath!=".." && boost::algorithm::all(subpath, bunsan::pm::entry::is_allowed_symbol);
+	return	!subpath.empty() &&
+		subpath!="." &&
+		subpath!=".." &&
+		boost::algorithm::all(subpath, bunsan::pm::entry::is_allowed_symbol);
 }
 
-bunsan::pm::entry::entry(const std::string &name_): location_(name_)
+bunsan::pm::entry::entry(const std::string &name_, char delim)
 {
-	build(name_);
+	build(name_, delim);
 }
 
-bunsan::pm::entry::entry(const char *name_): location_(name_)
+bunsan::pm::entry::entry(const char *name_, char delim)
 {
-	build(name_);
+	build(name_, delim);
 }
 
-void bunsan::pm::entry::build(const std::string &name_)
+void bunsan::pm::entry::build(const std::string &name_, char delim)
 {
-	const std::string error("Incorrect entry name: \""+name_+"\"");
-	boost::filesystem::path tmp;
-	if (name_.empty())
-		throw std::runtime_error(error);
-	for (const auto &i: location_)
-	{
-		if (!is_allowed_subpath(i.string()))
-			throw std::runtime_error(error);
-		tmp /= i.string();
-	}
-	location_.swap(tmp);
+	m_location.clear();
+	boost::algorithm::split(
+		m_location,
+		name_,
+		[delim](char c){return delim==c;},
+		boost::algorithm::token_compress_on);
+	for (const auto &i: m_location)
+		if (!is_allowed_subpath(i))
+			BOOST_THROW_EXCEPTION(invalid_entry()<<invalid_entry::entry_name(name_));
+	BOOST_ASSERT(!m_location.empty());
 }
 
-bunsan::pm::entry::entry(const bunsan::pm::entry &e): location_(e.location_){}
+bunsan::pm::entry &bunsan::pm::entry::operator=(bunsan::pm::entry &&e) throw()
+{
+	this->swap(e);
+	return *this;
+}
 
 bunsan::pm::entry &bunsan::pm::entry::operator=(const bunsan::pm::entry &e)
 {
@@ -59,27 +69,25 @@ bunsan::pm::entry &bunsan::pm::entry::operator=(const std::string &name_)
 
 bool bunsan::pm::entry::operator==(const bunsan::pm::entry &e) const
 {
-	return location_==e.location_;
+	return m_location==e.m_location;
 }
 
 bool bunsan::pm::entry::operator<(const bunsan::pm::entry &e) const
 {
-	return location_<e.location_;
+	return m_location<e.m_location;
 }
 
 boost::filesystem::path bunsan::pm::entry::location() const
 {
-	return location_;
+	boost::filesystem::path loc;
+	for (const auto &i: m_location)
+		loc /= i;
+	return loc;
 }
 
-std::vector<std::string> bunsan::pm::entry::decomposition() const
+const std::vector<std::string> &bunsan::pm::entry::decomposition() const
 {
-	std::vector<std::string> path;
-	for (const auto &i: location_)
-	{
-		path.push_back(i.string());
-	}
-	return path;
+	return m_location;
 }
 
 boost::property_tree::ptree::path_type bunsan::pm::entry::ptree_path() const
@@ -87,37 +95,32 @@ boost::property_tree::ptree::path_type bunsan::pm::entry::ptree_path() const
 	return boost::property_tree::ptree::path_type(name('/'), '/');
 }
 
-std::string bunsan::pm::entry::name(char delimiter) const
+std::string bunsan::pm::entry::name(const std::string &delim) const
 {
-	std::string buf;
-	for (const auto &i: location_)
-	{
-		buf += i.string();
-		buf.push_back(delimiter);
-	}
-	if (!buf.empty())
-		buf.resize(buf.size()-1);
-	return buf;
+	BOOST_ASSERT(!m_location.empty());
+	return boost::algorithm::join(m_location, delim);
+}
+
+std::string bunsan::pm::entry::name(char delim) const
+{
+	std::string d = {delim};
+	return name(d);
 }
 
 void bunsan::pm::entry::swap(bunsan::pm::entry &e) throw()
 {
-	e.location_.swap(location_);
+	m_location.swap(e.m_location);
 }
 
-std::string bunsan::pm::entry::remote_resource(const std::string &repository, const boost::filesystem::path &name) const
+std::string bunsan::pm::entry::remote_resource(
+	const std::string &repository,
+	const boost::filesystem::path &name_) const
 {
 	std::string full = repository;
 	if (!full.empty() && full.back()!='/')
 		full.push_back('/');
-	assert(!location_.empty());
-	for (const auto &i: location_)
-	{
-		full += i.string();
-			full.push_back('/');
-	}
-	full.resize(full.size()-1);//full.pop_back();
-	for (const auto &i: name)
+	full += name('/');
+	for (const auto &i: name_)
 	{
 		full.push_back('/');
 		full += i.string();
@@ -125,8 +128,10 @@ std::string bunsan::pm::entry::remote_resource(const std::string &repository, co
 	return full;
 }
 
-boost::filesystem::path bunsan::pm::entry::local_resource(const boost::filesystem::path &dir, const boost::filesystem::path &name) const
+boost::filesystem::path bunsan::pm::entry::local_resource(
+	const boost::filesystem::path &dir,
+	const boost::filesystem::path &name_) const
 {
-	return dir/location_/name;
+	return dir/location()/name_;
 }
 
