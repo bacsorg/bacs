@@ -94,9 +94,9 @@ namespace bunsan{namespace pm
 			std::map<entry, boost::property_tree::ptree> &snapshot,
 			std::map<stage, std::map<entry, boost::property_tree::ptree>> &snapshot_cache);
 	};
-
+	// implementation
 	template <typename Ret, typename Path, typename ... Args>
-	Ret config_get(const Path &path, Args &&...args) const
+	Ret repository::config_get(const Path &path, Args &&...args) const
 	{
 		try
 		{
@@ -108,7 +108,7 @@ namespace bunsan{namespace pm
 		}
 	}
 	template <typename Path, typename ... Args>
-	boost::property_tree::ptree config_get_child(const Path &path, Args &&...args) const
+	boost::property_tree::ptree repository::config_get_child(const Path &path, Args &&...args) const
 	{
 		try
 		{
