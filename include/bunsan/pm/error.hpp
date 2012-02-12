@@ -17,9 +17,13 @@ namespace bunsan{namespace pm
 	};
 	struct invalid_configuration_path: virtual invalid_configuration
 	{
-		invalid_configuration_path=default();
 		// tags
 		typedef boost::error_info<struct tag_path, std::string> path;
+	};
+	struct circular_dependencies: virtual error
+	{
+		// tags
+		typedef boost::error_info<struct tag_package, std::string> package;
 	};
 }}
 
