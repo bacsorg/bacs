@@ -11,7 +11,7 @@
 
 namespace bunsan{namespace pm
 {
-	struct invalid_entry: virtual error
+	struct invalid_entry_name: virtual error
 	{
 		// tags
 		typedef boost::error_info<struct tag_entry_name, std::string> entry_name;
