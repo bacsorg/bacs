@@ -14,6 +14,7 @@
 #include <boost/interprocess/sync/file_lock.hpp>
 
 #include "bunsan/pm/entry.hpp"
+#include "bunsan/pm/error.hpp"
 
 namespace bunsan{namespace pm
 {
@@ -49,19 +50,30 @@ namespace bunsan{namespace pm
 		 */
 		void clean();
 		/// Extract value from config as Ret
+		template <typename Ret, typename Path, typename ... Args>
+		Ret config_get(const Path &path, Args &&...args) const;
 		template <typename Ret, typename ... Args>
-		Ret config_get(Args &&...args) const
+		boost::optional<Ret> config_get_optional(Args &...args)
 		{
-			return config.get<Ret>(std::forward<Args>(args)...);
+			return config.get_optional<Ret>(std::forward<Args>(args)...);
 		}
 		/// Extract value from config as boost::property_tree::ptree
+		template <typename Path, typename ... Args>
+		boost::property_tree::ptree config_get_child(const Path &path, Args &&...args) const;
 		template <typename ... Args>
-		boost::property_tree::ptree config_get_child(Args &&...args) const
+		boost::optional<boost::property_tree::ptree> config_get_child(Args &&...args) const
 		{
-			return config.get_child(std::forward<Args>(args)...);
+			return config.get_child_optional(std::forward<Args>(args)...);
 		}
 		~repository();
 	private:
+		template <typename Path>
+		void config_get_wrap_exception(const Path &path)
+		{
+			BOOST_THROW_EXCEPTION(
+				invalid_configuration_path()
+				<<invalid_configuration_path::path(path));
+		}
 		class native;
 		native *ntv;
 		std::unique_ptr<boost::interprocess::file_lock> flock;
@@ -73,13 +85,40 @@ namespace bunsan{namespace pm
 		/// updates package depends and imports "index" files tree
 		void update_index_tree(const entry &package);
 		/// dfs topological-sort order update algorithm
+		enum class stage_type: int;
+		typedef std::pair<entry, stage_type> stage;
 		bool update_package_depends(
-			const std::pair<entry, int> &package,
-			std::map<std::pair<entry, int>, bool> &updated,
-			std::set<std::pair<entry, int>> &in,
+			const stage &stage_,
+			std::map<stage, bool> &updated,
+			std::set<stage> &in,
 			std::map<entry, boost::property_tree::ptree> &snapshot,
-			std::map<std::pair<entry, int>, std::map<entry, boost::property_tree::ptree>> &snapshot_cache);
+			std::map<stage, std::map<entry, boost::property_tree::ptree>> &snapshot_cache);
 	};
+
+	template <typename Ret, typename Path, typename ... Args>
+	Ret config_get(const Path &path, Args &&...args) const
+	{
+		try
+		{
+			return config.get<Ret>(std::forward<Args>(args)...);
+		}
+		catch (boost::property_tree::ptree_bad_path &)
+		{
+			config_get_wrap_exception(path);
+		}
+	}
+	template <typename Path, typename ... Args>
+	boost::property_tree::ptree config_get_child(const Path &path, Args &&...args) const
+	{
+		try
+		{
+			return config.get_child(std::forward<Args>(args)...);
+		}
+		catch (boost::property_tree::ptree_bad_path &)
+		{
+			config_get_wrap_exception(path);
+		}
+	}
 }}
 
 #endif //BUNSAN_PM_REPOSITORY_HPP
