@@ -3,6 +3,10 @@
 
 namespace bunsan{namespace pm{namespace config
 {
+	namespace lock
+	{
+		constexpr const char *global = "lock.global";	///< global lock for synchronization
+	}
 	namespace dir
 	{
 		constexpr const char *tmp = "dir.tmp";		///< directory for large temporary files
