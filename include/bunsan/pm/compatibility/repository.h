@@ -7,7 +7,11 @@
 extern "C"
 {
 #else
-#include <stdbool.h>
+#	if __STDC_VERSION__ >= 199901L
+#		include <stdbool.h>
+#	else
+#		error only C99 version is supported
+#	endif
 #endif
 	typedef size_t size_type;
 	typedef char *string;
