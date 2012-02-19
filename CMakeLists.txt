@@ -36,10 +36,8 @@ target_link_libraries(${PROJECT_NAME} bunsan_common bunsan_utility cryptopp ${Bo
 add_executable(${PROJECT_NAME}_repo src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_repo ${PROJECT_NAME})
 
-add_library(${PROJECT_NAME}_c SHARED src/compatibility/bunsan_pm_c.cpp)
-target_link_libraries(${PROJECT_NAME}_c ${PROJECT_NAME})
-
-add_library(${PROJECT_NAME}_compatibility SHARED src/compatibility/repository.cpp)
+aux_source_directory(src/compatibility compatibility_srcs)
+add_library(${PROJECT_NAME}_compatibility SHARED ${compatibility_srcs})
 target_link_libraries(${PROJECT_NAME}_compatibility ${PROJECT_NAME})
 
 # install
@@ -47,7 +45,6 @@ target_link_libraries(${PROJECT_NAME}_compatibility ${PROJECT_NAME})
 install(DIRECTORY include DESTINATION .)
 install(TARGETS
 	${PROJECT_NAME}
-	${PROJECT_NAME}_c
 	${PROJECT_NAME}_repo
 	${PROJECT_NAME}_compatibility
 	RUNTIME DESTINATION bin
