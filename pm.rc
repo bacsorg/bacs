@@ -16,8 +16,8 @@ name
 		tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp ; for small files
 		index index
 		checksum checksum
-		build build.tar.xz
-		installation installation.tar.xz
+		build build.tar.gz
+		installation installation.tar.gz
 		installation_snapshot installation_snapshot
 		build_snapshot build_snapshot
 	}
@@ -30,7 +30,7 @@ name
 }
 suffix
 {
-	source_archive .txz
+	source_archive .tgz
 }
 ;repository_url "http://localhost/~lex/repo"
 repository_url "/home/lex/public_html/repo"
@@ -39,7 +39,13 @@ utility
 {
 	resolver
 	{
-		#include "resolver.rc"
+		path
+		{
+			"" tar
+			"" make
+			"" cmake
+			"" curl
+		}
 	}
 	source_archiver
 	{
