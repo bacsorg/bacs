@@ -1,6 +1,7 @@
 #ifndef BUNSAN_UTILITY_RESOLVER_HPP
 #define BUNSAN_UTILITY_RESOLVER_HPP
 
+#include <boost/unordered_map.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
 
@@ -30,6 +31,9 @@ namespace bunsan{namespace utility
 		boost::filesystem::path find_library(
 			const boost::filesystem::path &lib) const;
 	private:
+		void apply_absolute(boost::filesystem::path &name) const;
+		void apply_alias(boost::filesystem::path &name) const;
+		boost::unordered_map<boost::filesystem::path, boost::filesystem::path> m_alias, m_absolute;
 	};
 	inline void swap(resolver &a, resolver &b) throw()
 	{
