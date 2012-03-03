@@ -107,7 +107,7 @@ void builders::cmake::configure_(
 }
 
 void builders::cmake::make_(
-	const boost::filesystem::path &src,
+	const boost::filesystem::path &/*src*/,
 	const boost::filesystem::path &bin)
 {
 	BOOST_ASSERT(m_generator);
@@ -128,7 +128,7 @@ void builders::cmake::make_(
 }
 
 void builders::cmake::install_(
-	const boost::filesystem::path &src,
+	const boost::filesystem::path &/*src*/,
 	const boost::filesystem::path &bin,
 	const boost::filesystem::path &root)
 {
