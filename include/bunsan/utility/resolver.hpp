@@ -1,6 +1,7 @@
 #ifndef BUNSAN_UTILITY_RESOLVER_HPP
 #define BUNSAN_UTILITY_RESOLVER_HPP
 
+#include <boost/optional.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/property_tree/ptree.hpp>
