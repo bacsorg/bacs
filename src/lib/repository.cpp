@@ -98,7 +98,7 @@ void bunsan::pm::repository::update_index_tree(const entry &package)
 {
 	std::set<entry> visited;
 	std::function<void(const entry &)> update_index =
-		[ntv, &visited, &update_index](const entry &package)
+		[this, &visited, &update_index](const entry &package)
 		{
 			if (visited.find(package)==visited.end())
 			{
