@@ -5,11 +5,11 @@
 
 namespace bunsan{namespace utility
 {
-	struct error: virtual bunsan::error
-	{
-		error()=default;
-		explicit error(const std::string &message_);
-	};
+    struct error: virtual bunsan::error
+    {
+        error()=default;
+        explicit error(const std::string &message_);
+    };
 }}
 
 #endif //BUNSAN_UTILITY_ERROR_HPP

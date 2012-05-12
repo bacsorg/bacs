@@ -3,22 +3,22 @@ project(bunsan_utility)
 cmake_minimum_required(VERSION 2.8)
 
 if(${CMAKE_COMPILER_IS_GNUCXX})
-	set(gxx_flags "-std=c++0x -Wall -Wextra")
-	if(${UNIX})
-		set(gxx_flags "-pthread ${gxx_flags}")
-	endif()
-	set(CMAKE_CXX_FLAGS_DEBUG "-g ${gxx_flags}")
-	set(CMAKE_CXX_FLAGS_RELEASE "-O2 ${gxx_flags}")
+    set(gxx_flags "-std=c++0x -Wall -Wextra")
+    if(${UNIX})
+        set(gxx_flags "-pthread ${gxx_flags}")
+    endif()
+    set(CMAKE_CXX_FLAGS_DEBUG "-g ${gxx_flags}")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O2 ${gxx_flags}")
 endif()
 
 include(${CMAKE_SOURCE_DIR}/user-config.cmake OPTIONAL)
 
 if(NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build, options are: Debug Release" FORCE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build, options are: Debug Release" FORCE)
 endif()
 
 if(NOT DEFINED ENABLE_TESTS)
-	set(ENABLE_TESTS ON CACHE BOOL "Do you want to enable testing?" FORCE)
+    set(ENABLE_TESTS ON CACHE BOOL "Do you want to enable testing?" FORCE)
 endif()
 
 # BOOST
@@ -53,14 +53,14 @@ target_link_libraries(${PROJECT_NAME} ${libraries})
 
 install(DIRECTORY include DESTINATION .)
 install(TARGETS ${PROJECT_NAME}
-	RUNTIME DESTINATION bin
-	LIBRARY DESTINATION lib
-	ARCHIVE DESTINATION lib)
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
 
 # testing
 
 if(${ENABLE_TESTS})
-	enable_testing()
-	add_subdirectory(tests ${PROJECT_BINARY_DIR}/tests)
+    enable_testing()
+    add_subdirectory(tests ${PROJECT_BINARY_DIR}/tests)
 endif()
 

@@ -5,15 +5,15 @@
 
 namespace bunsan{namespace utility{namespace fetchers
 {
-	class copy: public fetcher
-	{
-	public:
-		copy()=default;
-		virtual void fetch(const std::string &uri, const boost::filesystem::path &dst);
-	private:
-		static bool factory_reg_hook_cp;
-		static bool factory_reg_hook_copy;
-	};
+    class copy: public fetcher
+    {
+    public:
+        copy()=default;
+        virtual void fetch(const std::string &uri, const boost::filesystem::path &dst);
+    private:
+        static bool factory_reg_hook_cp;
+        static bool factory_reg_hook_copy;
+    };
 }}}
 
 #endif //SRC_FETCHERS_COPY_HPP
