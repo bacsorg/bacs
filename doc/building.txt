@@ -3,20 +3,20 @@
 
 \section stages_sec Stages
 Package building process can be separated into different stages:
-	- <b>package index</b> update -- we should synchronize with server to retrieve the latest data (<b>package checksum</b> is also updated at this stage)
-		- note, that we have to update all package dependencies <b>package indices</b>
-	- depth-first-search dependency build process
-	- package building -- creation of the <b>package build</b>
-		- <b>package source</b> extraction
-			- <b>package self source</b> extraction
-			- <b>package imports</b> extraction
-		- configuration
-		- compilation
-		- packing
-	- <b>package installation</b> building
-		- unpacking of <b>package build</b>
-		- merging with specified <b>package installations</b>
-		- packing into <b>package installation</b> entity
+    - <b>package index</b> update -- we should synchronize with server to retrieve the latest data (<b>package checksum</b> is also updated at this stage)
+        - note, that we have to update all package dependencies <b>package indices</b>
+    - depth-first-search dependency build process
+    - package building -- creation of the <b>package build</b>
+        - <b>package source</b> extraction
+            - <b>package self source</b> extraction
+            - <b>package imports</b> extraction
+        - configuration
+        - compilation
+        - packing
+    - <b>package installation</b> building
+        - unpacking of <b>package build</b>
+        - merging with specified <b>package installations</b>
+        - packing into <b>package installation</b> entity
 
 \section algo_sec Building algorithms
 Please note that for platform-independent execution support we will move all file and directory names into \ref configuration_page "configuration" file.<br>

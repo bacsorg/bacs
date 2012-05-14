@@ -1,94 +1,94 @@
 
 lock
 {
-	global /home/lex/istu/dev/bunsan/pm/test/repo.lock
+    global /home/lex/istu/dev/bunsan/pm/test/repo.lock
 }
 dir
 {
-	tmp /tmp/bunsan_pm_tmp ; for build
-	source /home/lex/istu/dev/bunsan/pm/test/source_dir
-	package /home/lex/istu/dev/bunsan/pm/test/package_dir
+    tmp /tmp/bunsan_pm_tmp ; for build
+    source /home/lex/istu/dev/bunsan/pm/test/source_dir
+    package /home/lex/istu/dev/bunsan/pm/test/package_dir
 }
 name
 {
-	file
-	{
-		tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp ; for small files
-		index index
-		checksum checksum
-		build build.tar.gz
-		installation installation.tar.gz
-		installation_snapshot installation_snapshot
-		build_snapshot build_snapshot
-	}
-	dir
-	{
-		source source
-		build build
-		installation installation
-	}
+    file
+    {
+        tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp ; for small files
+        index index
+        checksum checksum
+        build build.tar.gz
+        installation installation.tar.gz
+        installation_snapshot installation_snapshot
+        build_snapshot build_snapshot
+    }
+    dir
+    {
+        source source
+        build build
+        installation installation
+    }
 }
 suffix
 {
-	source_archive .tgz
+    source_archive .tgz
 }
 ;repository_url "http://localhost/~lex/repo"
 repository_url "/home/lex/public_html/repo"
 
 utility
 {
-	resolver
-	{
-		path
-		{
-			"" tar
-			"" make
-			"" cmake
-			"" curl
-		}
-	}
-	source_archiver
-	{
-		type tar
-		config
-		{
-			format J
-			exclude-vcs 1
-		}
-	}
-	cache_archiver
-	{
-		type tar
-		config
-		{
-			format J
-		}
-	}
-	fetcher
-	{
-		;type curl
-		type copy
-	}
-	builder
-	{
-		type cmake
-		config
-		{
-			cmake
-			{
-				defines
-				{
-					CMAKE_INSTALL_PREFIX /
-				}
-			}
-			make_maker
-			{
-				threads 3
-			}
-			;install_maker
-			;{
-			;}
-		}
-	}
+    resolver
+    {
+        path
+        {
+            "" tar
+            "" make
+            "" cmake
+            "" curl
+        }
+    }
+    source_archiver
+    {
+        type tar
+        config
+        {
+            format J
+            exclude-vcs 1
+        }
+    }
+    cache_archiver
+    {
+        type tar
+        config
+        {
+            format J
+        }
+    }
+    fetcher
+    {
+        ;type curl
+        type copy
+    }
+    builder
+    {
+        type cmake
+        config
+        {
+            cmake
+            {
+                defines
+                {
+                    CMAKE_INSTALL_PREFIX /
+                }
+            }
+            make_maker
+            {
+                threads 3
+            }
+            ;install_maker
+            ;{
+            ;}
+        }
+    }
 }
 

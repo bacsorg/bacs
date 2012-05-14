@@ -9,53 +9,53 @@ Building results are cached.
 \subsection entities_ssec Entities
 Package is a building result.
 We will distinguish the following entities:
-	- <b>package installation</b> -- the result of merging <b>package build</b> and other <b>package installations</b> (specified by package maintainer)
-		- note, that package is installed in temporary directory and then is being packed
-		- <b>package installation</b> term will be used to name
-	- <b>package build</b> -- the result of building <b>package sources</b>
-	- <b>package source</b> -- the result of extraction of <b>package self sources</b> and <b>package imports</b> merged together in one directory
-		- <b>package imports</b> -- union of <b>package source imports</b> and <b>package installation imports</b>
-			- <b>package installation import</b> -- extraction of <b>package installation</b> of specified package into <b>package source</b> directory
-			- <b>package source import</b> -- extraction of <b>package source</b> of specified package into <b>package source</b> directory
-		- <b>package self source</b> -- sources that belong to corresponding package
-	- <b>package checksum</b> -- checksum of all <b>package self sources</b> and <b>package index</b>
-	- <b>package index</b> -- configuration file of the corresponding package
+    - <b>package installation</b> -- the result of merging <b>package build</b> and other <b>package installations</b> (specified by package maintainer)
+        - note, that package is installed in temporary directory and then is being packed
+        - <b>package installation</b> term will be used to name
+    - <b>package build</b> -- the result of building <b>package sources</b>
+    - <b>package source</b> -- the result of extraction of <b>package self sources</b> and <b>package imports</b> merged together in one directory
+        - <b>package imports</b> -- union of <b>package source imports</b> and <b>package installation imports</b>
+            - <b>package installation import</b> -- extraction of <b>package installation</b> of specified package into <b>package source</b> directory
+            - <b>package source import</b> -- extraction of <b>package source</b> of specified package into <b>package source</b> directory
+        - <b>package self source</b> -- sources that belong to corresponding package
+    - <b>package checksum</b> -- checksum of all <b>package self sources</b> and <b>package index</b>
+    - <b>package index</b> -- configuration file of the corresponding package
 
 \subpage building_spage
 
 \section depends_sec Generic dependencies graph for target package
 \dot
-	digraph deps
-	{
-		{
-			node[color="red"];
-			Tinstall[label="Target installation"];
-			Tbuild[label="Target build"];
-			Tsource[label="Target source"];
-			Tself[label="Target self source"];
-			Tinstall->Tbuild->Tsource->Tself;
-		}
-		{
-			{
-				node[color="purple"];
-				Oinstall0[label="Other installation 0"];
-				Oinstall1[label="Other installation 1"];
-				Oinstall2[label="Other installation 2"];
-				Oinstall3[label="Other installation 3"];
-			}
-			{
-				node[color="green"];
-				Osource0[label="Other source 0"];
-				Osource1[label="Other source 1"];
-			}
-			Tinstall->Oinstall0;
-			Tinstall->Oinstall1;
-			Tsource->Oinstall2;
-			Tsource->Oinstall3;
-			Tsource->Osource0;
-			Tsource->Osource1;
-		}
-	}
+    digraph deps
+    {
+        {
+            node[color="red"];
+            Tinstall[label="Target installation"];
+            Tbuild[label="Target build"];
+            Tsource[label="Target source"];
+            Tself[label="Target self source"];
+            Tinstall->Tbuild->Tsource->Tself;
+        }
+        {
+            {
+                node[color="purple"];
+                Oinstall0[label="Other installation 0"];
+                Oinstall1[label="Other installation 1"];
+                Oinstall2[label="Other installation 2"];
+                Oinstall3[label="Other installation 3"];
+            }
+            {
+                node[color="green"];
+                Osource0[label="Other source 0"];
+                Osource1[label="Other source 1"];
+            }
+            Tinstall->Oinstall0;
+            Tinstall->Oinstall1;
+            Tsource->Oinstall2;
+            Tsource->Oinstall3;
+            Tsource->Osource0;
+            Tsource->Osource1;
+        }
+    }
 \enddot
 
 \section example_sec Example
@@ -64,78 +64,78 @@ Consider the following example: we have to build A <b>package installation</b>.
 There are also B, C, D and E packages.
 
 \dot
-	digraph deps
-	{
-		{
-			node[color="red"];
-			Ainstall[label="A installation"];
-			Abuild[label="A build"];
-			Asource[label="A source"];
-			Aself[label="A self source"];
-		}
-		{
-			node[color="blue"];
-			Binstall[label="B installation"];
-			Bbuild[label="B build"];
-			Bsource[label="B source"];
-			Bself[label="B self source"];
-		}
-		{
-			node[color="purple"];
-			Cinstall[label="C installation"];
-			Cbuild[label="C build"];
-			Csource[label="C source"];
-			Cself[label="C self source"];
-		}
-		{
-			node[color="green"];
-			Dinstall[label="D installation"];
-			Dbuild[label="D build"];
-			Dsource[label="D source"];
-			Dself[label="D self source"];
-		}
-		{
-			node[color="magenta"];
-			{
-				node[color="gray", style="dotted"];
-				Einstall[label="E installation"];
-				Ebuild[label="E build"];
-			}
-			Esource[label="E source"];
-			Eself[label="E self source"];
-		}
-		{
-			Ainstall->Abuild->Asource->Aself;
-			Binstall->Bbuild->Bsource->Bself;
-			Cinstall->Cbuild->Csource->Cself;
-			Dinstall->Dbuild->Dsource->Dself;
-			Esource->Eself;
-			{
-				edge[style="dotted"];
-				Einstall->Ebuild;
-				Ebuild->Esource;
-			}
-		}
-		{
-			Ainstall->Binstall;
-			Bsource->Dinstall;
-			Asource->Dinstall;
-			Binstall->Cinstall;
-			Asource->Csource;
-			Bsource->Esource;
-		}
-	}
+    digraph deps
+    {
+        {
+            node[color="red"];
+            Ainstall[label="A installation"];
+            Abuild[label="A build"];
+            Asource[label="A source"];
+            Aself[label="A self source"];
+        }
+        {
+            node[color="blue"];
+            Binstall[label="B installation"];
+            Bbuild[label="B build"];
+            Bsource[label="B source"];
+            Bself[label="B self source"];
+        }
+        {
+            node[color="purple"];
+            Cinstall[label="C installation"];
+            Cbuild[label="C build"];
+            Csource[label="C source"];
+            Cself[label="C self source"];
+        }
+        {
+            node[color="green"];
+            Dinstall[label="D installation"];
+            Dbuild[label="D build"];
+            Dsource[label="D source"];
+            Dself[label="D self source"];
+        }
+        {
+            node[color="magenta"];
+            {
+                node[color="gray", style="dotted"];
+                Einstall[label="E installation"];
+                Ebuild[label="E build"];
+            }
+            Esource[label="E source"];
+            Eself[label="E self source"];
+        }
+        {
+            Ainstall->Abuild->Asource->Aself;
+            Binstall->Bbuild->Bsource->Bself;
+            Cinstall->Cbuild->Csource->Cself;
+            Dinstall->Dbuild->Dsource->Dself;
+            Esource->Eself;
+            {
+                edge[style="dotted"];
+                Einstall->Ebuild;
+                Ebuild->Esource;
+            }
+        }
+        {
+            Ainstall->Binstall;
+            Bsource->Dinstall;
+            Asource->Dinstall;
+            Binstall->Cinstall;
+            Asource->Csource;
+            Bsource->Esource;
+        }
+    }
 \enddot
 
 Note the following facts:
-	- <b>package self source</b> can be a list of sources, but graph complexity is not influenced by that.
-	- package can have arbitrary number of <b>package imports</b> of any kind specified above
-	- <b>package self sources</b> are always leaves.
-	- <b>package self source</b> and <b>package build</b> are inaccessible directly for import by other packages.
-	- dependency graph is always topological-sortable, otherwise packages are ill-formed
-	- <b>E installation</b> will not be built because nothing depends on it (building is lazy)
-	- everything will be built in topological-sort order
-	- <b>package self source</b>, <b>package build</b> and <b>package installation</b> will be cached
+    - <b>package self source</b> can be a list of sources, but graph complexity is not influenced by that.
+    - package can have arbitrary number of <b>package imports</b> of any kind specified above
+    - <b>package self sources</b> are always leaves.
+    - <b>package self source</b> and <b>package build</b> are inaccessible directly for import by other packages.
+    - dependency graph is always topological-sortable, otherwise packages are ill-formed
+    - <b>E installation</b> will not be built because nothing depends on it (building is lazy)
+    - everything will be built in topological-sort order
+    - <b>package self source</b>, <b>package build</b> and <b>package installation</b> will be cached
 
 */
 

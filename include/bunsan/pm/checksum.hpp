@@ -7,7 +7,7 @@
 
 namespace bunsan{namespace pm
 {
-	std::string checksum(const boost::filesystem::path &file);
+    std::string checksum(const boost::filesystem::path &file);
 }}
 
 #endif //BUNSAN_PM_CHECKSUM_HPP

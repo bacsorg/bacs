@@ -6,160 +6,160 @@
 
 std::string bunsan::pm::repository::native::value(const std::string &key)
 {
-	return config.get<std::string>(key);
+    return config.get<std::string>(key);
 }
 
 void bunsan::pm::repository::native::read_index(const entry &package, boost::property_tree::ptree &ptree)
 {
-	boost::property_tree::read_info(source_resource(package, value(config::name::file::index)).string(), ptree);
+    boost::property_tree::read_info(source_resource(package, value(config::name::file::index)).string(), ptree);
 }
 
 void bunsan::pm::repository::native::read_checksum(const entry &package, boost::property_tree::ptree &ptree)
 {
-	boost::property_tree::read_info(source_resource(package, value(config::name::file::checksum)).string(), ptree);
+    boost::property_tree::read_info(source_resource(package, value(config::name::file::checksum)).string(), ptree);
 }
 
 std::string bunsan::pm::repository::native::remote_resource(const entry &package, const std::string &name)
 {
-	return package.remote_resource(value(config::repository_url), name);
+    return package.remote_resource(value(config::repository_url), name);
 }
 
 boost::filesystem::path bunsan::pm::repository::native::source_resource(const entry &package, const std::string &name)
 {
-	return package.local_resource(value(config::dir::source), name);
+    return package.local_resource(value(config::dir::source), name);
 }
 
 boost::filesystem::path bunsan::pm::repository::native::package_resource(const entry &package, const std::string &name)
 {
-	return package.local_resource(value(config::dir::package), name);
+    return package.local_resource(value(config::dir::package), name);
 }
 
 std::multimap<boost::filesystem::path, std::string> bunsan::pm::repository::native::sources(const entry &package)
 {
-	return read_depends(package).source.self;
+    return read_depends(package).source.self;
 }
 
 bunsan::pm::repository::native::native(const boost::property_tree::ptree &config_):
-	config(config_),
-	m_resolver(config.get_child(config::command::resolver))
+    config(config_),
+    m_resolver(config.get_child(config::command::resolver))
 {
-	using boost::property_tree::ptree;
-	using namespace config::command;
-	// creation
-	if (!(cache_archiver = bunsan::utility::archiver::instance(value(cache_archiver::type), m_resolver)))
-		throw std::runtime_error("Unable to create cache_archiver");
-	if (!(source_archiver = bunsan::utility::archiver::instance(value(source_archiver::type), m_resolver)))
-		throw std::runtime_error("Unable to create source_archiver");
-	if (!(builder = bunsan::utility::builder::instance(value(builder::type), m_resolver)))
-		throw std::runtime_error("Unable to create builder");
-	if (!(fetcher = bunsan::utility::fetcher::instance(value(fetcher::type), m_resolver)))
-		throw std::runtime_error("Unable to create fetcher");
-	// setup
-	cache_archiver->setup(config.get_child(cache_archiver::config, ptree()));
-	source_archiver->setup(config.get_child(source_archiver::config, ptree()));
-	builder->setup(config.get_child(builder::config, ptree()));
-	fetcher->setup(config.get_child(fetcher::config, ptree()));
+    using boost::property_tree::ptree;
+    using namespace config::command;
+    // creation
+    if (!(cache_archiver = bunsan::utility::archiver::instance(value(cache_archiver::type), m_resolver)))
+        throw std::runtime_error("Unable to create cache_archiver");
+    if (!(source_archiver = bunsan::utility::archiver::instance(value(source_archiver::type), m_resolver)))
+        throw std::runtime_error("Unable to create source_archiver");
+    if (!(builder = bunsan::utility::builder::instance(value(builder::type), m_resolver)))
+        throw std::runtime_error("Unable to create builder");
+    if (!(fetcher = bunsan::utility::fetcher::instance(value(fetcher::type), m_resolver)))
+        throw std::runtime_error("Unable to create fetcher");
+    // setup
+    cache_archiver->setup(config.get_child(cache_archiver::config, ptree()));
+    source_archiver->setup(config.get_child(source_archiver::config, ptree()));
+    builder->setup(config.get_child(builder::config, ptree()));
+    fetcher->setup(config.get_child(fetcher::config, ptree()));
 }
 
 void bunsan::pm::repository::native::write_snapshot(const boost::filesystem::path &path, const std::map<entry, boost::property_tree::ptree> &snapshot)
 {
-	boost::property_tree::ptree snapshot_;
-	for (const auto &i: snapshot)
-		snapshot_.push_back(boost::property_tree::ptree::value_type(i.first.name(), i.second));
-	boost::property_tree::write_info(path.string(), snapshot_);
+    boost::property_tree::ptree snapshot_;
+    for (const auto &i: snapshot)
+        snapshot_.push_back(boost::property_tree::ptree::value_type(i.first.name(), i.second));
+    boost::property_tree::write_info(path.string(), snapshot_);
 }
 
 std::map<bunsan::pm::entry, boost::property_tree::ptree> bunsan::pm::repository::native::read_snapshot(const boost::filesystem::path &path)
 {
-	std::map<entry, boost::property_tree::ptree> snapshot;
-	boost::property_tree::ptree snapshot_;
-	boost::property_tree::read_info(path.string(), snapshot_);
-	for (const auto &i: snapshot_)
-	{
-		auto iter = snapshot.find(i.first);
-		if (iter!=snapshot.end())
-			BOOST_ASSERT(iter->second==i.second);
-		else
-			snapshot[i.first] = i.second;
-	}
-	return snapshot;
+    std::map<entry, boost::property_tree::ptree> snapshot;
+    boost::property_tree::ptree snapshot_;
+    boost::property_tree::read_info(path.string(), snapshot_);
+    for (const auto &i: snapshot_)
+    {
+        auto iter = snapshot.find(i.first);
+        if (iter!=snapshot.end())
+            BOOST_ASSERT(iter->second==i.second);
+        else
+            snapshot[i.first] = i.second;
+    }
+    return snapshot;
 }
 
 bunsan::pm::depends bunsan::pm::repository::native::read_depends(const entry &package)
 {
-	try
-	{
-		boost::property_tree::ptree index;
-		read_index(package, index);
-		depends deps(index);
-		return deps;
-	}
-	catch (std::exception &e)
-	{
-		throw pm_error("Unable to read package depends", e);
-	}
+    try
+    {
+        boost::property_tree::ptree index;
+        read_index(package, index);
+        depends deps(index);
+        return deps;
+    }
+    catch (std::exception &e)
+    {
+        throw pm_error("Unable to read package depends", e);
+    }
 }
 
 namespace
 {
-	void check_dir(const boost::filesystem::path &dir)
-	{
-		if (!dir.is_absolute())
-			throw std::runtime_error("you have to use absolute path, but "+dir.string()+" was used");
-		SLOG("checking "<<dir);
-		if (!boost::filesystem::is_directory(dir))
-		{
-			if (!boost::filesystem::exists(dir))
-			{
-				SLOG("directory "<<dir<<" was not found");
-			}
-			else
-			{
-				SLOG(dir<<" is not a directory: starting recursive remove");
-				boost::filesystem::remove_all(dir);
-			}
-			SLOG("trying to create "<<dir);
-			boost::filesystem::create_directory(dir);
-			DLOG(created);
-		}
-	}
+    void check_dir(const boost::filesystem::path &dir)
+    {
+        if (!dir.is_absolute())
+            throw std::runtime_error("you have to use absolute path, but "+dir.string()+" was used");
+        SLOG("checking "<<dir);
+        if (!boost::filesystem::is_directory(dir))
+        {
+            if (!boost::filesystem::exists(dir))
+            {
+                SLOG("directory "<<dir<<" was not found");
+            }
+            else
+            {
+                SLOG(dir<<" is not a directory: starting recursive remove");
+                boost::filesystem::remove_all(dir);
+            }
+            SLOG("trying to create "<<dir);
+            boost::filesystem::create_directory(dir);
+            DLOG(created);
+        }
+    }
 }
 
 bool bunsan::pm::repository::native::build_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot)
 {
-	boost::filesystem::path snp = package_resource(package, value(config::name::file::build_snapshot));
-	boost::filesystem::path build = package_resource(package, value(config::name::file::build));
-	if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(build))
-		return true;
-	std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
-	return snapshot!=snapshot_;
+    boost::filesystem::path snp = package_resource(package, value(config::name::file::build_snapshot));
+    boost::filesystem::path build = package_resource(package, value(config::name::file::build));
+    if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(build))
+        return true;
+    std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
+    return snapshot!=snapshot_;
 }
 
 bool bunsan::pm::repository::native::installation_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot)
 {
-	boost::filesystem::path snp = package_resource(package, value(config::name::file::installation_snapshot));
-	boost::filesystem::path installation = package_resource(package, value(config::name::file::installation));
-	if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(installation))
-		return true;
-	std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
-	return snapshot!=snapshot_;
+    boost::filesystem::path snp = package_resource(package, value(config::name::file::installation_snapshot));
+    boost::filesystem::path installation = package_resource(package, value(config::name::file::installation));
+    if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(installation))
+        return true;
+    std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
+    return snapshot!=snapshot_;
 }
 
 void bunsan::pm::repository::native::check_dirs()
 {
-	DLOG(checking directories);
-	check_dir(value(config::dir::source));
-	check_dir(value(config::dir::package));
-	check_dir(value(config::dir::tmp));
-	DLOG(checked);
+    DLOG(checking directories);
+    check_dir(value(config::dir::source));
+    check_dir(value(config::dir::package));
+    check_dir(value(config::dir::tmp));
+    DLOG(checked);
 }
 
 void bunsan::pm::repository::native::clean()
 {
-	DLOG(trying to clean cache);
-	bunsan::reset_dir(value(config::dir::source));
-	bunsan::reset_dir(value(config::dir::package));
-	bunsan::reset_dir(value(config::dir::tmp));
-	DLOG(cleaned);
+    DLOG(trying to clean cache);
+    bunsan::reset_dir(value(config::dir::source));
+    bunsan::reset_dir(value(config::dir::package));
+    bunsan::reset_dir(value(config::dir::tmp));
+    DLOG(cleaned);
 }
 
