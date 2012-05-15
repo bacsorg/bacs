@@ -33,20 +33,15 @@ aux_source_directory(src/lib lib_srcs)
 add_library(${PROJECT_NAME} SHARED ${lib_srcs})
 target_link_libraries(${PROJECT_NAME} bunsan_common bunsan_utility cryptopp ${Boost_LIBRARIES})
 
-add_executable(${PROJECT_NAME}_server src/main.cpp)
+add_executable(${PROJECT_NAME}_server src/server.cpp)
 target_link_libraries(${PROJECT_NAME}_server ${PROJECT_NAME})
-
-aux_source_directory(src/compatibility compatibility_srcs)
-add_library(${PROJECT_NAME}_compatibility SHARED ${compatibility_srcs})
-target_link_libraries(${PROJECT_NAME}_compatibility ${PROJECT_NAME})
 
 # install
 
 install(DIRECTORY include DESTINATION .)
 install(TARGETS
     ${PROJECT_NAME}
-    ${PROJECT_NAME}_repo
-    ${PROJECT_NAME}_compatibility
+    ${PROJECT_NAME}_server
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
