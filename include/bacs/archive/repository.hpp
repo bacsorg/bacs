@@ -6,34 +6,16 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/optional.hpp>
 
 #include "bunsan/tempfile.hpp"
 #include "bunsan/pm/entry.hpp"
+#include "bunsan/utility/resolver.hpp"
+
+#include "bacs/archive/problem.hpp"
 
 namespace bacs{namespace archive
 {
-    namespace problem
-    {
-        /// problem id
-        typedef std::string id;
-        typedef std::vector<unsigned char> binary;
-        /// information about problem, see problem.xsd from BACS.XSD
-        typedef binary info;
-        /// package name
-        typedef bunsan::pm::entry package;
-        /// hash string
-        typedef binary hash;
-        typedef std::vector<id> id_list;
-        typedef std::vector<info> info_list;
-        typedef std::vector<package> package_list;
-        typedef std::vector<hash> hash_list;
-        struct import_info
-        {
-            bool ok;
-            std::string error;
-        };
-        typedef std::map<id, import_info> import_map;
-    }
     class repository
     {
     public:
@@ -44,7 +26,7 @@ namespace bacs{namespace archive
          *
          * \return import information
          */
-        problem::import_map insert_all(const std::string &format, const boost::filesystem::path &archive);
+        problem::import_map insert_all(const problem::archive_format &format, const boost::filesystem::path &archive);
         /*
          * \brief extract problems from repository
          *
@@ -52,7 +34,7 @@ namespace bacs{namespace archive
          *
          * If problem does not exists for given id, this id is ignored.
          */
-        bunsan::tempfile extract(const std::string &format, const problem::id_list &id_list);
+        bunsan::tempfile extract(const problem::archive_format &format, const problem::id_list &id_list);
         /*!
          * \brief insert particular problem into repository
          *
@@ -78,7 +60,8 @@ namespace bacs{namespace archive
         problem::hash_list hash(const problem::id_list &id_list);
     private:
         std::string value(const boost::property_tree::ptree::path_type &path);
-        const boost::property_tree::ptree m_config;
+        const bunsan::utility::resolver m_resolver;
+        const boost::filesystem::path m_tmpdir;
     };
 }}
 
