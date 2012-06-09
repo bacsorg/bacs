@@ -33,15 +33,15 @@ aux_source_directory(src/lib lib_srcs)
 add_library(${PROJECT_NAME} SHARED ${lib_srcs})
 target_link_libraries(${PROJECT_NAME} bunsan_common bunsan_utility cryptopp ${Boost_LIBRARIES})
 
-add_executable(${PROJECT_NAME}_server src/server.cpp)
-target_link_libraries(${PROJECT_NAME}_server ${PROJECT_NAME})
+add_executable(${PROJECT_NAME}_cli src/cli.cpp)
+target_link_libraries(${PROJECT_NAME}_cli ${PROJECT_NAME})
 
 # install
 
 install(DIRECTORY include DESTINATION .)
 install(TARGETS
     ${PROJECT_NAME}
-    ${PROJECT_NAME}_server
+    ${PROJECT_NAME}_cli
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
