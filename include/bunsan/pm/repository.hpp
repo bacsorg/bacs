@@ -10,8 +10,8 @@
 #include <boost/noncopyable.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/interprocess/sync/file_lock.hpp>
+
+#include "bunsan/interprocess/sync/file_lock.hpp"
 
 #include "bunsan/pm/entry.hpp"
 #include "bunsan/pm/error.hpp"
@@ -75,8 +75,7 @@ namespace bunsan{namespace pm
         }
         class native;
         native *ntv;
-        std::unique_ptr<boost::interprocess::file_lock> flock;
-        boost::mutex slock;
+        std::unique_ptr<bunsan::interprocess::file_lock> flock;
         const boost::property_tree::ptree config;
         // private functions
         /// update logic

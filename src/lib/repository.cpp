@@ -28,7 +28,7 @@ bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): 
     DLOG(creating repository instance);
     boost::optional<std::string> lock_file = config_get_optional<std::string>(config::lock::global);
     if (lock_file)
-        flock.reset(new boost::interprocess::file_lock(lock_file.get().c_str()));
+        flock.reset(new bunsan::interprocess::file_lock(lock_file.get().c_str()));
     ntv = new native(config);
 }
 
@@ -56,8 +56,7 @@ void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boo
 {
     require_lock(static_cast<bool>(flock), __func__);
     SLOG("extract "<<package<<" to "<<destination);
-    boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
-    boost::mutex::scoped_lock lk2(slock);
+    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*flock);
     DLOG(trying to update);
     update(package);
     DLOG(trying to extract);
@@ -215,8 +214,7 @@ bool bunsan::pm::repository::update_package_depends(
 void bunsan::pm::repository::clean()
 {
     require_lock(static_cast<bool>(flock), __func__);
-    boost::interprocess::scoped_lock<boost::interprocess::file_lock> lk(*flock);
-    boost::mutex::scoped_lock lk2(slock);
+    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*flock);
     ntv->clean();
 }
 
