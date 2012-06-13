@@ -27,7 +27,7 @@ namespace bunsan{namespace utility
          *
          * Default implementation will call install
          * with root set to temporary directory inside bin
-         * and pack it content using archiver::pack_content
+         * and pack it contents using archiver::pack_contents
          */
         virtual void pack(
             const boost::filesystem::path &src,

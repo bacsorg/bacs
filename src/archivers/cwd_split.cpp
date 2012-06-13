@@ -11,7 +11,7 @@ void bunsan::utility::archivers::cwd_split::pack(
     pack_from(file_.parent_path(), archive_, file_.filename());
 }
 
-void bunsan::utility::archivers::cwd_split::pack_content(
+void bunsan::utility::archivers::cwd_split::pack_contents(
     const boost::filesystem::path &archive,
     const boost::filesystem::path &file)
 {

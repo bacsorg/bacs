@@ -11,7 +11,7 @@ namespace bunsan{namespace utility{namespace archivers
         virtual void pack(
             const boost::filesystem::path &archive,
             const boost::filesystem::path &file);
-        virtual void pack_content(
+        virtual void pack_contents(
             const boost::filesystem::path &archive,
             const boost::filesystem::path &dir);
     protected:

@@ -23,6 +23,6 @@ void bunsan::utility::builder::pack(
     install(src, bin_.path(), root_.path());
     // packing
     BOOST_ASSERT_MSG(archiver_, "Archiver pointer should not be null");
-    archiver_->pack_content(archive, root_.path());
+    archiver_->pack_contents(archive, root_.path());
 }
 
