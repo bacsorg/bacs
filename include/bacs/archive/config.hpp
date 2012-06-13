@@ -3,6 +3,7 @@
 
 namespace bacs{namespace archive{namespace config
 {
+    constexpr const char *lock = "lock";
     constexpr const char *resolver = "resolver";
     constexpr const char *tmpdir = "tmpdir";
 }}}

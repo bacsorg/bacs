@@ -9,6 +9,7 @@
 using namespace bacs::archive;
 
 repository::repository(const boost::property_tree::ptree &config_):
+    m_lock(config_.get<std::string>(config::lock)),
     m_resolver(config_.get_child(config::resolver)),
     m_tmpdir(config_.get<std::string>(config::tmpdir))
 {

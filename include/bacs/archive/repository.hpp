@@ -8,6 +8,7 @@
 #include <boost/optional.hpp>
 
 #include "bunsan/tempfile.hpp"
+#include "bunsan/interprocess/sync/file_lock.hpp"
 #include "bunsan/utility/resolver.hpp"
 
 #include "bacs/archive/problem.hpp"
@@ -89,7 +90,7 @@ namespace bacs{namespace archive
          */
         problem::hash_map hash_all(const problem::id_list &id_list);
     private:
-        std::string value(const boost::property_tree::ptree::path_type &path);
+        bunsan::interprocess::file_lock m_lock;
         const bunsan::utility::resolver m_resolver;
         const boost::filesystem::path m_tmpdir;
     };
