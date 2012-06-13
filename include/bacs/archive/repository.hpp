@@ -2,14 +2,12 @@
 #define BACS_ARCHIVE_REPOSITORY_HPP
 
 #include <string>
-#include <vector>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/optional.hpp>
 
 #include "bunsan/tempfile.hpp"
-#include "bunsan/pm/entry.hpp"
 #include "bunsan/utility/resolver.hpp"
 
 #include "bacs/archive/problem.hpp"
@@ -66,10 +64,30 @@ namespace bacs{namespace archive
          */
         problem::id_list all();
         /* info */
-        problem::info info(const problem::id &id);
-        problem::info_list info(const problem::id_list &id_list);
-        problem::hash hash(const problem::id &id);
-        problem::hash_list hash(const problem::id_list &id_list);
+        /*!
+         * \brief get problem info
+         *
+         * \return uninitialized optional if problem does not exist
+         */
+        boost::optional<problem::info> info(const problem::id &id);
+        /*!
+         * \brief get info map for given problems
+         *
+         * If problem does not exist id is ignored.
+         */
+        problem::info_map info_all(const problem::id_list &id_list);
+        /*!
+         * \brief get problem hash
+         *
+         * \return unitialized optional if problem does not exist
+         */
+        boost::optional<problem::hash> hash(const problem::id &id);
+        /*!
+         * \brief get hash map for given problems
+         *
+         * If problem does not exist id is ignored.
+         */
+        problem::hash_map hash_all(const problem::id_list &id_list);
     private:
         std::string value(const boost::property_tree::ptree::path_type &path);
         const bunsan::utility::resolver m_resolver;

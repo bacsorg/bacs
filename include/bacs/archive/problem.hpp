@@ -1,6 +1,14 @@
 #ifndef BACS_ARCHIVE_PROBLEM_HPP
 #define BACS_ARCHIVE_PROBLEM_HPP
 
+#include <string>
+#include <vector>
+#include <map>
+
+#include <boost/optional.hpp>
+
+#include "bunsan/pm/entry.hpp"
+
 namespace bacs{namespace archive{namespace problem
 {
     /// problem id
@@ -13,9 +21,8 @@ namespace bacs{namespace archive{namespace problem
     /// hash string
     typedef binary hash;
     typedef std::vector<id> id_list;
-    typedef std::vector<info> info_list;
-    typedef std::vector<package> package_list;
-    typedef std::vector<hash> hash_list;
+    typedef std::map<id, info> info_map;
+    typedef std::map<id, hash> hash_map;
     struct import_info
     {
         bool ok;
