@@ -14,15 +14,23 @@ repository::repository(const boost::property_tree::ptree &config_):
 {
 }
 
+namespace
+{
+    bunsan::utility::archiver_ptr get_archiver(const problem::archive_format &format, const bunsan::utility::resolver &m_resolver)
+    {
+        bunsan::utility::archiver_ptr archiver = bunsan::utility::archiver::instance(format.archiver, m_resolver);
+        if (!archiver)
+            BOOST_THROW_EXCEPTION(unknown_archiver_error()<<unknown_archiver_error::format(format));
+        if (format.format)
+            archiver->setarg("format", format.format.get());
+    }
+}
+
 problem::import_map repository::insert_all(const problem::archive_format &format, const boost::filesystem::path &archive)
 {
     // TODO validate problem id
     bunsan::tempfile unpacked = bunsan::tempfile::in_dir(m_tmpdir);
-    bunsan::utility::archiver_ptr archiver = bunsan::utility::archiver::instance(format.archiver, m_resolver);
-    if (!archiver)
-        BOOST_THROW_EXCEPTION(unknown_archiver_error()<<unknown_archiver_error::format(format));
-    if (format.format)
-        archiver->setarg("format", format.format.get());
+    bunsan::utility::archiver_ptr archiver = get_archiver(format, m_resolver);
     archiver->unpack(archive, unpacked.path());
     boost::filesystem::directory_iterator i(unpacked.path()), end;
     problem::import_map map;
@@ -38,11 +46,7 @@ bunsan::tempfile repository::extract_all(const problem::archive_format &format, 
 {
     // TODO validate problem id
     bunsan::tempfile unpacked = bunsan::tempfile::in_dir(m_tmpdir);
-    bunsan::utility::archiver_ptr archiver = bunsan::uility::archiver::instance(formt.archiver, m_resolver);
-    if (!archiver)
-        BOOST_THROW_EXCEPTION(unknown_archiver_error()<<unknown_archiver_error::format(format));
-    if (format.format)
-        archiver->setarg("format", format.format.get());
+    bunsan::utility::archiver_ptr archiver = get_archiver(format, m_resolver);
     for (const problem::id &id: id_list)
     {
         // ignore return value
