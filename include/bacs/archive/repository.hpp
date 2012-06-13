@@ -20,21 +20,27 @@ namespace bacs{namespace archive
     {
     public:
         explicit repository(const boost::property_tree::ptree &config_);
-        // container
+        /* container */
         /*!
          * \brief insert problems into repository
          *
          * \return import information
          */
         problem::import_map insert_all(const problem::archive_format &format, const boost::filesystem::path &archive);
-        /*
+        /*!
          * \brief extract problems from repository
          *
          * \return archive with problems
          *
          * If problem does not exists for given id, this id is ignored.
          */
-        bunsan::tempfile extract(const problem::archive_format &format, const problem::id_list &id_list);
+        bunsan::tempfile extract_all(const problem::archive_format &format, const problem::id_list &id_list);
+        /*!
+         * \brief extract problem from repository
+         *
+         * \return false if problem does not exist
+         */
+        bool extract(const problem::id &id, const boost::filesystem::path &dst);
         /*!
          * \brief insert particular problem into repository
          *
@@ -48,12 +54,18 @@ namespace bacs{namespace archive
          *
          * \return list of erased problems
          */
-        problem::id_list erase(const problem::id_list &id_list);
+        problem::id_list erase_all(const problem::id_list &id_list);
+        /*!
+         * \brief erase problem from repository
+         *
+         * \return false if problem does not exists
+         */
+        bool erase(const problem::id &id);
         /*!
          * \brief list of available problems
          */
         problem::id_list all();
-        // info
+        /* info */
         problem::info info(const problem::id &id);
         problem::info_list info(const problem::id_list &id_list);
         problem::hash hash(const problem::id &id);
