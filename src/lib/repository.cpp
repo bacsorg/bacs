@@ -23,6 +23,7 @@ namespace
             BOOST_THROW_EXCEPTION(unknown_archiver_error()<<unknown_archiver_error::format(format));
         if (format.format)
             archiver->setarg("format", format.format.get());
+        return archiver;
     }
 }
 
