@@ -58,3 +58,32 @@ bunsan::tempfile repository::extract_all(const problem::archive_format &format, 
     return packed;
 }
 
+namespace
+{
+    template <typename Ret, typename RetMap, typename boost::optional<Ret> (repository::*Getter)(const problem::id &)>
+    struct multiplex
+    {
+        static RetMap get(const problem::id_list &id_list, repository *this_)
+        {
+            RetMap map;
+            for (const problem::id &id: id_list)
+            {
+                const boost::optional<Ret> ret = (this_->*Getter)(id);
+                if (ret)
+                    map[id] = ret.get();
+            }
+            return map;
+        }
+    };
+}
+
+problem::info_map repository::info_all(const problem::id_list &id_list)
+{
+    return multiplex<problem::info, problem::info_map, &repository::info>::get(id_list, this);
+}
+
+problem::hash_map repository::hash_all(const problem::id_list &id_list)
+{
+    return multiplex<problem::hash, problem::hash_map, &repository::hash>::get(id_list, this);
+}
+
