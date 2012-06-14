@@ -46,7 +46,7 @@ namespace bacs{namespace archive
          *
          * \param location -- directory with problem
          */
-        problem::import_info insert(const problem::id &problem_id, const boost::filesystem::path &location);
+        problem::import_info insert(const problem::id &id, const boost::filesystem::path &location);
         /*!
          * \brief erase problems from repository
          *
@@ -57,6 +57,9 @@ namespace bacs{namespace archive
         problem::id_list erase_all(const problem::id_list &id_list);
         /*!
          * \brief erase problem from repository
+         *
+         * \todo Should problem be moved into backup storage?
+         * Or it simply mark it 'erased'? \see repository::repack
          *
          * \return false if problem does not exists
          */
@@ -90,10 +93,47 @@ namespace bacs{namespace archive
          * If problem does not exist id is ignored.
          */
         problem::hash_map hash_all(const problem::id_list &id_list);
+        /*!
+         * \brief check problem existence
+         *
+         * Operation is atomic, lock-free
+         *
+         * \todo consistency: if 'erased' is a mark
+         * then repository::exists should have at least two variants (for mark and for real existence)
+         * \see repository::valid
+         */
+        bool exists(const problem::id &id);
+        /*!
+         * \brief repack problem
+         *
+         * Repacking is similar to import
+         * except using internal copy of problem
+         *
+         * Can be useful if problem conversion utility is changed
+         * or index is corrupted
+         *
+         * \todo inconsistent API: if repack is failed, problem is still present.
+         * It may be useful to mark problem 'erased', depending on repository::erase
+         * implementation.
+         */
+        problem::import_info repack(const problem::id &id);
+        /*!
+         * \brief repack all given problems
+         */
+        problem::import_map repack_all(const problem::id_list &id_list);
     private:
+        /*!
+         * \brief Check problem for validity
+         *
+         * Check basic format conformance, it does not check
+         * whether problem is importable
+         */
+        bool valid(const problem::id &id);
+
         bunsan::interprocess::file_lock m_lock;
         const bunsan::utility::resolver m_resolver;
         const boost::filesystem::path m_tmpdir;
+        /// internal problem storage packing
         bunsan::utility::archiver_ptr m_problem_archiver;
     };
 }}
