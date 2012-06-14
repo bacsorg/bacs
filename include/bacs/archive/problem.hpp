@@ -28,9 +28,9 @@ namespace bacs{namespace archive{namespace problem
         bool ok;
         std::string error;
     };
-    struct archive_format
+    struct archiver_config
     {
-        std::string archiver;
+        std::string type;
         boost::optional<std::string> format;
     };
     typedef std::map<id, import_info> import_map;

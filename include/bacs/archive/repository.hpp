@@ -10,6 +10,7 @@
 #include "bunsan/tempfile.hpp"
 #include "bunsan/interprocess/sync/file_lock.hpp"
 #include "bunsan/utility/resolver.hpp"
+#include "bunsan/utility/archiver.hpp"
 
 #include "bacs/archive/problem.hpp"
 
@@ -25,7 +26,7 @@ namespace bacs{namespace archive
          *
          * \return import information
          */
-        problem::import_map insert_all(const problem::archive_format &format, const boost::filesystem::path &archive);
+        problem::import_map insert_all(const problem::archiver_config &archiver_config, const boost::filesystem::path &archive);
         /*!
          * \brief extract problems from repository
          *
@@ -33,7 +34,7 @@ namespace bacs{namespace archive
          *
          * If problem does not exists for given id, this id is ignored.
          */
-        bunsan::tempfile extract_all(const problem::archive_format &format, const problem::id_list &id_list);
+        bunsan::tempfile extract_all(const problem::archiver_config &archiver_config, const problem::id_list &id_list);
         /*!
          * \brief extract problem from repository
          *

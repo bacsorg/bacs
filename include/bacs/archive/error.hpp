@@ -17,7 +17,7 @@ namespace bacs{namespace archive
     };
     struct unknown_archiver_error: virtual error
     {
-        typedef boost::error_info<struct tag_format, problem::archive_format> format;
+        typedef boost::error_info<struct tag_format, problem::archiver_config> archiver_config;
     };
 }}
 

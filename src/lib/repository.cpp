@@ -8,6 +8,19 @@
 
 using namespace bacs::archive;
 
+namespace
+{
+    bunsan::utility::archiver_ptr get_archiver(const problem::archiver_config &archiver_config, const bunsan::utility::resolver &m_resolver)
+    {
+        bunsan::utility::archiver_ptr archiver = bunsan::utility::archiver::instance(archiver_config.type, m_resolver);
+        if (!archiver)
+            BOOST_THROW_EXCEPTION(unknown_archiver_error()<<unknown_archiver_error::archiver_config(archiver_config));
+        if (archiver_config.format)
+            archiver->setarg("format", archiver_config.format.get());
+        return archiver;
+    }
+}
+
 repository::repository(const boost::property_tree::ptree &config_):
     m_lock(config_.get<std::string>(config::lock)),
     m_resolver(config_.get_child(config::resolver)),
@@ -15,24 +28,11 @@ repository::repository(const boost::property_tree::ptree &config_):
 {
 }
 
-namespace
-{
-    bunsan::utility::archiver_ptr get_archiver(const problem::archive_format &format, const bunsan::utility::resolver &m_resolver)
-    {
-        bunsan::utility::archiver_ptr archiver = bunsan::utility::archiver::instance(format.archiver, m_resolver);
-        if (!archiver)
-            BOOST_THROW_EXCEPTION(unknown_archiver_error()<<unknown_archiver_error::format(format));
-        if (format.format)
-            archiver->setarg("format", format.format.get());
-        return archiver;
-    }
-}
-
-problem::import_map repository::insert_all(const problem::archive_format &format, const boost::filesystem::path &archive)
+problem::import_map repository::insert_all(const problem::archiver_config &archiver_config, const boost::filesystem::path &archive)
 {
     // TODO validate problem id
     bunsan::tempfile unpacked = bunsan::tempfile::in_dir(m_tmpdir);
-    bunsan::utility::archiver_ptr archiver = get_archiver(format, m_resolver);
+    bunsan::utility::archiver_ptr archiver = get_archiver(archiver_config, m_resolver);
     archiver->unpack(archive, unpacked.path());
     boost::filesystem::directory_iterator i(unpacked.path()), end;
     problem::import_map map;
@@ -44,11 +44,11 @@ problem::import_map repository::insert_all(const problem::archive_format &format
     return map;
 }
 
-bunsan::tempfile repository::extract_all(const problem::archive_format &format, const problem::id_list &id_list)
+bunsan::tempfile repository::extract_all(const problem::archiver_config &archiver_config, const problem::id_list &id_list)
 {
     // TODO validate problem id
     bunsan::tempfile unpacked = bunsan::tempfile::in_dir(m_tmpdir);
-    bunsan::utility::archiver_ptr archiver = get_archiver(format, m_resolver);
+    bunsan::utility::archiver_ptr archiver = get_archiver(archiver_config, m_resolver);
     for (const problem::id &id: id_list)
     {
         // ignore return value
