@@ -26,6 +26,12 @@ repository::repository(const boost::property_tree::ptree &config_):
     m_resolver(config_.get_child(config::resolver)),
     m_tmpdir(config_.get<std::string>(config::tmpdir))
 {
+    problem::archiver_config archiver_config =
+        {
+            config_.get<std::string>(config::problem::archiver::type),
+            config_.get_optional<std::string>(config::problem::archiver::format)
+        };
+    m_problem_archiver = get_archiver(archiver_config, m_resolver);
 }
 
 problem::import_map repository::insert_all(const problem::archiver_config &archiver_config, const boost::filesystem::path &archive)

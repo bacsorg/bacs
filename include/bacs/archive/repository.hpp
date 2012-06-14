@@ -94,6 +94,7 @@ namespace bacs{namespace archive
         bunsan::interprocess::file_lock m_lock;
         const bunsan::utility::resolver m_resolver;
         const boost::filesystem::path m_tmpdir;
+        bunsan::utility::archiver_ptr m_problem_archiver;
     };
 }}
 
