@@ -1,0 +1,34 @@
+/*!
+\page internal_storage_page Internal storage
+
+\section repository_sec Repository
+
+\verbatim
+repository/
+           ${problem_id}/
+                         ${archive_name}
+\endverbatim
+
+\section index_sec Index
+
+\verbatim
+index/
+      ${problem_id}/
+                    problem.xml
+                    hash
+\endverbatim
+
+\section pm_sec bunsan::pm
+
+\verbatim
+pm/
+   bacs/
+        problem/
+                ${problem_id}/
+                              {unspecified}
+\endverbatim
+
+*/
+
+// vim:syntax=doxygen
+
