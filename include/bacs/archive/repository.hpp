@@ -139,13 +139,13 @@ namespace bacs{namespace archive
          *
          * Atomic, lock-free.
          */
-        bool has_flag(const problem::id &id, const problem::flag &flag);
+        bool has_flag(const problem::id &id, const problem::flag_type &flag);
         /*!
          * \brief Set problem flag.
          *
          * Atomic, exclusive-lock.
          */
-        bool set_flag(const problem::id &id, const problem::flag &flag);
+        bool set_flag(const problem::id &id, const problem::flag_type &flag);
         /*!
          * \brief Set problem flags.
          *
@@ -157,7 +157,7 @@ namespace bacs{namespace archive
          *
          * Atomic, exclusive-lock.
          */
-        bool unset_flag(const problem::id &id, const problem::flag &flag);
+        bool unset_flag(const problem::id &id, const problem::flag_type &flag);
         /*!
          * \brief Unset problem flags.
          *
@@ -200,7 +200,7 @@ namespace bacs{namespace archive
          *
          * \see repository::available
          */
-        boost::optional<problem::info> info(const problem::id &id);
+        boost::optional<problem::info_type> info(const problem::id &id);
         /*!
          * \brief Get info map for given problems.
          *
@@ -265,6 +265,8 @@ namespace bacs{namespace archive
          * \see repository::exists
          */
         bool valid(const problem::id &id);
+        /* lock-free function versions for internal usage */
+        // TODO
 
         bunsan::interprocess::file_lock m_lock;
         const bunsan::utility::resolver m_resolver;
