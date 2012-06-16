@@ -16,6 +16,17 @@
 
 namespace bacs{namespace archive
 {
+    /*!
+     * \brief Problems repository.
+     *
+     * Member functions has lock-related documentation.
+     * User should not rely on it, it may change in the future.
+     *
+     * There are three kinds of locks:
+     *     - exclusive-lock -- single operation at time, no other locks (except lock-free)
+     *     - shared-lock -- multiple operations at time, no exclusive locks
+     *     - lock-free -- multiple operations at time
+     */
     class repository
     {
     public:
@@ -70,7 +81,11 @@ namespace bacs{namespace archive
         /*!
          * \brief Change problem id and repack.
          *
-         * Atomic, exclusive-lock.
+         * If problem with id=future exists or repack fails functions does nothing.
+         *
+         * Atomic, shared-lock, exclusive-lock.
+         *
+         * \todo full locking documentation
          *
          * \see repository::repack
          */
