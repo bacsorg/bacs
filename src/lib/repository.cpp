@@ -1,5 +1,6 @@
 #include "bacs/archive/repository.hpp"
 #include "bacs/archive/config.hpp"
+#include "bacs/archive/flags.hpp"
 #include "bacs/archive/error.hpp"
 
 #include <boost/filesystem/operations.hpp>
@@ -67,6 +68,11 @@ bunsan::tempfile repository::extract_all(const problem::id_set &id_set, const pr
     return packed;
 }
 
+bool repository::available(const problem::id &id)
+{
+    return has_flag(id, problem::flag::ignore);
+}
+
 /* flags */
 
 problem::id_set repository::ignore_all(const problem::id_set &id_set)
@@ -76,6 +82,11 @@ problem::id_set repository::ignore_all(const problem::id_set &id_set)
         if (ignore(id))
             ret.insert(id);
     return ret;
+}
+
+bool repository::ignore(const problem::id &id)
+{
+    return set_flag(id, problem::flag::ignore);
 }
 
 /* info */
