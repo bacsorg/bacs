@@ -20,7 +20,7 @@ namespace bacs{namespace archive{namespace problem
     typedef bunsan::pm::entry package;
     /// hash string
     typedef binary hash_type;
-    typedef std::vector<id> id_set;
+    typedef std::set<id> id_set;
     typedef std::map<id, info_type> info_map;
     typedef std::map<id, hash_type> hash_map;
     typedef std::string flag_type;
