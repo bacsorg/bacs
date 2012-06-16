@@ -34,9 +34,10 @@ repository::repository(const boost::property_tree::ptree &config_):
     m_problem_archiver = get_archiver(archiver_config, m_resolver);
 }
 
+/* container */
+
 problem::import_map repository::insert_all(const problem::archiver_config &archiver_config, const boost::filesystem::path &archive)
 {
-    // TODO validate problem id
     bunsan::tempfile unpacked = bunsan::tempfile::in_dir(m_tmpdir);
     bunsan::utility::archiver_ptr archiver = get_archiver(archiver_config, m_resolver);
     archiver->unpack(archive, unpacked.path());
@@ -45,17 +46,18 @@ problem::import_map repository::insert_all(const problem::archiver_config &archi
     for (; i!=end; ++i)
     {
         problem::id id = i->path().filename().string();
+        // TODO validate problem id (should be implemented in repository::insert)
         map[id] = insert(id, i->path());
     }
     return map;
 }
 
-bunsan::tempfile repository::extract_all(const problem::archiver_config &archiver_config, const problem::id_list &id_list)
+bunsan::tempfile repository::extract_all(const problem::id_set &id_set, const problem::archiver_config &archiver_config)
 {
     // TODO validate problem id
     bunsan::tempfile unpacked = bunsan::tempfile::in_dir(m_tmpdir);
     bunsan::utility::archiver_ptr archiver = get_archiver(archiver_config, m_resolver);
-    for (const problem::id &id: id_list)
+    for (const problem::id &id: id_set)
     {
         // ignore return value
         extract(id, unpacked.path()/id);
@@ -65,32 +67,64 @@ bunsan::tempfile repository::extract_all(const problem::archiver_config &archive
     return packed;
 }
 
+/* flags */
+
+problem::id_set repository::ignore_all(const problem::id_set &id_set)
+{
+    problem::id_set ret;
+    for (const auto &id: id_set)
+        if (ignore(id))
+            ret.insert(id);
+    return ret;
+}
+
+/* info */
+
 namespace
 {
-    template <typename Ret, typename RetMap, typename boost::optional<Ret> (repository::*Getter)(const problem::id &)>
+    template <typename Ret, typename RetMap, Ret (repository::*Getter)(const problem::id &)>
     struct multiplex
     {
-        static RetMap get(const problem::id_list &id_list, repository *this_)
+        template <typename T>
+        static inline void insert(RetMap &map, const problem::id &id, const T &ret)
+        {
+            map[id] = ret;
+        }
+        template <typename T>
+        static inline void insert(RetMap &map, const problem::id &id, const boost::optional<T> &ret)
+        {
+            if (ret)
+                map[id] = ret.get();
+        }
+        static RetMap get(const problem::id_set &id_set, repository *this_)
         {
             RetMap map;
-            for (const problem::id &id: id_list)
-            {
-                const boost::optional<Ret> ret = (this_->*Getter)(id);
-                if (ret)
-                    map[id] = ret.get();
-            }
+            for (const problem::id &id: id_set)
+                insert(map, id, (this_->*Getter)(id));
             return map;
         }
     };
 }
 
-problem::info_map repository::info_all(const problem::id_list &id_list)
+problem::info_map repository::info_all(const problem::id_set &id_set)
 {
-    return multiplex<problem::info, problem::info_map, &repository::info>::get(id_list, this);
+    return multiplex<boost::optional<problem::info_type>, problem::info_map, &repository::info>::get(id_set, this);
 }
 
-problem::hash_map repository::hash_all(const problem::id_list &id_list)
+problem::hash_map repository::hash_all(const problem::id_set &id_set)
 {
-    return multiplex<problem::hash, problem::hash_map, &repository::hash>::get(id_list, this);
+    return multiplex<boost::optional<problem::hash_type>, problem::hash_map, &repository::hash>::get(id_set, this);
+}
+
+problem::status_map repository::status_all(const problem::id_set &id_set)
+{
+    return multiplex<problem::status, problem::status_map, &repository::status>::get(id_set, this);
+}
+
+/* repack */
+
+problem::import_map repository::repack_all(const problem::id_set &id_set)
+{
+    return multiplex<problem::import_info, problem::import_map, &repository::repack>::get(id_set, this);
 }
 
