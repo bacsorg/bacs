@@ -111,7 +111,7 @@ namespace bacs{namespace archive
          * \brief Check problem for availability.
          *
          * Return true if problem is available and
-         * is not marked by 'ignore' flag.
+         * is not marked by problem::flag::ignore.
          *
          * Atomic, shared-lock.
          *
@@ -123,7 +123,7 @@ namespace bacs{namespace archive
         /*!
          * \brief Get problem status.
          *
-         * Atomic, shared-lock.
+         * Atomic, lock-free.
          */
         problem::status status(const problem::id &id);
         /*!
@@ -137,11 +137,16 @@ namespace bacs{namespace archive
         /*!
          * \brief Check problem for flag.
          *
+         * \return false if problem does not exist
+         * or problem is not marked by flag
+         *
          * Atomic, lock-free.
          */
         bool has_flag(const problem::id &id, const problem::flag_type &flag);
         /*!
          * \brief Set problem flag.
+         *
+         * \return false if problem does not exist
          *
          * Atomic, exclusive-lock.
          */
@@ -155,11 +160,15 @@ namespace bacs{namespace archive
         /*!
          * \brief Unset problem flag.
          *
+         * \return false if problem does not exist
+         *
          * Atomic, exclusive-lock.
          */
         bool unset_flag(const problem::id &id, const problem::flag_type &flag);
         /*!
          * \brief Unset problem flags.
+         *
+         * \return false if problem does not exist
          *
          * Atomic, exclusive-lock.
          */
@@ -167,11 +176,13 @@ namespace bacs{namespace archive
         /*!
          * \brief Reset problem flags.
          *
+         * \return false if problem does not exist
+         *
          * Atomic, exclusive-lock.
          */
         bool reset_flags(const problem::id &id);
         /*!
-         * \brief Mark problems with 'ignore' flag.
+         * \brief Mark problems with problem::flag::ignore.
          *
          * If problem does not exists id is ignored.
          *
@@ -183,7 +194,7 @@ namespace bacs{namespace archive
          */
         problem::id_set ignore_all(const problem::id_set &id_set);
         /*!
-         * \brief Alias for set_flag(id, "ignore").
+         * \brief Alias for repository::set_flag(id, #problem::flag::ignore).
          *
          * \return false if problem does not exists
          *
@@ -237,7 +248,7 @@ namespace bacs{namespace archive
          * Can be useful if problem conversion utility is changed
          * or index is corrupted
          *
-         * If repack is not successful problem is marked by 'ignore' flag.
+         * If repack is not successful problem is marked by problem::flag::ignore.
          *
          * Atomic, exclusive-lock.
          *
