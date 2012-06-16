@@ -227,6 +227,7 @@ namespace bacs{namespace archive
          * \see repository::hash
          */
         problem::hash_map hash_all(const problem::id_set &id_set);
+        /* repack */
         /*!
          * \brief Repack problem.
          *
