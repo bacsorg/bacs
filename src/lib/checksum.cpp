@@ -16,7 +16,7 @@ namespace
         boost::crc_32_type crc;
         boost::filesystem::ifstream in(file, std::ios_base::binary);
         if (!in.is_open())
-            bunsan::system_error("open file: \""+file.string()+"\"");
+            BOOST_THROW_EXCEPTION(bunsan::system_error("open") << bunsan::error::message(file.string()));
         constexpr size_t bufsize = 1024;
         char buf[bufsize];
         do
@@ -26,7 +26,7 @@ namespace
         }
         while (in);
         if (in.bad())
-            bunsan::system_error("reading from file: \""+file.string()+"\"");
+            BOOST_THROW_EXCEPTION(bunsan::system_error("read") << bunsan::error::message(file.string()));
         std::stringstream out;
         out<<std::hex<<std::uppercase<<crc.checksum();
         return out.str();
@@ -46,7 +46,7 @@ namespace
         HASH hash;
         boost::filesystem::ifstream in(file, std::ios_base::binary);
         if (!in.is_open())
-            bunsan::system_error("open file: \""+file.string()+"\"");
+            BOOST_THROW_EXCEPTION(bunsan::system_error("open") << bunsan::error::message(file.string()));
         do
         {
             in.read(reinterpret_cast<char *>(buf), bufsize);
@@ -54,7 +54,7 @@ namespace
         }
         while (in);
         if (in.bad())
-            bunsan::system_error("reading from file: \""+file.string()+"\"");
+            BOOST_THROW_EXCEPTION(bunsan::system_error("read") << bunsan::error::message(file.string()));
         byte out[HASH::DIGESTSIZE];
         hash.Final(out);
         std::stringstream sout;
