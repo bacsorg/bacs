@@ -33,7 +33,7 @@ void fetchers::curl::fetch(const std::string &uri, const boost::filesystem::path
     {
         boost::filesystem::ofstream touch(dst);
         if (!touch.is_open())
-            bunsan::system_error(dst.string());
+            BOOST_THROW_EXCEPTION(system_error("open") << error::message(dst.string()));
     }
 }
 
