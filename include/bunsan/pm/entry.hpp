@@ -36,6 +36,8 @@ namespace bunsan{namespace pm
         // comparisons
         bool operator==(const entry &e) const;
         bool operator<(const entry &e) const;
+        // concatenation
+        entry operator/(const entry &e) const;
         // entry conversion getters
         boost::filesystem::path location() const;
         std::string name(char delim=def_delim) const;

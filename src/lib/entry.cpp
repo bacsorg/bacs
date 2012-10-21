@@ -76,6 +76,13 @@ bool bunsan::pm::entry::operator<(const bunsan::pm::entry &e) const
     return m_location<e.m_location;
 }
 
+bunsan::pm::entry bunsan::pm::entry::operator/(const entry &e) const
+{
+    entry ent(*this);
+    ent.m_location.insert(ent.m_location.end(), e.m_location.begin(), e.m_location.end());
+    return ent;
+}
+
 boost::filesystem::path bunsan::pm::entry::location() const
 {
     boost::filesystem::path loc;

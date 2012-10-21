@@ -23,6 +23,7 @@ int main()
     assert(e.local_resource("repo")=="repo"/pname);
     assert(e.local_resource("/repo")=="/repo"/pname);
     assert(e.local_resource("/repo", "o_O")=="/repo"/pname/"o_O");
+    assert((entry("123/456") / "789").name() == "123/456/789");
     entry a("some//long/name");
     assert(a==e);
     using std::stringstream;
