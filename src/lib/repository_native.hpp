@@ -31,7 +31,6 @@ private:
     boost::filesystem::path source_resource(const entry &package, const std::string &name);
     boost::filesystem::path package_resource(const entry &package, const std::string &name);
     std::string value(const std::string &key);
-    void read_index(const entry &package, boost::property_tree::ptree &ptree);
     std::multimap<boost::filesystem::path, std::string> sources(const entry &package);
     std::map<entry, boost::property_tree::ptree> read_snapshot(const boost::filesystem::path &path);
     void write_snapshot(const boost::filesystem::path &path, const std::map<entry, boost::property_tree::ptree> &snapshot);

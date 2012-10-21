@@ -27,8 +27,16 @@ namespace bunsan{namespace pm
         } source;
         std::vector<entry> all() const;
         // boost::property_tree::ptree convertions
-        explicit depends(const boost::property_tree::ptree &index);
+        template <typename T>
+        explicit depends(const T &obj)
+        {
+            load(obj);
+        }
         explicit operator boost::property_tree::ptree() const;
+        // load()/save()
+        void load(const boost::property_tree::ptree &index);
+        void load(const boost::filesystem::path &path);
+        void save(const boost::filesystem::path &path) const;
     };
 }}
 

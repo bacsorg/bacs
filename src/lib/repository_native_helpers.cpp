@@ -9,11 +9,6 @@ std::string bunsan::pm::repository::native::value(const std::string &key)
     return config.get<std::string>(key);
 }
 
-void bunsan::pm::repository::native::read_index(const entry &package, boost::property_tree::ptree &ptree)
-{
-    boost::property_tree::read_info(source_resource(package, value(config::name::file::index)).string(), ptree);
-}
-
 void bunsan::pm::repository::native::read_checksum(const entry &package, boost::property_tree::ptree &ptree)
 {
     boost::property_tree::read_info(source_resource(package, value(config::name::file::checksum)).string(), ptree);
@@ -89,10 +84,7 @@ bunsan::pm::depends bunsan::pm::repository::native::read_depends(const entry &pa
 {
     try
     {
-        boost::property_tree::ptree index;
-        read_index(package, index);
-        depends deps(index);
-        return deps;
+        return depends(source_resource(package, value(config::name::file::index)));
     }
     catch (std::exception &e)
     {

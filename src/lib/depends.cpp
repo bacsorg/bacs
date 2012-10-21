@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <set>
 
+#include <boost/property_tree/info_parser.hpp>
+
 std::vector<bunsan::pm::entry> bunsan::pm::depends::all() const
 {
     std::set<entry> all_;
@@ -19,18 +21,6 @@ std::vector<bunsan::pm::entry> bunsan::pm::depends::all() const
 }
 
 // boost::property_tree::ptree convertions
-
-bunsan::pm::depends::depends(const boost::property_tree::ptree &index)
-{
-    for (const auto &i: index.get_child(pm::index::package, boost::property_tree::ptree()))
-        this->package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-    for (const auto &i: index.get_child(pm::index::source::self, boost::property_tree::ptree()))
-        this->source.self.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-    for (const auto &i: index.get_child(pm::index::source::import::package, boost::property_tree::ptree()))
-        this->source.import.package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-    for (const auto &i: index.get_child(pm::index::source::import::source, boost::property_tree::ptree()))
-        this->source.import.source.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-}
 
 namespace
 {
@@ -65,5 +55,29 @@ bunsan::pm::depends::operator boost::property_tree::ptree() const
     deps.put_child(index::source::import::source, multimap2ptree(this->source.import.source));
     deps.put_child(index::source::self, multimap2ptree(this->source.self));
     return deps;
+}
+
+void bunsan::pm::depends::load(const boost::property_tree::ptree &index)
+{
+    for (const auto &i: index.get_child(pm::index::package, boost::property_tree::ptree()))
+        this->package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
+    for (const auto &i: index.get_child(pm::index::source::self, boost::property_tree::ptree()))
+        this->source.self.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
+    for (const auto &i: index.get_child(pm::index::source::import::package, boost::property_tree::ptree()))
+        this->source.import.package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
+    for (const auto &i: index.get_child(pm::index::source::import::source, boost::property_tree::ptree()))
+        this->source.import.source.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
+}
+
+void bunsan::pm::depends::load(const boost::filesystem::path &path)
+{
+    boost::property_tree::ptree index;
+    boost::property_tree::read_info(path.string(), index);
+    load(index);
+}
+
+void bunsan::pm::depends::save(const boost::filesystem::path &path) const
+{
+    boost::property_tree::write_info(path.string(), static_cast<boost::property_tree::ptree>(*this));
 }
 
