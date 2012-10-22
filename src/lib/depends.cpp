@@ -39,9 +39,9 @@ namespace
         ptree pt;
         for (const auto &i: mmap)
         {
-            ptree pt;
-            pt.put_value(to_string(i.second));
-            pt.push_back(ptree::value_type(i.first.string(), pt));
+            ptree kv;
+            kv.put_value(to_string(i.second));
+            pt.push_back(ptree::value_type(i.first.string(), kv));
         }
         return pt;
     }
