@@ -24,7 +24,7 @@ namespace bunsan{namespace utility{namespace makers
     private:
         std::vector<std::string> argv_(
             const std::vector<std::string> &targets) const;
-        static bool factory_reg_hook;
+        static const bool factory_reg_hook;
     };
 }}}
 

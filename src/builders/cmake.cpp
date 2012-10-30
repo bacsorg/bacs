@@ -6,7 +6,7 @@
 
 using namespace bunsan::utility;
 
-bool builders::cmake::factory_reg_hook = builder::register_new("cmake",
+const bool builders::cmake::factory_reg_hook = builder::register_new("cmake",
     [](const resolver &resolver_)
     {
         builder_ptr ptr(new cmake(resolver_));

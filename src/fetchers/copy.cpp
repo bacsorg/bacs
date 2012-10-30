@@ -9,7 +9,7 @@ using namespace bunsan::utility;
 #   error ASSERTION: BUNSAN_UTILITY_FETCHER_COPY is in use
 #endif
 #define BUNSAN_UTILITY_FETCHER_COPY(NAME) \
-bool fetchers::copy::factory_reg_hook_##NAME = fetcher::register_new(#NAME, \
+const bool fetchers::copy::factory_reg_hook_##NAME = fetcher::register_new(#NAME, \
     [](const resolver &) \
     { \
         fetcher_ptr ptr(new copy); \

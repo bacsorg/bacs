@@ -6,7 +6,7 @@
 
 using namespace bunsan::utility;
 
-bool fetchers::wget::factory_reg_hook = fetcher::register_new("wget",
+const bool fetchers::wget::factory_reg_hook = fetcher::register_new("wget",
     [](const resolver &resolver_)
     {
         fetcher_ptr ptr(new wget(resolver_.find_executable("wget")));

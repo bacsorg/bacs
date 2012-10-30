@@ -8,7 +8,7 @@ using namespace bunsan::utility;
 #   error ASSERTION: BUNSAN_UTILITY_ARCHIVER_7Z is in use
 #endif
 #define BUNSAN_UTILITY_ARCHIVER_7Z(EXE) \
-bool archivers::_7z::factory_reg_hook_##EXE = archiver::register_new(#EXE, \
+const bool archivers::_7z::factory_reg_hook_##EXE = archiver::register_new(#EXE, \
     [](const resolver &resolver_) \
     { \
         archiver_ptr ptr(new _7z(resolver_.find_executable(#EXE))); \

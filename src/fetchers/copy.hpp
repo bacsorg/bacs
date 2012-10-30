@@ -11,8 +11,8 @@ namespace bunsan{namespace utility{namespace fetchers
         copy()=default;
         virtual void fetch(const std::string &uri, const boost::filesystem::path &dst);
     private:
-        static bool factory_reg_hook_cp;
-        static bool factory_reg_hook_copy;
+        static const bool factory_reg_hook_cp;
+        static const bool factory_reg_hook_copy;
     };
 }}}
 

@@ -6,7 +6,7 @@
 
 using namespace bunsan::utility;
 
-bool archivers::tar::factory_reg_hook = archiver::register_new("tar",
+const bool archivers::tar::factory_reg_hook = archiver::register_new("tar",
     [](const resolver &resolver_)
     {
         archiver_ptr ptr(new tar(resolver_.find_executable("tar")));

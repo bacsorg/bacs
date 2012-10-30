@@ -8,7 +8,7 @@
 
 using namespace bunsan::utility;
 
-bool fetchers::curl::factory_reg_hook = fetcher::register_new("curl",
+const bool fetchers::curl::factory_reg_hook = fetcher::register_new("curl",
     [](const resolver &resolver_)
     {
         fetcher_ptr ptr(new curl(resolver_.find_executable("curl")));

@@ -12,7 +12,7 @@ namespace bunsan{namespace utility{namespace fetchers
         explicit curl(const boost::filesystem::path &exe);
         virtual void fetch(const std::string &uri, const boost::filesystem::path &dst);
     private:
-        static bool factory_reg_hook;
+        static const bool factory_reg_hook;
     };
 }}}
 

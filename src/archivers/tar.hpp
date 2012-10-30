@@ -24,7 +24,7 @@ namespace bunsan{namespace utility{namespace archivers
             const boost::filesystem::path &archive,
             const boost::filesystem::path &file);
     private:
-        static bool factory_reg_hook;
+        static const bool factory_reg_hook;
     };
 }}}
 
