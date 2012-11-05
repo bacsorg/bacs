@@ -4,9 +4,12 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
-bunsan::pm::compatibility::repository::repository(const boost::property_tree::ptree &config):
-    m_repo(new bunsan::pm::repository(config))
-{}
+bunsan::pm::compatibility::repository::repository(const std::string &config)
+{
+    boost::property_tree::ptree cfg;
+    boost::property_tree::read_info(config, cfg);
+    m_repo = new bunsan::pm::repository(cfg);
+}
 
 void bunsan::pm::compatibility::repository::extract(const std::string &package, const std::string &destination)
 {

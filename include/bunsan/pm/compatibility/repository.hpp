@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
+#include <boost/noncopyable.hpp>
 
 namespace bunsan{namespace pm
 {
@@ -12,14 +12,18 @@ namespace bunsan{namespace pm
 
 namespace bunsan{namespace pm{namespace compatibility
 {
-    class repository
+    class repository: private boost::noncopyable
     {
     public:
-        explicit repository(const boost::property_tree::ptree &config);
+        /*!
+         * \param config path to configuration file
+         */
+        explicit repository(const std::string &config);
         void create(const std::string &path, bool strip=false);
         void extract(const std::string &package, const std::string &path);
         void clean();
         ~repository();
+
     private:
         bunsan::pm::repository *m_repo;
     };
