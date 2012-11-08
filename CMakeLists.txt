@@ -1,66 +1,53 @@
 project(bunsan_utility)
 
+include(${CMAKE_SOURCE_DIR}/system-config.cmake OPTIONAL)
+
 cmake_minimum_required(VERSION 2.8)
 
-if(${CMAKE_COMPILER_IS_GNUCXX})
-    set(gxx_flags "-std=c++0x -Wall -Wextra")
-    if(${UNIX})
-        set(gxx_flags "-pthread ${gxx_flags}")
-    endif()
-    set(CMAKE_CXX_FLAGS_DEBUG "-g ${gxx_flags}")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O2 ${gxx_flags}")
-endif()
+include(BunsanCommon)
 
-include(${CMAKE_SOURCE_DIR}/user-config.cmake OPTIONAL)
+include_directories(include)
 
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build, options are: Debug Release" FORCE)
-endif()
-
-if(NOT DEFINED ENABLE_TESTS)
-    set(ENABLE_TESTS ON CACHE BOOL "Do you want to enable testing?" FORCE)
-endif()
-
-# BOOST
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREADED ON)
-find_package(Boost COMPONENTS system filesystem serialization iostreams unit_test_framework program_options REQUIRED)
-list(APPEND includes ${Boost_INCLUDE_DIRS})
-list(APPEND libraries ${Boost_LIBRARIES})
-
+# bunsan::common
 list(APPEND libraries bunsan_common)
 
-aux_source_directory(src srcs)
+bunsan_use_boost(system filesystem serialization unit_test_framework thread)
 
-aux_source_directory(src/archivers archivers_srcs)
-list(APPEND srcs ${archivers_srcs})
+add_library(${PROJECT_NAME} SHARED
+    src/error.cpp
+    src/utility.cpp
+    src/executor.cpp
+    src/resolver.cpp
 
-aux_source_directory(src/builders builders_srcs)
-list(APPEND srcs ${builders_srcs})
+    src/builder.cpp
+    src/builders/cmake.hpp
+    src/builders/cmake.cpp
+    src/builders/conf_make_install.hpp
+    src/builders/conf_make_install.cpp
 
-aux_source_directory(src/fetchers fetchers_srcs)
-list(APPEND srcs ${fetchers_srcs})
+    src/fetcher.cpp
+    src/fetchers/curl.hpp
+    src/fetchers/wget.cpp
+    src/fetchers/wget.hpp
+    src/fetchers/curl.cpp
+    src/fetchers/copy.hpp
+    src/fetchers/copy.cpp
 
-aux_source_directory(src/makers makers_srcs)
-list(APPEND srcs ${makers_srcs})
+    src/archiver.cpp
+    src/archivers/tar.hpp
+    src/archivers/cwd_split.cpp
+    src/archivers/7z.hpp
+    src/archivers/tar.cpp
+    src/archivers/7z.cpp
+    src/archivers/cwd_split.hpp
 
-include_directories(include ${includes})
-
-add_library(${PROJECT_NAME} SHARED ${srcs})
+    src/maker.cpp
+    src/makers/make.cpp
+    src/makers/make.hpp
+)
 target_link_libraries(${PROJECT_NAME} ${libraries})
 
-# install
-
 install(DIRECTORY include DESTINATION .)
-install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
+bunsan_install_targets(${PROJECT_NAME})
 
-# testing
-
-if(${ENABLE_TESTS})
-    enable_testing()
-    add_subdirectory(tests ${PROJECT_BINARY_DIR}/tests)
-endif()
-
+bunsan_include_tests()
