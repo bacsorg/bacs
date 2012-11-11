@@ -6,14 +6,11 @@ cmake_minimum_required(VERSION 2.8)
 
 include(BunsanCommon)
 
-include_directories(include)
-
-# bunsan::common
-list(APPEND libraries bunsan_common)
+bunsan_use_bunsan(common)
 
 bunsan_use_boost(system filesystem serialization unit_test_framework thread)
 
-add_library(${PROJECT_NAME} SHARED
+bunsan_add_shared_library(${PROJECT_NAME}
     src/error.cpp
     src/utility.cpp
     src/executor.cpp
@@ -45,9 +42,8 @@ add_library(${PROJECT_NAME} SHARED
     src/makers/make.cpp
     src/makers/make.hpp
 )
-target_link_libraries(${PROJECT_NAME} ${libraries})
 
-install(DIRECTORY include DESTINATION .)
+bunsan_install_headers()
 bunsan_install_targets(${PROJECT_NAME})
 
 bunsan_include_tests()
