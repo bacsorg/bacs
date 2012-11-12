@@ -28,7 +28,7 @@ bunsan::utility::resolver::resolver(const boost::property_tree::ptree &config):
     }
 }
 
-bunsan::utility::resolver::resolver(resolver &&res) throw()
+bunsan::utility::resolver::resolver(resolver &&res) noexcept
 {
     this->swap(res);
 }
@@ -40,20 +40,20 @@ bunsan::utility::resolver &bunsan::utility::resolver::operator=(const resolver &
     return *this;
 }
 
-bunsan::utility::resolver &bunsan::utility::resolver::operator=(resolver &&res) throw()
+bunsan::utility::resolver &bunsan::utility::resolver::operator=(resolver &&res) noexcept
 {
     this->swap(res);
     return *this;
 }
 
-void bunsan::utility::resolver::swap(bunsan::utility::resolver::config_type &a, bunsan::utility::resolver::config_type &b) throw()
+void bunsan::utility::resolver::swap(bunsan::utility::resolver::config_type &a, bunsan::utility::resolver::config_type &b) noexcept
 {
     a.m_alias.swap(b.m_alias);
     a.m_absolute.swap(b.m_absolute);
     a.m_path.swap(b.m_path);
 }
 
-void bunsan::utility::resolver::swap(resolver &res) throw()
+void bunsan::utility::resolver::swap(resolver &res) noexcept
 {
     if (m_config)
     {

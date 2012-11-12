@@ -23,10 +23,10 @@ namespace bunsan{namespace utility
          */
         explicit resolver(const boost::property_tree::ptree &config);
         resolver(const resolver &)=default;
-        resolver(resolver &&) throw();
+        resolver(resolver &&) noexcept;
         resolver &operator=(const resolver &);
-        resolver &operator=(resolver &&) throw();
-        void swap(resolver &) throw();
+        resolver &operator=(resolver &&) noexcept;
+        void swap(resolver &) noexcept;
         // interface
         boost::filesystem::path find_executable(
             const boost::filesystem::path &exe) const;
@@ -42,10 +42,10 @@ namespace bunsan{namespace utility
                 m_alias, m_absolute;
             boost::unordered_set<boost::filesystem::path> m_path;
         };
-        static void swap(config_type &a, config_type &b) throw();
+        static void swap(config_type &a, config_type &b) noexcept;
         boost::optional<config_type> m_config;
     };
-    inline void swap(resolver &a, resolver &b) throw()
+    inline void swap(resolver &a, resolver &b) noexcept
     {
         a.swap(b);
     }
