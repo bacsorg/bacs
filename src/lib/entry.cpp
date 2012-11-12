@@ -46,7 +46,7 @@ void bunsan::pm::entry::build(const std::string &name_, char delim)
     BOOST_ASSERT(!m_location.empty());
 }
 
-bunsan::pm::entry &bunsan::pm::entry::operator=(bunsan::pm::entry &&e) throw()
+bunsan::pm::entry &bunsan::pm::entry::operator=(bunsan::pm::entry &&e) noexcept
 {
     this->swap(e);
     return *this;
@@ -113,7 +113,7 @@ std::string bunsan::pm::entry::name(char delim) const
     return name(d);
 }
 
-void bunsan::pm::entry::swap(bunsan::pm::entry &e) throw()
+void bunsan::pm::entry::swap(bunsan::pm::entry &e) noexcept
 {
     m_location.swap(e.m_location);
 }

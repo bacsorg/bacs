@@ -14,7 +14,7 @@ using bunsan::pm::repository;
 namespace
 {
     template <typename ... MemFnArgs, typename ... Args>
-    int wrap(void (repository::*mem_fn)(MemFnArgs...), cstring config, string error_msg, size_type error_size, Args &&...args) throw()
+    int wrap(void (repository::*mem_fn)(MemFnArgs...), cstring config, string error_msg, size_type error_size, Args &&...args) noexcept
     {
         try
         {

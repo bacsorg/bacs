@@ -27,8 +27,8 @@ namespace bunsan{namespace pm
         entry(const entry &)=default;
         entry(entry &&)=default;
         entry &operator=(const entry &e);
-        entry &operator=(entry &&e) throw();
-        void swap(entry &e) throw();
+        entry &operator=(entry &&e) noexcept;
+        void swap(entry &e) noexcept;
         // conversions
         entry(const std::string &name_, char delim=def_delim);
         entry(const char *name_, char delim=def_delim);
@@ -60,7 +60,7 @@ namespace bunsan{namespace pm
         void build(const std::string &name_, char delim=def_delim);
         std::vector<std::string> m_location;
     };
-    inline void swap(entry &e1, entry &e2) throw()
+    inline void swap(entry &e1, entry &e2) noexcept
     {
         e1.swap(e2);
     }
