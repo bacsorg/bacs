@@ -4,7 +4,7 @@
 
 #include "bunsan/utility/maker.hpp"
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
@@ -53,9 +53,7 @@ namespace bunsan{namespace utility{namespace builders
 
         boost::optional<std::size_t> m_generator;
 
-        // FIXME unordered
-#warning TODO
-        std::map<std::string, std::string> m_cmake_defines;
+        std::unordered_map<std::string, std::string> m_cmake_defines;
         utility::config_type m_make_maker_config, m_install_maker_config;
 
     private:
