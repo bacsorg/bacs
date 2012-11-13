@@ -1,5 +1,4 @@
-#ifndef BUNSAN_UTILITY_MAKER_HPP
-#define BUNSAN_UTILITY_MAKER_HPP
+#pragma once
 
 #include "bunsan/factory_helper.hpp"
 #include "bunsan/utility/resolver.hpp"
@@ -15,6 +14,3 @@ namespace bunsan{namespace utility
             const std::vector<std::string> &targets)=0;
     BUNSAN_FACTORY_END(maker)
 }}
-
-#endif //BUNSAN_UTILITY_MAKER_HPP
-

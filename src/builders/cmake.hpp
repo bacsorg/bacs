@@ -1,5 +1,8 @@
-#ifndef SRC_BUILDERS_CMAKE_HPP
-#define SRC_BUILDERS_CMAKE_HPP
+#pragma once
+
+#include "conf_make_install.hpp"
+
+#include "bunsan/utility/maker.hpp"
 
 #include <map>
 #include <string>
@@ -7,30 +10,28 @@
 
 #include <boost/optional.hpp>
 
-#include "bunsan/utility/maker.hpp"
-
-#include "conf_make_install.hpp"
-
 namespace bunsan{namespace utility{namespace builders
 {
     class cmake: public conf_make_install
     {
-        const resolver m_resolver;
-        const boost::filesystem::path m_cmake_exe;
     public:
         explicit cmake(const resolver &resolver_);
-        virtual void setup(const utility::config_type &config);
+        void setup(const utility::config_type &config) override;
+
     protected:
-        virtual void configure_(
+        void configure_(
             const boost::filesystem::path &src,
-            const boost::filesystem::path &bin);
-        virtual void make_(
+            const boost::filesystem::path &bin) override;
+
+        void make_(
             const boost::filesystem::path &src,
-            const boost::filesystem::path &bin);
-        virtual void install_(
+            const boost::filesystem::path &bin) override;
+
+        void install_(
             const boost::filesystem::path &src,
             const boost::filesystem::path &bin,
-            const boost::filesystem::path &root);
+            const boost::filesystem::path &root) override;
+
     private:
         struct generator
         {
@@ -38,20 +39,27 @@ namespace bunsan{namespace utility{namespace builders
             const std::string m_id;
             const type m_type;
         };
+
     private:
         void setup_generator();
         void set_generator(const std::string &gen_id);
         const generator &get_generator() const;
         std::vector<std::string> argv_(
             const boost::filesystem::path &src) const;
+
     private:
+        const resolver m_resolver;
+        const boost::filesystem::path m_cmake_exe;
+
         boost::optional<std::size_t> m_generator;
+
+        // FIXME unordered
+#warning TODO
         std::map<std::string, std::string> m_cmake_defines;
         utility::config_type m_make_maker_config, m_install_maker_config;
+
+    private:
         static const std::vector<generator> generators;
         static const bool factory_reg_hook;
     };
 }}}
-
-#endif //SRC_BUILDERS_CMAKE_HPP
-

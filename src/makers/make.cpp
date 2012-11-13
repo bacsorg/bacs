@@ -1,9 +1,9 @@
 #include "make.hpp"
 
+#include "bunsan/process/execute.hpp"
+
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/operations.hpp>
-
-#include "bunsan/process/execute.hpp"
 
 using namespace bunsan::utility;
 
@@ -76,4 +76,3 @@ void makers::make::setup(const utility::config_type &config)
             BOOST_THROW_EXCEPTION(unknown_option_error(i.first));
     }
 }
-

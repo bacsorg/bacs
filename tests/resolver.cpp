@@ -164,5 +164,5 @@ int main()
     init(res, cfg_alias_absolute_path);
     BOOST_ASSERT("/usr/some/bar"==res.find_executable("foo"));
     // TODO find_library
+#warning unimplemented find_library
 }
-

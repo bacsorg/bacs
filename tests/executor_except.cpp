@@ -1,11 +1,11 @@
+#include "bunsan/util.hpp"
+#include "bunsan/utility/executor.hpp"
+
 #include <sstream>
 
 #include <cassert>
 
 #include <boost/property_tree/info_parser.hpp>
-
-#include "bunsan/util.hpp"
-#include "bunsan/utility/executor.hpp"
 
 int main()
 {
@@ -16,12 +16,13 @@ int main()
     typedef std::vector<std::string> vs;
     ptree pt;
     context ctx;
-    ss in_1("n name\n"
-        "d\n"
-        "{\n"
-        "\texecutable exe\n"
-        "\tcurrent_path path\n"
-        "}\n");
+    ss in_1(R"EOF(
+n name
+d
+{
+    executable exe
+    current_path path
+})EOF");
     read_info(in_1, pt);
     try
     {
@@ -33,4 +34,3 @@ int main()
         SLOG("caught: "<<e.what());
     }
 }
-

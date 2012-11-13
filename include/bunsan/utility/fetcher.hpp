@@ -1,5 +1,4 @@
-#ifndef BUNSAN_UTILITY_FETCHER_HPP
-#define BUNSAN_UTILITY_FETCHER_HPP
+#pragma once
 
 #include "bunsan/factory_helper.hpp"
 #include "bunsan/utility/resolver.hpp"
@@ -13,6 +12,3 @@ namespace bunsan{namespace utility
         virtual void fetch(const std::string &uri, const boost::filesystem::path &dst)=0;
     BUNSAN_FACTORY_END(fetcher)
 }}
-
-#endif //BUNSAN_UTILITY_FETCHER_HPP
-

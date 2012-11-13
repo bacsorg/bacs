@@ -1,8 +1,8 @@
 #include "wget.hpp"
 
-#include <boost/filesystem/operations.hpp>
-
 #include "bunsan/process/execute.hpp"
+
+#include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;
 
@@ -27,4 +27,3 @@ void fetchers::wget::fetch(const std::string &uri, const boost::filesystem::path
         });
     bunsan::process::check_sync_execute(ctx);
 }
-

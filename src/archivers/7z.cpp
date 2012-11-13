@@ -65,4 +65,3 @@ void archivers::_7z::setarg(const std::string &key, const std::string &value)
     else
         BOOST_THROW_EXCEPTION(unknown_option_error(key));
 }
-

@@ -9,4 +9,3 @@ void bunsan::utility::builders::conf_make_install::install(
     make_(src, bin);
     install_(src, bin, root);
 }
-

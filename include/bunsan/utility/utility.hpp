@@ -1,10 +1,9 @@
-#ifndef BUNSAN_UTILITY_UTILITY_HPP
-#define BUNSAN_UTILITY_UTILITY_HPP
+#pragma once
+
+#include "bunsan/utility/error.hpp"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/any.hpp>
-
-#include "bunsan/utility/error.hpp"
 
 namespace bunsan{namespace utility
 {
@@ -13,9 +12,11 @@ namespace bunsan{namespace utility
     public:
         explicit unknown_option_error(const std::string &option);
         std::string option() const;
+
     private:
         typedef boost::error_info<struct error_option_tag, std::string> error_option;
     };
+
     /*!
      * \brief Abstract class that specifies the way
      * of options transmission + virtual destructor
@@ -24,6 +25,7 @@ namespace bunsan{namespace utility
     {
     public:
         typedef boost::property_tree::ptree config_type;
+
     public:
         /*!
          * \brief Set up utility with various options
@@ -37,16 +39,17 @@ namespace bunsan{namespace utility
          * for every config child
          */
         virtual void setup(const config_type &config);
+
         /*!
          * \brief Set up utility option
          *
          * Default implementation throws unknown_option_error exception
          */
         virtual void setarg(const std::string &key, const std::string &value);
-        /*!
-         * \copydoc setarg
-         */
+
+        /// \copydoc setarg
         virtual void setarg_any(const std::string &key, const boost::any &value);
+
         /*!
          * \brief Does nothing
          *
@@ -56,6 +59,3 @@ namespace bunsan{namespace utility
         virtual ~utility();
     };
 }}
-
-#endif //BUNSAN_UTILITY_UTILITY_HPP
-

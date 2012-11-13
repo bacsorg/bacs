@@ -19,4 +19,3 @@ void bunsan::utility::archivers::cwd_split::pack_contents(
     const boost::filesystem::path archive_ = boost::filesystem::absolute(archive);
     pack_from(file_, archive_, ".");
 }
-

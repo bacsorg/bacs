@@ -1,9 +1,9 @@
 #include "bunsan/utility/executor.hpp"
 
+#include "bunsan/util.hpp"
+
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
-
-#include "bunsan/util.hpp"
 
 bunsan::utility::executor::executor(const std::string &command): positional(0), next_positional(0)
 {
@@ -202,4 +202,3 @@ int bunsan::utility::executor::sync() const
     DLOG(trying to execute);
     return bunsan::process::sync_execute(context());
 }
-

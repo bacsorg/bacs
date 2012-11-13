@@ -1,5 +1,4 @@
-#ifndef BUNSAN_UTILITY_ERROR_HPP
-#define BUNSAN_UTILITY_ERROR_HPP
+#pragma once
 
 #include "bunsan/error.hpp"
 
@@ -11,6 +10,3 @@ namespace bunsan{namespace utility
         explicit error(const std::string &message_);
     };
 }}
-
-#endif //BUNSAN_UTILITY_ERROR_HPP
-

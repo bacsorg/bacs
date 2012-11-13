@@ -1,10 +1,10 @@
 #include "curl.hpp"
 
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
-
 #include "bunsan/process/execute.hpp"
 #include "bunsan/system_error.hpp"
+
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;
 
@@ -36,4 +36,3 @@ void fetchers::curl::fetch(const std::string &uri, const boost::filesystem::path
             BOOST_THROW_EXCEPTION(system_error("open") << error::message(dst.string()));
     }
 }
-

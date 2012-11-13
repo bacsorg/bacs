@@ -134,4 +134,3 @@ boost::filesystem::path bunsan::utility::resolver::find_library(const boost::fil
 #warning unimplemented
     return lib;
 }
-

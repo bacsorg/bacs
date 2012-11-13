@@ -24,4 +24,3 @@ void fetchers::copy::fetch(const std::string &uri, const boost::filesystem::path
     boost::filesystem::copy_file(uri, dst,
         boost::filesystem::copy_option::overwrite_if_exists);
 }
-

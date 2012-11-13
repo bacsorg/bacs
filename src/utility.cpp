@@ -31,4 +31,3 @@ void bunsan::utility::utility::setarg_any(const std::string &key, const boost::a
 {
     BOOST_THROW_EXCEPTION(unknown_option_error(key));
 }
-

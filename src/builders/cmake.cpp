@@ -1,8 +1,8 @@
 #include "cmake.hpp"
 
-#include <algorithm>
-
 #include "bunsan/process/execute.hpp"
+
+#include <algorithm>
 
 using namespace bunsan::utility;
 
@@ -220,4 +220,3 @@ void builders::cmake::setup(const utility::config_type &config)
     }
     setup_generator();
 }
-

@@ -1,5 +1,4 @@
-#ifndef SRC_ARCHIVERS_CWD_SPLIT_HPP
-#define SRC_ARCHIVERS_CWD_SPLIT_HPP
+#pragma once
 
 #include "bunsan/utility/archiver.hpp"
 
@@ -8,12 +7,14 @@ namespace bunsan{namespace utility{namespace archivers
     class cwd_split: public archiver
     {
     public:
-        virtual void pack(
+        void pack(
             const boost::filesystem::path &archive,
-            const boost::filesystem::path &file);
-        virtual void pack_contents(
+            const boost::filesystem::path &file) override;
+
+        void pack_contents(
             const boost::filesystem::path &archive,
-            const boost::filesystem::path &dir);
+            const boost::filesystem::path &dir) override;
+
     protected:
         virtual void pack_from(
             const boost::filesystem::path &cwd,
@@ -21,6 +22,3 @@ namespace bunsan{namespace utility{namespace archivers
             const boost::filesystem::path &file)=0;
     };
 }}}
-
-#endif //SRC_ARCHIVERS_CWD_SPLIT_HPP
-

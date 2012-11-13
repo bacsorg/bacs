@@ -1,5 +1,4 @@
-#ifndef BUNSAN_UTILITY_BUILDER_HPP
-#define BUNSAN_UTILITY_BUILDER_HPP
+#pragma once
 
 #include "bunsan/factory_helper.hpp"
 #include "bunsan/utility/resolver.hpp"
@@ -22,6 +21,7 @@ namespace bunsan{namespace utility
             const boost::filesystem::path &src,
             const boost::filesystem::path &bin,
             const boost::filesystem::path &root)=0;
+
         /*!
          * \brief Build and pack package
          *
@@ -36,6 +36,3 @@ namespace bunsan{namespace utility
             const archiver_ptr &archiver_);
     BUNSAN_FACTORY_END(builder)
 }}
-
-#endif //BUNSAN_UTILITY_BUILDER_HPP
-

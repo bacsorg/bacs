@@ -1,8 +1,8 @@
 #include "tar.hpp"
 
-#include <boost/filesystem/operations.hpp>
-
 #include "bunsan/process/execute.hpp"
+
+#include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;
 
@@ -25,6 +25,8 @@ void archivers::tar::pack_from(
     std::vector<std::string> argv_ =
         {
             m_exe.filename().string(),
+#warning TODO
+            // FIXME implement support for non-single character formats
             "c"+m_format+"f",
             archive.string(),
             "-C",
@@ -72,4 +74,3 @@ void archivers::tar::setarg(const std::string &key, const std::string &value)
     else
         BOOST_THROW_EXCEPTION(unknown_option_error(key));
 }
-
