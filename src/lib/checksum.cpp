@@ -1,13 +1,12 @@
 #include "bunsan/pm/checksum.hpp"
 
+#include "bunsan/system_error.hpp"
+
 #include <sstream>
 #include <iomanip>
 
 #include <boost/filesystem/fstream.hpp>
-
 #include <boost/crc.hpp>
-
-#include "bunsan/system_error.hpp"
 
 namespace
 {
@@ -69,4 +68,3 @@ std::string bunsan::pm::checksum(const boost::filesystem::path &file)
 {
     return CryptoPP_checksum<CryptoPP::SHA512>(file);
 }
-

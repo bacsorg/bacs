@@ -1,5 +1,4 @@
-#ifndef BUNSAN_PM_CONFIG_HPP
-#define BUNSAN_PM_CONFIG_HPP
+#pragma once
 
 namespace bunsan{namespace pm{namespace config
 {
@@ -18,7 +17,8 @@ namespace bunsan{namespace pm{namespace config
     {
         namespace file
         {
-            constexpr const char *tmp = "name.file.tmp";                                    ///< file mask for small temporary files, should be absolute
+            constexpr const char *tmp = "name.file.tmp";                                    ///< file mask for small temporary files,
+                                                                                            ///< should be absolute
             constexpr const char *index = "name.file.index";                                ///< index file name
             constexpr const char *checksum = "name.file.checksum";                          ///< checksum file name
             constexpr const char *build_snapshot = "name.file.build_snapshot";              ///< build snapshot file name
@@ -63,6 +63,3 @@ namespace bunsan{namespace pm{namespace config
     }
     constexpr const char *repository_url = "repository_url"; ///< repository location
 }}}
-
-#endif //BUNSAN_PM_CONFIG_HPP
-

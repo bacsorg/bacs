@@ -1,5 +1,4 @@
-#ifndef BUNSAN_PM_INDEX_HPP
-#define BUNSAN_PM_INDEX_HPP
+#pragma once
 
 namespace bunsan{namespace pm{namespace index
 {
@@ -14,6 +13,3 @@ namespace bunsan{namespace pm{namespace index
         constexpr const char *self = "source.self";
     }
 }}}
-
-#endif //BUNSAN_PM_INDEX_HPP
-

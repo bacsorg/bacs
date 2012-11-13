@@ -1,13 +1,12 @@
 #include "bunsan/pm/compatibility/repository.h"
+#include "bunsan/pm/repository.hpp"
+
+#include "bunsan/util.hpp"
 
 #include <cstring>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
-
-#include "bunsan/util.hpp"
-
-#include "bunsan/pm/repository.hpp"
 
 using bunsan::pm::repository;
 
@@ -51,4 +50,3 @@ int bunsan_pm_repository_extract(cstring config, cstring package, cstring destin
 {
     return ::wrap(&repository::extract, config, error_msg, error_size, package, destination);
 }
-

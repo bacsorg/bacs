@@ -1,6 +1,9 @@
+#include "repository_native.hpp"
+
 #include "bunsan/pm/repository.hpp"
 #include "bunsan/pm/config.hpp"
-#include "repository_native.hpp"
+
+#include "bunsan/util.hpp"
 
 #include <stdexcept>
 #include <string>
@@ -20,8 +23,6 @@
 #include <boost/interprocess/sync/sharable_lock.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/assert.hpp>
-
-#include "bunsan/util.hpp"
 
 bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): ntv(0), config(config_)
 {
@@ -222,4 +223,3 @@ bunsan::pm::repository::~repository()
 {
     delete ntv;
 }
-

@@ -1,6 +1,10 @@
 #include "repository_native.hpp"
+
 #include "bunsan/pm/index.hpp"
 #include "bunsan/pm/config.hpp"
+
+#include "bunsan/util.hpp"
+#include "bunsan/pm/checksum.hpp"
 
 #include <map>
 #include <set>
@@ -8,9 +12,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
-
-#include "bunsan/util.hpp"
-#include "bunsan/pm/checksum.hpp"
 
 void bunsan::pm::repository::native::create(const boost::filesystem::path &source, bool strip)
 {
@@ -49,4 +50,3 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
             boost::filesystem::remove_all(path);
         }
 }
-

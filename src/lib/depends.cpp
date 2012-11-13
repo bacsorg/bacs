@@ -80,4 +80,3 @@ void bunsan::pm::depends::save(const boost::filesystem::path &path) const
 {
     boost::property_tree::write_info(path.string(), static_cast<boost::property_tree::ptree>(*this));
 }
-

@@ -1,5 +1,4 @@
-#ifndef BUNSAN_PM_CHECKSUM_HPP
-#define BUNSAN_PM_CHECKSUM_HPP
+#pragma once
 
 #include <string>
 
@@ -9,6 +8,3 @@ namespace bunsan{namespace pm
 {
     std::string checksum(const boost::filesystem::path &file);
 }}
-
-#endif //BUNSAN_PM_CHECKSUM_HPP
-

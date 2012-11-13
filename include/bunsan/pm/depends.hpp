@@ -1,11 +1,10 @@
-#ifndef BUNSAN_PM_DEPENDS_HPP
-#define BUNSAN_PM_DEPENDS_HPP
+#pragma once
+
+#include "bunsan/pm/entry.hpp"
 
 #include <map>
 
 #include <boost/filesystem/path.hpp>
-
-#include "bunsan/pm/entry.hpp"
 
 namespace bunsan{namespace pm
 {
@@ -16,6 +15,21 @@ namespace bunsan{namespace pm
         depends(depends &&)=default;
         depends &operator=(const depends &)=default;
         depends &operator=(depends &&)=default;
+
+        explicit operator boost::property_tree::ptree() const;
+
+        template <typename T>
+        explicit depends(const T &obj)
+        {
+            load(obj);
+        }
+
+        void load(const boost::property_tree::ptree &index);
+        void load(const boost::filesystem::path &path);
+        void save(const boost::filesystem::path &path) const;
+
+        std::vector<entry> all() const;
+
         std::multimap<boost::filesystem::path, entry> package;
         struct
         {
@@ -25,20 +39,5 @@ namespace bunsan{namespace pm
             } import;
             std::multimap<boost::filesystem::path, std::string> self;
         } source;
-        std::vector<entry> all() const;
-        // boost::property_tree::ptree convertions
-        template <typename T>
-        explicit depends(const T &obj)
-        {
-            load(obj);
-        }
-        explicit operator boost::property_tree::ptree() const;
-        // load()/save()
-        void load(const boost::property_tree::ptree &index);
-        void load(const boost::filesystem::path &path);
-        void save(const boost::filesystem::path &path) const;
     };
 }}
-
-#endif //BUNSAN_PM_DEPENDS_HPP
-

@@ -2,6 +2,12 @@
 
 #include "repository_native.hpp"
 
+#include "bunsan/pm/checksum.hpp"
+#include "bunsan/pm/config.hpp"
+
+#include "bunsan/util.hpp"
+#include "bunsan/tempfile.hpp"
+
 #include <stdexcept>
 
 #include <boost/property_tree/ptree.hpp>
@@ -9,12 +15,6 @@
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-
-#include "bunsan/util.hpp"
-#include "bunsan/tempfile.hpp"
-
-#include "bunsan/pm/checksum.hpp"
-#include "bunsan/pm/config.hpp"
 
 void bunsan::pm::repository::native::build(const entry &package)
 {
@@ -277,4 +277,3 @@ void bunsan::pm::repository::native::extract_installation(const entry &package, 
         throw pm_error("Unable to extract package installation", e);
     }
 }
-

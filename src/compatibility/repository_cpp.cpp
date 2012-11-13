@@ -30,4 +30,3 @@ bunsan::pm::compatibility::repository::~repository()
 {
     delete m_repo;
 }
-

@@ -1,10 +1,10 @@
+#include "bunsan/pm/entry.hpp"
+
 #include <sstream>
 #include <cassert>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
-
-#include "bunsan/pm/entry.hpp"
 
 int main()
 {
@@ -41,4 +41,3 @@ int main()
     read_info(in, pt);
     assert(pt.get<std::string>(e.ptree_path())=="hello world");
 }
-
