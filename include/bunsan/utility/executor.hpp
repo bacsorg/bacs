@@ -3,9 +3,8 @@
 #include "bunsan/process/execute.hpp"
 #include "bunsan/util.hpp"
 
-#include <stdexcept>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/variant.hpp>
@@ -140,9 +139,7 @@ namespace bunsan{namespace utility
         typedef boost::variant<reference, std::string> token;
         typedef std::vector<token> string;
         typedef boost::optional<std::string> string_opt;
-
-        // FIXME order does not matter
-        typedef std::map<std::string, std::string> dict;
+        typedef std::unordered_map<std::string, std::string> dict;
 
     private:
         std::vector<string> arguments;
