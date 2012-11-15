@@ -5,6 +5,8 @@
 #include <sstream>
 #include <iomanip>
 
+#include <cstdio>
+
 #include <boost/filesystem/fstream.hpp>
 #include <boost/crc.hpp>
 
@@ -16,11 +18,10 @@ namespace
         boost::filesystem::ifstream in(file, std::ios_base::binary);
         if (!in.is_open())
             BOOST_THROW_EXCEPTION(bunsan::system_error("open") << bunsan::error::message(file.string()));
-        constexpr size_t bufsize = 1024;
-        char buf[bufsize];
+        char buf[BUFSIZ];
         do
         {
-            in.read(buf, bufsize);
+            in.read(buf, BUFSIZ);
             crc.process_bytes(buf, in.gcount());
         }
         while (in);
@@ -39,8 +40,7 @@ namespace
     template <typename HASH>
     std::string CryptoPP_checksum(const boost::filesystem::path &file)
     {
-        constexpr size_t bufsize = 1024;
-        byte buf[bufsize];
+        byte buf[BUFSIZ];
         static_assert(sizeof(byte)==sizeof(char), "size of byte have to be equal size of char");
         HASH hash;
         boost::filesystem::ifstream in(file, std::ios_base::binary);
@@ -48,7 +48,7 @@ namespace
             BOOST_THROW_EXCEPTION(bunsan::system_error("open") << bunsan::error::message(file.string()));
         do
         {
-            in.read(reinterpret_cast<char *>(buf), bufsize);
+            in.read(reinterpret_cast<char *>(buf), BUFSIZ);
             hash.Update(buf, in.gcount());
         }
         while (in);
