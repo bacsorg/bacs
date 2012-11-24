@@ -3,9 +3,9 @@
 
 #include <boost/program_options.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/info_parser.hpp>
 
-#include "bunsan/util.hpp"
+#include "bunsan/logging/legacy.hpp"
+#include "bunsan/property_tree/info_parser.hpp"
 
 #include "bunsan/pm/repository.hpp"
 
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
         }
         DLOG(config parse);
         boost::property_tree::ptree config;
-        bunsan::read_info(config_file, config);
+        bunsan::property_tree::read_info(config_file, config);
         bunsan::pm::repository repo(config);
         if (vm.count("clean"))
         {

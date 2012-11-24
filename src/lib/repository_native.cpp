@@ -5,7 +5,8 @@
 #include "bunsan/pm/checksum.hpp"
 #include "bunsan/pm/config.hpp"
 
-#include "bunsan/util.hpp"
+#include "bunsan/logging/legacy.hpp"
+#include "bunsan/filesystem/operations.hpp"
 #include "bunsan/tempfile.hpp"
 
 #include <stdexcept>
@@ -18,8 +19,8 @@
 
 void bunsan::pm::repository::native::build(const entry &package)
 {
-    bunsan::tempfile build_dir = bunsan::tempfile::in_dir(value(config::dir::tmp));
-    bunsan::reset_dir(build_dir.path());
+    tempfile build_dir = tempfile::in_dir(value(config::dir::tmp));
+    filesystem::reset_dir(build_dir.path());
     unpack(package, build_dir.path());
     pack(package, build_dir.path());
 }
@@ -46,7 +47,7 @@ void bunsan::pm::repository::native::update_index(const entry &package)
     try
     {
         SLOG("starting "<<package<<" "<<__func__);
-        bunsan::tempfile checksum_tmp = bunsan::tempfile::from_model(value(config::name::file::tmp));
+        tempfile checksum_tmp = tempfile::from_model(value(config::name::file::tmp));
         try
         {
             fetcher->fetch(remote_resource(package, value(config::name::file::checksum)), checksum_tmp.path());
@@ -116,7 +117,7 @@ namespace
     {
         boost::filesystem::create_directories(destination);
         bunsan::tempfile tmp = bunsan::tempfile::in_dir(destination);
-        bunsan::reset_dir(tmp.path());
+        bunsan::filesystem::reset_dir(tmp.path());
         extractor->unpack(source, tmp.path());
         merge_dir(tmp.path()/subsource, destination);
     }
@@ -164,9 +165,9 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
         boost::filesystem::path installation = build_dir/value(config::name::dir::installation);
         boost::filesystem::path snp = build_dir/value(config::name::file::build_snapshot);
         // create/clean directories
-        bunsan::reset_dir(src);
-        bunsan::reset_dir(build);
-        bunsan::reset_dir(installation);
+        filesystem::reset_dir(src);
+        filesystem::reset_dir(build);
+        filesystem::reset_dir(installation);
         // unpack source
         std::map<entry, boost::property_tree::ptree> snapshot_map;
         unpack_source(package, src, snapshot_map);
@@ -210,7 +211,7 @@ void bunsan::pm::repository::native::extract_build(const entry &package, const b
     try
     {
         SLOG("starting "<<package<<" "<<__func__);
-        bunsan::reset_dir(destination);
+        filesystem::reset_dir(destination);
         ::extract(cache_archiver, package_resource(package, value(config::name::file::build)), destination, value(config::name::dir::installation));
     }
     catch (std::exception &e)
@@ -224,8 +225,8 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
     try
     {
         SLOG("starting "<<package<<" "<<__func__);
-        bunsan::tempfile build_dir = bunsan::tempfile::in_dir(value(config::dir::tmp));
-        bunsan::reset_dir(build_dir.path());
+        tempfile build_dir = tempfile::in_dir(value(config::dir::tmp));
+        filesystem::reset_dir(build_dir.path());
         boost::filesystem::path install_dir = build_dir.path()/value(config::name::dir::installation);
         // unpack
         extract_build(package, install_dir);
@@ -267,7 +268,7 @@ void bunsan::pm::repository::native::extract_installation(const entry &package, 
     {
         SLOG("starting "<<package<<" "<<__func__);
         if (reset)
-            bunsan::reset_dir(destination);
+            filesystem::reset_dir(destination);
         else
             boost::filesystem::create_directories(destination);
         ::extract(cache_archiver, package_resource(package, value(config::name::file::installation)), destination, value(config::name::dir::installation));

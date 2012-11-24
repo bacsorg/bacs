@@ -3,7 +3,10 @@
 #include "bunsan/pm/index.hpp"
 #include "bunsan/pm/config.hpp"
 
-#include "bunsan/util.hpp"
+#include "bunsan/logging/legacy.hpp"
+#include "bunsan/filesystem/operations.hpp"
+
+#include <boost/property_tree/info_parser.hpp>
 
 std::string bunsan::pm::repository::native::value(const std::string &key)
 {
@@ -42,13 +45,13 @@ bunsan::pm::repository::native::native(const boost::property_tree::ptree &config
     using boost::property_tree::ptree;
     using namespace config::command;
     // creation
-    if (!(cache_archiver = bunsan::utility::archiver::instance(value(cache_archiver::type), m_resolver)))
+    if (!(cache_archiver = utility::archiver::instance(value(cache_archiver::type), m_resolver)))
         throw std::runtime_error("Unable to create cache_archiver");
-    if (!(source_archiver = bunsan::utility::archiver::instance(value(source_archiver::type), m_resolver)))
+    if (!(source_archiver = utility::archiver::instance(value(source_archiver::type), m_resolver)))
         throw std::runtime_error("Unable to create source_archiver");
-    if (!(builder = bunsan::utility::builder::instance(value(builder::type), m_resolver)))
+    if (!(builder = utility::builder::instance(value(builder::type), m_resolver)))
         throw std::runtime_error("Unable to create builder");
-    if (!(fetcher = bunsan::utility::fetcher::instance(value(fetcher::type), m_resolver)))
+    if (!(fetcher = utility::fetcher::instance(value(fetcher::type), m_resolver)))
         throw std::runtime_error("Unable to create fetcher");
     // setup
     cache_archiver->setup(config.get_child(cache_archiver::config, ptree()));
@@ -150,8 +153,8 @@ void bunsan::pm::repository::native::check_dirs()
 void bunsan::pm::repository::native::clean()
 {
     DLOG(trying to clean cache);
-    bunsan::reset_dir(value(config::dir::source));
-    bunsan::reset_dir(value(config::dir::package));
-    bunsan::reset_dir(value(config::dir::tmp));
+    filesystem::reset_dir(value(config::dir::source));
+    filesystem::reset_dir(value(config::dir::package));
+    filesystem::reset_dir(value(config::dir::tmp));
     DLOG(cleaned);
 }

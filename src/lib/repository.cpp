@@ -3,7 +3,7 @@
 #include "bunsan/pm/repository.hpp"
 #include "bunsan/pm/config.hpp"
 
-#include "bunsan/util.hpp"
+#include "bunsan/logging/legacy.hpp"
 
 #include <stdexcept>
 #include <string>

@@ -3,8 +3,9 @@
 #include "bunsan/pm/index.hpp"
 #include "bunsan/pm/config.hpp"
 
-#include "bunsan/util.hpp"
 #include "bunsan/pm/checksum.hpp"
+
+#include "bunsan/logging/legacy.hpp"
 
 #include <map>
 #include <set>

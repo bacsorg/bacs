@@ -1,7 +1,7 @@
 #include "bunsan/pm/compatibility/repository.h"
 #include "bunsan/pm/repository.hpp"
 
-#include "bunsan/util.hpp"
+#include "bunsan/property_tree/info_parser.hpp"
 
 #include <cstring>
 
@@ -18,7 +18,7 @@ namespace
         try
         {
             boost::property_tree::ptree cfg;
-            bunsan::read_info(config, cfg);
+            bunsan::property_tree::read_info(config, cfg);
             bunsan::pm::repository repo(cfg);
             (repo.*mem_fn)(std::forward<Args>(args)...);
             return 0;
