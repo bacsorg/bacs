@@ -1,4 +1,4 @@
-#include "bunsan/util.hpp"
+#include "bunsan/logging/legacy.hpp"
 #include "bunsan/utility/executor.hpp"
 
 #include <sstream>

@@ -5,6 +5,7 @@
 #include <cassert>
 
 #include <boost/property_tree/info_parser.hpp>
+#include <boost/filesystem/operations.hpp>
 
 int main()
 {

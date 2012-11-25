@@ -1,6 +1,6 @@
 #include "bunsan/utility/executor.hpp"
 
-#include "bunsan/util.hpp"
+#include "bunsan/logging/legacy.hpp"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>

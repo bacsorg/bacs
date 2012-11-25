@@ -2,6 +2,7 @@
 
 #include "bunsan/process/execute.hpp"
 
+#include <boost/lexical_cast.hpp>
 #include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;

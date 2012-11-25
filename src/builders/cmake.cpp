@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include <boost/filesystem/operations.hpp>
+
 using namespace bunsan::utility;
 
 const bool builders::cmake::factory_reg_hook = builder::register_new("cmake",
