@@ -3,6 +3,7 @@
 #include "bunsan/pm/index.hpp"
 #include "bunsan/pm/config.hpp"
 
+#include "bunsan/enable_error_info.hpp"
 #include "bunsan/logging/legacy.hpp"
 #include "bunsan/filesystem/operations.hpp"
 
@@ -44,15 +45,23 @@ bunsan::pm::repository::native::native(const boost::property_tree::ptree &config
 {
     using boost::property_tree::ptree;
     using namespace config::command;
+    std::string type;
     // creation
-    if (!(cache_archiver = utility::archiver::instance(value(cache_archiver::type), m_resolver)))
-        throw std::runtime_error("Unable to create cache_archiver");
-    if (!(source_archiver = utility::archiver::instance(value(source_archiver::type), m_resolver)))
-        throw std::runtime_error("Unable to create source_archiver");
-    if (!(builder = utility::builder::instance(value(builder::type), m_resolver)))
-        throw std::runtime_error("Unable to create builder");
-    if (!(fetcher = utility::fetcher::instance(value(fetcher::type), m_resolver)))
-        throw std::runtime_error("Unable to create fetcher");
+    if (!(cache_archiver = utility::archiver::instance(type = value(cache_archiver::type), m_resolver)))
+        BOOST_THROW_EXCEPTION(invalid_configuration_cache_archiver_error() <<
+                              invalid_configuration_cache_archiver_error::utility_type(type));
+
+    if (!(source_archiver = utility::archiver::instance(type = value(source_archiver::type), m_resolver)))
+        BOOST_THROW_EXCEPTION(invalid_configuration_source_archiver_error() <<
+                              invalid_configuration_source_archiver_error::utility_type(type));
+
+    if (!(builder = utility::builder::instance(type = value(builder::type), m_resolver)))
+        BOOST_THROW_EXCEPTION(invalid_configuration_builder_error() <<
+                              invalid_configuration_builder_error::utility_type(type));
+
+    if (!(fetcher = utility::fetcher::instance(type = value(fetcher::type), m_resolver)))
+        BOOST_THROW_EXCEPTION(invalid_configuration_fetcher_error() <<
+                              invalid_configuration_fetcher_error::utility_type(type));
     // setup
     cache_archiver->setup(config.get_child(cache_archiver::config, ptree()));
     source_archiver->setup(config.get_child(source_archiver::config, ptree()));
@@ -75,9 +84,9 @@ std::map<bunsan::pm::entry, boost::property_tree::ptree> bunsan::pm::repository:
     boost::property_tree::read_info(path.string(), snapshot_);
     for (const auto &i: snapshot_)
     {
-        auto iter = snapshot.find(i.first);
-        if (iter!=snapshot.end())
-            BOOST_ASSERT(iter->second==i.second);
+        const auto iter = snapshot.find(i.first);
+        if (iter != snapshot.end())
+            BOOST_ASSERT(iter->second == i.second);
         else
             snapshot[i.first] = i.second;
     }
@@ -86,14 +95,11 @@ std::map<bunsan::pm::entry, boost::property_tree::ptree> bunsan::pm::repository:
 
 bunsan::pm::depends bunsan::pm::repository::native::read_depends(const entry &package)
 {
-    try
+    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
         return depends(source_resource(package, value(config::name::file::index)));
     }
-    catch (std::exception &e)
-    {
-        throw pm_error("Unable to read package depends", e);
-    }
+    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
 }
 
 namespace
@@ -101,7 +107,10 @@ namespace
     void check_dir(const boost::filesystem::path &dir)
     {
         if (!dir.is_absolute())
-            throw std::runtime_error("you have to use absolute path, but "+dir.string()+" was used");
+            BOOST_THROW_EXCEPTION(bunsan::pm::invalid_configuration_error() <<
+                                  bunsan::pm::invalid_configuration_error::path(dir) <<
+                                  bunsan::pm::invalid_configuration_error::message(
+                                      "You have to specify absolute path"));
         SLOG("checking "<<dir);
         if (!boost::filesystem::is_directory(dir))
         {
@@ -128,7 +137,7 @@ bool bunsan::pm::repository::native::build_outdated(const entry &package, const 
     if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(build))
         return true;
     std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
-    return snapshot!=snapshot_;
+    return snapshot != snapshot_;
 }
 
 bool bunsan::pm::repository::native::installation_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot)
@@ -138,7 +147,7 @@ bool bunsan::pm::repository::native::installation_outdated(const entry &package,
     if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(installation))
         return true;
     std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
-    return snapshot!=snapshot_;
+    return snapshot != snapshot_;
 }
 
 void bunsan::pm::repository::native::check_dirs()

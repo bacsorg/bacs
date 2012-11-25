@@ -1,6 +1,9 @@
 #pragma once
 
+#include "bunsan/pm/entry.hpp"
+
 #include "bunsan/error.hpp"
+#include "bunsan/filesystem/error.hpp"
 
 namespace bunsan{namespace pm
 {
@@ -8,23 +11,34 @@ namespace bunsan{namespace pm
     {
         error()=default;
         explicit error(const std::string &message_);
+
+        typedef boost::error_info<struct tag_package, entry> package;
+        typedef boost::error_info<struct tag_action, std::string> action;
+        typedef filesystem::error::path path;
     };
 
-    struct invalid_configuration: virtual error
+    struct invalid_entry_name_error: virtual error
     {
-        invalid_configuration()=default;
-        explicit invalid_configuration(const std::string &message_);
+        typedef boost::error_info<struct tag_entry_name, std::string> entry_name;
     };
 
-    struct invalid_configuration_path: virtual invalid_configuration
+    struct invalid_configuration_error: virtual error {};
+
+    struct invalid_configuration_key_error: virtual invalid_configuration_error
     {
-        // tags
-        typedef boost::error_info<struct tag_path, std::string> path;
+        typedef boost::error_info<struct tag_configuration_key, std::string> configuration_key;
     };
 
-    struct circular_dependencies: virtual error
+    struct invalid_configuration_utility_error: virtual invalid_configuration_error
     {
-        // tags
-        typedef boost::error_info<struct tag_package, std::string> package;
+        typedef boost::error_info<struct tag_utility_type, std::string> utility_type;
     };
+
+    struct invalid_configuration_archiver_error: virtual invalid_configuration_utility_error {};
+    struct invalid_configuration_source_archiver_error: virtual invalid_configuration_archiver_error {};
+    struct invalid_configuration_cache_archiver_error: virtual invalid_configuration_archiver_error {};
+    struct invalid_configuration_builder_error: virtual invalid_configuration_utility_error {};
+    struct invalid_configuration_fetcher_error: virtual invalid_configuration_utility_error {};
+
+    struct circular_dependencies: virtual error {};
 }}

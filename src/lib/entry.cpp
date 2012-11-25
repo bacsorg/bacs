@@ -1,4 +1,5 @@
 #include "bunsan/pm/entry.hpp"
+#include "bunsan/pm/error.hpp"
 
 #include <boost/assert.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -42,7 +43,7 @@ void bunsan::pm::entry::build(const std::string &name_, char delim)
                             boost::algorithm::token_compress_on);
     for (const auto &i: m_location)
         if (!is_allowed_subpath(i))
-            BOOST_THROW_EXCEPTION(invalid_entry_name_error()<<invalid_entry_name_error::entry_name(name_));
+            BOOST_THROW_EXCEPTION(invalid_entry_name_error() << invalid_entry_name_error::entry_name(name_));
     BOOST_ASSERT(!m_location.empty());
 }
 
@@ -138,5 +139,5 @@ boost::filesystem::path bunsan::pm::entry::local_resource(
     const boost::filesystem::path &dir,
     const boost::filesystem::path &name_) const
 {
-    return dir/location()/name_;
+    return dir / location() / name_;
 }

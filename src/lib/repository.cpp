@@ -43,13 +43,13 @@ namespace
 {
     void require_lock(bool has, const char *func)
     {
-        using bunsan::pm::invalid_configuration_path;
+        using bunsan::pm::invalid_configuration_key_error;
         using std::string;
         namespace config = bunsan::pm::config;
         if (!has)
-            BOOST_THROW_EXCEPTION(invalid_configuration_path()<<
-                                  invalid_configuration_path::path(config::lock::global)<<
-                                  bunsan::error::message(string("Unable to call ")+func));
+            BOOST_THROW_EXCEPTION(invalid_configuration_key_error()<<
+                                  invalid_configuration_key_error::path(config::lock::global) <<
+                                  invalid_configuration_key_error::action(func));
     }
 }
 

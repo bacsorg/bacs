@@ -97,8 +97,8 @@ namespace bunsan{namespace pm
         template <typename Path>
         void config_get_wrap_exception(const Path &path)
         {
-            BOOST_THROW_EXCEPTION(invalid_configuration_path()<<
-                                  invalid_configuration_path::path(path));
+            BOOST_THROW_EXCEPTION(invalid_configuration_key_error() <<
+                                  invalid_configuration_key_error::configuration_key(path));
         }
 
         class native;

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "bunsan/pm/error.hpp"
-
 #include <string>
 #include <vector>
 
@@ -10,12 +8,6 @@
 
 namespace bunsan{namespace pm
 {
-    struct invalid_entry_name_error: virtual error
-    {
-        // tags
-        typedef boost::error_info<struct tag_entry_name, std::string> entry_name;
-    };
-
     /// Represents \ref package_page "package" reference in repository.
     class entry
     {
@@ -78,6 +70,6 @@ namespace bunsan{namespace pm
     template <typename Char, typename Traits>
     inline std::basic_ostream<Char, Traits> &operator<<(std::basic_ostream<Char, Traits> &out, const entry &e)
     {
-        return out<<e.location();
+        return out << e.location();
     }
 }}
