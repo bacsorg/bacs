@@ -10,7 +10,7 @@
 class bunsan::pm::repository::native: private boost::noncopyable
 {
 public:
-    explicit native(const boost::property_tree::ptree &config_);
+    explicit native(const pm::config &config_);
 
     void create(const boost::filesystem::path &source, bool strip);
     void fetch_source(const entry &package);
@@ -31,10 +31,9 @@ private:
     void unpack_source(const entry &package, const boost::filesystem::path &destination, std::map<entry, boost::property_tree::ptree> &snapshot);
     void unpack(const entry &package, const boost::filesystem::path &build_dir);
     void pack(const entry &package, const boost::filesystem::path &build_dir);
-    std::string remote_resource(const entry &package, const std::string &name);
+    std::string remote_resource(const entry &package, const boost::filesystem::path &name);
     boost::filesystem::path source_resource(const entry &package, const std::string &name);
     boost::filesystem::path package_resource(const entry &package, const std::string &name);
-    std::string value(const std::string &key);
     std::multimap<boost::filesystem::path, std::string> sources(const entry &package);
     std::map<entry, boost::property_tree::ptree> read_snapshot(const boost::filesystem::path &path);
     void write_snapshot(const boost::filesystem::path &path, const std::map<entry, boost::property_tree::ptree> &snapshot);
@@ -48,18 +47,11 @@ public:
     void extract_installation(const entry &package, const boost::filesystem::path &destination, bool reset=true);
 
 private:
-    const boost::property_tree::ptree &config;
+    const pm::config &m_config;
     const bunsan::utility::resolver m_resolver;
     bunsan::utility::archiver_ptr cache_archiver, source_archiver;
     bunsan::utility::builder_ptr builder;
     bunsan::utility::fetcher_ptr fetcher;
-
-private:
-    class pm_error: public std::runtime_error
-    {
-    public:
-        inline pm_error(const std::string &msg, const std::exception &e): std::runtime_error("Error occured: \""+msg+"\" because \""+e.what()+"\""){}
-    };
 };
 
 namespace bunsan{namespace pm
@@ -71,8 +63,8 @@ namespace bunsan{namespace pm
         for (const auto &i: b)
         {
             auto iter = a.find(i.first);
-            if (iter!=a.end())
-                BOOST_ASSERT(iter->second==i.second);
+            if (iter != a.end())
+                BOOST_ASSERT(iter->second == i.second);
             else
                 a[i.first] = i.second;
         }

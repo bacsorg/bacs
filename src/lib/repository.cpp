@@ -3,6 +3,8 @@
 #include "bunsan/pm/repository.hpp"
 #include "bunsan/pm/config.hpp"
 
+#include "bunsan/config/input_archive.hpp"
+#include "bunsan/enable_error_info.hpp"
 #include "bunsan/logging/legacy.hpp"
 
 #include <stdexcept>
@@ -24,18 +26,28 @@
 #include <boost/filesystem.hpp>
 #include <boost/assert.hpp>
 
-bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): ntv(0), config(config_)
+bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): ntv(0)
 {
     DLOG(creating repository instance);
-    boost::optional<std::string> lock_file = config_get_optional<std::string>(config::lock::global);
-    if (lock_file)
-        flock.reset(new bunsan::interprocess::file_lock(lock_file.get().c_str()));
-    ntv = new native(config);
+    // TODO translate some exceptions to invalid_configuration_error
+    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    {
+        bunsan::config::input_archive<boost::property_tree::ptree>::load_from_ptree(m_config, config_);
+    }
+    BUNSAN_EXCEPTIONS_WRAP_END()
+    if (m_config.lock.global)
+        flock.reset(new bunsan::interprocess::file_lock(m_config.lock.global.get().c_str()));
+    ntv = new native(m_config);
+}
+
+const bunsan::pm::config &bunsan::pm::repository::config() const
+{
+    return m_config;
 }
 
 void bunsan::pm::repository::create(const boost::filesystem::path &source, bool strip)
 {
-    SLOG("creating source package from "<<source<<" with"<<(strip?"":"out")<<" stripping");
+    SLOG("creating source package from " << source << " with" << (strip ? "" : "out") << " stripping");
     ntv->create(source, strip);
 }
 
@@ -45,10 +57,9 @@ namespace
     {
         using bunsan::pm::invalid_configuration_key_error;
         using std::string;
-        namespace config = bunsan::pm::config;
         if (!has)
-            BOOST_THROW_EXCEPTION(invalid_configuration_key_error()<<
-                                  invalid_configuration_key_error::path(config::lock::global) <<
+            BOOST_THROW_EXCEPTION(invalid_configuration_key_error() <<
+                                  invalid_configuration_key_error::path("config.lock.global") <<
                                   invalid_configuration_key_error::action(func));
     }
 }
@@ -56,7 +67,7 @@ namespace
 void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
 {
     require_lock(static_cast<bool>(flock), __func__);
-    SLOG("extract "<<package<<" to "<<destination);
+    SLOG("extract " << package << " to " << destination);
     boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*flock);
     DLOG(trying to update);
     update(package);
@@ -83,7 +94,7 @@ namespace
 
 void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 {
-    SLOG("updating "<<package);
+    SLOG("updating " << package);
     ntv->check_dirs();
     DLOG(starting build);
     update_index_tree(package);
@@ -119,9 +130,9 @@ bool bunsan::pm::repository::update_package_depends(
     std::map<entry, boost::property_tree::ptree> &snapshot,
     std::map<stage, std::map<entry, boost::property_tree::ptree>> &snapshot_cache)
 {
-    SLOG("starting "<<package.first<<" ("<<stage_type_name[static_cast<int>(package.second)]<<") "<<__func__);
+    SLOG("starting " << package.first << " (" << stage_type_name[static_cast<int>(package.second)] << ") " << __func__);
     if (in.find(package)!=in.end())
-        BOOST_THROW_EXCEPTION(circular_dependencies()<<circular_dependencies::package(package.first.name()));
+        BOOST_THROW_EXCEPTION(circular_dependencies() << circular_dependencies::package(package.first.name()));
     {
         auto iter = updated.find(package);
         if (iter!=updated.end())

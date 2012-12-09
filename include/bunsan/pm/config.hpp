@@ -1,65 +1,133 @@
 #pragma once
 
-namespace bunsan{namespace pm{namespace config
+#include <string>
+
+#include <boost/optional.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+
+namespace bunsan{namespace pm
 {
-    namespace lock
+    namespace detail
     {
-        constexpr const char *global = "lock.global";   ///< global lock for synchronization
+        struct factory_config
+        {
+            template <typename Archive>
+            void serialize(Archive &ar, const unsigned int)
+            {
+                ar & BOOST_SERIALIZATION_NVP(type);
+                ar & BOOST_SERIALIZATION_NVP(config);
+            }
+
+            std::string type;
+            boost::property_tree::ptree config;
+        };
     }
-    namespace dir
+
+    struct config
     {
-        constexpr const char *tmp = "dir.tmp";          ///< directory for large temporary files
-        constexpr const char *package = "dir.package";  ///< directory for built packages
-        constexpr const char *source = "dir.source";    ///< directory for package sources
-    }
-    /// file and directory names, usually relative
-    namespace name
-    {
-        namespace file
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int)
         {
-            constexpr const char *tmp = "name.file.tmp";                                    ///< file mask for small temporary files,
-                                                                                            ///< should be absolute
-            constexpr const char *index = "name.file.index";                                ///< index file name
-            constexpr const char *checksum = "name.file.checksum";                          ///< checksum file name
-            constexpr const char *build_snapshot = "name.file.build_snapshot";              ///< build snapshot file name
-            constexpr const char *installation_snapshot = "name.file.installation_snapshot";///< installation snapshot file name
-            constexpr const char *build = "name.file.build";                                ///< build archive name
-            constexpr const char *installation = "name.file.installation";                  ///< installation archive name
+            ar & BOOST_SERIALIZATION_NVP(lock.global);
+            ar & BOOST_SERIALIZATION_NVP(dir);
+            ar & BOOST_SERIALIZATION_NVP(name);
+            ar & BOOST_SERIALIZATION_NVP(utility);
+            ar & BOOST_SERIALIZATION_NVP(suffix.source_archive);
+            ar & BOOST_SERIALIZATION_NVP(repository_url);
         }
-        namespace dir
+
+        struct
         {
-            constexpr const char *source = "name.dir.source";             ///< subdirectory for package source
-            constexpr const char *build = "name.dir.build";               ///< subdirectory for package building
-            constexpr const char *installation = "name.dir.installation"; ///< subdirectory for package installation
-        }
-    }
-    namespace suffix
-    {
-        constexpr const char *source_archive = "suffix.source_archive";   ///< suffix of archive files
-    }
-    namespace command
-    {
-        constexpr const char *resolver = "utility.resolver";
-        namespace builder
+            boost::optional<boost::filesystem::path> global;    ///< global lock for synchronization
+        } lock;
+
+        struct
         {
-            constexpr const char *type = "utility.builder.type";
-            constexpr const char *config = "utility.builder.config";
-        }
-        namespace fetcher
+            template <typename Archive>
+            void serialize(Archive &ar, const unsigned int)
+            {
+                ar & BOOST_SERIALIZATION_NVP(tmp);
+                ar & BOOST_SERIALIZATION_NVP(package);
+                ar & BOOST_SERIALIZATION_NVP(source);
+            }
+
+            boost::filesystem::path tmp;        ///< directory for large temporary files
+            boost::filesystem::path package;    ///< directory for built packages
+            boost::filesystem::path source;     ///< directory for package sources
+        } dir;
+
+        struct
         {
-            constexpr const char *type = "utility.fetcher.type";
-            constexpr const char *config = "utility.fetcher.config";
-        }
-        namespace source_archiver
+            template <typename Archive>
+            void serialize(Archive &ar, const unsigned int)
+            {
+                ar & BOOST_SERIALIZATION_NVP(file);
+                ar & BOOST_SERIALIZATION_NVP(dir);
+            }
+
+            struct
+            {
+                template <typename Archive>
+                void serialize(Archive &ar, const unsigned int)
+                {
+                    ar & BOOST_SERIALIZATION_NVP(tmp);
+                    ar & BOOST_SERIALIZATION_NVP(index);
+                    ar & BOOST_SERIALIZATION_NVP(checksum);
+                    ar & BOOST_SERIALIZATION_NVP(build_snapshot);
+                    ar & BOOST_SERIALIZATION_NVP(installation_snapshot);
+                    ar & BOOST_SERIALIZATION_NVP(build);
+                    ar & BOOST_SERIALIZATION_NVP(installation);
+                }
+
+                std::string tmp;                    ///< file mask for small temporary files,
+                                                    ///< should be absolute
+                std::string index;                  ///< index file name
+                std::string checksum;               ///< checksum file name
+                std::string build_snapshot;         ///< build snapshot file name
+                std::string installation_snapshot;  ///< installation snapshot file name
+                std::string build;                  ///< build archive name
+                std::string installation;           ///< installation archive name
+            } file;
+
+            struct
+            {
+                template <typename Archive>
+                void serialize(Archive &ar, const unsigned int)
+                {
+                    ar & BOOST_SERIALIZATION_NVP(build);
+                    ar & BOOST_SERIALIZATION_NVP(installation);
+                }
+
+                boost::filesystem::path source;         ///< subdirectory for package source
+                boost::filesystem::path build;          ///< subdirectory for package building
+                boost::filesystem::path installation;   ///< subdirectory for package installation
+            } dir;
+        } name;
+
+        struct
         {
-            constexpr const char *type = "utility.source_archiver.type";
-            constexpr const char *config = "utility.source_archiver.config";
-        }
-        namespace cache_archiver
+            std::string source_archive; ///< suffix of archive files
+        } suffix;
+
+        struct
         {
-            constexpr const char *type = "utility.cache_archiver.type";
-            constexpr const char *config = "utility.cache_archiver.config";
-        }
-    }
-    constexpr const char *repository_url = "repository_url"; ///< repository location
-}}}
+            template <typename Archive>
+            void serialize(Archive &ar, const unsigned int)
+            {
+                ar & BOOST_SERIALIZATION_NVP(resolver);
+                ar & BOOST_SERIALIZATION_NVP(builder);
+                ar & BOOST_SERIALIZATION_NVP(fetcher);
+                ar & BOOST_SERIALIZATION_NVP(source_archiver);
+                ar & BOOST_SERIALIZATION_NVP(cache_archiver);
+            }
+
+            boost::property_tree::ptree resolver;
+            detail::factory_config builder, fetcher, source_archiver, cache_archiver;
+        } utility;
+
+        std::string repository_url; ///< repository location
+    };
+}}

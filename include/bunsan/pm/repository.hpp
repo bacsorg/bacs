@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bunsan/pm/entry.hpp"
+#include "bunsan/pm/config.hpp"
 #include "bunsan/pm/error.hpp"
 
 #include "bunsan/interprocess/sync/file_lock.hpp"
@@ -52,25 +53,7 @@ namespace bunsan{namespace pm
          */
         void clean();
 
-        /// Extract value from config as Ret
-        template <typename Ret, typename Path, typename ... Args>
-        Ret config_get(const Path &path, Args &&...args) const;
-
-        template <typename Ret, typename ... Args>
-        boost::optional<Ret> config_get_optional(Args &...args)
-        {
-            return config.get_optional<Ret>(std::forward<Args>(args)...);
-        }
-
-        /// Extract value from config as boost::property_tree::ptree
-        template <typename Path, typename ... Args>
-        boost::property_tree::ptree config_get_child(const Path &path, Args &&...args) const;
-
-        template <typename ... Args>
-        boost::optional<boost::property_tree::ptree> config_get_child(Args &&...args) const
-        {
-            return config.get_child_optional(std::forward<Args>(args)...);
-        }
+        const pm::config &config() const;
 
         ~repository();
 
@@ -94,43 +77,9 @@ namespace bunsan{namespace pm
             std::map<stage, std::map<entry, boost::property_tree::ptree>> &snapshot_cache);
 
     private:
-        template <typename Path>
-        void config_get_wrap_exception(const Path &path)
-        {
-            BOOST_THROW_EXCEPTION(invalid_configuration_key_error() <<
-                                  invalid_configuration_key_error::configuration_key(path));
-        }
-
         class native;
         native *ntv;
         std::unique_ptr<bunsan::interprocess::file_lock> flock;
-        const boost::property_tree::ptree config;
+        pm::config m_config;
     };
-
-    // implementation
-    template <typename Ret, typename Path, typename ... Args>
-    Ret repository::config_get(const Path &path, Args &&...args) const
-    {
-        try
-        {
-            return config.get<Ret>(std::forward<Args>(args)...);
-        }
-        catch (boost::property_tree::ptree_bad_path &)
-        {
-            config_get_wrap_exception(path);
-        }
-    }
-
-    template <typename Path, typename ... Args>
-    boost::property_tree::ptree repository::config_get_child(const Path &path, Args &&...args) const
-    {
-        try
-        {
-            return config.get_child(std::forward<Args>(args)...);
-        }
-        catch (boost::property_tree::ptree_bad_path &)
-        {
-            config_get_wrap_exception(path);
-        }
-    }
 }}
