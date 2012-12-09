@@ -17,6 +17,7 @@ namespace bunsan{namespace pm
         typedef filesystem::error::path path;
     };
 
+    /// \todo consider rename
     struct invalid_entry_name_error: virtual error
     {
         typedef boost::error_info<struct tag_entry_name, std::string> entry_name;

@@ -8,19 +8,19 @@
 
 bool bunsan::pm::entry::is_allowed_symbol(char c)
 {
-    return ('0'<=c && c<='9') ||
-           ('a'<=c && c<='z') ||
-           ('A'<=c && c<='Z') ||
-           c=='_' ||
-           c=='-' ||
-           c=='.';
+    return ('0' <= c && c <= '9') ||
+           ('a' <= c && c <= 'z') ||
+           ('A' <= c && c <= 'Z') ||
+           c == '_' ||
+           c == '-' ||
+           c == '.';
 }
 
 bool bunsan::pm::entry::is_allowed_subpath(const std::string &subpath)
 {
     return !subpath.empty() &&
-           subpath!="." &&
-           subpath!=".." &&
+           subpath != "." &&
+           subpath != ".." &&
            boost::algorithm::all(subpath, bunsan::pm::entry::is_allowed_symbol);
 }
 
@@ -39,7 +39,7 @@ void bunsan::pm::entry::build(const std::string &name_, char delim)
     m_location.clear();
     boost::algorithm::split(m_location,
                             name_,
-                            [delim](char c){return delim==c;},
+                            [delim](char c){return delim == c;},
                             boost::algorithm::token_compress_on);
     for (const auto &i: m_location)
         if (!is_allowed_subpath(i))
@@ -67,14 +67,14 @@ bunsan::pm::entry &bunsan::pm::entry::operator=(const std::string &name_)
     return *this;
 }
 
-bool bunsan::pm::entry::operator==(const bunsan::pm::entry &e) const
+bool bunsan::pm::entry::operator == (const bunsan::pm::entry &e) const
 {
-    return m_location==e.m_location;
+    return m_location == e.m_location;
 }
 
 bool bunsan::pm::entry::operator<(const bunsan::pm::entry &e) const
 {
-    return m_location<e.m_location;
+    return m_location < e.m_location;
 }
 
 bunsan::pm::entry bunsan::pm::entry::operator/(const entry &e) const
@@ -124,7 +124,7 @@ std::string bunsan::pm::entry::remote_resource(
     const boost::filesystem::path &name_) const
 {
     std::string full = repository;
-    if (!full.empty() && full.back()!='/')
+    if (!full.empty() && full.back() != '/')
         full.push_back('/');
     full += name('/');
     for (const auto &i: name_)
