@@ -1,5 +1,7 @@
 #include "bunsan/pm/depends.hpp"
-#include "bunsan/pm/index.hpp"
+
+#include "bunsan/config/input_archive.hpp"
+#include "bunsan/config/output_archive.hpp"
 
 #include <algorithm>
 #include <set>
@@ -8,6 +10,7 @@
 
 std::vector<bunsan::pm::entry> bunsan::pm::depends::all() const
 {
+    // TODO make it unordered
     std::set<entry> all_;
     for (const auto &i: package)
         all_.insert(i.second);
@@ -20,53 +23,24 @@ std::vector<bunsan::pm::entry> bunsan::pm::depends::all() const
     return all__;
 }
 
-// boost::property_tree::ptree convertions
-
-namespace
+namespace bunsan{namespace config{namespace traits
 {
-    inline const std::string &to_string(const std::string &str)
-    {
-        return str;
-    }
-    inline std::string to_string(const bunsan::pm::entry &entry)
-    {
-        return entry.name();
-    }
-    template <typename Value>
-    boost::property_tree::ptree multimap2ptree(const std::multimap<boost::filesystem::path, Value> &mmap)
-    {
-        using boost::property_tree::ptree;
-        ptree pt;
-        for (const auto &i: mmap)
-        {
-            ptree kv;
-            kv.put_value(to_string(i.second));
-            pt.push_back(ptree::value_type(i.first.string(), kv));
-        }
-        return pt;
-    }
-}
+    template <>
+    struct is_direct_assignable<bunsan::pm::entry>: std::integral_constant<bool, true> {};
+}}}
 
 bunsan::pm::depends::operator boost::property_tree::ptree() const
 {
     boost::property_tree::ptree deps;
-    deps.put_child(index::package, multimap2ptree(this->package));
-    deps.put_child(index::source::import::package, multimap2ptree(this->source.import.package));
-    deps.put_child(index::source::import::source, multimap2ptree(this->source.import.source));
-    deps.put_child(index::source::self, multimap2ptree(this->source.self));
+    bunsan::config::output_archive<boost::property_tree::ptree> oa(deps);
+    oa << *this;
     return deps;
 }
 
 void bunsan::pm::depends::load(const boost::property_tree::ptree &index)
 {
-    for (const auto &i: index.get_child(pm::index::package, boost::property_tree::ptree()))
-        this->package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-    for (const auto &i: index.get_child(pm::index::source::self, boost::property_tree::ptree()))
-        this->source.self.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-    for (const auto &i: index.get_child(pm::index::source::import::package, boost::property_tree::ptree()))
-        this->source.import.package.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
-    for (const auto &i: index.get_child(pm::index::source::import::source, boost::property_tree::ptree()))
-        this->source.import.source.insert(std::make_pair(i.first, i.second.get_value<std::string>()));
+    bunsan::config::input_archive<boost::property_tree::ptree> ia(index);
+    ia >> *this;
 }
 
 void bunsan::pm::depends::load(const boost::filesystem::path &path)

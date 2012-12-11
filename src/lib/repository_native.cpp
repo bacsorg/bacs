@@ -49,7 +49,7 @@ void bunsan::pm::repository::native::update_index(const entry &package)
 {
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
-        SLOG("starting " << package << " " << __func__);
+        SLOG("starting \"" << package << "\" " << __func__);
         tempfile checksum_tmp = tempfile::from_model(m_config.name.file.tmp);
         BUNSAN_EXCEPTIONS_WRAP_BEGIN()
         {
@@ -76,7 +76,7 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
 {
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
-        SLOG("starting " << package << " " << __func__);
+        SLOG("starting \"" << package << "\" " << __func__);
         const std::string src_sfx = m_config.suffix.source_archive;
         const boost::filesystem::path output = package.local_resource(m_config.dir.source);
         boost::property_tree::ptree checksum;
@@ -139,7 +139,7 @@ void bunsan::pm::repository::native::unpack_source(const entry &package, const b
     // extract package imports
     for (const auto &i: deps.source.import.package)
     {
-        SLOG("starting " << package << " import extraction");
+        SLOG("starting \"" << package << "\" import extraction");
         boost::filesystem::path snp = package_resource(i.second, m_config.name.file.installation_snapshot);
         extract_installation(i.second, destination / i.first, false);
         std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
@@ -151,7 +151,7 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
 {
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
-        SLOG("starting " << package << " " << __func__);
+        SLOG("starting \"" << package << "\" " << __func__);
         const boost::filesystem::path src = build_dir / m_config.name.dir.source;
         const boost::filesystem::path build = build_dir / m_config.name.dir.build;
         const boost::filesystem::path installation = build_dir / m_config.name.dir.installation;
@@ -172,7 +172,7 @@ void bunsan::pm::repository::native::pack(const entry &package, const boost::fil
 {
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
-        SLOG("starting " << package << " " << __func__);
+        SLOG("starting \"" << package << "\" " << __func__);
         boost::filesystem::path snp = build_dir / m_config.name.file.build_snapshot;
         builder->install(
             build_dir / m_config.name.dir.source,
@@ -196,7 +196,7 @@ void bunsan::pm::repository::native::extract_build(const entry &package, const b
 {
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
-        SLOG("starting " << package << " " << __func__);
+        SLOG("starting \"" << package << "\" " << __func__);
         filesystem::reset_dir(destination);
         ::extract(cache_archiver, package_resource(package, m_config.name.file.build), destination, m_config.name.dir.installation);
     }

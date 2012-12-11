@@ -5,11 +5,22 @@
 #include <map>
 
 #include <boost/filesystem/path.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
 
 namespace bunsan{namespace pm
 {
     struct depends
     {
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int)
+        {
+            ar & BOOST_SERIALIZATION_NVP(package);
+            ar & BOOST_SERIALIZATION_NVP(source.self);
+            ar & BOOST_SERIALIZATION_NVP(source.import.source);
+            ar & BOOST_SERIALIZATION_NVP(source.import.package);
+        }
+
         depends()=default;
         depends(const depends &)=default;
         depends(depends &&)=default;

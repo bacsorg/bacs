@@ -56,7 +56,6 @@ namespace
     void require_lock(bool has, const char *func)
     {
         using bunsan::pm::invalid_configuration_key_error;
-        using std::string;
         if (!has)
             BOOST_THROW_EXCEPTION(invalid_configuration_key_error() <<
                                   invalid_configuration_key_error::path("config.lock.global") <<
@@ -67,7 +66,7 @@ namespace
 void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
 {
     require_lock(static_cast<bool>(flock), __func__);
-    SLOG("extract " << package << " to " << destination);
+    SLOG("extract \"" << package << "\" to " << destination);
     boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*flock);
     DLOG(trying to update);
     update(package);
@@ -94,7 +93,7 @@ namespace
 
 void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 {
-    SLOG("updating " << package);
+    SLOG("updating \"" << package << "\"");
     ntv->check_dirs();
     DLOG(starting build);
     update_index_tree(package);
@@ -111,7 +110,7 @@ void bunsan::pm::repository::update_index_tree(const entry &package)
     std::function<void(const entry &)> update_index =
         [this, &visited, &update_index](const entry &package)
         {
-            if (visited.find(package)==visited.end())
+            if (visited.find(package) == visited.end())
             {
                 ntv->update_index(package);
                 visited.insert(package);
@@ -130,12 +129,12 @@ bool bunsan::pm::repository::update_package_depends(
     std::map<entry, boost::property_tree::ptree> &snapshot,
     std::map<stage, std::map<entry, boost::property_tree::ptree>> &snapshot_cache)
 {
-    SLOG("starting " << package.first << " (" << stage_type_name[static_cast<int>(package.second)] << ") " << __func__);
-    if (in.find(package)!=in.end())
+    SLOG("starting \"" << package.first << "\" (" << stage_type_name[static_cast<int>(package.second)] << ") " << __func__);
+    if (in.find(package) != in.end())
         BOOST_THROW_EXCEPTION(circular_dependencies() << circular_dependencies::package(package.first.name()));
     {
         auto iter = updated.find(package);
-        if (iter!=updated.end())
+        if (iter != updated.end())
         {
             snapshot = snapshot_cache.at(package);
             return iter->second;
@@ -208,8 +207,8 @@ bool bunsan::pm::repository::update_package_depends(
                 boost::property_tree::ptree checksum;
                 ntv->read_checksum(package.first, checksum);
                 auto iter = snapshot.find(package.first);
-                if (iter!=snapshot.end())
-                    BOOST_ASSERT(iter->second==checksum);
+                if (iter != snapshot.end())
+                    BOOST_ASSERT(iter->second == checksum);
                 else
                     snapshot[package.first] = checksum;
             }

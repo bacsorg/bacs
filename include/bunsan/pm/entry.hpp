@@ -68,8 +68,17 @@ namespace bunsan{namespace pm
     }
 
     template <typename Char, typename Traits>
+    inline std::basic_istream<Char, Traits> &operator>>(std::basic_istream<Char, Traits> &in, entry &e)
+    {
+        std::string name;
+        in >> name;
+        e = name;
+        return in;
+    }
+
+    template <typename Char, typename Traits>
     inline std::basic_ostream<Char, Traits> &operator<<(std::basic_ostream<Char, Traits> &out, const entry &e)
     {
-        return out << e.location();
+        return out << e.name();
     }
 }}
