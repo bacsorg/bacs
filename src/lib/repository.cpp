@@ -36,7 +36,7 @@ bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): 
     }
     BUNSAN_EXCEPTIONS_WRAP_END()
     if (m_config.lock.global)
-        flock.reset(new bunsan::interprocess::file_lock(m_config.lock.global.get().c_str()));
+        m_flock.reset(new bunsan::interprocess::file_lock(m_config.lock.global.get().c_str()));
     ntv = new native(m_config);
 }
 
@@ -65,9 +65,9 @@ namespace
 
 void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
 {
-    require_lock(static_cast<bool>(flock), __func__);
+    require_lock(static_cast<bool>(m_flock), __func__);
     SLOG("extract \"" << package << "\" to " << destination);
-    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*flock);
+    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
     DLOG(trying to update);
     update(package);
     DLOG(trying to extract);
@@ -224,8 +224,8 @@ bool bunsan::pm::repository::update_package_depends(
 
 void bunsan::pm::repository::clean()
 {
-    require_lock(static_cast<bool>(flock), __func__);
-    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*flock);
+    require_lock(static_cast<bool>(m_flock), __func__);
+    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
     ntv->clean();
 }
 

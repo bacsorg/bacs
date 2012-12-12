@@ -79,7 +79,7 @@ namespace bunsan{namespace pm
     private:
         class native;
         native *ntv;
-        std::unique_ptr<bunsan::interprocess::file_lock> flock;
+        std::unique_ptr<bunsan::interprocess::file_lock> m_flock;
         pm::config m_config;
     };
 }}
