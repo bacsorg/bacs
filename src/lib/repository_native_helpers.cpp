@@ -2,15 +2,18 @@
 
 #include "bunsan/pm/config.hpp"
 
+#include "bunsan/config/cast.hpp"
 #include "bunsan/enable_error_info.hpp"
 #include "bunsan/logging/legacy.hpp"
 #include "bunsan/filesystem/operations.hpp"
 
 #include <boost/property_tree/info_parser.hpp>
 
-void bunsan::pm::repository::native::read_checksum(const entry &package, boost::property_tree::ptree &ptree)
+bunsan::pm::snapshot_entry bunsan::pm::repository::native::read_checksum(const entry &package)
 {
+    boost::property_tree::ptree ptree;
     boost::property_tree::read_info(source_resource(package, m_config.name.file.checksum).string(), ptree);
+    return bunsan::config::load<snapshot_entry>(ptree);
 }
 
 std::string bunsan::pm::repository::native::remote_resource(const entry &package, const boost::filesystem::path &name)
@@ -63,28 +66,20 @@ bunsan::pm::repository::native::native(const pm::config &config_):
     fetcher->setup(utility.fetcher.config);
 }
 
-void bunsan::pm::repository::native::write_snapshot(const boost::filesystem::path &path, const std::map<entry, boost::property_tree::ptree> &snapshot)
+void bunsan::pm::repository::native::write_snapshot(const boost::filesystem::path &path, const snapshot &snapshot_)
 {
-    boost::property_tree::ptree snapshot_;
-    for (const auto &i: snapshot)
-        snapshot_.push_back(boost::property_tree::ptree::value_type(i.first.name(), i.second));
-    boost::property_tree::write_info(path.string(), snapshot_);
+    boost::property_tree::write_info(path.string(), bunsan::config::save<boost::property_tree::ptree>(snapshot_));
 }
 
-std::map<bunsan::pm::entry, boost::property_tree::ptree> bunsan::pm::repository::native::read_snapshot(const boost::filesystem::path &path)
+bunsan::pm::snapshot bunsan::pm::repository::native::read_snapshot(const boost::filesystem::path &path)
 {
-    std::map<entry, boost::property_tree::ptree> snapshot;
-    boost::property_tree::ptree snapshot_;
-    boost::property_tree::read_info(path.string(), snapshot_);
-    for (const auto &i: snapshot_)
+    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
-        const auto iter = snapshot.find(i.first);
-        if (iter != snapshot.end())
-            BOOST_ASSERT(iter->second == i.second);
-        else
-            snapshot[i.first] = i.second;
+        boost::property_tree::ptree ptree;
+        boost::property_tree::read_info(path.string(), ptree);
+        return bunsan::config::load<snapshot>(ptree);
     }
-    return snapshot;
+    BUNSAN_EXCEPTIONS_WRAP_END()
 }
 
 bunsan::pm::index bunsan::pm::repository::native::read_index(const entry &package)
@@ -124,24 +119,22 @@ namespace
     }
 }
 
-bool bunsan::pm::repository::native::build_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot)
+bool bunsan::pm::repository::native::build_outdated(const entry &package, const snapshot &snapshot_)
 {
-    boost::filesystem::path snp = package_resource(package, m_config.name.file.build_snapshot);
-    boost::filesystem::path build = package_resource(package, m_config.name.file.build);
+    const boost::filesystem::path snp = package_resource(package, m_config.name.file.build_snapshot);
+    const boost::filesystem::path build = package_resource(package, m_config.name.file.build);
     if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(build))
         return true;
-    std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
-    return snapshot != snapshot_;
+    return snapshot_ != read_snapshot(snp);
 }
 
-bool bunsan::pm::repository::native::installation_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot)
+bool bunsan::pm::repository::native::installation_outdated(const entry &package, const snapshot &snapshot_)
 {
     const boost::filesystem::path snp = package_resource(package, m_config.name.file.installation_snapshot);
     const boost::filesystem::path installation = package_resource(package, m_config.name.file.installation);
     if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(installation))
         return true;
-    std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
-    return snapshot != snapshot_;
+    return snapshot_ != read_snapshot(snp);
 }
 
 void bunsan::pm::repository::native::check_dirs()

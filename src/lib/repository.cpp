@@ -98,10 +98,10 @@ void bunsan::pm::repository::update(const bunsan::pm::entry &package)
     DLOG(starting build);
     update_index_tree(package);
     std::map<stage, bool> updated;
-    std::map<stage, std::map<entry, boost::property_tree::ptree>> snapshot_cache;
+    std::map<stage, snapshot> snapshot_cache;
     std::set<stage> in;
-    std::map<entry, boost::property_tree::ptree> snapshot;
-    update_package_depends(stage(package, stage_type::installation), updated, in, snapshot, snapshot_cache);
+    snapshot current_snapshot;
+    update_package_depends(stage(package, stage_type::installation), updated, in, current_snapshot, snapshot_cache);
 }
 
 void bunsan::pm::repository::update_index_tree(const entry &package)
@@ -126,8 +126,8 @@ bool bunsan::pm::repository::update_package_depends(
     const stage &package,
     std::map<stage, bool> &updated,
     std::set<stage> &in,
-    std::map<entry, boost::property_tree::ptree> &snapshot,
-    std::map<stage, std::map<entry, boost::property_tree::ptree>> &snapshot_cache)
+    snapshot &current_snapshot,
+    std::map<stage, snapshot> &snapshot_cache)
 {
     SLOG("starting \"" << package.first << "\" (" << stage_type_name[static_cast<int>(package.second)] << ") " << __func__);
     if (in.find(package) != in.end())
@@ -136,7 +136,7 @@ bool bunsan::pm::repository::update_package_depends(
         auto iter = updated.find(package);
         if (iter != updated.end())
         {
-            snapshot = snapshot_cache.at(package);
+            current_snapshot = snapshot_cache.at(package);
             return iter->second;
         }
     }
@@ -149,38 +149,38 @@ bool bunsan::pm::repository::update_package_depends(
         {
             for (const auto &i: deps.package)
             {
-                std::map<entry, boost::property_tree::ptree> snapshot_;
+                snapshot snapshot_;
                 const bool ret = update_package_depends(stage(i.second, stage_type::installation), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
-                merge_maps(snapshot, snapshot_);
+                merge_maps(current_snapshot, snapshot_);
             }
             {
-                std::map<entry, boost::property_tree::ptree> snapshot_;
+                snapshot snapshot_;
                 const bool ret = update_package_depends(stage(package.first, stage_type::build), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
-                merge_maps(snapshot, snapshot_);
+                merge_maps(current_snapshot, snapshot_);
             }
-            upd = upd || ntv->installation_outdated(package.first, snapshot);
+            upd = upd || ntv->installation_outdated(package.first, current_snapshot);
             if (upd)
             {
                 ntv->build_installation(package.first);
-                BOOST_ASSERT(!ntv->installation_outdated(package.first, snapshot));
+                BOOST_ASSERT(!ntv->installation_outdated(package.first, current_snapshot));
             }
         }
         break;
     case stage_type::build:
         {
             {
-                std::map<entry, boost::property_tree::ptree> snapshot_;
+                snapshot snapshot_;
                 const bool ret = update_package_depends(stage(package.first, stage_type::source), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
-                merge_maps(snapshot, snapshot_);
+                merge_maps(current_snapshot, snapshot_);
             }
-            upd = upd || ntv->build_outdated(package.first, snapshot);
+            upd = upd || ntv->build_outdated(package.first, current_snapshot);
             if (upd)
             {
                 ntv->build(package.first);
-                BOOST_ASSERT(!ntv->build_outdated(package.first, snapshot));
+                BOOST_ASSERT(!ntv->build_outdated(package.first, current_snapshot));
             }
         }
         break;
@@ -188,29 +188,28 @@ bool bunsan::pm::repository::update_package_depends(
         {
             for (const auto &i: deps.source.import.package)
             {
-                std::map<entry, boost::property_tree::ptree> snapshot_;
+                snapshot snapshot_;
                 const bool ret = update_package_depends(stage(i.second, stage_type::installation), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
-                merge_maps(snapshot, snapshot_);
+                merge_maps(current_snapshot, snapshot_);
             }
             for (const auto &i: deps.source.import.source)
             {
-                std::map<entry, boost::property_tree::ptree> snapshot_;
+                snapshot snapshot_;
                 const bool ret = update_package_depends(stage(i.second, stage_type::source), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
-                merge_maps(snapshot, snapshot_);
+                merge_maps(current_snapshot, snapshot_);
             }
             // we will always try to fetch source
             // native object will download source only if it is outdated or does not exist
             ntv->fetch_source(package.first);
             {
-                boost::property_tree::ptree checksum;
-                ntv->read_checksum(package.first, checksum);
-                auto iter = snapshot.find(package.first);
-                if (iter != snapshot.end())
+                const snapshot_entry checksum = ntv->read_checksum(package.first);
+                const auto iter = current_snapshot.find(package.first);
+                if (iter != current_snapshot.end())
                     BOOST_ASSERT(iter->second == checksum);
                 else
-                    snapshot[package.first] = checksum;
+                    current_snapshot[package.first] = checksum;
             }
         }
         break;
@@ -218,7 +217,7 @@ bool bunsan::pm::repository::update_package_depends(
         BOOST_ASSERT(false);
     }
     in.erase(package);
-    snapshot_cache[package] = snapshot;
+    snapshot_cache[package] = current_snapshot;
     return updated[package] = upd;
 }
 

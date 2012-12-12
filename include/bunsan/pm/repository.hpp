@@ -2,6 +2,7 @@
 
 #include "bunsan/pm/entry.hpp"
 #include "bunsan/pm/config.hpp"
+#include "bunsan/pm/snapshot.hpp"
 #include "bunsan/pm/error.hpp"
 
 #include "bunsan/interprocess/sync/file_lock.hpp"
@@ -73,8 +74,8 @@ namespace bunsan{namespace pm
             const stage &stage_,
             std::map<stage, bool> &updated,
             std::set<stage> &in,
-            std::map<entry, boost::property_tree::ptree> &snapshot,
-            std::map<stage, std::map<entry, boost::property_tree::ptree>> &snapshot_cache);
+            snapshot &current_snapshot,
+            std::map<stage, snapshot> &snapshot_cache);
 
     private:
         class native;

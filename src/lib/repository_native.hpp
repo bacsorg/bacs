@@ -28,21 +28,21 @@ public:
     void clean();
 
 private:
-    void unpack_source(const entry &package, const boost::filesystem::path &destination, std::map<entry, boost::property_tree::ptree> &snapshot);
+    void unpack_source(const entry &package, const boost::filesystem::path &destination, snapshot &snapshot_);
     void unpack(const entry &package, const boost::filesystem::path &build_dir);
     void pack(const entry &package, const boost::filesystem::path &build_dir);
     std::string remote_resource(const entry &package, const boost::filesystem::path &name);
     boost::filesystem::path source_resource(const entry &package, const std::string &name);
     boost::filesystem::path package_resource(const entry &package, const std::string &name);
     std::multimap<boost::filesystem::path, std::string> sources(const entry &package);
-    std::map<entry, boost::property_tree::ptree> read_snapshot(const boost::filesystem::path &path);
-    void write_snapshot(const boost::filesystem::path &path, const std::map<entry, boost::property_tree::ptree> &snapshot);
+    snapshot read_snapshot(const boost::filesystem::path &path);
+    void write_snapshot(const boost::filesystem::path &path, const snapshot &snapshot_);
 
 public:
-    bool installation_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot);
-    bool build_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot);
+    bool installation_outdated(const entry &package, const snapshot &snapshot_);
+    bool build_outdated(const entry &package, const snapshot &snapshot_);
     index read_index(const entry &package);
-    void read_checksum(const entry &package, boost::property_tree::ptree &ptree);
+    snapshot_entry read_checksum(const entry &package);
     void extract_build(const entry &package, const boost::filesystem::path &destination);
     void extract_installation(const entry &package, const boost::filesystem::path &destination, bool reset=true);
 

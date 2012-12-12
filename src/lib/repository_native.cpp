@@ -50,7 +50,7 @@ void bunsan::pm::repository::native::update_index(const entry &package)
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
         SLOG("starting \"" << package << "\" " << __func__);
-        tempfile checksum_tmp = tempfile::from_model(m_config.name.file.tmp);
+        const tempfile checksum_tmp = tempfile::from_model(m_config.name.file.tmp);
         BUNSAN_EXCEPTIONS_WRAP_BEGIN()
         {
             fetcher->fetch(remote_resource(package, m_config.name.file.checksum), checksum_tmp.path());
@@ -62,12 +62,10 @@ void bunsan::pm::repository::native::update_index(const entry &package)
         boost::filesystem::create_directories(output);
         boost::filesystem::copy_file(checksum_tmp.path(), output / m_config.name.file.checksum,
                                      boost::filesystem::copy_option::overwrite_if_exists);
-        boost::property_tree::ptree checksum;
-        read_checksum(package, checksum);
         load(fetcher,
              remote_resource(package, m_config.name.file.index),
              output / m_config.name.file.index,
-             checksum.get<std::string>(m_config.name.file.index));
+             read_checksum(package).at(m_config.name.file.index));
     }
     BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
 }
@@ -79,13 +77,11 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
         SLOG("starting \"" << package << "\" " << __func__);
         const std::string src_sfx = m_config.suffix.source_archive;
         const boost::filesystem::path output = package.local_resource(m_config.dir.source);
-        boost::property_tree::ptree checksum;
-        read_checksum(package, checksum);
         for (const auto &i: sources(package))
             load(fetcher,
                  remote_resource(package, i.second + src_sfx),
                  output / (i.second + src_sfx),
-                 checksum.get<std::string>(i.second));
+                 read_checksum(package).at(i.second));
     }
     BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
 }
@@ -115,8 +111,8 @@ namespace
     }
 }
 
-void bunsan::pm::repository::native::unpack_source(const entry &package, const boost::filesystem::path &destination,
-    std::map<entry, boost::property_tree::ptree> &snapshot)
+void bunsan::pm::repository::native::unpack_source(
+    const entry &package, const boost::filesystem::path &destination, snapshot &snapshot_)
 {
     SLOG("starting " << package << " import unpack");
     const index deps = read_index(package);
@@ -125,25 +121,23 @@ void bunsan::pm::repository::native::unpack_source(const entry &package, const b
         ::extract(source_archiver, source_resource(package, i.second + m_config.suffix.source_archive), destination / i.first, i.second);
     // dump package checksum into snapshot
     {
-        auto iter = snapshot.find(package);
-        boost::property_tree::ptree checksum;
-        read_checksum(package, checksum);
-        if (iter != snapshot.end())
+        const auto iter = snapshot_.find(package);
+        const snapshot_entry checksum = read_checksum(package);
+        if (iter != snapshot_.end())
             BOOST_ASSERT(iter->second == checksum);
         else
-            snapshot[package.name()] = checksum;
+            snapshot_[package.name()] = checksum;
     }
     // extract source imports
     for (const auto &i: deps.source.import.source)
-        unpack_source(i.second, destination / i.first, snapshot);
+        unpack_source(i.second, destination / i.first, snapshot_);
     // extract package imports
     for (const auto &i: deps.source.import.package)
     {
         SLOG("starting \"" << package << "\" import extraction");
         boost::filesystem::path snp = package_resource(i.second, m_config.name.file.installation_snapshot);
         extract_installation(i.second, destination / i.first, false);
-        std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
-        merge_maps(snapshot, snapshot_);
+        merge_maps(snapshot_, read_snapshot(snp));
     }
 }
 
@@ -161,9 +155,9 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
         filesystem::reset_dir(build);
         filesystem::reset_dir(installation);
         // unpack source
-        std::map<entry, boost::property_tree::ptree> snapshot_map;
-        unpack_source(package, src, snapshot_map);
-        write_snapshot(snp, snapshot_map);
+        snapshot snapshot_;
+        unpack_source(package, src, snapshot_);
+        write_snapshot(snp, snapshot_);
     }
     BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
 }
@@ -213,19 +207,16 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
         boost::filesystem::path install_dir = build_dir.path() / m_config.name.dir.installation;
         // unpack
         extract_build(package, install_dir);
-        std::map<entry, boost::property_tree::ptree> snapshot =
-            read_snapshot(package_resource(package, m_config.name.file.build_snapshot));
+        snapshot snapshot_ = read_snapshot(package_resource(package, m_config.name.file.build_snapshot));
         const index deps = read_index(package);
         for (const auto &i: deps.package)
         {
             boost::filesystem::path dest = install_dir / i.first;
             extract_installation(i.second, dest, false);
-            std::map<entry, boost::property_tree::ptree> snapshot_ =
-                read_snapshot(package_resource(i.second, m_config.name.file.installation_snapshot));
-            merge_maps(snapshot, snapshot_);
+            merge_maps(snapshot_, read_snapshot(package_resource(i.second, m_config.name.file.installation_snapshot)));
         }
         // save snapshot
-        write_snapshot(build_dir.path() / m_config.name.file.installation_snapshot, snapshot);
+        write_snapshot(build_dir.path() / m_config.name.file.installation_snapshot, snapshot_);
         // pack
         cache_archiver->pack(
             build_dir.path() / m_config.name.file.installation,
