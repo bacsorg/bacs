@@ -41,7 +41,7 @@ void bunsan::pm::entry::build(const std::string &name_, char delim)
                             name_,
                             [delim](char c){return delim == c;},
                             boost::algorithm::token_compress_on);
-    for (const auto &i: m_location)
+    for (const std::string &i: m_location)
         if (!is_allowed_subpath(i))
             BOOST_THROW_EXCEPTION(invalid_entry_name_error() << invalid_entry_name_error::entry_name(name_));
     BOOST_ASSERT(!m_location.empty());
@@ -87,7 +87,7 @@ bunsan::pm::entry bunsan::pm::entry::operator/(const entry &e) const
 boost::filesystem::path bunsan::pm::entry::location() const
 {
     boost::filesystem::path loc;
-    for (const auto &i: m_location)
+    for (const std::string &i: m_location)
         loc /= i;
     return loc;
 }
@@ -127,7 +127,7 @@ std::string bunsan::pm::entry::remote_resource(
     if (!full.empty() && full.back() != '/')
         full.push_back('/');
     full += name('/');
-    for (const auto &i: name_)
+    for (const boost::filesystem::path &i: name_)
     {
         full.push_back('/');
         full += i.string();
