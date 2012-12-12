@@ -136,8 +136,8 @@ bool bunsan::pm::repository::native::build_outdated(const entry &package, const 
 
 bool bunsan::pm::repository::native::installation_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot)
 {
-    boost::filesystem::path snp = package_resource(package, m_config.name.file.installation_snapshot);
-    boost::filesystem::path installation = package_resource(package, m_config.name.file.installation);
+    const boost::filesystem::path snp = package_resource(package, m_config.name.file.installation_snapshot);
+    const boost::filesystem::path installation = package_resource(package, m_config.name.file.installation);
     if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(installation))
         return true;
     std::map<entry, boost::property_tree::ptree> snapshot_ = read_snapshot(snp);
