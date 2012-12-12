@@ -119,7 +119,7 @@ void bunsan::pm::repository::native::unpack_source(const entry &package, const b
     std::map<entry, boost::property_tree::ptree> &snapshot)
 {
     SLOG("starting " << package << " import unpack");
-    depends deps = read_depends(package);
+    const index deps = read_index(package);
     // extract sources
     for (const auto &i: deps.source.self)
         ::extract(source_archiver, source_resource(package, i.second + m_config.suffix.source_archive), destination / i.first, i.second);
@@ -215,7 +215,7 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
         extract_build(package, install_dir);
         std::map<entry, boost::property_tree::ptree> snapshot =
             read_snapshot(package_resource(package, m_config.name.file.build_snapshot));
-        depends deps = read_depends(package);
+        const index deps = read_index(package);
         for (const auto &i: deps.package)
         {
             boost::filesystem::path dest = install_dir / i.first;

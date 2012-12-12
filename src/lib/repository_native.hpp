@@ -1,7 +1,7 @@
 #pragma once
 
 #include "bunsan/pm/repository.hpp"
-#include "bunsan/pm/depends.hpp"
+#include "bunsan/pm/index.hpp"
 
 #include "bunsan/utility/archiver.hpp"
 #include "bunsan/utility/builder.hpp"
@@ -41,7 +41,7 @@ private:
 public:
     bool installation_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot);
     bool build_outdated(const entry &package, const std::map<entry, boost::property_tree::ptree> &snapshot);
-    depends read_depends(const entry &package);
+    index read_index(const entry &package);
     void read_checksum(const entry &package, boost::property_tree::ptree &ptree);
     void extract_build(const entry &package, const boost::filesystem::path &destination);
     void extract_installation(const entry &package, const boost::filesystem::path &destination, bool reset=true);

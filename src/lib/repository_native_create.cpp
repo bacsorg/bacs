@@ -1,7 +1,7 @@
 #include "repository_native.hpp"
 
 #include "bunsan/pm/config.hpp"
-#include "bunsan/pm/depends.hpp"
+#include "bunsan/pm/index.hpp"
 
 #include "bunsan/pm/checksum.hpp"
 
@@ -22,9 +22,9 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
     // we need to save index checksum
     checksum[m_config.name.file.index] = bunsan::pm::checksum(index_name);
     std::set<std::string> to_remove;
-    depends index;
-    index.load(index_name);
-    for (const auto &i: index.source.self)
+    index index_;
+    index_.load(index_name);
+    for (const auto &i: index_.source.self)
     {
         const std::string src_name = i.second;
         const std::string src_value = src_name + m_config.suffix.source_archive;

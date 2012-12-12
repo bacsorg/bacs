@@ -114,8 +114,8 @@ void bunsan::pm::repository::update_index_tree(const entry &package)
             {
                 ntv->update_index(package);
                 visited.insert(package);
-                depends deps = ntv->read_depends(package);
-                for (const auto &i: deps.all())
+                const index deps = ntv->read_index(package);
+                for (const entry &i: deps.all())
                     update_index(i);
             }
         };
@@ -142,7 +142,7 @@ bool bunsan::pm::repository::update_package_depends(
     }
     in.insert(package);
     bool upd = false;
-    depends deps = ntv->read_depends(package.first);
+    const index deps = ntv->read_index(package.first);
     switch (package.second)
     {
     case stage_type::installation:
@@ -150,13 +150,13 @@ bool bunsan::pm::repository::update_package_depends(
             for (const auto &i: deps.package)
             {
                 std::map<entry, boost::property_tree::ptree> snapshot_;
-                bool ret = update_package_depends(stage(i.second, stage_type::installation), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(stage(i.second, stage_type::installation), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
                 merge_maps(snapshot, snapshot_);
             }
             {
                 std::map<entry, boost::property_tree::ptree> snapshot_;
-                bool ret = update_package_depends(stage(package.first, stage_type::build), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(stage(package.first, stage_type::build), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
                 merge_maps(snapshot, snapshot_);
             }
@@ -172,7 +172,7 @@ bool bunsan::pm::repository::update_package_depends(
         {
             {
                 std::map<entry, boost::property_tree::ptree> snapshot_;
-                bool ret = update_package_depends(stage(package.first, stage_type::source), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(stage(package.first, stage_type::source), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
                 merge_maps(snapshot, snapshot_);
             }
@@ -189,14 +189,14 @@ bool bunsan::pm::repository::update_package_depends(
             for (const auto &i: deps.source.import.package)
             {
                 std::map<entry, boost::property_tree::ptree> snapshot_;
-                bool ret = update_package_depends(stage(i.second, stage_type::installation), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(stage(i.second, stage_type::installation), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
                 merge_maps(snapshot, snapshot_);
             }
             for (const auto &i: deps.source.import.source)
             {
                 std::map<entry, boost::property_tree::ptree> snapshot_;
-                bool ret = update_package_depends(stage(i.second, stage_type::source), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(stage(i.second, stage_type::source), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
                 merge_maps(snapshot, snapshot_);
             }

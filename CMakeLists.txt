@@ -12,7 +12,7 @@ bunsan_use_boost(system filesystem serialization unit_test_framework program_opt
 
 bunsan_add_shared_library(${PROJECT_NAME}
     src/lib/error.cpp
-    src/lib/depends.cpp
+    src/lib/index.cpp
     src/lib/entry.cpp
     src/lib/checksum.cpp
     src/lib/repository_native_create.cpp

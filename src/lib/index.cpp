@@ -1,14 +1,13 @@
-#include "bunsan/pm/depends.hpp"
+#include "bunsan/pm/index.hpp"
 
 #include "bunsan/config/input_archive.hpp"
 #include "bunsan/config/output_archive.hpp"
 
 #include <algorithm>
-#include <set>
 
 #include <boost/property_tree/info_parser.hpp>
 
-std::vector<bunsan::pm::entry> bunsan::pm::depends::all() const
+std::set<bunsan::pm::entry> bunsan::pm::index::all() const
 {
     // TODO make it unordered
     std::set<entry> all_;
@@ -18,9 +17,7 @@ std::vector<bunsan::pm::entry> bunsan::pm::depends::all() const
         all_.insert(i.second);
     for (const auto &i: source.import.source)
         all_.insert(i.second);
-    std::vector<entry> all__(all_.size());
-    std::copy(all_.begin(), all_.end(), all__.begin());
-    return all__;
+    return std::move(all_);
 }
 
 namespace bunsan{namespace config{namespace traits
@@ -29,7 +26,7 @@ namespace bunsan{namespace config{namespace traits
     struct is_direct_assignable<bunsan::pm::entry>: std::integral_constant<bool, true> {};
 }}}
 
-bunsan::pm::depends::operator boost::property_tree::ptree() const
+bunsan::pm::index::operator boost::property_tree::ptree() const
 {
     boost::property_tree::ptree deps;
     bunsan::config::output_archive<boost::property_tree::ptree> oa(deps);
@@ -37,20 +34,20 @@ bunsan::pm::depends::operator boost::property_tree::ptree() const
     return deps;
 }
 
-void bunsan::pm::depends::load(const boost::property_tree::ptree &index)
+void bunsan::pm::index::load(const boost::property_tree::ptree &ptree)
 {
-    bunsan::config::input_archive<boost::property_tree::ptree> ia(index);
+    bunsan::config::input_archive<boost::property_tree::ptree> ia(ptree);
     ia >> *this;
 }
 
-void bunsan::pm::depends::load(const boost::filesystem::path &path)
+void bunsan::pm::index::load(const boost::filesystem::path &path)
 {
-    boost::property_tree::ptree index;
-    boost::property_tree::read_info(path.string(), index);
-    load(index);
+    boost::property_tree::ptree ptree;
+    boost::property_tree::read_info(path.string(), ptree);
+    load(ptree);
 }
 
-void bunsan::pm::depends::save(const boost::filesystem::path &path) const
+void bunsan::pm::index::save(const boost::filesystem::path &path) const
 {
     boost::property_tree::write_info(path.string(), static_cast<boost::property_tree::ptree>(*this));
 }

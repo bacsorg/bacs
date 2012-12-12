@@ -2,6 +2,7 @@
 
 #include "bunsan/pm/entry.hpp"
 
+#include <set>
 #include <map>
 
 #include <boost/filesystem/path.hpp>
@@ -10,7 +11,7 @@
 
 namespace bunsan{namespace pm
 {
-    struct depends
+    struct index
     {
         template <typename Archive>
         void serialize(Archive &ar, const unsigned int)
@@ -21,25 +22,25 @@ namespace bunsan{namespace pm
             ar & BOOST_SERIALIZATION_NVP(source.import.package);
         }
 
-        depends()=default;
-        depends(const depends &)=default;
-        depends(depends &&)=default;
-        depends &operator=(const depends &)=default;
-        depends &operator=(depends &&)=default;
-
-        explicit operator boost::property_tree::ptree() const;
+        index()=default;
+        index(const index &)=default;
+        index(index &&)=default;
+        index &operator=(const index &)=default;
+        index &operator=(index &&)=default;
 
         template <typename T>
-        explicit depends(const T &obj)
+        explicit index(const T &obj)
         {
             load(obj);
         }
 
-        void load(const boost::property_tree::ptree &index);
+        explicit operator boost::property_tree::ptree() const;
+
+        void load(const boost::property_tree::ptree &ptree);
         void load(const boost::filesystem::path &path);
         void save(const boost::filesystem::path &path) const;
 
-        std::vector<entry> all() const;
+        std::set<entry> all() const;
 
         std::multimap<boost::filesystem::path, entry> package;
         struct

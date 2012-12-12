@@ -30,7 +30,7 @@ boost::filesystem::path bunsan::pm::repository::native::package_resource(const e
 
 std::multimap<boost::filesystem::path, std::string> bunsan::pm::repository::native::sources(const entry &package)
 {
-    return read_depends(package).source.self;
+    return read_index(package).source.self;
 }
 
 bunsan::pm::repository::native::native(const pm::config &config_):
@@ -87,11 +87,11 @@ std::map<bunsan::pm::entry, boost::property_tree::ptree> bunsan::pm::repository:
     return snapshot;
 }
 
-bunsan::pm::depends bunsan::pm::repository::native::read_depends(const entry &package)
+bunsan::pm::index bunsan::pm::repository::native::read_index(const entry &package)
 {
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
-        return depends(source_resource(package, m_config.name.file.index));
+        return index(source_resource(package, m_config.name.file.index));
     }
     BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
 }
