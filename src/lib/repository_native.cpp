@@ -91,7 +91,7 @@ namespace
     void merge_dir(const boost::filesystem::path &source, const boost::filesystem::path &destination)
     {
         SLOG("merging dirs: source = " << source << ", destination = " << destination);
-        for (auto i = boost::filesystem::directory_iterator(source); i != boost::filesystem::directory_iterator(); ++i)
+        for (boost::filesystem::directory_iterator i(source), end; i != end; ++i)
         {
             boost::filesystem::path src = i->path(), dst = destination / i->path().filename();
             if (boost::filesystem::is_directory(src) && boost::filesystem::is_directory(dst))
