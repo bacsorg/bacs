@@ -9,14 +9,43 @@
 #include <vector>
 
 #include <boost/optional.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
 
 namespace bunsan{namespace utility{namespace builders
 {
     class cmake: public conf_make_install
     {
     public:
+        struct config
+        {
+            template <typename Archive>
+            void serialize(Archive &ar, const unsigned int)
+            {
+                ar & BOOST_SERIALIZATION_NVP(cmake);
+                ar & BOOST_SERIALIZATION_NVP(make_maker);
+                ar & BOOST_SERIALIZATION_NVP(install_maker);
+            }
+
+            struct
+            {
+                template <typename Archive>
+                void serialize(Archive &ar, const unsigned int)
+                {
+                    ar & BOOST_SERIALIZATION_NVP(defines);
+                    ar & BOOST_SERIALIZATION_NVP(generator);
+                }
+
+                std::unordered_map<std::string, std::string> defines; ///< for example {"CMAKE_INSTALL_PREFIX": "/usr"}
+                boost::optional<std::string> generator; ///< for example "Unix Makefiles"
+            } cmake;
+
+            boost::property_tree::ptree make_maker, install_maker;
+        };
+
+    public:
         explicit cmake(const resolver &resolver_);
-        void setup(const utility::config_type &config) override;
+        void setup(const boost::property_tree::ptree &ptree) override;
 
     protected:
         void configure_(
@@ -41,7 +70,7 @@ namespace bunsan{namespace utility{namespace builders
         };
 
     private:
-        void setup_generator();
+        void set_default_generator();
         void set_generator(const std::string &gen_id);
         const generator &get_generator() const;
         std::vector<std::string> argv_(
@@ -50,11 +79,8 @@ namespace bunsan{namespace utility{namespace builders
     private:
         const resolver m_resolver;
         const boost::filesystem::path m_cmake_exe;
-
         boost::optional<std::size_t> m_generator;
-
-        std::unordered_map<std::string, std::string> m_cmake_defines;
-        utility::config_type m_make_maker_config, m_install_maker_config;
+        config m_config;
 
     private:
         static const std::vector<generator> generators;

@@ -2,10 +2,25 @@
 
 #include "cwd_split.hpp"
 
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+
 namespace bunsan{namespace utility{namespace archivers
 {
     class _7z: public cwd_split
     {
+    public:
+        struct config
+        {
+            template <typename Archive>
+            void serialize(Archive &ar, const unsigned int)
+            {
+                ar & BOOST_SERIALIZATION_NVP(format);
+            }
+
+            std::string format;
+        };
+
     public:
         explicit _7z(const boost::filesystem::path &exe);
 
@@ -13,7 +28,7 @@ namespace bunsan{namespace utility{namespace archivers
             const boost::filesystem::path &archive,
             const boost::filesystem::path &dir) override;
 
-        void setarg(const std::string &key, const std::string &value) override;
+        void setup(const boost::property_tree::ptree &ptree) override;
 
     protected:
         void pack_from(
@@ -28,6 +43,6 @@ namespace bunsan{namespace utility{namespace archivers
 
     private:
         const boost::filesystem::path m_exe;
-        std::string m_format;
+        config m_config;
     };
 }}}

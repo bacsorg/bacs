@@ -1,8 +1,9 @@
 #include "tar.hpp"
 
+#include "bunsan/config/cast.hpp"
 #include "bunsan/process/execute.hpp"
 
-#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;
@@ -23,18 +24,17 @@ void archivers::tar::pack_from(
 {
     bunsan::process::context ctx;
     ctx.executable(m_exe);
-    std::vector<std::string> argv_ =
-        {
-            m_exe.filename().string(),
-#warning TODO
-            // FIXME implement support for non-single character formats
-            "c" + m_format + "f",
-            archive.string(),
-            "-C",
-            cwd.string()
-        };
-    for (const auto &i: m_args)
-        argv_.push_back("--" + i);
+    std::vector<std::string> argv_ = {
+        m_exe.filename().string(),
+        "--create",
+        format_argument(),
+        "--file",
+        archive.string(),
+        "--directory",
+        cwd.string()
+    };
+    const std::vector<std::string> flags = flag_arguments();
+    argv_.insert(argv_.end(), flags.begin(), flags.end());
     argv_.push_back("--");
     argv_.push_back(file.string());
     ctx.argv(argv_);
@@ -47,31 +47,39 @@ void archivers::tar::unpack(
 {
     bunsan::process::context ctx;
     ctx.executable(m_exe);
-    std::vector<std::string> argv_ =
-        {
-            m_exe.filename().string(),
-            "x" + m_format + "f",
-            boost::filesystem::absolute(archive).string(),
-            "-C",
-            boost::filesystem::absolute(dir).string()
-        };
-    for (const auto &i: m_args)
-        argv_.push_back("--" + i);
+    std::vector<std::string> argv_ = {
+        m_exe.filename().string(),
+        "--extract",
+        format_argument(),
+        "--file",
+        boost::filesystem::absolute(archive).string(),
+        "--directory",
+        boost::filesystem::absolute(dir).string()
+    };
+    const std::vector<std::string> flags = flag_arguments();
+    argv_.insert(argv_.end(), flags.begin(), flags.end());
     ctx.argv(argv_);
     bunsan::process::check_sync_execute(ctx);
 }
 
-void archivers::tar::setarg(const std::string &key, const std::string &value)
+std::string archivers::tar::format_argument() const
 {
-    if (key == "format")
-        m_format = value;
-    else if (key == "exclude-vcs")
+    return (m_config.format.size() == 1 ? "-" : "--") + m_config.format;
+}
+
+std::vector<std::string> archivers::tar::flag_arguments() const
+{
+    std::vector<std::string> argv_;
+    for (const config::flag i: m_config.flags)
     {
-        if (boost::lexical_cast<unsigned>(value))
-            m_args.insert(key);
-        else
-            m_args.erase(key);
+        std::string arg = boost::lexical_cast<std::string>(i);
+        boost::algorithm::replace_all(arg, "_", "-");
+        argv_.push_back("--" + arg);
     }
-    else
-        BOOST_THROW_EXCEPTION(unknown_option_error(key));
+    return argv_;
+}
+
+void archivers::tar::setup(const boost::property_tree::ptree &ptree)
+{
+    m_config = bunsan::config::load<config>(ptree);
 }

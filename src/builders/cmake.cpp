@@ -1,5 +1,7 @@
 #include "cmake.hpp"
+#include "../makers/make.hpp"
 
+#include "bunsan/config/cast.hpp"
 #include "bunsan/process/execute.hpp"
 
 #include <algorithm>
@@ -15,7 +17,7 @@ const bool builders::cmake::factory_reg_hook = builder::register_new("cmake",
         return ptr;
     });
 
-void builders::cmake::setup_generator()
+void builders::cmake::set_default_generator()
 {
 #if defined(BOOST_POSIX_API)
     set_generator("Unix Makefiles");
@@ -35,48 +37,47 @@ enum class builders::cmake::generator::type: std::size_t
     unknown
 };
 
-const std::vector<builders::cmake::generator> builders::cmake::generators =
-    {
-        // makefiles
-        {"Unix Makefiles", generator::type::makefile},
-        {"MinGW Makefiles", generator::type::makefile},
-        {"MSYS Makefiles", generator::type::makefile},
-        {"NMake Makefiles", generator::type::makefile},
-        {"NMake Makefiles JOM", generator::type::makefile},
-        {"Borland Makefiles", generator::type::makefile},
-        {"Watcom WMake", generator::type::unknown},
-        // IDEs
-        // CodeBlocks
-        {"CodeBlocks - Unix Makefiles", generator::type::makefile},
-        {"CodeBlocks - MinGW Makefiles", generator::type::makefile},
-        {"CodeBlocks - NMake Makefiles", generator::type::nmakefile},
-        // Eclipse
-        {"Eclipse CDT4 - Unix Makefiles", generator::type::makefile},
-        {"Eclipse CDT4 - MinGW Makefiles", generator::type::makefile},
-        {"Eclipse CDT4 - NMake Makefiles", generator::type::nmakefile},
-        // KDevelop
-        {"KDevelop3", generator::type::unknown},
-        {"KDevelop3 - Unix Makefiles", generator::type::makefile},
-        // Visual Studio
-        {"Visual Studio 10", generator::type::visual_studio},
-        {"Visual Studio 10 IA64", generator::type::visual_studio},
-        {"Visual Studio 10 Win64", generator::type::visual_studio},
-        {"Visual Studio 11", generator::type::visual_studio},
-        {"Visual Studio 11 Win64", generator::type::visual_studio},
-        {"Visual Studio 6", generator::type::visual_studio},
-        {"Visual Studio 7", generator::type::visual_studio},
-        {"Visual Studio 7 .NET 2003", generator::type::visual_studio},
-        {"Visual Studio 8 2005", generator::type::visual_studio},
-        {"Visual Studio 8 2005 Win64", generator::type::visual_studio},
-        {"Visual Studio 9 2008", generator::type::visual_studio},
-        {"Visual Studio 9 2008 IA64", generator::type::visual_studio},
-        {"Visual Studio 9 2008 Win64", generator::type::visual_studio}
-    };
+const std::vector<builders::cmake::generator> builders::cmake::generators = {
+    // makefiles
+    {"Unix Makefiles", generator::type::makefile},
+    {"MinGW Makefiles", generator::type::makefile},
+    {"MSYS Makefiles", generator::type::makefile},
+    {"NMake Makefiles", generator::type::makefile},
+    {"NMake Makefiles JOM", generator::type::makefile},
+    {"Borland Makefiles", generator::type::makefile},
+    {"Watcom WMake", generator::type::unknown},
+    // IDEs
+    // CodeBlocks
+    {"CodeBlocks - Unix Makefiles", generator::type::makefile},
+    {"CodeBlocks - MinGW Makefiles", generator::type::makefile},
+    {"CodeBlocks - NMake Makefiles", generator::type::nmakefile},
+    // Eclipse
+    {"Eclipse CDT4 - Unix Makefiles", generator::type::makefile},
+    {"Eclipse CDT4 - MinGW Makefiles", generator::type::makefile},
+    {"Eclipse CDT4 - NMake Makefiles", generator::type::nmakefile},
+    // KDevelop
+    {"KDevelop3", generator::type::unknown},
+    {"KDevelop3 - Unix Makefiles", generator::type::makefile},
+    // Visual Studio
+    {"Visual Studio 10", generator::type::visual_studio},
+    {"Visual Studio 10 IA64", generator::type::visual_studio},
+    {"Visual Studio 10 Win64", generator::type::visual_studio},
+    {"Visual Studio 11", generator::type::visual_studio},
+    {"Visual Studio 11 Win64", generator::type::visual_studio},
+    {"Visual Studio 6", generator::type::visual_studio},
+    {"Visual Studio 7", generator::type::visual_studio},
+    {"Visual Studio 7 .NET 2003", generator::type::visual_studio},
+    {"Visual Studio 8 2005", generator::type::visual_studio},
+    {"Visual Studio 8 2005 Win64", generator::type::visual_studio},
+    {"Visual Studio 9 2008", generator::type::visual_studio},
+    {"Visual Studio 9 2008 IA64", generator::type::visual_studio},
+    {"Visual Studio 9 2008 Win64", generator::type::visual_studio}
+};
 
 builders::cmake::cmake(const resolver &resolver_):
     m_resolver(resolver_), m_cmake_exe(m_resolver.find_executable("cmake"))
 {
-    setup_generator();
+    set_default_generator();
 }
 
 std::vector<std::string> builders::cmake::argv_(const boost::filesystem::path &src) const
@@ -88,7 +89,7 @@ std::vector<std::string> builders::cmake::argv_(const boost::filesystem::path &s
         argv.push_back("-G");
         argv.push_back(get_generator().m_id);
     }
-    for (const auto &i: m_cmake_defines)
+    for (const auto &i: m_config.cmake.defines)
     {
         // TODO arguments check
         argv.push_back("-D" + i.first + "=" + i.second);
@@ -118,7 +119,7 @@ void builders::cmake::make_(
     case generator::type::makefile:
         {
             maker_ptr ptr = maker::instance("make", m_resolver);
-            ptr->setup(m_make_maker_config);
+            ptr->setup(m_config.make_maker);
             ptr->exec(bin, {});
         }
         break;
@@ -140,9 +141,9 @@ void builders::cmake::install_(
     case generator::type::makefile:
         {
             maker_ptr ptr = maker::instance("make", m_resolver);
-            utility::config_type config = m_install_maker_config;
-            config.put("defines.DESTDIR", boost::filesystem::absolute(root).string());
-            ptr->setup(config);
+            makers::make::config make_config = bunsan::config::load<makers::make::config>(m_config.install_maker);
+            make_config.defines["DESTDIR"] = boost::filesystem::absolute(root).string();
+            ptr->setup(bunsan::config::save<boost::property_tree::ptree>(make_config));
             ptr->exec(bin, {"install"});
         }
         break;
@@ -172,53 +173,11 @@ const builders::cmake::generator &builders::cmake::get_generator() const
     return generators[m_generator.get()];
 }
 
-/*!
-\verbatim
-cmake
+void builders::cmake::setup(const boost::property_tree::ptree &ptree)
 {
-    defines
-    {
-        CMAKE_INSTALL_PREFIX "/usr"
-    }
-    generator "Unix Makefiles"
-}
-; see generator documentation
-; probably one of following will be used:
-; bunsan::utility::maker::make
-make_maker
-{
-}
-install_maker
-{
-}
-\endverbatim
-*/
-void builders::cmake::setup(const utility::config_type &config)
-{
-    utility::config_type make_config;
-    m_generator.reset();
-    m_cmake_defines.clear();
-    m_make_maker_config.clear();
-    m_install_maker_config.clear();
-    for (const auto &i: config)
-    {
-        if (i.first == "cmake")
-            for (const auto &j: i.second)
-            {
-                if (j.first == "defines")
-                    for (const auto d: j.second)
-                        m_cmake_defines[d.first] = d.second.get_value<std::string>();
-                else if (j.first == "generator")
-                    set_generator(j.second.get_value<std::string>());
-                else
-                    BOOST_THROW_EXCEPTION(unknown_option_error(i.first + "." + j.first));
-            }
-        else if (i.first == "make_maker")
-            m_make_maker_config = i.second;
-        else if (i.first == "install_maker")
-            m_install_maker_config = i.second;
-        else
-            BOOST_THROW_EXCEPTION(unknown_option_error(i.first));
-    }
-    setup_generator();
+    m_config = bunsan::config::load<config>(ptree);
+    if (m_config.cmake.generator)
+        set_generator(m_config.cmake.generator.get());
+    else
+        set_default_generator();
 }

@@ -7,16 +7,6 @@
 
 namespace bunsan{namespace utility
 {
-    class unknown_option_error: public virtual bunsan::utility::error
-    {
-    public:
-        explicit unknown_option_error(const std::string &option);
-        std::string option() const;
-
-    private:
-        typedef boost::error_info<struct error_option_tag, std::string> error_option;
-    };
-
     /*!
      * \brief Abstract class that specifies the way
      * of options transmission + virtual destructor
@@ -24,31 +14,14 @@ namespace bunsan{namespace utility
     class utility
     {
     public:
-        typedef boost::property_tree::ptree config_type;
-
-    public:
         /*!
-         * \brief Set up utility with various options
+         * \brief Set up utility configuration.
          *
-         * \todo what will happen to previous settings?
+         * You can find options documentation in utility docs.
          *
-         * You can find options documentation in utility docs
-         *
-         * Default implementation will call
-         * setarg(i.first, i.second.get_value<std::string>())
-         * for every config child
+         * TODO Default implementation throws exception.
          */
-        virtual void setup(const config_type &config);
-
-        /*!
-         * \brief Set up utility option
-         *
-         * Default implementation throws unknown_option_error exception
-         */
-        virtual void setarg(const std::string &key, const std::string &value);
-
-        /// \copydoc setarg
-        virtual void setarg_any(const std::string &key, const boost::any &value);
+        virtual void setup(const boost::property_tree::ptree &ptree);
 
         /*!
          * \brief Does nothing

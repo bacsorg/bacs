@@ -1,5 +1,6 @@
 #include "7z.hpp"
 
+#include "bunsan/config/cast.hpp"
 #include "bunsan/process/execute.hpp"
 
 using namespace bunsan::utility;
@@ -20,7 +21,10 @@ BUNSAN_UTILITY_ARCHIVER_7Z(7za)
 BUNSAN_UTILITY_ARCHIVER_7Z(7zr)
 
 archivers::_7z::_7z(const boost::filesystem::path &exe):
-    m_exe(exe), m_format("7z") {}
+    m_exe(exe)
+{
+    m_config.format = "7z";
+}
 
 void archivers::_7z::pack_from(
     const boost::filesystem::path &cwd,
@@ -33,7 +37,7 @@ void archivers::_7z::pack_from(
     ctx.argv({
             m_exe.filename().string(),
             "a",
-            "-t" + m_format,
+            "-t" + m_config.format,
             "--",
             archive.string(),
             file.string()
@@ -50,7 +54,7 @@ void archivers::_7z::unpack(
     ctx.argv({
             m_exe.filename().string(),
             "x",
-            "-t" + m_format,
+            "-t" + m_config.format,
             "-o" + dir.string(),
             "--",
             archive.string(),
@@ -58,10 +62,7 @@ void archivers::_7z::unpack(
     bunsan::process::check_sync_execute(ctx);
 }
 
-void archivers::_7z::setarg(const std::string &key, const std::string &value)
+void archivers::_7z::setup(const boost::property_tree::ptree &ptree)
 {
-    if (key == "format")
-        m_format = value;
-    else
-        BOOST_THROW_EXCEPTION(unknown_option_error(key));
+    m_config = bunsan::config::load<config>(ptree);
 }
