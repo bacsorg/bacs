@@ -91,7 +91,7 @@ std::vector<std::string> builders::cmake::argv_(const boost::filesystem::path &s
     for (const auto &i: m_cmake_defines)
     {
         // TODO arguments check
-        argv.push_back("-D"+i.first+"="+i.second);
+        argv.push_back("-D" + i.first + "=" + i.second);
     }
     argv.push_back(boost::filesystem::absolute(src).string());
     return argv;
@@ -159,10 +159,10 @@ void builders::cmake::set_generator(const std::string &gen_id)
         std::find_if(generators.begin(), generators.end(),
             [&gen_id](const generator &gen)
             {
-                return gen.m_id==gen_id;
-            })-generators.begin();
-    if (gen>=generators.size())
-        BOOST_THROW_EXCEPTION(error("Unknown generator id: \""+gen_id+"\""));
+                return gen.m_id == gen_id;
+            }) - generators.begin();
+    if (gen >= generators.size())
+        BOOST_THROW_EXCEPTION(error("Unknown generator id: \"" + gen_id + "\""));
     m_generator = gen;
 }
 
@@ -202,20 +202,20 @@ void builders::cmake::setup(const utility::config_type &config)
     m_install_maker_config.clear();
     for (const auto &i: config)
     {
-        if (i.first=="cmake")
+        if (i.first == "cmake")
             for (const auto &j: i.second)
             {
-                if (j.first=="defines")
+                if (j.first == "defines")
                     for (const auto d: j.second)
                         m_cmake_defines[d.first] = d.second.get_value<std::string>();
-                else if (j.first=="generator")
+                else if (j.first == "generator")
                     set_generator(j.second.get_value<std::string>());
                 else
-                    BOOST_THROW_EXCEPTION(unknown_option_error(i.first+"."+j.first));
+                    BOOST_THROW_EXCEPTION(unknown_option_error(i.first + "." + j.first));
             }
-        else if (i.first=="make_maker")
+        else if (i.first == "make_maker")
             m_make_maker_config = i.second;
-        else if (i.first=="install_maker")
+        else if (i.first == "install_maker")
             m_install_maker_config = i.second;
         else
             BOOST_THROW_EXCEPTION(unknown_option_error(i.first));

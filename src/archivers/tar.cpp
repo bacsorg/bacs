@@ -28,13 +28,13 @@ void archivers::tar::pack_from(
             m_exe.filename().string(),
 #warning TODO
             // FIXME implement support for non-single character formats
-            "c"+m_format+"f",
+            "c" + m_format + "f",
             archive.string(),
             "-C",
             cwd.string()
         };
     for (const auto &i: m_args)
-        argv_.push_back("--"+i);
+        argv_.push_back("--" + i);
     argv_.push_back("--");
     argv_.push_back(file.string());
     ctx.argv(argv_);
@@ -50,22 +50,22 @@ void archivers::tar::unpack(
     std::vector<std::string> argv_ =
         {
             m_exe.filename().string(),
-            "x"+m_format+"f",
+            "x" + m_format + "f",
             boost::filesystem::absolute(archive).string(),
             "-C",
             boost::filesystem::absolute(dir).string()
         };
     for (const auto &i: m_args)
-        argv_.push_back("--"+i);
+        argv_.push_back("--" + i);
     ctx.argv(argv_);
     bunsan::process::check_sync_execute(ctx);
 }
 
 void archivers::tar::setarg(const std::string &key, const std::string &value)
 {
-    if (key=="format")
+    if (key == "format")
         m_format = value;
-    else if (key=="exclude-vcs")
+    else if (key == "exclude-vcs")
     {
         if (boost::lexical_cast<unsigned>(value))
             m_args.insert(key);

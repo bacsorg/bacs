@@ -21,7 +21,7 @@ void fetchers::wget::fetch(const std::string &uri, const boost::filesystem::path
     ctx.executable(m_exe);
     ctx.argv({
         m_exe.filename().string(),
-        "--output-document="+boost::filesystem::absolute(dst).string(),
+        "--output-document=" + boost::filesystem::absolute(dst).string(),
         "--quiet",
         uri
         });

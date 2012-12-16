@@ -10,17 +10,17 @@ bunsan::utility::resolver::resolver(const boost::property_tree::ptree &config):
 {
     for (const auto &i: config)
     {
-        if (i.first=="alias")
+        if (i.first == "alias")
         {
             for (const auto &j: i.second)
                 m_config.get().m_alias[j.first] = j.second.get_value<std::string>();
         }
-        else if (i.first=="absolute")
+        else if (i.first == "absolute")
         {
             for (const auto &j: i.second)
                 m_config.get().m_absolute[j.first] = j.second.get_value<std::string>();
         }
-        else if (i.first=="path")
+        else if (i.first == "path")
         {
             for (const auto &j: i.second)
                 m_config.get().m_path.insert(j.second.get_value<std::string>());
@@ -87,11 +87,11 @@ void bunsan::utility::resolver::apply_alias(boost::filesystem::path &name) const
     boost::unordered_set<boost::filesystem::path> used;
     used.insert(name);
     auto iter = m_config.get().m_alias.find(name);
-    while (iter!=m_config.get().m_alias.end())
+    while (iter != m_config.get().m_alias.end())
     {
         name = iter->second;
         iter = m_config.get().m_alias.find(name);
-        if (used.find(name)!=used.end())
+        if (used.find(name) != used.end())
             BOOST_THROW_EXCEPTION(bunsan::utility::error("Circular dependencies in alias is prohibited"));
         used.insert(name);
     }
@@ -102,7 +102,7 @@ void bunsan::utility::resolver::apply_absolute(boost::filesystem::path &name) co
     if (!m_config)
         return;
     auto iter = m_config.get().m_absolute.find(name);
-    if (iter!=m_config.get().m_absolute.end())
+    if (iter != m_config.get().m_absolute.end())
         name = iter->second;
 }
 
@@ -110,12 +110,12 @@ void bunsan::utility::resolver::apply_path(boost::filesystem::path &name) const
 {
     if (m_config)
     {
-        if (m_config.get().m_path.find(name)!=m_config.get().m_path.end() && name==name.filename())
+        if (m_config.get().m_path.find(name) != m_config.get().m_path.end() && name == name.filename())
             name = boost::process::find_executable_in_path(name.string());
     }
     else
     {
-        if (name==name.filename())
+        if (name == name.filename())
             name = boost::process::find_executable_in_path(name.string());
     }
 }

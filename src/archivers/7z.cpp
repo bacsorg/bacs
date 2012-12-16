@@ -33,7 +33,7 @@ void archivers::_7z::pack_from(
     ctx.argv({
             m_exe.filename().string(),
             "a",
-            "-t"+m_format,
+            "-t" + m_format,
             "--",
             archive.string(),
             file.string()
@@ -50,8 +50,8 @@ void archivers::_7z::unpack(
     ctx.argv({
             m_exe.filename().string(),
             "x",
-            "-t"+m_format,
-            "-o"+dir.string(),
+            "-t" + m_format,
+            "-o" + dir.string(),
             "--",
             archive.string(),
         });
@@ -60,7 +60,7 @@ void archivers::_7z::unpack(
 
 void archivers::_7z::setarg(const std::string &key, const std::string &value)
 {
-    if (key=="format")
+    if (key == "format")
         m_format = value;
     else
         BOOST_THROW_EXCEPTION(unknown_option_error(key));

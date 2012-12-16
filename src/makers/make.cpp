@@ -24,10 +24,10 @@ std::vector<std::string> makers::make::argv_(
     for (const auto &i: m_defines)
     {
         // TODO arguments check
-        argv.push_back(i.first+"="+i.second);
+        argv.push_back(i.first + "=" + i.second);
     }
     if (m_threads)
-        argv.push_back("-j"+boost::lexical_cast<std::string>(m_threads.get()));
+        argv.push_back("-j" + boost::lexical_cast<std::string>(m_threads.get()));
     argv.insert(argv.end(), m_targets.begin(), m_targets.end());
     argv.insert(argv.end(), targets.begin(), targets.end());
     return argv;
@@ -64,13 +64,13 @@ void makers::make::setup(const utility::config_type &config)
     m_threads.reset();
     for (const auto &i: config)
     {
-        if (i.first=="defines")
+        if (i.first == "defines")
             for (const auto &j: i.second)
                 m_defines[j.first] = j.second.get_value<std::string>();
-        else if (i.first=="targets")
+        else if (i.first == "targets")
             for (const auto &j: i.second)
                 m_targets.push_back(j.second.get_value<std::string>());
-        else if (i.first=="threads")
+        else if (i.first == "threads")
             m_threads = i.second.get_value<std::size_t>();
         else
             BOOST_THROW_EXCEPTION(unknown_option_error(i.first));

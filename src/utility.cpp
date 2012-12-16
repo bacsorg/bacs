@@ -4,7 +4,7 @@
 
 bunsan::utility::unknown_option_error::unknown_option_error(const std::string &option)
 {
-    (*this)<<error_option(option);
+    (*this) << error_option(option);
 }
 
 std::string bunsan::utility::unknown_option_error::option() const
