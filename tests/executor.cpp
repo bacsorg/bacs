@@ -49,7 +49,8 @@ d
     current_path path
 })EOF");
     read_info(in_1, pt);
-    BOOST_CHECK_THROW(ctx = executor(pt).context(), std::exception);
+    // name placeholder was not defined
+    BOOST_CHECK_THROW(ctx = executor(pt).context(), std::out_of_range);
 }
 
 BOOST_AUTO_TEST_CASE(path)

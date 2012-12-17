@@ -53,7 +53,8 @@ void bunsan::utility::executor::process(string &arg, const boost::property_tree:
     else
     {
         SLOG("unknown type \"" << arg_value.first << "\"");
-        BOOST_THROW_EXCEPTION(error("unknown [" + arg_value.first + "]"));
+        BOOST_THROW_EXCEPTION(executor_unknown_placeholder_type_error() <<
+                              executor_unknown_placeholder_type_error::type(arg_value.first));
     }
     arg.push_back(tk);
 }

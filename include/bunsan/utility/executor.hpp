@@ -1,5 +1,6 @@
 #pragma once
 
+#include "bunsan/utility/error.hpp"
 #include "bunsan/process/execute.hpp"
 
 #include <string>
@@ -11,6 +12,13 @@
 
 namespace bunsan{namespace utility
 {
+    struct executor_error: virtual error {};
+
+    struct executor_unknown_placeholder_type_error: virtual executor_error
+    {
+        typedef boost::error_info<struct tag_type, std::string> type;
+    };
+
     class executor
     {
     public:
