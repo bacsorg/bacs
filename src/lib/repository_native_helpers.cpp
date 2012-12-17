@@ -42,19 +42,19 @@ bunsan::pm::repository::native::native(const pm::config &config_):
 {
     auto &utility = m_config.utility;
 
-    if (!(cache_archiver = utility.cache_archiver.instance<utility::archiver>(m_resolver)))
+    if (!(cache_archiver = utility.cache_archiver.instance(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_cache_archiver_error() <<
                               invalid_configuration_cache_archiver_error::utility_type(utility.cache_archiver.type));
 
-    if (!(source_archiver = utility.source_archiver.instance<utility::archiver>(m_resolver)))
+    if (!(source_archiver = utility.source_archiver.instance(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_source_archiver_error() <<
                               invalid_configuration_source_archiver_error::utility_type(utility.source_archiver.type));
 
-    if (!(builder = utility.builder.instance<utility::builder>(m_resolver)))
+    if (!(builder = utility.builder.instance(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_builder_error() <<
                               invalid_configuration_builder_error::utility_type(utility.builder.type));
 
-    if (!(fetcher = utility.fetcher.instance<utility::fetcher>(m_resolver)))
+    if (!(fetcher = utility.fetcher.instance(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_fetcher_error() <<
                               invalid_configuration_fetcher_error::utility_type(utility.fetcher.type));
 }

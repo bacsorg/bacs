@@ -1,6 +1,9 @@
 #pragma once
 
 #include "bunsan/utility/factory_options.hpp"
+#include "bunsan/utility/archiver.hpp"
+#include "bunsan/utility/builder.hpp"
+#include "bunsan/utility/fetcher.hpp"
 
 #include <string>
 
@@ -127,7 +130,9 @@ namespace bunsan{namespace pm
             }
 
             boost::property_tree::ptree resolver;
-            utility::factory_options builder, fetcher, source_archiver, cache_archiver;
+            utility::factory_options<utility::builder> builder;
+            utility::factory_options<utility::fetcher> fetcher;
+            utility::factory_options<utility::archiver> source_archiver, cache_archiver;
         } utility;
 
         std::string repository_url; ///< repository location
