@@ -25,7 +25,9 @@ void builders::cmake::set_default_generator()
     set_generator("NMake Makefiles");
 #else
 #warning unknown platform, unknown default generator
-    BOOST_THROW_EXCEPTION(error("Unknown platform, you have to specify generator"));
+    BOOST_THROW_EXCEPTION(cmake_unknown_platform_generator_error() <<
+                          cmake_unknown_platform_generator_error::message(
+                              "Unknown platform, you have to specify generator"));
 #endif
 }
 
@@ -126,7 +128,7 @@ void builders::cmake::make_(
     case generator::type::nmakefile:
     case generator::type::visual_studio:
     default:
-        BOOST_THROW_EXCEPTION(error("unknown cmake generator"));
+        BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error());
     }
 }
 
@@ -150,7 +152,7 @@ void builders::cmake::install_(
     case generator::type::nmakefile:
     case generator::type::visual_studio:
     default:
-        BOOST_THROW_EXCEPTION(error("unknown cmake generator"));
+        BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error());
     }
 }
 
@@ -163,7 +165,8 @@ void builders::cmake::set_generator(const std::string &gen_id)
                 return gen.m_id == gen_id;
             }) - generators.begin();
     if (gen >= generators.size())
-        BOOST_THROW_EXCEPTION(error("Unknown generator id: \"" + gen_id + "\""));
+        BOOST_THROW_EXCEPTION(cmake_unknown_generator_name_error() <<
+                              cmake_unknown_generator_name_error::generator_name(gen_id));
     m_generator = gen;
 }
 

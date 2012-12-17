@@ -14,6 +14,21 @@
 
 namespace bunsan{namespace utility{namespace builders
 {
+    struct cmake_error: virtual error {};
+    struct cmake_unknown_generator_error: virtual cmake_error {};
+
+    struct cmake_unknown_generator_type_error: virtual cmake_unknown_generator_error
+    {
+        // TODO typedef boost::error_info<struct tag_generator_type, TODO> generator_type;
+    };
+
+    struct cmake_unknown_generator_name_error: virtual cmake_unknown_generator_error
+    {
+        typedef boost::error_info<struct tag_generator_name, std::string> generator_name;
+    };
+
+    struct cmake_unknown_platform_generator_error: virtual cmake_unknown_generator_error {};
+
     class cmake: public conf_make_install
     {
     public:
