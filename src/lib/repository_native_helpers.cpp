@@ -40,30 +40,23 @@ bunsan::pm::repository::native::native(const pm::config &config_):
     m_config(config_),
     m_resolver(m_config.utility.resolver)
 {
-    using boost::property_tree::ptree;
     auto &utility = m_config.utility;
-    std::string type;
-    // creation
-    if (!(cache_archiver = utility::archiver::instance(type = utility.cache_archiver.type, m_resolver)))
+
+    if (!(cache_archiver = utility.cache_archiver.instance<utility::archiver>(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_cache_archiver_error() <<
-                              invalid_configuration_cache_archiver_error::utility_type(type));
+                              invalid_configuration_cache_archiver_error::utility_type(utility.cache_archiver.type));
 
-    if (!(source_archiver = utility::archiver::instance(type = utility.source_archiver.type, m_resolver)))
+    if (!(source_archiver = utility.source_archiver.instance<utility::archiver>(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_source_archiver_error() <<
-                              invalid_configuration_source_archiver_error::utility_type(type));
+                              invalid_configuration_source_archiver_error::utility_type(utility.source_archiver.type));
 
-    if (!(builder = utility::builder::instance(type = utility.builder.type, m_resolver)))
+    if (!(builder = utility.builder.instance<utility::builder>(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_builder_error() <<
-                              invalid_configuration_builder_error::utility_type(type));
+                              invalid_configuration_builder_error::utility_type(utility.builder.type));
 
-    if (!(fetcher = utility::fetcher::instance(type = utility.fetcher.type, m_resolver)))
+    if (!(fetcher = utility.fetcher.instance<utility::fetcher>(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_fetcher_error() <<
-                              invalid_configuration_fetcher_error::utility_type(type));
-    // setup
-    cache_archiver->setup(utility.cache_archiver.config);
-    source_archiver->setup(utility.source_archiver.config);
-    builder->setup(utility.builder.config);
-    fetcher->setup(utility.fetcher.config);
+                              invalid_configuration_fetcher_error::utility_type(utility.fetcher.type));
 }
 
 void bunsan::pm::repository::native::write_snapshot(const boost::filesystem::path &path, const snapshot &snapshot_)
