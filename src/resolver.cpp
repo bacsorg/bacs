@@ -1,32 +1,16 @@
 #include "bunsan/utility/resolver.hpp"
 #include "bunsan/utility/error.hpp"
 
+#include "bunsan/config/cast.hpp"
+
 #include <boost/process.hpp>
 
 bunsan::utility::resolver::resolver() {}
 
-bunsan::utility::resolver::resolver(const boost::property_tree::ptree &config):
-    m_config(config_type())
-{
-    for (const auto &i: config)
-    {
-        if (i.first == "alias")
-        {
-            for (const auto &j: i.second)
-                m_config.get().m_alias[j.first] = j.second.get_value<std::string>();
-        }
-        else if (i.first == "absolute")
-        {
-            for (const auto &j: i.second)
-                m_config.get().m_absolute[j.first] = j.second.get_value<std::string>();
-        }
-        else if (i.first == "path")
-        {
-            for (const auto &j: i.second)
-                m_config.get().m_path.insert(j.second.get_value<std::string>());
-        }
-    }
-}
+bunsan::utility::resolver::resolver(const config &config_): m_config(config_) {}
+
+bunsan::utility::resolver::resolver(const boost::property_tree::ptree &ptree):
+    resolver(bunsan::config::load<config>(ptree)) {}
 
 bunsan::utility::resolver::resolver(resolver &&res) noexcept
 {
@@ -46,11 +30,11 @@ bunsan::utility::resolver &bunsan::utility::resolver::operator=(resolver &&res) 
     return *this;
 }
 
-void bunsan::utility::resolver::swap(bunsan::utility::resolver::config_type &a, bunsan::utility::resolver::config_type &b) noexcept
+void bunsan::utility::resolver::swap(bunsan::utility::resolver::config &a, bunsan::utility::resolver::config &b) noexcept
 {
-    a.m_alias.swap(b.m_alias);
-    a.m_absolute.swap(b.m_absolute);
-    a.m_path.swap(b.m_path);
+    a.alias.swap(b.alias);
+    a.absolute.swap(b.absolute);
+    a.path.swap(b.path);
 }
 
 void bunsan::utility::resolver::swap(resolver &res) noexcept
@@ -86,11 +70,12 @@ void bunsan::utility::resolver::apply_alias(boost::filesystem::path &name) const
         return;
     boost::unordered_set<boost::filesystem::path> used;
     used.insert(name);
-    auto iter = m_config.get().m_alias.find(name);
-    while (iter != m_config.get().m_alias.end())
+    auto iter = m_config.get().alias.find(name);
+    // try to resolve as alias while possible
+    while (iter != m_config.get().alias.end())
     {
         name = iter->second;
-        iter = m_config.get().m_alias.find(name);
+        iter = m_config.get().alias.find(name);
         if (used.find(name) != used.end())
             BOOST_THROW_EXCEPTION(resolver_circular_alias_dependencies_error());
         used.insert(name);
@@ -101,8 +86,8 @@ void bunsan::utility::resolver::apply_absolute(boost::filesystem::path &name) co
 {
     if (!m_config)
         return;
-    auto iter = m_config.get().m_absolute.find(name);
-    if (iter != m_config.get().m_absolute.end())
+    const auto iter = m_config.get().absolute.find(name);
+    if (iter != m_config.get().absolute.end())
         name = iter->second;
 }
 
@@ -110,7 +95,7 @@ void bunsan::utility::resolver::apply_path(boost::filesystem::path &name) const
 {
     if (m_config)
     {
-        if (m_config.get().m_path.find(name) != m_config.get().m_path.end() && name == name.filename())
+        if (m_config.get().path.find(name) != m_config.get().path.end() && name == name.filename())
             name = boost::process::find_executable_in_path(name.string());
     }
     else
