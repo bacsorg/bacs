@@ -1,18 +1,17 @@
-#ifndef BACS_ARCHIVE_REPOSITORY_HPP
-#define BACS_ARCHIVE_REPOSITORY_HPP
+#pragma once
 
-#include <string>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/optional.hpp>
+#include "bacs/archive/problem.hpp"
 
 #include "bunsan/tempfile.hpp"
 #include "bunsan/interprocess/sync/file_lock.hpp"
 #include "bunsan/utility/resolver.hpp"
 #include "bunsan/utility/archiver.hpp"
 
-#include "bacs/archive/problem.hpp"
+#include <string>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/optional.hpp>
 
 namespace bacs{namespace archive
 {
@@ -31,6 +30,7 @@ namespace bacs{namespace archive
     {
     public:
         explicit repository(const boost::property_tree::ptree &config_);
+
         /* container */
         /*!
          * \brief Insert problems from archive into repository.
@@ -42,6 +42,7 @@ namespace bacs{namespace archive
          * \see repository::insert
          */
         problem::import_map insert_all(const problem::archiver_config &archiver_config, const boost::filesystem::path &archive);
+
         /*!
          * \brief Insert particular problem into repository.
          *
@@ -55,6 +56,7 @@ namespace bacs{namespace archive
          * \see repository::reset_flags
          */
         problem::import_info insert(const problem::id &id, const boost::filesystem::path &location);
+
         /*!
          * \brief Extract problems from repository.
          *
@@ -68,6 +70,7 @@ namespace bacs{namespace archive
          * \see repository::extract
          */
         bunsan::tempfile extract_all(const problem::id_set &id_set, const problem::archiver_config &archiver_config);
+
         /*!
          * \brief Extract problem from repository.
          *
@@ -78,6 +81,7 @@ namespace bacs{namespace archive
          * \see repository::available
          */
         bool extract(const problem::id &id, const boost::filesystem::path &dst);
+
         /*!
          * \brief Change problem id and repack.
          *
@@ -90,12 +94,14 @@ namespace bacs{namespace archive
          * \see repository::repack
          */
         problem::import_info rename(const problem::id &current, const problem::id &future);
+
         /*!
          * \brief Set of available problems.
          *
          * \see repository::available
          */
         problem::id_set all();
+
         /*!
          * \brief Check problem for existence.
          *
@@ -107,6 +113,7 @@ namespace bacs{namespace archive
          * \see repository::available
          */
         bool exists(const problem::id &id);
+
         /*!
          * \brief Check problem for availability.
          *
@@ -119,6 +126,7 @@ namespace bacs{namespace archive
          * \see repository::has_flag
          */
         bool available(const problem::id &id);
+
         /* flags */
         /*!
          * \brief Get problem status.
@@ -126,6 +134,7 @@ namespace bacs{namespace archive
          * Atomic, lock-free.
          */
         problem::status status(const problem::id &id);
+
         /*!
          * \brief Get problems status.
          *
@@ -134,6 +143,7 @@ namespace bacs{namespace archive
          * \see repository::status
          */
         problem::status_map status_all(const problem::id_set &id_set);
+
         /*!
          * \brief Check problem for flag.
          *
@@ -143,6 +153,7 @@ namespace bacs{namespace archive
          * Atomic, lock-free.
          */
         bool has_flag(const problem::id &id, const problem::flag_type &flag);
+
         /*!
          * \brief Set problem flag.
          *
@@ -151,12 +162,14 @@ namespace bacs{namespace archive
          * Atomic, exclusive-lock.
          */
         bool set_flag(const problem::id &id, const problem::flag_type &flag);
+
         /*!
          * \brief Set problem flags.
          *
          * Atomic, exclusive-lock.
          */
         bool set_flags(const problem::id &id, const problem::flag_set &flags);
+
         /*!
          * \brief Unset problem flag.
          *
@@ -165,6 +178,7 @@ namespace bacs{namespace archive
          * Atomic, exclusive-lock.
          */
         bool unset_flag(const problem::id &id, const problem::flag_type &flag);
+
         /*!
          * \brief Unset problem flags.
          *
@@ -173,6 +187,7 @@ namespace bacs{namespace archive
          * Atomic, exclusive-lock.
          */
         bool unset_flags(const problem::id &id, const problem::flag_set &flags);
+
         /*!
          * \brief Reset problem flags.
          *
@@ -181,6 +196,7 @@ namespace bacs{namespace archive
          * Atomic, exclusive-lock.
          */
         bool reset_flags(const problem::id &id);
+
         /*!
          * \brief Mark problems with problem::flag::ignore.
          *
@@ -193,6 +209,7 @@ namespace bacs{namespace archive
          * \see repository::ignore
          */
         problem::id_set ignore_all(const problem::id_set &id_set);
+
         /*!
          * \brief Alias for repository::set_flag(id, #problem::flag::ignore).
          *
@@ -203,6 +220,7 @@ namespace bacs{namespace archive
          * \todo pair function, function rename possible (as flag)
          */
         bool ignore(const problem::id &id);
+
         /* info */
         /*!
          * \brief Get problem info.
@@ -212,6 +230,7 @@ namespace bacs{namespace archive
          * \see repository::available
          */
         boost::optional<problem::info_type> info(const problem::id &id);
+
         /*!
          * \brief Get info map for given problems.
          *
@@ -221,6 +240,7 @@ namespace bacs{namespace archive
          * \see repository::info
          */
         problem::info_map info_all(const problem::id_set &id_set);
+
         /*!
          * \brief Get problem hash.
          *
@@ -229,6 +249,7 @@ namespace bacs{namespace archive
          * \see repository::available
          */
         boost::optional<problem::hash_type> hash(const problem::id &id);
+
         /*!
          * \brief Get hash map for given problems.
          *
@@ -238,6 +259,7 @@ namespace bacs{namespace archive
          * \see repository::hash
          */
         problem::hash_map hash_all(const problem::id_set &id_set);
+
         /* repack */
         /*!
          * \brief Repack problem.
@@ -255,6 +277,7 @@ namespace bacs{namespace archive
          * \see repository::set_flag
          */
         problem::import_info repack(const problem::id &id);
+
         /*!
          * \brief Repack all given problems.
          *
@@ -263,6 +286,7 @@ namespace bacs{namespace archive
          * \see repository::repack
          */
         problem::import_map repack_all(const problem::id_set &id_set);
+
     private:
         /*!
          * \brief Check problem for validity.
@@ -277,6 +301,7 @@ namespace bacs{namespace archive
          * \see repository::exists
          */
         bool valid(const problem::id &id);
+
         /* lock-free function versions for internal usage */
         // TODO
 
@@ -287,6 +312,3 @@ namespace bacs{namespace archive
         bunsan::utility::archiver_ptr m_problem_archiver;
     };
 }}
-
-#endif //BACS_ARCHIVE_REPOSITORY_HPP
-

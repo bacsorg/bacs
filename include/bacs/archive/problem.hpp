@@ -1,13 +1,13 @@
-#ifndef BACS_ARCHIVE_PROBLEM_HPP
-#define BACS_ARCHIVE_PROBLEM_HPP
+#pragma once
 
-#include <string>
-#include <vector>
-#include <map>
+#include "bunsan/pm/entry.hpp"
 
 #include <boost/optional.hpp>
 
-#include "bunsan/pm/entry.hpp"
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
 
 namespace bacs{namespace archive{namespace problem
 {
@@ -45,6 +45,3 @@ namespace bacs{namespace archive{namespace problem
     };
     typedef std::map<id, import_info> import_map;
 }}}
-
-#endif //BACS_ARCHIVE_PROBLEM_HPP
-

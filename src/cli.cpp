@@ -1,8 +1,8 @@
 #include <boost/program_options.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/info_parser.hpp>
 
-#include "bunsan/util.hpp"
+#include "bunsan/property_tree/info_parser.hpp"
+#include "bunsan/logging/legacy.hpp"
 
 #include "bacs/archive/repository.hpp"
 
@@ -10,11 +10,9 @@ int main(int argc, char **argv)
 {
     std::string config_file;
     std::string format;
-    bacs::archive::problem::archive_format archive_format;
     std::string input, output;
     try
     {
-        //command line parser
         boost::program_options::options_description desc(argv[0]);
         desc.add_options()
             ("help,h", "Print this information")
@@ -30,28 +28,28 @@ int main(int argc, char **argv)
         boost::program_options::notify(vm);
         if (vm.count("help"))
         {
-            std::cerr<<desc<<std::endl;
+            std::cerr << desc << std::endl;
             return 1;
         }
         if (vm.count("version"))
         {
-            std::cerr<<"It is too early to announce project version"<<std::endl;
+            std::cerr << "It is too early to announce project version" << std::endl;
             return 1;
         }
         DLOG(config parse);
         boost::property_tree::ptree config;
-        bunsan::read_info(config_file, config);
+        bunsan::property_tree::read_info(config_file, config);
         bacs::archive::repository repo(config);
+        bacs::archive::problem::archiver_config archiver_config;
         {
             const std::string::size_type pos = format.find(':');
-            bacs::archive::problem::archive_format archive_format;
-            archive_format.archiver = format.substr(pos);
-            if (pos!=std::string::npos)
-                archive_format.format = format.substr(pos+1);
+            archiver_config.type = format.substr(pos);
+            if (pos != std::string::npos)
+                archiver_config.format = format.substr(pos + 1);
         }
         if (vm.count("insert_all"))
         {
-            bacs::archive::problem::import_map map = repo.insert_all(archive_format, input);
+            bacs::archive::problem::import_map map = repo.insert_all(archiver_config, input);
             // TODO import_map output
         }
         else if (vm.count("insert"))
@@ -73,8 +71,7 @@ int main(int argc, char **argv)
     catch (std::exception &e)
     {
         DLOG(Oops! An exception has occured);
-        std::cerr<<e.what()<<std::endl;
+        std::cerr << e.what() << std::endl;
         return 200;
     }
 }
-

@@ -1,5 +1,4 @@
-#ifndef BACS_ARCHIVE_CONFIG_HPP
-#define BACS_ARCHIVE_CONFIG_HPP
+#pragma once
 
 namespace bacs{namespace archive{namespace config
 {
@@ -15,6 +14,3 @@ namespace bacs{namespace archive{namespace config
         }
     }
 }}}
-
-#endif //BACS_ARCHIVE_CONFIG_HPP
-
