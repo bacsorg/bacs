@@ -2,7 +2,8 @@
 
 bunsan::utility::utility::~utility() {}
 
-void bunsan::utility::utility::setup(const boost::property_tree::ptree &/*ptree*/)
+void bunsan::utility::utility::setup(const boost::property_tree::ptree &ptree)
 {
-    BOOST_THROW_EXCEPTION(error("not implemented"));
+    if (!ptree.empty())
+        BOOST_THROW_EXCEPTION(error("not implemented"));
 }

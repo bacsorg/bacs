@@ -19,7 +19,7 @@ namespace bunsan{namespace utility
          *
          * You can find options documentation in utility docs.
          *
-         * TODO Default implementation throws exception.
+         * \throws error if !ptree.empty()
          */
         virtual void setup(const boost::property_tree::ptree &ptree);
 
