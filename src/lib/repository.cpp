@@ -36,7 +36,7 @@ bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): 
     }
     BUNSAN_EXCEPTIONS_WRAP_END()
     if (m_config.lock.global)
-        m_flock.reset(new bunsan::interprocess::file_lock(m_config.lock.global.get().c_str()));
+        m_flock.reset(new bunsan::interprocess::file_lock(m_config.lock.global->c_str()));
     ntv = new native(m_config);
 }
 
