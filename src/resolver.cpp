@@ -70,12 +70,12 @@ void bunsan::utility::resolver::apply_alias(boost::filesystem::path &name) const
         return;
     boost::unordered_set<boost::filesystem::path> used;
     used.insert(name);
-    auto iter = m_config.get().alias.find(name);
+    auto iter = m_config->alias.find(name);
     // try to resolve as alias while possible
-    while (iter != m_config.get().alias.end())
+    while (iter != m_config->alias.end())
     {
         name = iter->second;
-        iter = m_config.get().alias.find(name);
+        iter = m_config->alias.find(name);
         if (used.find(name) != used.end())
             BOOST_THROW_EXCEPTION(resolver_circular_alias_dependencies_error());
         used.insert(name);
@@ -86,8 +86,8 @@ void bunsan::utility::resolver::apply_absolute(boost::filesystem::path &name) co
 {
     if (!m_config)
         return;
-    const auto iter = m_config.get().absolute.find(name);
-    if (iter != m_config.get().absolute.end())
+    const auto iter = m_config->absolute.find(name);
+    if (iter != m_config->absolute.end())
         name = iter->second;
 }
 
@@ -95,7 +95,7 @@ void bunsan::utility::resolver::apply_path(boost::filesystem::path &name) const
 {
     if (m_config)
     {
-        if (m_config.get().path.find(name) != m_config.get().path.end() && name == name.filename())
+        if (m_config->path.find(name) != m_config->path.end() && name == name.filename())
             name = boost::process::find_executable_in_path(name.string());
     }
     else
