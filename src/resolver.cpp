@@ -92,7 +92,7 @@ void bunsan::utility::resolver::apply_alias(boost::filesystem::path &name) const
         name = iter->second;
         iter = m_config.get().m_alias.find(name);
         if (used.find(name) != used.end())
-            BOOST_THROW_EXCEPTION(bunsan::utility::error("Circular dependencies in alias is prohibited"));
+            BOOST_THROW_EXCEPTION(resolver_circular_alias_dependencies_error());
         used.insert(name);
     }
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "bunsan/utility/error.hpp"
+
 #include <boost/optional.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -52,4 +54,7 @@ namespace bunsan{namespace utility
     {
         a.swap(b);
     }
+
+    struct resolver_error: virtual error {};
+    struct resolver_circular_alias_dependencies_error: virtual resolver_error {};
 }}
