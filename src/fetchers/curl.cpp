@@ -1,9 +1,9 @@
 #include "curl.hpp"
 
 #include "bunsan/process/execute.hpp"
-#include "bunsan/system_error.hpp"
+#include "bunsan/enable_error_info.hpp"
+#include "bunsan/filesystem/fstream.hpp"
 
-#include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;
@@ -31,8 +31,11 @@ void fetchers::curl::fetch(const std::string &uri, const boost::filesystem::path
     bunsan::process::check_sync_execute(ctx);
     if (!boost::filesystem::exists(dst))
     {
-        boost::filesystem::ofstream touch(dst);
-        if (!touch.is_open())
-            BOOST_THROW_EXCEPTION(system_error("open") << error::message(dst.string()));
+        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        {
+            bunsan::filesystem::ofstream touch(dst);
+            touch.close();
+        }
+        BUNSAN_EXCEPTIONS_WRAP_END()
     }
 }
