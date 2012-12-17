@@ -4,6 +4,8 @@
 
 #include "bunsan/utility/maker.hpp"
 
+#include "bunsan/stream_enum.hpp"
+
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -14,21 +16,6 @@
 
 namespace bunsan{namespace utility{namespace builders
 {
-    struct cmake_error: virtual error {};
-    struct cmake_unknown_generator_error: virtual cmake_error {};
-
-    struct cmake_unknown_generator_type_error: virtual cmake_unknown_generator_error
-    {
-        // TODO typedef boost::error_info<struct tag_generator_type, TODO> generator_type;
-    };
-
-    struct cmake_unknown_generator_name_error: virtual cmake_unknown_generator_error
-    {
-        typedef boost::error_info<struct tag_generator_name, std::string> generator_name;
-    };
-
-    struct cmake_unknown_platform_generator_error: virtual cmake_unknown_generator_error {};
-
     class cmake: public conf_make_install
     {
     public:
@@ -76,17 +63,25 @@ namespace bunsan{namespace utility{namespace builders
             const boost::filesystem::path &bin,
             const boost::filesystem::path &root) override;
 
+    public:
+        BUNSAN_INCLASS_STREAM_ENUM_CLASS(generator_type,
+        (
+            MAKEFILE,
+            NMAKEFILE,
+            VISUAL_STUDIO,
+            UNKNOWN
+        ))
+
     private:
         struct generator
         {
-            enum class type: std::size_t;
-            const std::string m_id;
-            const type m_type;
+            const std::string name;
+            const generator_type type;
         };
 
     private:
         void set_default_generator();
-        void set_generator(const std::string &gen_id);
+        void set_generator(const std::string &generator_name);
         const generator &get_generator() const;
         std::vector<std::string> argv_(
             const boost::filesystem::path &src) const;
@@ -101,4 +96,19 @@ namespace bunsan{namespace utility{namespace builders
         static const std::vector<generator> generators;
         static const bool factory_reg_hook;
     };
+
+    struct cmake_error: virtual error {};
+    struct cmake_unknown_generator_error: virtual cmake_error {};
+
+    struct cmake_unknown_generator_type_error: virtual cmake_unknown_generator_error
+    {
+        typedef boost::error_info<struct tag_generator_type, cmake::generator_type> generator_type;
+    };
+
+    struct cmake_unknown_generator_name_error: virtual cmake_unknown_generator_error
+    {
+        typedef boost::error_info<struct tag_generator_name, std::string> generator_name;
+    };
+
+    struct cmake_unknown_platform_generator_error: virtual cmake_unknown_generator_error {};
 }}}

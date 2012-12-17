@@ -31,49 +31,41 @@ void builders::cmake::set_default_generator()
 #endif
 }
 
-enum class builders::cmake::generator::type: std::size_t
-{
-    makefile,
-    nmakefile,
-    visual_studio,
-    unknown
-};
-
 const std::vector<builders::cmake::generator> builders::cmake::generators = {
     // makefiles
-    {"Unix Makefiles", generator::type::makefile},
-    {"MinGW Makefiles", generator::type::makefile},
-    {"MSYS Makefiles", generator::type::makefile},
-    {"NMake Makefiles", generator::type::makefile},
-    {"NMake Makefiles JOM", generator::type::makefile},
-    {"Borland Makefiles", generator::type::makefile},
-    {"Watcom WMake", generator::type::unknown},
+    {"Unix Makefiles", generator_type::MAKEFILE},
+    {"MinGW Makefiles", generator_type::MAKEFILE},
+    {"MSYS Makefiles", generator_type::MAKEFILE},
+    {"NMake Makefiles", generator_type::MAKEFILE},
+    {"NMake Makefiles JOM", generator_type::MAKEFILE},
+    {"Borland Makefiles", generator_type::MAKEFILE},
+    {"Watcom WMake", generator_type::UNKNOWN},
     // IDEs
     // CodeBlocks
-    {"CodeBlocks - Unix Makefiles", generator::type::makefile},
-    {"CodeBlocks - MinGW Makefiles", generator::type::makefile},
-    {"CodeBlocks - NMake Makefiles", generator::type::nmakefile},
+    {"CodeBlocks - Unix Makefiles", generator_type::MAKEFILE},
+    {"CodeBlocks - MinGW Makefiles", generator_type::MAKEFILE},
+    {"CodeBlocks - NMake Makefiles", generator_type::NMAKEFILE},
     // Eclipse
-    {"Eclipse CDT4 - Unix Makefiles", generator::type::makefile},
-    {"Eclipse CDT4 - MinGW Makefiles", generator::type::makefile},
-    {"Eclipse CDT4 - NMake Makefiles", generator::type::nmakefile},
+    {"Eclipse CDT4 - Unix Makefiles", generator_type::MAKEFILE},
+    {"Eclipse CDT4 - MinGW Makefiles", generator_type::MAKEFILE},
+    {"Eclipse CDT4 - NMake Makefiles", generator_type::NMAKEFILE},
     // KDevelop
-    {"KDevelop3", generator::type::unknown},
-    {"KDevelop3 - Unix Makefiles", generator::type::makefile},
+    {"KDevelop3", generator_type::UNKNOWN},
+    {"KDevelop3 - Unix Makefiles", generator_type::MAKEFILE},
     // Visual Studio
-    {"Visual Studio 10", generator::type::visual_studio},
-    {"Visual Studio 10 IA64", generator::type::visual_studio},
-    {"Visual Studio 10 Win64", generator::type::visual_studio},
-    {"Visual Studio 11", generator::type::visual_studio},
-    {"Visual Studio 11 Win64", generator::type::visual_studio},
-    {"Visual Studio 6", generator::type::visual_studio},
-    {"Visual Studio 7", generator::type::visual_studio},
-    {"Visual Studio 7 .NET 2003", generator::type::visual_studio},
-    {"Visual Studio 8 2005", generator::type::visual_studio},
-    {"Visual Studio 8 2005 Win64", generator::type::visual_studio},
-    {"Visual Studio 9 2008", generator::type::visual_studio},
-    {"Visual Studio 9 2008 IA64", generator::type::visual_studio},
-    {"Visual Studio 9 2008 Win64", generator::type::visual_studio}
+    {"Visual Studio 10", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 10 IA64", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 10 Win64", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 11", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 11 Win64", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 6", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 7", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 7 .NET 2003", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 8 2005", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 8 2005 Win64", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 9 2008", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 9 2008 IA64", generator_type::VISUAL_STUDIO},
+    {"Visual Studio 9 2008 Win64", generator_type::VISUAL_STUDIO}
 };
 
 builders::cmake::cmake(const resolver &resolver_):
@@ -89,7 +81,7 @@ std::vector<std::string> builders::cmake::argv_(const boost::filesystem::path &s
     if (m_generator)
     {
         argv.push_back("-G");
-        argv.push_back(get_generator().m_id);
+        argv.push_back(get_generator().name);
     }
     for (const auto &i: m_config.cmake.defines)
     {
@@ -116,19 +108,21 @@ void builders::cmake::make_(
     const boost::filesystem::path &bin)
 {
     BOOST_ASSERT(m_generator);
-    switch (generators[m_generator.get()].m_type)
+    const generator_type type = generators[m_generator.get()].type;
+    switch (type)
     {
-    case generator::type::makefile:
+    case generator_type::MAKEFILE:
         {
             maker_ptr ptr = maker::instance("make", m_resolver);
             ptr->setup(m_config.make_maker);
             ptr->exec(bin, {});
         }
         break;
-    case generator::type::nmakefile:
-    case generator::type::visual_studio:
+    case generator_type::NMAKEFILE:
+    case generator_type::VISUAL_STUDIO:
     default:
-        BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error());
+        BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error() <<
+                              cmake_unknown_generator_type_error::generator_type(type));
     }
 }
 
@@ -138,9 +132,10 @@ void builders::cmake::install_(
     const boost::filesystem::path &root)
 {
     BOOST_ASSERT(m_generator);
-    switch (generators[m_generator.get()].m_type)
+    const generator_type type = generators[m_generator.get()].type;
+    switch (type)
     {
-    case generator::type::makefile:
+    case generator_type::MAKEFILE:
         {
             maker_ptr ptr = maker::instance("make", m_resolver);
             makers::make::config make_config = bunsan::config::load<makers::make::config>(m_config.install_maker);
@@ -149,24 +144,25 @@ void builders::cmake::install_(
             ptr->exec(bin, {"install"});
         }
         break;
-    case generator::type::nmakefile:
-    case generator::type::visual_studio:
+    case generator_type::NMAKEFILE:
+    case generator_type::VISUAL_STUDIO:
     default:
-        BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error());
+        BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error() <<
+                              cmake_unknown_generator_type_error::generator_type(type));
     }
 }
 
-void builders::cmake::set_generator(const std::string &gen_id)
+void builders::cmake::set_generator(const std::string &generator_name)
 {
     const std::size_t gen =
         std::find_if(generators.begin(), generators.end(),
-            [&gen_id](const generator &gen)
+            [&generator_name](const generator &gen)
             {
-                return gen.m_id == gen_id;
+                return gen.name == generator_name;
             }) - generators.begin();
     if (gen >= generators.size())
         BOOST_THROW_EXCEPTION(cmake_unknown_generator_name_error() <<
-                              cmake_unknown_generator_name_error::generator_name(gen_id));
+                              cmake_unknown_generator_name_error::generator_name(generator_name));
     m_generator = gen;
 }
 
