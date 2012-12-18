@@ -21,7 +21,7 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/lib/repository.cpp
     src/lib/repository_native_helpers.cpp
 )
-list(APPEND libraries ${PROJECT_NAME})
+bunsan_use(${PROJECT_NAME})
 
 bunsan_add_shared_library(${PROJECT_NAME}_compatibility
     src/compatibility/repository_cpp.cpp
