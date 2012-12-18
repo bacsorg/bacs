@@ -40,16 +40,16 @@ int main(int argc, char **argv)
         boost::property_tree::ptree config;
         bunsan::property_tree::read_info(config_file, config);
         bacs::archive::repository repo(config);
-        bacs::archive::problem::archiver_config archiver_config;
+        bacs::archive::archiver_options archiver_options;
         {
             const std::string::size_type pos = format.find(':');
-            archiver_config.type = format.substr(pos);
+            archiver_options.type = format.substr(0, pos);
             if (pos != std::string::npos)
-                archiver_config.format = format.substr(pos + 1);
+                archiver_options.config.put("format", format.substr(pos + 1));
         }
         if (vm.count("insert_all"))
         {
-            bacs::archive::problem::import_map map = repo.insert_all(archiver_config, input);
+            bacs::archive::problem::import_map map = repo.insert_all(archiver_options, input);
             // TODO import_map output
         }
         else if (vm.count("insert"))

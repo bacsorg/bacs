@@ -1,5 +1,6 @@
 #pragma once
 
+#include "bacs/archive/config.hpp"
 #include "bacs/archive/problem.hpp"
 
 #include "bunsan/tempfile.hpp"
@@ -12,6 +13,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/optional.hpp>
+#include <boost/noncopyable.hpp>
 
 namespace bacs{namespace archive
 {
@@ -26,10 +28,11 @@ namespace bacs{namespace archive
      *     - shared-lock -- multiple operations at time, no exclusive locks
      *     - lock-free -- multiple operations at time
      */
-    class repository
+    class repository: private boost::noncopyable
     {
     public:
-        explicit repository(const boost::property_tree::ptree &config_);
+        explicit repository(const config &config_);
+        explicit repository(const boost::property_tree::ptree &tree);
 
         /* container */
         /*!
@@ -41,7 +44,7 @@ namespace bacs{namespace archive
          *
          * \see repository::insert
          */
-        problem::import_map insert_all(const problem::archiver_config &archiver_config, const boost::filesystem::path &archive);
+        problem::import_map insert_all(const archiver_options &archiver_options_, const boost::filesystem::path &archive);
 
         /*!
          * \brief Insert particular problem into repository.
@@ -69,7 +72,7 @@ namespace bacs{namespace archive
          * \see repository::available
          * \see repository::extract
          */
-        bunsan::tempfile extract_all(const problem::id_set &id_set, const problem::archiver_config &archiver_config);
+        bunsan::tempfile extract_all(const problem::id_set &id_set, const archiver_options &archiver_options_);
 
         /*!
          * \brief Extract problem from repository.

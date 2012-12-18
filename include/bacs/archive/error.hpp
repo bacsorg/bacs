@@ -10,13 +10,13 @@ namespace bacs{namespace archive
 
     struct problem_error: virtual error
     {
-        typedef boost::error_info<struct tag_problem_id, std::string> problem_id;
+        typedef boost::error_info<struct tag_problem_id, problem::id> problem_id;
     };
 
     struct format_error: virtual error {};
 
     struct unknown_archiver_error: virtual error
     {
-        typedef boost::error_info<struct tag_format, problem::archiver_config> archiver_config;
+        typedef boost::error_info<struct tag_archiver_type, std::string> archiver_type;
     };
 }}

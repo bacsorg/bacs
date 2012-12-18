@@ -1,16 +1,37 @@
 #pragma once
 
-namespace bacs{namespace archive{namespace config
+#include "bunsan/utility/factory_options.hpp"
+#include "bunsan/utility/archiver.hpp"
+
+#include <boost/filesystem/path.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+
+namespace bacs{namespace archive
 {
-    constexpr const char *lock = "lock";
-    constexpr const char *resolver = "resolver";
-    constexpr const char *tmpdir = "tmpdir";
-    namespace problem
+    struct archiver_options: bunsan::utility::factory_options<bunsan::utility::archiver>
     {
-        namespace archiver
+        bunsan::utility::archiver_ptr instance(const bunsan::utility::resolver &resolver) const;
+    };
+
+    struct config
+    {
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int)
         {
-            constexpr const char *type = "problem.archiver.type";
-            constexpr const char *format = "problem.archiver.format";
+            ar & BOOST_SERIALIZATION_NVP(lock);
+            ar & BOOST_SERIALIZATION_NVP(resolver);
+            ar & BOOST_SERIALIZATION_NVP(tmpdir);
+            ar & BOOST_SERIALIZATION_NVP(problem.archiver);
         }
-    }
-}}}
+
+        boost::filesystem::path lock;
+        boost::property_tree::ptree resolver;
+        boost::filesystem::path tmpdir;
+        struct
+        {
+            archiver_options archiver;
+        } problem;
+    };
+}}

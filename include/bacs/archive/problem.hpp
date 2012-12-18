@@ -38,10 +38,5 @@ namespace bacs{namespace archive{namespace problem
         std::string error;
         status previous, current;
     };
-    struct archiver_config
-    {
-        std::string type;
-        boost::optional<std::string> format;
-    };
     typedef std::map<id, import_info> import_map;
 }}}

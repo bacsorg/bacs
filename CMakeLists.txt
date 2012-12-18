@@ -11,7 +11,9 @@ bunsan_use_bunsan(common process utility pm)
 
 bunsan_add_shared_library(${PROJECT_NAME}
     src/lib/repository.cpp
+    src/lib/config.cpp
 )
+bunsan_use(${PROJECT_NAME})
 
 bunsan_add_executable(${PROJECT_NAME}_cli src/bin/cli.cpp)
 
