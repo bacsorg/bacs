@@ -4,12 +4,12 @@
 #include "bacs/archive/problem.hpp"
 
 #include "bunsan/tempfile.hpp"
-#include "bunsan/interprocess/sync/file_lock.hpp"
 #include "bunsan/utility/resolver.hpp"
 #include "bunsan/utility/archiver.hpp"
 
 #include <string>
 
+#include <boost/interprocess/sync/named_upgradable_mutex.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/optional.hpp>
@@ -308,7 +308,7 @@ namespace bacs{namespace archive
         /* lock-free function versions for internal usage */
         // TODO
 
-        bunsan::interprocess::file_lock m_lock;
+        boost::interprocess::named_upgradable_mutex m_lock;
         const bunsan::utility::resolver m_resolver;
         const boost::filesystem::path m_tmpdir;
         /// internal problem storage packing

@@ -14,7 +14,7 @@ repository::repository(const boost::property_tree::ptree &ptree):
     repository(bunsan::config::load<bacs::archive::config>(ptree)) {}
 
 repository::repository(const config &config_):
-    m_lock(config_.lock),
+    m_lock(boost::interprocess::open_or_create, config_.lock.c_str()),
     m_resolver(config_.resolver),
     m_tmpdir(config_.tmpdir),
     m_problem_archiver(config_.problem.archiver.instance(m_resolver)) {}

@@ -26,7 +26,7 @@ namespace bacs{namespace archive
             ar & BOOST_SERIALIZATION_NVP(problem.archiver);
         }
 
-        boost::filesystem::path lock;
+        std::string lock;
         boost::property_tree::ptree resolver;
         boost::filesystem::path tmpdir;
         struct
