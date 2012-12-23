@@ -53,7 +53,8 @@ namespace bacs{namespace archive
         /*!
          * \copydoc insert_all()
          */
-        problem::import_map insert_all(const archiver_options &archiver_options_, const boost::filesystem::path &archive);
+        problem::import_map insert_all(const archiver_options &archiver_options_,
+                                       const boost::filesystem::path &archive);
 
         /*!
          * \brief Insert particular problem into repository.
@@ -89,15 +90,15 @@ namespace bacs{namespace archive
          *
          * \return archive with problems
          */
-        bunsan::tempfile extract_all(const problem::id_set &id_set,
-                                     const archiver_options &archiver_options_);
+        void extract_all(const problem::id_set &id_set,
+                         const archiver_options &archiver_options_,
+                         const boost::filesystem::path &archive);
 
         /*!
          * \copydoc extract_all()
          */
-        void extract_all(const problem::id_set &id_set,
-                         const archiver_options &archiver_options_,
-                         const boost::filesystem::path &archive);
+        bunsan::tempfile extract_all(const problem::id_set &id_set,
+                                     const archiver_options &archiver_options_);
 
         /*!
          * \brief Extract problem from repository.
@@ -248,11 +249,13 @@ namespace bacs{namespace archive
         /*!
          * \brief Clear problems flags.
          *
+         * \return Set of cleared problems.
+         *
          * Not atomic.
          *
          * \see repository::clear_flags
          */
-        void clear_flags_all(const problem::id_set &id_set);
+        problem::id_set clear_flags_all(const problem::id_set &id_set);
 
         /*!
          * \brief Mark problems with problem::flag::ignore.
