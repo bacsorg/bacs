@@ -23,6 +23,10 @@ namespace bacs{namespace archive
      * Member functions has lock-related documentation.
      * User should not rely on it, it may change in the future.
      *
+     * *_all() functions are wrappers for their counterparts
+     * without "_all" suffix. These functions return maps, with values
+     * returned by functions counterparts.
+     *
      * There are three kinds of locks:
      *     - exclusive-lock -- single operation at time, no other locks (except lock-free)
      *     - shared-lock -- multiple operations at time, no exclusive locks
@@ -44,6 +48,11 @@ namespace bacs{namespace archive
          *
          * \see repository::insert
          */
+        problem::import_map insert_all(const boost::filesystem::path &location);
+
+        /*!
+         * \copydoc insert_all()
+         */
         problem::import_map insert_all(const archiver_options &archiver_options_, const boost::filesystem::path &archive);
 
         /*!
@@ -60,10 +69,11 @@ namespace bacs{namespace archive
          */
         problem::import_info insert(const problem::id &id, const boost::filesystem::path &location);
 
+        /// repository::insert(location.filename().string(), location)
+        problem::import_info insert(const boost::filesystem::path &location);
+
         /*!
          * \brief Extract problems from repository.
-         *
-         * \return archive with problems
          *
          * Ignores unavailable problems.
          *
@@ -72,7 +82,22 @@ namespace bacs{namespace archive
          * \see repository::available
          * \see repository::extract
          */
-        bunsan::tempfile extract_all(const problem::id_set &id_set, const archiver_options &archiver_options_);
+        void extract_all(const problem::id_set &id_set, const boost::filesystem::path &location);
+
+        /*!
+         * \copydoc extract_all()
+         *
+         * \return archive with problems
+         */
+        bunsan::tempfile extract_all(const problem::id_set &id_set,
+                                     const archiver_options &archiver_options_);
+
+        /*!
+         * \copydoc extract_all()
+         */
+        void extract_all(const problem::id_set &id_set,
+                         const archiver_options &archiver_options_,
+                         const boost::filesystem::path &archive);
 
         /*!
          * \brief Extract problem from repository.
@@ -83,7 +108,7 @@ namespace bacs{namespace archive
          *
          * \see repository::available
          */
-        bool extract(const problem::id &id, const boost::filesystem::path &dst);
+        bool extract(const problem::id &id, const boost::filesystem::path &location);
 
         /*!
          * \brief Change problem id and repack.
@@ -118,9 +143,18 @@ namespace bacs{namespace archive
         bool exists(const problem::id &id);
 
         /*!
+         * \brief Get existing problems from list.
+         *
+         * Not atomic.
+         *
+         * \see repository::available
+         */
+        problem::id_set exists(const problem::id_set &id_set);
+
+        /*!
          * \brief Check problem for availability.
          *
-         * Return true if problem is available and
+         * \return true if problem exists and
          * is not marked by problem::flag::ignore.
          *
          * Atomic, shared-lock.
@@ -130,13 +164,24 @@ namespace bacs{namespace archive
          */
         bool available(const problem::id &id);
 
+        /*!
+         * \brief Get available problems from list.
+         *
+         * Not atomic.
+         *
+         * \see repository::available
+         */
+        problem::id_set available(const problem::id_set &id_set);
+
         /* flags */
         /*!
          * \brief Get problem status.
          *
+         * \return null if problem does not exist
+         *
          * Atomic, lock-free.
          */
-        problem::status status(const problem::id &id);
+        boost::optional<problem::status_type> status(const problem::id &id);
 
         /*!
          * \brief Get problems status.
@@ -192,13 +237,22 @@ namespace bacs{namespace archive
         bool unset_flags(const problem::id &id, const problem::flag_set &flags);
 
         /*!
-         * \brief Reset problem flags.
+         * \brief Clear problem flags.
          *
          * \return false if problem does not exist
          *
          * Atomic, exclusive-lock.
          */
-        bool reset_flags(const problem::id &id);
+        bool clear_flags(const problem::id &id);
+
+        /*!
+         * \brief Clear problems flags.
+         *
+         * Not atomic.
+         *
+         * \see repository::clear_flags
+         */
+        void clear_flags_all(const problem::id_set &id_set);
 
         /*!
          * \brief Mark problems with problem::flag::ignore.

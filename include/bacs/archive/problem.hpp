@@ -1,7 +1,5 @@
 #pragma once
 
-#include "bunsan/pm/entry.hpp"
-
 #include <string>
 #include <vector>
 #include <unordered_set>
@@ -19,15 +17,12 @@ namespace bacs{namespace archive{namespace problem
     /// information about problem, see bacs::single::api::problem::Problem
     typedef binary info_type;
 
-    /// package name
-    typedef bunsan::pm::entry package;
-
     /// hash string
     typedef binary hash_type;
 
     typedef std::unordered_set<id> id_set;
-    typedef std::unordered_map<id, info_type> info_map;
-    typedef std::unordered_map<id, hash_type> hash_map;
+    typedef std::unordered_map<id, boost::optional<info_type>> info_map;
+    typedef std::unordered_map<id, boost::optional<hash_type>> hash_map;
     typedef std::string flag_type;
     typedef std::unordered_set<flag_type> flag_set;
 
@@ -36,14 +31,13 @@ namespace bacs{namespace archive{namespace problem
         flag_set flags;
         hash_type hash;
     };
-    typedef boost::optional<status_type> status;
 
-    typedef std::unordered_map<id, status> status_map;
+    typedef std::unordered_map<id, boost::optional<status_type>> status_map;
 
     struct import_info
     {
-        boost::optional<std::string> error;
-        status previous, current;
+        boost::optional<std::string> error;  ///< null if OK, error message otherwise
+        boost::optional<status_type> status; ///< null if does not exist
     };
 
     typedef std::unordered_map<id, import_info> import_map;
