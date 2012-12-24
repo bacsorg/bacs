@@ -41,8 +41,12 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/bin/web.cpp
 )
 
+bunsan_web_add_skin(${PROJECT_NAME}_skin_plain
+    view/plain/base.tmpl
+)
+
 bunsan_install_headers()
-bunsan_install_targets(${PROJECT_NAME} ${PROJECT_NAME}_cli ${PROJECT_NAME}_web)
+bunsan_install_targets(${PROJECT_NAME} ${PROJECT_NAME}_cli ${PROJECT_NAME}_web ${PROJECT_NAME}_skin_plain)
 install(FILES ${proto_hdrs} DESTINATION include/bacs/archive/pb)
 
 bunsan_include_tests()
