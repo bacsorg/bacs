@@ -4,7 +4,7 @@ include(${CMAKE_SOURCE_DIR}/system-config.cmake OPTIONAL)
 
 cmake_minimum_required(VERSION 2.8)
 
-include(BunsanCommon)
+include(BunsanWeb)
 
 bunsan_use_boost(system filesystem serialization unit_test_framework program_options)
 bunsan_use_bunsan(common process utility pm)
@@ -34,8 +34,15 @@ bunsan_use(${PROJECT_NAME})
 
 bunsan_add_executable(${PROJECT_NAME}_cli src/bin/cli.cpp)
 
+bunsan_use_bunsan(web)
+bunsan_use(cppcms)
+bunsan_add_executable(${PROJECT_NAME}_web
+    src/web/repository.cpp
+    src/bin/web.cpp
+)
+
 bunsan_install_headers()
-bunsan_install_targets(${PROJECT_NAME} ${PROJECT_NAME}_cli)
+bunsan_install_targets(${PROJECT_NAME} ${PROJECT_NAME}_cli ${PROJECT_NAME}_web)
 install(FILES ${proto_hdrs} DESTINATION include/bacs/archive/pb)
 
 bunsan_include_tests()
