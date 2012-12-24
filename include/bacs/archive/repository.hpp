@@ -80,7 +80,7 @@ namespace bacs{namespace archive
          *
          * Not atomic.
          *
-         * \see repository::available
+         * \see repository::is_available
          * \see repository::extract
          */
         void extract_all(const problem::id_set &id_set, const boost::filesystem::path &location);
@@ -107,7 +107,7 @@ namespace bacs{namespace archive
          *
          * Atomic, shared-lock.
          *
-         * \see repository::available
+         * \see repository::is_available
          */
         bool extract(const problem::id &id, const boost::filesystem::path &location);
 
@@ -125,11 +125,20 @@ namespace bacs{namespace archive
         problem::import_info rename(const problem::id &current, const problem::id &future);
 
         /*!
+         * \brief Set of existing problems.
+         *
+         * Not atomic, lock-free.
+         *
+         * \see repository::exists
+         */
+        problem::id_set existing();
+
+        /*!
          * \brief Set of available problems.
          *
-         * \see repository::available
+         * \see repository::is_available
          */
-        problem::id_set all();
+        problem::id_set available();
 
         /*!
          * \brief Check problem for existence.
@@ -139,7 +148,7 @@ namespace bacs{namespace archive
          *
          * Atomic, lock-free.
          *
-         * \see repository::available
+         * \see repository::is_available
          */
         bool exists(const problem::id &id);
 
@@ -148,9 +157,9 @@ namespace bacs{namespace archive
          *
          * Not atomic.
          *
-         * \see repository::available
+         * \see repository::is_available
          */
-        problem::id_set exists(const problem::id_set &id_set);
+        problem::id_set existing(const problem::id_set &id_set);
 
         /*!
          * \brief Check problem for availability.
@@ -163,14 +172,14 @@ namespace bacs{namespace archive
          * \see repository::exists
          * \see repository::has_flag
          */
-        bool available(const problem::id &id);
+        bool is_available(const problem::id &id);
 
         /*!
          * \brief Get available problems from list.
          *
          * Not atomic.
          *
-         * \see repository::available
+         * \see repository::is_available
          */
         problem::id_set available(const problem::id_set &id_set);
 
@@ -287,7 +296,7 @@ namespace bacs{namespace archive
          *
          * \return uninitialized optional if problem is not available
          *
-         * \see repository::available
+         * \see repository::is_available
          */
         boost::optional<problem::info_type> info(const problem::id &id);
 
@@ -296,7 +305,7 @@ namespace bacs{namespace archive
          *
          * If problem is not available, id is ignored.
          *
-         * \see repository::available
+         * \see repository::is_available
          * \see repository::info
          */
         problem::info_map info_all(const problem::id_set &id_set);
@@ -306,7 +315,7 @@ namespace bacs{namespace archive
          *
          * \return uninitialized optional if problem is not available
          *
-         * \see repository::available
+         * \see repository::is_available
          */
         boost::optional<problem::hash_type> hash(const problem::id &id);
 
@@ -315,7 +324,7 @@ namespace bacs{namespace archive
          *
          * If problem is not available, id is ignored.
          *
-         * \see repository::available
+         * \see repository::is_available
          * \see repository::hash
          */
         problem::hash_map hash_all(const problem::id_set &id_set);

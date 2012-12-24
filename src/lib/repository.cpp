@@ -97,17 +97,17 @@ namespace bacs{namespace archive
         return packed;
     }
 
-    problem::id_set repository::exists(const problem::id_set &id_set)
+    problem::id_set repository::existing(const problem::id_set &id_set)
     {
         return get_all(this, &repository::exists, id_set);
     }
 
     problem::id_set repository::available(const problem::id_set &id_set)
     {
-        return get_all(this, &repository::available, id_set);
+        return get_all(this, &repository::is_available, id_set);
     }
 
-    bool repository::available(const problem::id &id)
+    bool repository::is_available(const problem::id &id)
     {
         return has_flag(id, problem::flag::ignore);
     }
