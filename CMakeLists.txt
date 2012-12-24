@@ -27,6 +27,7 @@ PROTOBUF_GENERATE_CPP(proto_srcs proto_hdrs
 bunsan_add_shared_library(${PROJECT_NAME}
     ${proto_srcs}
     src/lib/repository.cpp
+    src/lib/repository_impl.cpp
     src/lib/config.cpp
 )
 bunsan_use(${PROJECT_NAME})
