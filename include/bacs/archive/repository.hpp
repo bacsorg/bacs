@@ -6,10 +6,11 @@
 #include "bunsan/tempfile.hpp"
 #include "bunsan/utility/resolver.hpp"
 #include "bunsan/utility/archiver.hpp"
+#include "bunsan/interprocess/sync/file_guard.hpp"
 
 #include <string>
 
-#include <boost/interprocess/sync/named_upgradable_mutex.hpp>
+#include <boost/thread/shared_mutex.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/optional.hpp>
@@ -22,6 +23,9 @@ namespace bacs{namespace archive
      *
      * Member functions has lock-related documentation.
      * User should not rely on it, it may change in the future.
+     *
+     * \warning User should not create multiple instances bind to single repository
+     * (nor in process scope, nor in thread scope). Exception will be thrown.
      *
      * *_all() functions are wrappers for their counterparts
      * without "_all" suffix. These functions return maps, with values
@@ -374,10 +378,11 @@ namespace bacs{namespace archive
         /* lock-free function versions for internal usage */
         // TODO
 
-        boost::interprocess::named_upgradable_mutex m_lock;
+        boost::shared_mutex m_lock;
+        const bunsan::interprocess::file_guard m_flock;
         const bunsan::utility::resolver m_resolver;
         const boost::filesystem::path m_tmpdir;
         /// internal problem storage packing
-        bunsan::utility::archiver_ptr m_problem_archiver;
+        const bunsan::utility::archiver_ptr m_problem_archiver;
     };
 }}

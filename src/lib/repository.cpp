@@ -6,8 +6,12 @@
 #include "bunsan/utility/archiver.hpp"
 #include "bunsan/config/cast.hpp"
 #include "bunsan/filesystem/operations.hpp"
+#include "bunsan/system_error.hpp"
 
 #include <boost/filesystem/operations.hpp>
+#include <boost/assert.hpp>
+
+#include <cstdio>
 
 namespace bacs{namespace archive
 {
@@ -15,7 +19,7 @@ namespace bacs{namespace archive
         repository(bunsan::config::load<bacs::archive::config>(ptree)) {}
 
     repository::repository(const config &config_):
-        m_lock(boost::interprocess::open_or_create, config_.lock.c_str()),
+        m_flock(config_.lock),
         m_resolver(config_.resolver),
         m_tmpdir(config_.tmpdir),
         m_problem_archiver(config_.problem.archiver.instance(m_resolver)) {}
