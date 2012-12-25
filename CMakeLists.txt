@@ -46,6 +46,7 @@ bunsan_add_executable(${PROJECT_NAME}_web
 
 bunsan_web_add_skin(${PROJECT_NAME}_skin_plain
     view/plain/base.tmpl
+    view/plain/base_form.tmpl
 )
 
 bunsan_install_headers()
