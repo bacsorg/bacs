@@ -51,7 +51,7 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/bin/web.cpp
 )
 
-bunsan_web_add_skin(${PROJECT_NAME}_skin_plain
+bunsan_web_add_skin(plain
     view/plain/base.tmpl
     view/plain/base_form.tmpl
     view/plain/insert.tmpl
@@ -71,7 +71,8 @@ bunsan_web_add_skin(${PROJECT_NAME}_skin_plain
 )
 
 bunsan_install_headers()
-bunsan_install_targets(${PROJECT_NAME} ${PROJECT_NAME}_cli ${PROJECT_NAME}_web ${PROJECT_NAME}_skin_plain)
+bunsan_install_targets(${PROJECT_NAME} ${PROJECT_NAME}_cli ${PROJECT_NAME}_web)
 install(FILES ${proto_hdrs} DESTINATION include/bacs/archive/pb)
+install(TARGETS plain DESTINATION lib/${PROJECT_NAME}/skins)
 
 bunsan_include_tests()
