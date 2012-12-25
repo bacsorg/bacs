@@ -5,7 +5,7 @@
 
 namespace bacs{namespace archive{namespace web{namespace content{namespace form
 {
-    struct list_query: cppcms::form
+    struct list_query: base
     {
         list_query();
         explicit list_query(const std::string &query);

@@ -5,7 +5,7 @@
 
 namespace bacs{namespace archive{namespace web{namespace content{namespace form
 {
-    struct insert: cppcms::form
+    struct insert: base
     {
         insert();
 

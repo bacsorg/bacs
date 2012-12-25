@@ -5,7 +5,7 @@
 
 namespace bacs{namespace archive{namespace web{namespace content{namespace form
 {
-    struct rename: cppcms::form
+    struct rename: base
     {
         rename();
 

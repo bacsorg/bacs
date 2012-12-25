@@ -6,7 +6,7 @@
 
 namespace bacs{namespace archive{namespace web{namespace content{namespace form
 {
-    struct extract: cppcms::form
+    struct extract: base
     {
         extract();
 
