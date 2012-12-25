@@ -39,6 +39,7 @@ bunsan_use_bunsan(web)
 bunsan_use(cppcms)
 bunsan_add_executable(${PROJECT_NAME}_web
     src/web/repository.cpp
+    src/web/content/form/widgets/problem.cpp
     src/bin/web.cpp
 )
 
