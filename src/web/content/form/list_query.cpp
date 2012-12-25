@@ -8,4 +8,9 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
         add(ids);
         add(submit);
     }
+
+    list_query::list_query(const std::string &query): list_query()
+    {
+        submit.value(query);
+    }
 }}}}}
