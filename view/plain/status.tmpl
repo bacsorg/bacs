@@ -3,7 +3,9 @@
     <% view status uses bacs::archive::web::content::status extends base_form %>
         <% template form() %>
             <p><% gt "Get problems status" %></p>
-            <% form as_p form %>
+            <form method="post" action="">
+                <% form as_p form %>
+            </form>
         <% end template %>
         <% template result() %>
             <% if result %>

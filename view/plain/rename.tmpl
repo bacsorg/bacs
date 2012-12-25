@@ -3,7 +3,9 @@
     <% view rename uses bacs::archive::web::content::rename extends base_form %>
         <% template form() %>
             <% gt "Rename problem" %>
-            <% form as_p form %>
+            <form method="post" action="">
+                <% form as_p form %>
+            </form>
         <% end template %>
         <% template result() %>
             <% if result %>

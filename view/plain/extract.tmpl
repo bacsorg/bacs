@@ -3,7 +3,9 @@
     <% view extract uses bacs::archive::web::content::extract extends base_form %>
         <% template form() %>
             <p><% gt "Extract problems from archive" %></p>
-            <% form as_p form %>
+            <form method="post" action="">
+                <% form as_p form %>
+            </form>
         <% end template %>
         <% template result() %>
             <% if result %>

@@ -4,7 +4,9 @@
     <% view hash uses bacs::archive::web::content::hash extends base_form %>
         <% template form() %>
             <p><% gt "Get problems hash" %></p>
-            <% form as_p form %>
+            <form method="post" action="">
+                <% form as_p form %>
+            </form>
         <% end template %>
         <% template result() %>
             <% if result %>
