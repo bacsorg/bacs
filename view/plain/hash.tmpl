@@ -1,0 +1,33 @@
+<% c++ #include "bacs/archive/web/content/form.hpp" %>
+<% c++ #include "bacs/archive/web/filters/base64_binary.hpp" %>
+<% skin plain %>
+    <% view hash uses bacs::archive::web::content::hash extends base_form %>
+        <% template form() %>
+            <p><% gt "Get problems hash" %></p>
+            <% form as_p form %>
+        <% end template %>
+        <% template result() %>
+            <% if result %>
+                <% foreach id_hash in result.get() %>
+                    <table>
+                        <caption><% gt "Problem hashes" %></caption>
+                        <th><% gt "Problem" %></th>
+                        <th><% gt "Hash" %></th>
+                        <% item %>
+                            <tr>
+                                <td><%= id_hash.first %></td>
+                                <td>
+                                    <% if id_hash.second %>
+                                        <%= id_hash.second.get() | base64_binary %>
+                                    <% else %>
+                                        <% gt "Not found" %>
+                                    <% end %>
+                                </td>
+                            </tr>
+                        <% end %>
+                    </table>
+                <% end %>
+            <% end %>
+        <% end template %>
+    <% end view %>
+<% end skin %>

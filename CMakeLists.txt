@@ -54,6 +54,20 @@ bunsan_add_executable(${PROJECT_NAME}_web
 bunsan_web_add_skin(${PROJECT_NAME}_skin_plain
     view/plain/base.tmpl
     view/plain/base_form.tmpl
+    view/plain/insert.tmpl
+    view/plain/extract.tmpl
+    view/plain/rename.tmpl
+    #view/plain/existing.tmpl
+    #view/plain/available.tmpl
+    view/plain/status.tmpl
+    #view/plain/has_flag.tmpl
+    #view/plain/set_flags.tmpl
+    #view/plain/unset_flags.tmpl
+    view/plain/clear_flags.tmpl
+    view/plain/ignore.tmpl
+    view/plain/info.tmpl
+    view/plain/hash.tmpl
+    view/plain/repack.tmpl
 )
 
 bunsan_install_headers()

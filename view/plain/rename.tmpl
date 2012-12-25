@@ -1,0 +1,31 @@
+<% c++ #include "bacs/archive/web/content/form.hpp" %>
+<% skin plain %>
+    <% view rename uses bacs::archive::web::content::rename extends base_form %>
+        <% template form() %>
+            <% gt "Rename problem" %>
+            <% form as_p form %>
+        <% end template %>
+        <% template result() %>
+            <% if result %>
+                <p><% gt "Import status:" %>
+                    <% if result->error %>
+                        <%= result->error.get() %>
+                    <% else %>
+                        <% gt "OK" %>
+                    <% end %>
+                </p>
+                <% if result->status %>
+                    <% foreach flag in result->status->flags %>
+                        <% gt "Problem flags:" %>
+                        <% item %>
+                            <%= flag %>
+                        <% end %>
+                    <% end %>
+                    <p><% gt "Problem hash:" %> <%= result->status->hash | base64_binary %></p>
+                <% else %>
+                    <% gt "N/A" %>
+                <% end %>
+            <% end %>
+        <% end template %>
+    <% end view %>
+<% end skin %>

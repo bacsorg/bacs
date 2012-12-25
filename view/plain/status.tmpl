@@ -1,0 +1,38 @@
+<% c++ #include "bacs/archive/web/content/form.hpp" %>
+<% skin plain %>
+    <% view status uses bacs::archive::web::content::status extends base_form %>
+        <% template form() %>
+            <p><% gt "Get problems status" %></p>
+            <% form as_p form %>
+        <% end template %>
+        <% template result() %>
+            <% if result %>
+                <% foreach id_status in result.get() %>
+                    <table>
+                        <caption><% gt "Problem status" %></caption>
+                        <th><% gt "Problem" %></th>
+                        <th><% gt "Flags" %></th>
+                        <th><% gt "Hash" %></th>
+                        <% item %>
+                            <tr>
+                                <td><%= id_status.first %></td>
+                                <% if id_status.second %>
+                                    <td>
+                                        <% foreach flag in id_status.second->flags %>
+                                            <% item %>
+                                                <%= flag %>
+                                            <% end %>
+                                        <% end %>
+                                    </td>
+                                    <td><%= id_status.second->hash | base64_binary %></td>
+                                <% else %>
+                                    <td><% gt "Not found" %></td>
+                                <% end %>
+                            </tr>
+                        <% end %>
+                    </table>
+                <% end %>
+            <% end %>
+        <% end template %>
+    <% end view %>
+<% end skin %>
