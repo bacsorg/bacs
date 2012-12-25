@@ -35,11 +35,12 @@ bunsan_use(${PROJECT_NAME})
 
 bunsan_add_executable(${PROJECT_NAME}_cli src/bin/cli.cpp)
 
-bunsan_use_bunsan(web)
+bunsan_use_bunsan(network web)
 bunsan_use(cppcms)
 bunsan_add_executable(${PROJECT_NAME}_web
     src/web/repository.cpp
     src/web/content/form/widgets/problem.cpp
+    src/web/filters/base64_binary.cpp
     src/bin/web.cpp
 )
 
