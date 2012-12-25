@@ -6,7 +6,7 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
     {
         current.message(cppcms::locale::translate("Current id"));
         future.message(cppcms::locale::translate("Future id"));
-        submit.message(cppcms::locale::translate("Rename"));
+        submit.value(cppcms::locale::translate("Rename"));
         add(current);
         add(future);
         add(submit);
