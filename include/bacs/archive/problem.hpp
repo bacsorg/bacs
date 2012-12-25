@@ -23,8 +23,8 @@ namespace bacs{namespace archive{namespace problem
     typedef std::unordered_set<id> id_set;
     typedef std::unordered_map<id, boost::optional<info_type>> info_map;
     typedef std::unordered_map<id, boost::optional<hash_type>> hash_map;
-    typedef std::string flag_type;
-    typedef std::unordered_set<flag_type> flag_set;
+    typedef std::string flag;
+    typedef std::unordered_set<flag> flag_set;
 
     struct status_type
     {

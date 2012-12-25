@@ -113,14 +113,14 @@ namespace bacs{namespace archive
 
     bool repository::is_available(const problem::id &id)
     {
-        return has_flag(id, problem::flag::ignore);
+        return has_flag(id, problem::flags::ignore);
     }
 
     /* flags */
 
     bool repository::ignore(const problem::id &id)
     {
-        return set_flag(id, problem::flag::ignore);
+        return set_flag(id, problem::flags::ignore);
     }
 
     problem::id_set repository::ignore_all(const problem::id_set &id_set)

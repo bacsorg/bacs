@@ -214,7 +214,7 @@ namespace bacs{namespace archive
          *
          * Atomic, lock-free.
          */
-        bool has_flag(const problem::id &id, const problem::flag_type &flag);
+        bool has_flag(const problem::id &id, const problem::flag &flag);
 
         /*!
          * \brief Set problem flag.
@@ -223,7 +223,7 @@ namespace bacs{namespace archive
          *
          * Atomic, exclusive-lock.
          */
-        bool set_flag(const problem::id &id, const problem::flag_type &flag);
+        bool set_flag(const problem::id &id, const problem::flag &flag);
 
         /*!
          * \brief Set problem flags.
@@ -239,7 +239,7 @@ namespace bacs{namespace archive
          *
          * Atomic, exclusive-lock.
          */
-        bool unset_flag(const problem::id &id, const problem::flag_type &flag);
+        bool unset_flag(const problem::id &id, const problem::flag &flag);
 
         /*!
          * \brief Unset problem flags.

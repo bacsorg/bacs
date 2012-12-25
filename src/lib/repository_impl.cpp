@@ -62,7 +62,7 @@ namespace bacs{namespace archive
         return boost::optional<problem::status_type>();
     }
 
-    bool repository::set_flag(const problem::id &id, const problem::flag_type &flag)
+    bool repository::set_flag(const problem::id &id, const problem::flag &flag)
     {
         if (exists(id))
         {
@@ -76,7 +76,7 @@ namespace bacs{namespace archive
         return false;
     }
 
-    bool repository::unset_flag(const problem::id &id, const problem::flag_type &flag)
+    bool repository::unset_flag(const problem::id &id, const problem::flag &flag)
     {
         if (exists(id))
         {
@@ -131,7 +131,7 @@ namespace bacs{namespace archive
         return boost::optional<problem::info_type>();
     }
 
-    bool repository::has_flag(const problem::id &id, const problem::flag_type &flag)
+    bool repository::has_flag(const problem::id &id, const problem::flag &flag)
     {
         if (exists(id))
         {
