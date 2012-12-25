@@ -41,4 +41,6 @@ namespace bacs{namespace archive{namespace problem
     };
 
     typedef std::unordered_map<id, import_info> import_map;
+
+    bool is_allowed_id(const id &id_);
 }}}
