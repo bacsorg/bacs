@@ -43,6 +43,7 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/web/content/form/archiver_config.cpp
     src/web/content/form/list_query.cpp
     src/web/content/form/extract.cpp
+    src/web/content/form/rename.cpp
     src/web/content/form/widgets/problem.cpp
     src/web/filters/base64_binary.cpp
     src/bin/web.cpp
