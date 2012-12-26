@@ -4,7 +4,7 @@
     <% view insert uses bacs::archive::web::content::insert extends base_form %>
         <% template form() %>
             <p><% gt "Insert problems in archive" %></p>
-            <form method="post" action="">
+            <form method="post" action="" enctype="multipart/form-data">
                 <% form as_p form %>
             </form>
         <% end template %>
