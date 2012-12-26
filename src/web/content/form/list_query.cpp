@@ -4,6 +4,7 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
 {
     list_query::list_query()
     {
+        ids.name("ids");
         ids.message(cppcms::locale::translate("Problem ids"));
         add(ids);
         add(submit);
