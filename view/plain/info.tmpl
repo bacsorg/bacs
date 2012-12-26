@@ -13,8 +13,10 @@
                 <% foreach id_info in result.get() %>
                     <table>
                         <caption><% gt "Problem info" %></caption>
-                        <th><% gt "Problem" %></th>
-                        <th><% gt "Info" %></th>
+                        <tr>
+                            <th><% gt "Problem" %></th>
+                            <th><% gt "Info" %></th>
+                        </tr>
                         <% item %>
                             <tr>
                                 <td><%= id_info.first %></td>

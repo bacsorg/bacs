@@ -12,10 +12,12 @@
                 <% foreach id_import in result.get() %>
                     <table>
                         <caption><% gt "Insertion results" %></caption>
-                        <th><% gt "Problem" %></th>
-                        <th><% gt "Error" %></th>
-                        <th><% gt "Flags" %></th>
-                        <th><% gt "Hash" %></th>
+                        <tr>
+                            <th><% gt "Problem" %></th>
+                            <th><% gt "Error" %></th>
+                            <th><% gt "Flags" %></th>
+                            <th><% gt "Hash" %></th>
+                        </tr>
                         <% item %>
                             <tr>
                                 <td><%= id_import.first %></td>

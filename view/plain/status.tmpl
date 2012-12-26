@@ -12,9 +12,11 @@
                 <% foreach id_status in result.get() %>
                     <table>
                         <caption><% gt "Problem status" %></caption>
-                        <th><% gt "Problem" %></th>
-                        <th><% gt "Flags" %></th>
-                        <th><% gt "Hash" %></th>
+                        <tr>
+                            <th><% gt "Problem" %></th>
+                            <th><% gt "Flags" %></th>
+                            <th><% gt "Hash" %></th>
+                        </tr>
                         <% item %>
                             <tr>
                                 <td><%= id_status.first %></td>
