@@ -5,6 +5,7 @@
 #include "bacs/archive/web/content/base_form.hpp"
 
 #include "bacs/archive/web/content/form/list_query.hpp"
+#include "bacs/archive/web/content/form/optional_list_query.hpp"
 #include "bacs/archive/web/content/form/insert.hpp"
 #include "bacs/archive/web/content/form/extract.hpp"
 #include "bacs/archive/web/content/form/rename.hpp"
@@ -35,8 +36,16 @@ namespace bacs{namespace archive{namespace web{namespace content
     typedef basic_form<form::insert, problem::import_map> insert;
     typedef basic_form<form::extract, std::string> extract;
     typedef basic_form<form::rename, problem::import_info> rename;
-    // TODO existing
-    // TODO available
+
+    struct existing: basic_form<form::optional_list_query, problem::id_set>
+    {
+        existing();
+    };
+
+    struct available: basic_form<form::optional_list_query, problem::id_set>
+    {
+        available();
+    };
 
     struct status: basic_form<form::list_query, problem::status_map>
     {

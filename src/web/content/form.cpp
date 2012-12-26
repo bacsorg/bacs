@@ -2,8 +2,13 @@
 
 namespace bacs{namespace archive{namespace web{namespace content
 {
-    // existing
-    // available
+    existing::existing(): basic_form(cppcms::locale::translate("All"),
+                                     cppcms::locale::translate("Get existing problems"),
+                                     form::optional_list_query::flag_disables) {}
+
+    available::available(): basic_form(cppcms::locale::translate("All"),
+                                       cppcms::locale::translate("Get available problems"),
+                                       form::optional_list_query::flag_disables) {}
 
     status::status(): basic_form(cppcms::locale::translate("Get status")) {}
 
