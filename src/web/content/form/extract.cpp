@@ -6,7 +6,7 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
     {
         ids.name("ids");
         ids.message(cppcms::locale::translate("Problem ids"));
-        ids.message(cppcms::locale::translate("Extract"));
+        submit.value(cppcms::locale::translate("Extract"));
         add(config);
         add(ids);
         add(submit);
