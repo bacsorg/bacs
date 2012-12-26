@@ -117,14 +117,40 @@ namespace bacs{namespace archive{namespace web
 
     void repository::existing()
     {
-        /*content::existing data;
-        data.title = translate("");*/
+        content::existing data;
+        data.title = translate("Existing problems");
+        if (request().request_method() == "POST")
+        {
+            data.form.load(context());
+            if (data.form.validate())
+            {
+                const boost::optional<problem::id_set> ids = data.form.value();
+                if (ids)
+                    data.result = m_repository->existing(ids.get());
+                else
+                    data.result = m_repository->existing();
+            }
+        }
+        render("existing", data);
     }
 
     void repository::available()
     {
-        /*content::available data;
-        data.title = translate("Hash");*/
+        content::available data;
+        data.title = translate("Available problems");
+        if (request().request_method() == "POST")
+        {
+            data.form.load(context());
+            if (data.form.validate())
+            {
+                const boost::optional<problem::id_set> ids = data.form.value();
+                if (ids)
+                    data.result = m_repository->available(ids.get());
+                else
+                    data.result = m_repository->available();
+            }
+        }
+        render("available", data);
     }
 
     void repository::status()
