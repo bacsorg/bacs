@@ -8,6 +8,6 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
     {
         base();
 
-        cppcms::widgets::radio response;
+        cppcms::widgets::select response;
     };
 }}}}}
