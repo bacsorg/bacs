@@ -1,0 +1,23 @@
+<% c++ #include "bacs/archive/web/content/form.hpp" %>
+<% skin plain %>
+    <% view existing uses bacs::archive::web::content::existing extends base_form %>
+        <% template form() %>
+            <p><% gt "Get existing problems" %></p>
+            <form method="post" action="">
+                <% form as_p form %>
+            </form>
+        <% end template %>
+        <% template result() %>
+            <% if result %>
+                <% foreach id in result.get() %>
+                    <% gt "The following problems exist:" %>
+                    <ul>
+                        <% item %>
+                            <li><%= id %></li>
+                        <% end %>
+                    </ul>
+                <% end %>
+            <% end %>
+        <% end template %>
+    <% end view %>
+<% end skin %>
