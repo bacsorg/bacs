@@ -30,6 +30,13 @@ namespace bacs{namespace archive{namespace web
         void hash();
         void repack();
 
+        template <typename ProtoBuf>
+        void send_protobuf(const ProtoBuf &protobuf, const std::string &filename);
+
+        void send_file(const boost::filesystem::path &path, const std::string &filename);
+
+        void send_tempfile(bunsan::tempfile &&tmpfile, const std::string &filename);
+
     private:
         const std::shared_ptr<archive::repository> m_repository;
     };
