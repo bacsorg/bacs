@@ -57,6 +57,8 @@ namespace bacs{namespace archive{namespace web
 
         dispatcher().assign("/repack", &repository::repack, this);
         mapper().assign("repack", "/repack");
+
+        mapper().root("/repository");
     }
 
     void repository::insert()
