@@ -18,18 +18,20 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
         }
         flag.name("flag");
         flag.message(flag_);
-        static const std::string jhead = R"EOF(onchange="document.getElementById(')EOF";
+        static const std::string jhead = R"EOF("document.getElementById(')EOF";
         static const std::string jmid = R"EOF(').disabled = )EOF";
         static const std::string jtail = R"EOF(this.checked;")EOF";
+        std::string script;
         switch (flag_type)
         {
         case flag_enables:
-            flag.attributes_string(jhead + ids_id + jmid + "!" + jtail);
+            script = jhead + ids_id + jmid + "!" + jtail;
             break;
         case flag_disables:
-            flag.attributes_string(jhead + ids_id + jmid + jtail);
+            script = jhead + ids_id + jmid + jtail;
             break;
         }
+        flag.attributes_string("onload=" + script + " onchange=" + script);
         ids.id(ids_id);
         ids.name("ids");
         ids.message(cppcms::locale::translate("Problem ids"));
