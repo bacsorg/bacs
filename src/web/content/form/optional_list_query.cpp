@@ -39,6 +39,23 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
         add(submit);
     }
 
+    bool optional_list_query::validate()
+    {
+        bool valid = flag.validate() && submit.validate();
+        switch (flag_type)
+        {
+        case flag_enables:
+            if (flag.value())
+                valid = valid && ids.validate();
+            break;
+        case flag_disables:
+            if (!flag.value())
+                valid = valid && ids.validate();
+            break;
+        }
+        return valid;
+    }
+
     boost::optional<problem::id_set> optional_list_query::value()
     {
         switch (flag_type)

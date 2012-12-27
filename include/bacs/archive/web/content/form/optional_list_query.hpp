@@ -19,6 +19,8 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
 
         boost::optional<problem::id_set> value();
 
+        bool validate() override;
+
         flag_type_enum flag_type;
 
         cppcms::widgets::checkbox flag;
