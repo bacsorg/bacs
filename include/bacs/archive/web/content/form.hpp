@@ -21,13 +21,14 @@
 // hash
 // repack
 
+#include "bunsan/forward_constructor.hpp"
+
 namespace bacs{namespace archive{namespace web{namespace content
 {
     template <typename Form, typename Result>
     struct basic_form: base_form
     {
-        template <typename ... Args>
-        explicit basic_form(Args &&...args): form(std::forward<Args>(args)...) {}
+        BUNSAN_FORWARD_EXPLICIT_CONSTRUCTOR(basic_form, form)
 
         Form form;
         boost::optional<Result> result;

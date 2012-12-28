@@ -2,17 +2,16 @@
 
 #include "bacs/archive/problem.hpp"
 
-#include <cppcms/filters.h>
+#include "bunsan/forward_constructor.hpp"
 
-#include <utility>
+#include <cppcms/filters.h>
 
 namespace cppcms{namespace filters
 {
     class base64_binary
     {
     public:
-        template <typename T>
-        explicit base64_binary(T &&binary): m_binary(std::forward<T>(binary)) {}
+        BUNSAN_FORWARD_EXPLICIT_CONSTRUCTOR(base64_binary, m_binary)
 
         base64_binary()=default;
         base64_binary(const base64_binary &)=default;
