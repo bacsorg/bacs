@@ -14,19 +14,19 @@ bunsan::utility::resolver::resolver(const boost::property_tree::ptree &ptree):
 
 bunsan::utility::resolver::resolver(resolver &&res) noexcept
 {
-    this->swap(res);
+    swap(res);
 }
 
 bunsan::utility::resolver &bunsan::utility::resolver::operator=(const resolver &res)
 {
     resolver tmp(res);
-    this->swap(tmp);
+    swap(tmp);
     return *this;
 }
 
 bunsan::utility::resolver &bunsan::utility::resolver::operator=(resolver &&res) noexcept
 {
-    this->swap(res);
+    swap(res);
     return *this;
 }
 
