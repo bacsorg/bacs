@@ -25,7 +25,7 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
         if (!text::validate())
             return false;
         valid(archive::problem::is_allowed_id(value()));
-        return text::validate();
+        return valid();
     }
 
     archive::problem::id_set id_set::value()
@@ -53,7 +53,7 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
             return false;
         const archive::problem::id_set set = value();
         valid(!set.empty() && std::all_of(set.begin(), set.end(), archive::problem::is_allowed_id));
-        return text::validate();
+        return valid();
     }
 
     archive::problem::flag_set flag_set::value()
@@ -81,6 +81,6 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
             return false;
         const archive::problem::flag_set set = value();
         valid(std::all_of(set.begin(), set.end(), archive::problem::is_allowed_id));
-        return text::validate();
+        return valid();
     }
 }}}}}}}
