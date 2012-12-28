@@ -49,21 +49,21 @@ void bunsan::pm::entry::build(const std::string &name_, char delim)
 
 bunsan::pm::entry &bunsan::pm::entry::operator=(bunsan::pm::entry &&e) noexcept
 {
-    this->swap(e);
+    swap(e);
     return *this;
 }
 
 bunsan::pm::entry &bunsan::pm::entry::operator=(const bunsan::pm::entry &e)
 {
     bunsan::pm::entry ent(e);
-    this->swap(ent);
+    swap(ent);
     return *this;
 }
 
 bunsan::pm::entry &bunsan::pm::entry::operator=(const std::string &name_)
 {
     bunsan::pm::entry ent(name_);
-    this->swap(ent);
+    swap(ent);
     return *this;
 }
 
