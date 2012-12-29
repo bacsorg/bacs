@@ -3,7 +3,9 @@
     <% view base uses bacs::archive::web::content::base %>
         <% template render() %>
             <html>
-                <title><%= title %></title>
+                <head>
+                    <title><%= title %></title>
+                </head>
                 <body>
                     <% include menu() %>
                     <% include body() %>
