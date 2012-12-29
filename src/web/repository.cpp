@@ -178,14 +178,32 @@ namespace bacs{namespace archive{namespace web
 
     void repository::set_flags()
     {
-        /*content::set_flags data;
-        data.title = translate("");*/
+        content::set_flags data;
+        data.title = translate("Set flags");
+        if (request().request_method() == "POST")
+        {
+            data.form.load(context());
+            if (data.form.validate())
+            {
+                data.result = m_repository->set_flags_all(data.form.ids.value(), data.form.flags.value());
+            }
+        }
+        render("set_flags", data);
     }
 
     void repository::unset_flags()
     {
-        /*content::unset_flags data;
-        data.title = translate("");*/
+        content::unset_flags data;
+        data.title = translate("Unset flags");
+        if (request().request_method() == "POST")
+        {
+            data.form.load(context());
+            if (data.form.validate())
+            {
+                data.result = m_repository->unset_flags_all(data.form.ids.value(), data.form.flags.value());
+            }
+        }
+        render("unset_flags", data);
     }
 
     void repository::clear_flags()
