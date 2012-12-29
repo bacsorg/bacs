@@ -11,6 +11,8 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/assert.hpp>
 
+#include <utility>
+
 #include <cstdio>
 
 namespace bacs{namespace archive
@@ -26,24 +28,25 @@ namespace bacs{namespace archive
 
     namespace
     {
-        template <typename Ret>
-        std::unordered_map<problem::id, Ret> get_all(repository *const this_,
-                                                     Ret (repository::*get)(const problem::id &),
-                                                     const problem::id_set &id_set)
+        template <typename Ret, typename ... Args>
+        std::unordered_map<problem::id, Ret> get_all_map(
+            repository *const this_, Ret (repository::*get)(const problem::id &, Args...),
+            const problem::id_set &id_set, Args &&...args)
         {
             std::unordered_map<problem::id, Ret> map;
             for (const problem::id &id: id_set)
-                map[id] = (this_->*get)(id);
+                map[id] = (this_->*get)(id, std::forward<Args>(args)...);
             return map;
         }
 
-        problem::id_set get_all(repository *const this_,
-                                bool (repository::*get)(const problem::id &),
-                                const problem::id_set &id_set)
+        template <typename ... Args>
+        problem::id_set get_all_set(
+            repository *const this_, bool (repository::*get)(const problem::id &, Args...),
+            const problem::id_set &id_set, Args &&...args)
         {
             problem::id_set set;
             for (const problem::id &id: id_set)
-                if ((this_->*get)(id))
+                if ((this_->*get)(id, std::forward<Args>(args)...))
                     set.insert(id);
             return set;
         }
@@ -103,12 +106,12 @@ namespace bacs{namespace archive
 
     problem::id_set repository::existing(const problem::id_set &id_set)
     {
-        return get_all(this, &repository::exists, id_set);
+        return get_all_set(this, &repository::exists, id_set);
     }
 
     problem::id_set repository::available(const problem::id_set &id_set)
     {
-        return get_all(this, &repository::is_available, id_set);
+        return get_all_set(this, &repository::is_available, id_set);
     }
 
     bool repository::is_available(const problem::id &id)
@@ -118,6 +121,18 @@ namespace bacs{namespace archive
 
     /* flags */
 
+    problem::id_set repository::set_flags_all(const problem::id_set &id_set,
+                                              const problem::flag_set &flags)
+    {
+        return get_all_set(this, &repository::set_flags, id_set, flags);
+    }
+
+    problem::id_set repository::unset_flags_all(const problem::id_set &id_set,
+                                                const problem::flag_set &flags)
+    {
+        return get_all_set(this, &repository::unset_flags, id_set, flags);
+    }
+
     bool repository::ignore(const problem::id &id)
     {
         return set_flag(id, problem::flags::ignore);
@@ -125,35 +140,35 @@ namespace bacs{namespace archive
 
     problem::id_set repository::ignore_all(const problem::id_set &id_set)
     {
-        return get_all(this, &repository::ignore, id_set);
+        return get_all_set(this, &repository::ignore, id_set);
     }
 
     problem::id_set repository::clear_flags_all(const problem::id_set &id_set)
     {
-        return get_all(this, &repository::clear_flags, id_set);
+        return get_all_set(this, &repository::clear_flags, id_set);
     }
 
     /* info */
 
     problem::status_map repository::status_all(const problem::id_set &id_set)
     {
-        return get_all(this, &repository::status, id_set);
+        return get_all_map(this, &repository::status, id_set);
     }
 
     problem::info_map repository::info_all(const problem::id_set &id_set)
     {
-        return get_all(this, &repository::info, id_set);
+        return get_all_map(this, &repository::info, id_set);
     }
 
     problem::hash_map repository::hash_all(const problem::id_set &id_set)
     {
-        return get_all(this, &repository::hash, id_set);
+        return get_all_map(this, &repository::hash, id_set);
     }
 
     /* repack */
 
     problem::import_map repository::repack_all(const problem::id_set &id_set)
     {
-        return get_all(this, &repository::repack, id_set);
+        return get_all_map(this, &repository::repack, id_set);
     }
 }}

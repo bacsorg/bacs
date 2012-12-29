@@ -233,6 +233,15 @@ namespace bacs{namespace archive
         bool set_flags(const problem::id &id, const problem::flag_set &flags);
 
         /*!
+         * \brief Set problems flags.
+         *
+         * Not atomic.
+         *
+         * \see repository::set_flags
+         */
+        problem::id_set set_flags_all(const problem::id_set &id_set, const problem::flag_set &flags);
+
+        /*!
          * \brief Unset problem flag.
          *
          * \return false if problem does not exist
@@ -249,6 +258,15 @@ namespace bacs{namespace archive
          * Atomic, exclusive-lock.
          */
         bool unset_flags(const problem::id &id, const problem::flag_set &flags);
+
+        /*!
+         * \brief Unset problems flags.
+         *
+         * Not atomic.
+         *
+         * \see repository::unset_flags
+         */
+        problem::id_set unset_flags_all(const problem::id_set &id_set, const problem::flag_set &flags);
 
         /*!
          * \brief Clear problem flags.
