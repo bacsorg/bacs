@@ -9,8 +9,8 @@
 #include "bacs/archive/web/content/form/insert.hpp"
 #include "bacs/archive/web/content/form/extract.hpp"
 #include "bacs/archive/web/content/form/rename.hpp"
-//#include "bacs/archive/web/content/form/existing.hpp"
-//#include "bacs/archive/web/content/form/available.hpp"
+// existing
+// available
 // status
 //#include "bacs/archive/web/content/form/has_flag.hpp"
 //#include "bacs/archive/web/content/form/set_flags.hpp"
