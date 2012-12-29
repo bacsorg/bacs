@@ -76,6 +76,20 @@ namespace bacs{namespace archive
         return false;
     }
 
+    bool repository::set_flags(const problem::id &id, const problem::flag_set &flags)
+    {
+        if (exists(id))
+        {
+            const lock_guard lk(m_lock);
+            if (exists(id))
+            {
+                // TODO
+                return true;
+            }
+        }
+        return false;
+    }
+
     bool repository::unset_flag(const problem::id &id, const problem::flag &flag)
     {
         if (exists(id))
