@@ -1,0 +1,23 @@
+<% c++ #include "bacs/archive/web/content/form.hpp" %>
+<% skin plain %>
+    <% view set_flags uses bacs::archive::web::content::set_flags extends base_form %>
+        <% template form() %>
+            <% gt "Set problem flags" %>
+            <form method="post" action="">
+                <% form as_p form %>
+            </form>
+        <% end template %>
+        <% template result() %>
+            <% if result %>
+                <% foreach id in result.get() %>
+                    <% gt "Flags were set for the following problems:" %>
+                    <ul>
+                        <% item %>
+                            <li><%= id %></li>
+                        <% end %>
+                    </ul>
+                <% end %>
+            <% end %>
+        <% end template %>
+    <% end view %>
+<% end skin %>
