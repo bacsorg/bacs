@@ -217,6 +217,15 @@ namespace bacs{namespace archive
         bool has_flag(const problem::id &id, const problem::flag &flag);
 
         /*!
+         * \brief Return problems with specified flag.
+         *
+         * Not atomic.
+         *
+         * \see repository::has_flag
+         */
+        problem::id_set with_flag(const problem::id_set &id_set, const problem::flag &flag);
+
+        /*!
          * \brief Set problem flag.
          *
          * \return false if problem does not exist
