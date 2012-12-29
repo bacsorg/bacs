@@ -13,8 +13,8 @@
 // available
 // status
 //#include "bacs/archive/web/content/form/has_flag.hpp"
-//#include "bacs/archive/web/content/form/set_flags.hpp"
-//#include "bacs/archive/web/content/form/unset_flags.hpp"
+#include "bacs/archive/web/content/form/set_flags.hpp"
+#include "bacs/archive/web/content/form/unset_flags.hpp"
 // clear_flags
 // ignore
 // info
@@ -54,8 +54,9 @@ namespace bacs{namespace archive{namespace web{namespace content
     };
 
     //typedef basic_form<form::has_flag, boost::optional<bool>> has_flag;
-    //typedef basic_form<form::set_flags, boost::optional<bool>> set_flags;
-    //typedef basic_form<form::unset_flags, boost::optional<bool>> unset_flags;
+
+    typedef basic_form<form::set_flags, problem::id_set> set_flags;
+    typedef basic_form<form::unset_flags, problem::id_set> unset_flags;
 
     struct clear_flags: basic_form<form::list_query, problem::id_set>
     {
