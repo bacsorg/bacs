@@ -51,6 +51,7 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/web/content/form.cpp
     src/web/content/form/widgets/problem/id.cpp
     src/web/content/form/widgets/problem/id_set.cpp
+    src/web/content/form/widgets/problem/optional_id_set.cpp
     src/web/content/form/widgets/problem/flag_set.cpp
     src/web/filters/base64_binary.cpp
     src/bin/web.cpp
