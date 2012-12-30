@@ -166,8 +166,21 @@ namespace bacs{namespace archive{namespace web
 
     void repository::with_flag()
     {
-        /*content::with_flag data;
-        data.title = translate("With flag");*/
+        content::with_flag data;
+        data.title = translate("With flag");
+        if (request().request_method() == "POST")
+        {
+            data.form.load(context());
+            if (data.form.validate())
+            {
+                const boost::optional<problem::id_set> ids = data.form.ids.value();
+                if (ids)
+                    data.result = m_repository->with_flag(ids.get(), data.form.flag.value());
+                else
+                    data.result = m_repository->with_flag(data.form.flag.value());
+            }
+        }
+        render("with_flag", data);
     }
 
     void repository::set_flags()
