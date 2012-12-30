@@ -15,27 +15,31 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
         flag_type(flag_type_)
     {
         std::string ids_id(16, '\0');
+        //std::string flag_id(16, '\0');
         {
             std::mt19937 rng(std::time(nullptr));
             std::uniform_int_distribution<char> rnd('a', 'z');
             std::generate(ids_id.begin(), ids_id.end(), [&rng, &rnd](){return rnd(rng);});
+            //std::generate(flag_id.begin(), flag_id.end(), [&rng, &rnd](){return rnd(rng);});
         }
         flag.name("ids_flag");
+        //flag.id(flag_id);
         flag.message(flag_);
-        static const std::string jhead = R"EOF("document.getElementById(')EOF";
-        static const std::string jmid = R"EOF(').disabled = )EOF";
-        static const std::string jtail = R"EOF(this.checked;")EOF";
-        std::string script;
+        const std::string flag_head = " onclick=\"document.getElementById('" + ids_id + "').disabled = ";
+        const std::string flag_tail = "this.checked;\"";
+        std::string flag_attr;
+        std::string ids_attr;
         switch (flag_type)
         {
         case flag_enables:
-            script = jhead + ids_id + jmid + "!" + jtail;
+            flag_attr = flag_head + "!" + flag_tail;
             break;
         case flag_disables:
-            script = jhead + ids_id + jmid + jtail;
+            flag_attr = flag_head + flag_tail;
             break;
         }
-        flag.attributes_string("onload=" + script + " onchange=" + script);
+        flag.attributes_string(flag_attr);
+        ids.attributes_string(ids_attr);
         ids.id(ids_id);
         ids.name("ids");
         ids.message(cppcms::locale::translate("Problem ids"));
@@ -90,5 +94,19 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
             flag.value(!static_cast<bool>(id_set_));
             break;
         }
+    }
+
+    void optional_id_set::render(cppcms::form_context &context)
+    {
+        switch (flag_type)
+        {
+        case flag_enables:
+            ids.disabled(!flag.value());
+            break;
+        case flag_disables:
+            ids.disabled(flag.value());
+            break;
+        }
+        form::render(context);
     }
 }}}}}}}

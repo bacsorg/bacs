@@ -24,6 +24,8 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
 
         bool validate() override;
 
+        void render(cppcms::form_context &context) override;
+
     private:
         flag_type_enum flag_type;
 
