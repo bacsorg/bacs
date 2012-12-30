@@ -5,12 +5,11 @@
 #include "bacs/archive/web/content/base_form.hpp"
 
 #include "bacs/archive/web/content/form/list_query.hpp"
-#include "bacs/archive/web/content/form/optional_list_query.hpp"
 #include "bacs/archive/web/content/form/insert.hpp"
 #include "bacs/archive/web/content/form/extract.hpp"
 #include "bacs/archive/web/content/form/rename.hpp"
-// existing
-// available
+#include "bacs/archive/web/content/form/existing.hpp"
+#include "bacs/archive/web/content/form/available.hpp"
 // status
 //#include "bacs/archive/web/content/form/has_flag.hpp"
 #include "bacs/archive/web/content/form/set_flags.hpp"
@@ -37,23 +36,15 @@ namespace bacs{namespace archive{namespace web{namespace content
     typedef basic_form<form::insert, problem::import_map> insert;
     typedef basic_form<form::extract, std::string> extract;
     typedef basic_form<form::rename, problem::import_info> rename;
-
-    struct existing: basic_form<form::optional_list_query, problem::id_set>
-    {
-        existing();
-    };
-
-    struct available: basic_form<form::optional_list_query, problem::id_set>
-    {
-        available();
-    };
+    typedef basic_form<form::existing, problem::id_set> existing;
+    typedef basic_form<form::available, problem::id_set> available;
 
     struct status: basic_form<form::list_query, problem::status_map>
     {
         status();
     };
 
-    //typedef basic_form<form::has_flag, boost::optional<bool>> has_flag;
+    //typedef basic_form<form::with_flag, boost::optional<bool>> with_flag;
 
     typedef basic_form<form::set_flags, problem::id_set> set_flags;
     typedef basic_form<form::unset_flags, problem::id_set> unset_flags;

@@ -120,7 +120,7 @@ namespace bacs{namespace archive{namespace web
             data.form.load(context());
             if (data.form.validate())
             {
-                const boost::optional<problem::id_set> ids = data.form.value();
+                const boost::optional<problem::id_set> ids = data.form.ids.value();
                 if (ids)
                     data.result = m_repository->existing(ids.get());
                 else
@@ -139,7 +139,7 @@ namespace bacs{namespace archive{namespace web
             data.form.load(context());
             if (data.form.validate())
             {
-                const boost::optional<problem::id_set> ids = data.form.value();
+                const boost::optional<problem::id_set> ids = data.form.ids.value();
                 if (ids)
                     data.result = m_repository->available(ids.get());
                 else
