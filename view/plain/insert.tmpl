@@ -2,6 +2,9 @@
 <% c++ #include "bacs/archive/web/filters/base64_binary.hpp" %>
 <% skin plain %>
     <% view insert uses bacs::archive::web::content::insert extends base_form %>
+        <% template subtitle() %>
+            <% gt "Insert problems" %>
+        <% end template %>
         <% template form() %>
             <p><% gt "Insert problems in archive" %></p>
             <form method="post" action="" enctype="multipart/form-data">

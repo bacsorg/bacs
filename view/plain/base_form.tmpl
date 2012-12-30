@@ -1,6 +1,13 @@
 <% c++ #include "bacs/archive/web/content/base_form.hpp" %>
 <% skin plain %>
     <% view base_form uses bacs::archive::web::content::base_form extends base %>
+        <% template title() %>
+            <% include base::title() %>
+            <% include subtitle() %>
+        <% end template %>
+        <% template subtitle() %>
+            Form
+        <% end template %>
         <% template body() %>
             <% include form() %>
             <% include result() %>

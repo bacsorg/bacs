@@ -6,8 +6,5 @@
 
 namespace bacs{namespace archive{namespace web{namespace content
 {
-    struct base: cppcms::base_content
-    {
-        std::string title;
-    };
+    struct base: cppcms::base_content {};
 }}}}

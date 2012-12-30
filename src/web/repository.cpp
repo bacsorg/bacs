@@ -64,7 +64,6 @@ namespace bacs{namespace archive{namespace web
     void repository::insert()
     {
         content::insert data;
-        data.title = translate("Insert");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -81,7 +80,6 @@ namespace bacs{namespace archive{namespace web
     void repository::extract()
     {
         content::extract data;
-        data.title = translate("Extract problems");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -99,7 +97,6 @@ namespace bacs{namespace archive{namespace web
     void repository::rename()
     {
         content::rename data;
-        data.title = translate("Rename problem");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -114,7 +111,6 @@ namespace bacs{namespace archive{namespace web
     void repository::existing()
     {
         content::existing data;
-        data.title = translate("Existing problems");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -133,7 +129,6 @@ namespace bacs{namespace archive{namespace web
     void repository::available()
     {
         content::available data;
-        data.title = translate("Available problems");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -152,7 +147,6 @@ namespace bacs{namespace archive{namespace web
     void repository::status()
     {
         content::status data;
-        data.title = translate("Get problems status");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -167,7 +161,6 @@ namespace bacs{namespace archive{namespace web
     void repository::with_flag()
     {
         content::with_flag data;
-        data.title = translate("With flag");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -186,7 +179,6 @@ namespace bacs{namespace archive{namespace web
     void repository::set_flags()
     {
         content::set_flags data;
-        data.title = translate("Set flags");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -201,7 +193,6 @@ namespace bacs{namespace archive{namespace web
     void repository::unset_flags()
     {
         content::unset_flags data;
-        data.title = translate("Unset flags");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -216,7 +207,6 @@ namespace bacs{namespace archive{namespace web
     void repository::clear_flags()
     {
         content::clear_flags data;
-        data.title = translate("Clear problems flags");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -231,7 +221,6 @@ namespace bacs{namespace archive{namespace web
     void repository::ignore()
     {
         content::ignore data;
-        data.title = translate("Ignore problems");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -246,7 +235,6 @@ namespace bacs{namespace archive{namespace web
     void repository::info()
     {
         content::info data;
-        data.title = translate("Get problems info");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -261,7 +249,6 @@ namespace bacs{namespace archive{namespace web
     void repository::hash()
     {
         content::hash data;
-        data.title = translate("Get problems hash");
         if (request().request_method() == "POST")
         {
             data.form.load(context());
@@ -276,7 +263,6 @@ namespace bacs{namespace archive{namespace web
     void repository::repack()
     {
         content::repack data;
-        data.title = translate("Repack problems");
         if (request().request_method() == "POST")
         {
             data.form.load(context());

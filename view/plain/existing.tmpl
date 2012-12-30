@@ -1,6 +1,9 @@
 <% c++ #include "bacs/archive/web/content/form.hpp" %>
 <% skin plain %>
     <% view existing uses bacs::archive::web::content::existing extends base_form %>
+        <% template subtitle() %>
+            <% gt "Existing problems" %>
+        <% end template %>
         <% template form() %>
             <p><% gt "Get existing problems" %></p>
             <form method="post" action="">

@@ -2,6 +2,9 @@
 <% c++ #include "bacs/archive/web/filters/base64_binary.hpp" %>
 <% skin plain %>
     <% view info uses bacs::archive::web::content::info extends base_form %>
+        <% template subtitle() %>
+            <% gt "Problems info" %>
+        <% end template %>
         <% template form() %>
             <p><% gt "Get problems info" %></p>
             <form method="post" action="">

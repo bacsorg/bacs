@@ -2,6 +2,9 @@
 <% c++ #include "bacs/archive/web/filters/base64_binary.hpp" %>
 <% skin plain %>
     <% view hash uses bacs::archive::web::content::hash extends base_form %>
+        <% template subtitle() %>
+            <% gt "Problems hash" %>
+        <% end template %>
         <% template form() %>
             <p><% gt "Get problems hash" %></p>
             <form method="post" action="">

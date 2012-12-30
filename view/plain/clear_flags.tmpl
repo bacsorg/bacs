@@ -1,6 +1,9 @@
 <% c++ #include "bacs/archive/web/content/form.hpp" %>
 <% skin plain %>
     <% view clear_flags uses bacs::archive::web::content::clear_flags extends base_form %>
+        <% template subtitle() %>
+            <% gt "Clear problems flags" %>
+        <% end template %>
         <% template form() %>
             <p><% gt "Clear problems flags" %></p>
             <form method="post" action="">

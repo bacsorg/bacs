@@ -1,6 +1,9 @@
 <% c++ #include "bacs/archive/web/content/form.hpp" %>
 <% skin plain %>
     <% view status uses bacs::archive::web::content::status extends base_form %>
+        <% template subtitle() %>
+            <% gt "Problems status" %>
+        <% end template %>
         <% template form() %>
             <p><% gt "Get problems status" %></p>
             <form method="post" action="">

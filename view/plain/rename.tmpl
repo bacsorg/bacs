@@ -1,6 +1,9 @@
 <% c++ #include "bacs/archive/web/content/form.hpp" %>
 <% skin plain %>
     <% view rename uses bacs::archive::web::content::rename extends base_form %>
+        <% template subtitle() %>
+            <% gt "Rename problem" %>
+        <% end template %>
         <% template form() %>
             <% gt "Rename problem" %>
             <form method="post" action="">

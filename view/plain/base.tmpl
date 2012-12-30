@@ -4,7 +4,7 @@
         <% template render() %>
             <html>
                 <head>
-                    <title><%= title %></title>
+                    <title><% include title() %></title>
                 </head>
                 <body>
                     <% include menu() %>
@@ -31,6 +31,9 @@
                     <td style="padding:5px"><a href="<% url "/repack" %>"><% gt "repack" %></a></td>
                 </tr>
             </table>
+        <% end template %>
+        <% template title() %>
+            BACS Archive
         <% end template %>
         <% template body() %>
             Hi, folks!
