@@ -127,6 +127,11 @@ namespace bacs{namespace archive
         return get_all_set(this, &repository::has_flag, id_set, flag);
     }
 
+    problem::id_set repository::with_flag(const problem::flag &flag)
+    {
+        return get_all_set(this, &repository::has_flag, existing(), flag);
+    }
+
     problem::id_set repository::set_flags_all(const problem::id_set &id_set,
                                               const problem::flag_set &flags)
     {
