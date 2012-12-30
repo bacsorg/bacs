@@ -11,7 +11,7 @@
 #include "bacs/archive/web/content/form/existing.hpp"
 #include "bacs/archive/web/content/form/available.hpp"
 // status
-//#include "bacs/archive/web/content/form/has_flag.hpp"
+#include "bacs/archive/web/content/form/with_flag.hpp"
 #include "bacs/archive/web/content/form/set_flags.hpp"
 #include "bacs/archive/web/content/form/unset_flags.hpp"
 // clear_flags
@@ -44,8 +44,7 @@ namespace bacs{namespace archive{namespace web{namespace content
         status();
     };
 
-    //typedef basic_form<form::with_flag, boost::optional<bool>> with_flag;
-
+    typedef basic_form<form::with_flag, problem::id_set> with_flag;
     typedef basic_form<form::set_flags, problem::id_set> set_flags;
     typedef basic_form<form::unset_flags, problem::id_set> unset_flags;
 
