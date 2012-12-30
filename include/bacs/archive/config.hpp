@@ -1,7 +1,6 @@
 #pragma once
 
-#include "bunsan/utility/factory_options.hpp"
-#include "bunsan/utility/archiver.hpp"
+#include "bacs/archive/archiver_options.hpp"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -10,11 +9,6 @@
 
 namespace bacs{namespace archive
 {
-    struct archiver_options: bunsan::utility::factory_options<bunsan::utility::archiver>
-    {
-        bunsan::utility::archiver_ptr instance(const bunsan::utility::resolver &resolver) const;
-    };
-
     struct config
     {
         template <typename Archive>
