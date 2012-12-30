@@ -70,12 +70,9 @@ namespace bacs{namespace archive{namespace web
             data.form.load(context());
             if (data.form.validate())
             {
-                archiver_options config;
-                config.type = data.form.config.type.value();
-                config.config.put("format", data.form.config.format.value());
                 const bunsan::tempfile tmpfile = bunsan::tempfile::unique(); // FIXME use specified dir from config
                 data.form.archive.value()->save_to(tmpfile.string());
-                data.result = m_repository->insert_all(config, tmpfile.path());
+                data.result = m_repository->insert_all(data.form.config.value(), tmpfile.path());
             }
         }
         render("insert", data);
@@ -90,10 +87,7 @@ namespace bacs{namespace archive{namespace web
             data.form.load(context());
             if (data.form.validate())
             {
-                archiver_options config;
-                config.type = data.form.config.type.value();
-                config.config.put("format", data.form.config.format.value());
-                bunsan::tempfile tmpfile = m_repository->extract_all(data.form.ids.value(), config);
+                bunsan::tempfile tmpfile = m_repository->extract_all(data.form.ids.value(), data.form.config.value());
                 const std::string filename = "archive." + data.form.config.type.value() +
                                              "." + data.form.config.format.value();
                 send_tempfile(std::move(tmpfile), filename);
