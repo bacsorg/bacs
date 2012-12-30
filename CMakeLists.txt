@@ -40,7 +40,6 @@ bunsan_use(cppcms booster)
 bunsan_add_executable(${PROJECT_NAME}_web
     src/web/repository.cpp
     src/web/content/form/base.cpp
-    src/web/content/form/archiver_config.cpp
     src/web/content/form/list_query.cpp
     src/web/content/form/insert.cpp
     src/web/content/form/extract.cpp
@@ -51,6 +50,7 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/web/content/form/set_flags.cpp
     src/web/content/form/unset_flags.cpp
     src/web/content/form.cpp
+    src/web/content/form/widgets/archiver_config.cpp
     src/web/content/form/widgets/problem/id.cpp
     src/web/content/form/widgets/problem/id_set.cpp
     src/web/content/form/widgets/problem/optional_id_set.cpp

@@ -1,6 +1,6 @@
-#include "bacs/archive/web/content/form/archiver_config.hpp"
+#include "bacs/archive/web/content/form/widgets/archiver_config.hpp"
 
-namespace bacs{namespace archive{namespace web{namespace content{namespace form
+namespace bacs{namespace archive{namespace web{namespace content{namespace form{namespace widgets
 {
     archiver_config::archiver_config()
     {
@@ -19,4 +19,4 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
         config.config.put("format", format.value());
         return config;
     }
-}}}}}
+}}}}}}

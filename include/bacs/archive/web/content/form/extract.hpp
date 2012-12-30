@@ -1,8 +1,8 @@
 #pragma once
 
 #include "bacs/archive/web/content/form/base.hpp"
+#include "bacs/archive/web/content/form/widgets/archiver_config.hpp"
 #include "bacs/archive/web/content/form/widgets/problem/id_set.hpp"
-#include "bacs/archive/web/content/form/archiver_config.hpp"
 
 namespace bacs{namespace archive{namespace web{namespace content{namespace form
 {
@@ -10,7 +10,7 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
     {
         extract();
 
-        archiver_config config;
+        widgets::archiver_config config;
         widgets::problem::id_set ids;
         cppcms::widgets::submit submit;
     };
