@@ -68,7 +68,7 @@ bunsan_web_add_skin(plain
     view/plain/existing.tmpl
     view/plain/available.tmpl
     view/plain/status.tmpl
-    #view/plain/has_flag.tmpl
+    view/plain/with_flag.tmpl
     view/plain/set_flags.tmpl
     view/plain/unset_flags.tmpl
     view/plain/clear_flags.tmpl
