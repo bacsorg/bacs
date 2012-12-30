@@ -2,9 +2,12 @@
 <% skin plain %>
     <% view base uses bacs::archive::web::content::base %>
         <% template render() %>
+            <!DOCTYPE html>
             <html>
                 <head>
-                    <title><% include title() %></title>
+                    <title>
+                        <% include title() %>
+                    </title>
                 </head>
                 <body>
                     <% include menu() %>
@@ -33,7 +36,11 @@
             </table>
         <% end template %>
         <% template title() %>
-            BACS Archive
+            BACS Archive ::
+            <% include subtitle() %>
+        <% end template %>
+        <% template subtitle() %>
+            <!-- Nothing here by default -->
         <% end template %>
         <% template body() %>
             Hi, folks!
