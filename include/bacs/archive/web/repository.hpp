@@ -21,7 +21,7 @@ namespace bacs{namespace archive{namespace web
         void existing();
         void available();
         void status();
-        void has_flag();
+        void with_flag();
         void set_flags();
         void unset_flags();
         void clear_flags();

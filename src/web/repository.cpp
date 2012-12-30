@@ -34,8 +34,8 @@ namespace bacs{namespace archive{namespace web
         dispatcher().assign("/status", &repository::status, this);
         mapper().assign("status", "/status");
 
-        dispatcher().assign("/has_flag", &repository::has_flag, this);
-        mapper().assign("has_flag", "/has_flag");
+        dispatcher().assign("/with_flag", &repository::with_flag, this);
+        mapper().assign("with_flag", "/with_flag");
 
         dispatcher().assign("/set_flags", &repository::set_flags, this);
         mapper().assign("set_flags", "/set_flags");
@@ -170,10 +170,10 @@ namespace bacs{namespace archive{namespace web
         render("status", data);
     }
 
-    void repository::has_flag()
+    void repository::with_flag()
     {
-        /*content::has_flag data;
-        data.title = translate("");*/
+        /*content::with_flag data;
+        data.title = translate("With flag");*/
     }
 
     void repository::set_flags()
