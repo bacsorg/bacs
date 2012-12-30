@@ -21,7 +21,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_BINAR
 set(PROTOBUF_IMPORT_DIRS proto)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 PROTOBUF_GENERATE_CPP(proto_srcs proto_hdrs
-    proto/archive.proto
+    proto/problem.proto
 )
 
 bunsan_add_shared_library(${PROJECT_NAME}

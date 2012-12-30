@@ -1,4 +1,4 @@
-package bacs.archive.pb;
+package bacs.archive.pb.problem;
 
 message IdSet
 {
