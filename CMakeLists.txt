@@ -49,7 +49,9 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/web/content/form/set_flags.cpp
     src/web/content/form/unset_flags.cpp
     src/web/content/form.cpp
-    src/web/content/form/widgets/problem.cpp
+    src/web/content/form/widgets/problem/id.cpp
+    src/web/content/form/widgets/problem/id_set.cpp
+    src/web/content/form/widgets/problem/flag_set.cpp
     src/web/filters/base64_binary.cpp
     src/bin/web.cpp
 )
