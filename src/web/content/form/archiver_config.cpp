@@ -11,4 +11,12 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form
         add(type);
         add(format);
     }
+
+    archiver_options archiver_config::value()
+    {
+        archiver_options config;
+        config.type = type.value();
+        config.config.put("format", format.value());
+        return config;
+    }
 }}}}}
