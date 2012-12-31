@@ -38,6 +38,17 @@ message Status
     required bytes hash = 2;
 }
 
+message StatusMap
+{
+    message Entry
+    {
+        required string id = 1;
+        optional Status status = 2;
+    }
+
+    repeated Entry items = 1;
+}
+
 message ImportInfo
 {
     optional string error = 1;
