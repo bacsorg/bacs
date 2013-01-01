@@ -61,6 +61,7 @@ bunsan_add_executable(${PROJECT_NAME}_web
 
 bunsan_web_add_skin(plain
     view/plain/base.tmpl
+    view/plain/error.tmpl
     view/plain/base_form.tmpl
     view/plain/insert.tmpl
     view/plain/extract.tmpl

@@ -1,0 +1,16 @@
+<% c++ #include "bacs/archive/web/content/error.hpp" %>
+<% skin plain %>
+    <% view error uses bacs::archive::web::content::error extends base %>
+        <% template subtitle() %>
+            Error
+        <% end template %>
+        <% template body() %>
+            <p><%= brief %></p>
+            <% if raw %>
+                <div><%= message | raw %></div>
+            <% else %>
+                <pre><%= message %></pre>
+            <% end %>
+        <% end template %>
+    <% end view %>
+<% end skin %>
