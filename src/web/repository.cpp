@@ -74,7 +74,30 @@ namespace bacs{namespace archive{namespace web
             if (data.form.validate())
             {
                 Result result;
-                do_render = (this->*Handler)(data, result);
+                try
+                {
+                    do_render = (this->*Handler)(data, result);
+                }
+                catch (std::exception &e)
+                {
+                    content::error error;
+                    switch (data.form.response())
+                    {
+                    case content::form::base::response_type::html:
+                        {
+                            error.brief = translate("Oops! Exception occurred.");
+                            error.message = e.what();
+                            render("error", error);
+                        }
+                        break;
+                    case content::form::base::response_type::protobuf:
+                        response().status(cppcms::http::response::internal_server_error, "Exception occurred");
+                        response().content_type("text/plain");
+                        response().out() << e.what();
+                        break;
+                    }
+                    return;
+                }
                 switch (data.form.response())
                 {
                 case content::form::base::response_type::html:
@@ -104,7 +127,7 @@ namespace bacs{namespace archive{namespace web
                         error.brief = translate("Invalid request.");
                         error.message = translate("Form was not filled correctly.");
                         render("error", error);
-                        do_render = false;
+                        return;
                     }
                     break;
                 }
