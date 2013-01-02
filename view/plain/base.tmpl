@@ -10,7 +10,6 @@
                     </title>
                 </head>
                 <body>
-                    <% include menu() %>
                     <% include body() %>
                 </body>
             </html>
@@ -43,6 +42,10 @@
             <!-- Nothing here by default -->
         <% end template %>
         <% template body() %>
+            <% include menu() %>
+            <% include main() %>
+        <% end template %>
+        <% template main() %>
             Hi, folks!
         <% end template %>
     <% end view %>
