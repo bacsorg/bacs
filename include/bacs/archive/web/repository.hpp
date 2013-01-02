@@ -31,6 +31,8 @@ namespace bacs{namespace archive{namespace web
         template <typename Model, typename Result>
         void handler_wrapper(const std::string &name, Result &result);
 
+        void main(std::string url) override;
+
         void insert();
         void extract();
         void rename();

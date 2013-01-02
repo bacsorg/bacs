@@ -199,6 +199,18 @@ namespace bacs{namespace archive{namespace web
         }
     }
 
+    void repository::main(std::string url)
+    {
+        if (!dispatcher().dispatch(url))
+        {
+            response().status(cppcms::http::response::not_found);
+            content::error error;
+            error.brief = translate("Page not found.");
+            error.message = translate("Requested page was not found. Try to use menu above.");
+            render("error", error);
+        }
+    }
+
 #define DEFINE_CONVERTIBLE_HANDLER(NAME, RESULT, PROTO_RESULT) \
     void repository::NAME() \
     { \
