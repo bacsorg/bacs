@@ -33,8 +33,16 @@ namespace bacs{namespace archive{namespace web{namespace content
         boost::optional<Result> result;
     };
 
+    template <typename Form>
+    struct basic_form<Form, void>: base_form
+    {
+        BUNSAN_FORWARD_EXPLICIT_CONSTRUCTOR(basic_form, form)
+
+        Form form;
+    };
+
     typedef basic_form<form::insert, problem::import_map> insert;
-    typedef basic_form<form::extract, std::string> extract;
+    typedef basic_form<form::extract, void> extract;
     typedef basic_form<form::rename, problem::import_info> rename;
     typedef basic_form<form::existing, problem::id_set> existing;
     typedef basic_form<form::available, problem::id_set> available;
