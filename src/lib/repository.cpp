@@ -26,7 +26,14 @@
 #include <boost/filesystem.hpp>
 #include <boost/assert.hpp>
 
-bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): ntv(0)
+bunsan::pm::repository::repository(const pm::config &config_): ntv(nullptr), m_config(config_)
+{
+    if (m_config.lock.global)
+        m_flock.reset(new bunsan::interprocess::file_lock(m_config.lock.global->c_str()));
+    ntv = new native(m_config);
+}
+
+bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): ntv(nullptr)
 {
     DLOG(creating repository instance);
     // TODO translate some exceptions to invalid_configuration_error

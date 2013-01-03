@@ -30,6 +30,7 @@ namespace bunsan{namespace pm
     class repository: private boost::noncopyable
     {
     public:
+        explicit repository(const pm::config &config_);
         explicit repository(const boost::property_tree::ptree &config_);
 
         /*!
