@@ -357,11 +357,7 @@ namespace bacs{namespace archive
     {
         problem::validate_id(id);
         problem::validate_flag(flag);
-        if (exists(id))
-        {
-            // TODO
-        }
-        return false;
+        return boost::filesystem::exists(m_location.repository_root / id / ename::flags / flag);
     }
 
     boost::optional<problem::hash_type> repository::hash(const problem::id &id)
