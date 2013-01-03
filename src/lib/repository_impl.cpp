@@ -240,7 +240,13 @@ namespace bacs{namespace archive
             if (exists(id))
             {
                 problem::status_type status;
-                // TODO
+                status.hash = read_hash(m_location.repository_root / id / ename::hash);
+                for (boost::filesystem::directory_iterator i(m_location.repository_root / id / ename::flags), end; i != end; ++i)
+                {
+                    const problem::flag flag = i->path().filename().string();
+                    problem::validate_flag(flag);
+                    status.flags.insert(flag);
+                }
                 return status;
             }
         }
