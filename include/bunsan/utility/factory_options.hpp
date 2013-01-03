@@ -11,9 +11,10 @@ namespace bunsan{namespace utility
     template <typename Factory>
     struct factory_options
     {
-        typedef Factory factory_type;
-        typedef typename factory_type::bunsan_factory::result_type result_type;
-        typedef typename factory_type::bunsan_factory::arguments_size arguments_size;
+        typedef Factory factory;
+        typedef typename factory::factory_type factory_type;
+        typedef typename factory::bunsan_factory::result_type result_type;
+        typedef typename factory::bunsan_factory::arguments_size arguments_size;
 
         template <typename Archive>
         void serialize(Archive &ar, const unsigned int)
@@ -27,7 +28,7 @@ namespace bunsan{namespace utility
         typename std::enable_if<arguments_size::value == sizeof...(Args),
             result_type>::type instance(Args &&...args) const
         {
-            const result_type tmp = factory_type::instance(type, std::forward<Args>(args)...);
+            const result_type tmp = factory::instance(type, std::forward<Args>(args)...);
             if (tmp)
                 tmp->setup(config);
             return tmp;
