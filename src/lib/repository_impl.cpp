@@ -197,8 +197,15 @@ namespace bacs{namespace archive
 
     problem::id_set repository::available()
     {
+        const shared_lock_guard lk(m_lock);
         problem::id_set set;
-        // TODO
+        for (boost::filesystem::directory_iterator i(m_location.repository_root), end; i != end; ++i)
+        {
+            const problem::id id = i->path().filename().string();
+            problem::validate_id(id);
+            if (is_available_(id))
+                set.insert(id);
+        }
         return set;
     }
 
