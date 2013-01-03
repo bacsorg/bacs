@@ -405,7 +405,8 @@ namespace bacs{namespace archive
 
     problem::import_info repository::repack_(const problem::id &id)
     {
-        // TODO
+        BOOST_ASSERT(exists(id));
+        return repack_(id, read_hash(m_location.repository_root / id / ename::hash));
     }
 
     problem::import_info repository::repack_(const problem::id &id, const problem::hash_type &hash)
