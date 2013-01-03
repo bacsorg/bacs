@@ -115,6 +115,15 @@ namespace bacs{namespace archive
         return get_all_set(this, &repository::is_available, id_set);
     }
 
+    bool repository::is_locked(const problem::id &id)
+    {
+        return has_flag(id, problem::flags::locked) || has_flag(id, problem::flags::read_only);
+    }
+
+    bool repository::is_read_only(const problem::id &id)
+    {
+        return has_flag(id, problem::flags::read_only);
+    }
     /* flags */
 
     problem::id_set repository::with_flag(const problem::id_set &id_set,

@@ -189,6 +189,20 @@ namespace bacs{namespace archive
          */
         problem::id_set available(const problem::id_set &id_set);
 
+        /*!
+         * \brief Check if problem is locked or read only.
+         *
+         * Not atomic, lock-free.
+         */
+        bool is_locked(const problem::id &id);
+
+        /*!
+         * \brief Check if problem is read only.
+         *
+         * Atomic, lock-free.
+         */
+        bool is_read_only(const problem::id &id);
+
         /* flags */
         /*!
          * \brief Get problem status.
