@@ -429,6 +429,8 @@ namespace bacs{namespace archive
 
         /* not synchronized function versions for internal usage */
         bool is_available_(const problem::id &id);
+        problem::import_info repack_(const problem::id &id);
+        problem::import_info repack_(const problem::id &id, const problem::hash_type &hash);
 
     private:
         boost::shared_mutex m_lock;

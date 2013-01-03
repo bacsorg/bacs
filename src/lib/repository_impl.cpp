@@ -113,8 +113,55 @@ namespace bacs{namespace archive
 
     problem::import_info repository::insert(const problem::id &id, const boost::filesystem::path &location)
     {
+        enum error_type
+        {
+            ok,
+            problem_is_locked
+        } error = ok;
         problem::validate_id(id);
-        // TODO
+        problem::import_info import_info;
+        if (!is_locked(id))
+        {
+            const lock_guard lk(m_lock);
+            if (!is_locked(id))
+            {
+                if (boost::filesystem::exists(m_location.repository_root / id))
+                {
+                    boost::filesystem::remove(m_location.repository_root / id / m_problem.data.filename);
+                    boost::filesystem::remove(m_location.repository_root / id / ename::hash);
+                    boost::filesystem::remove(m_location.repository_root / id / ename::info);
+                }
+                else
+                {
+                    BOOST_VERIFY(boost::filesystem::create_directory(m_location.repository_root / id));
+                    BOOST_VERIFY(boost::filesystem::create_directory(m_location.repository_root / id / ename::flags));
+                }
+                const bunsan::utility::archiver_ptr archiver = m_problem_archiver_factory(m_resolver);
+                BOOST_ASSERT(archiver);
+                archiver->pack_contents(m_location.repository_root / id / m_problem.data.filename, location);
+                const problem::hash_type hash = compute_hash(m_location.repository_root / id / m_problem.data.filename);
+                write_hash(m_location.repository_root / id / ename::hash, hash);
+                import_info = repack_(id, hash);
+            }
+            else
+            {
+                error = problem_is_locked;
+            }
+        }
+        else
+        {
+            error = problem_is_locked;
+        }
+        switch (error)
+        {
+        case ok:
+            /* nothing to do */
+            break;
+        case problem_is_locked:
+            import_info.error = "problem is locked";
+            break;
+        }
+        return import_info;
     }
 
     bool repository::extract(const problem::id &id, const boost::filesystem::path &location)
@@ -333,5 +380,15 @@ namespace bacs{namespace archive
             }
         }
         return info;
+    }
+
+    problem::import_info repository::repack_(const problem::id &id)
+    {
+        // TODO
+    }
+
+    problem::import_info repository::repack_(const problem::id &id, const problem::hash_type &hash)
+    {
+        // TODO
     }
 }}
