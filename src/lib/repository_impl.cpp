@@ -170,9 +170,12 @@ namespace bacs{namespace archive
         if (exists(id))
         {
             const shared_lock_guard lk(m_lock);
-            if (exists(id))
+            if (is_available_(id))
             {
-                // TODO
+                bunsan::filesystem::reset_dir(location);
+                const bunsan::utility::archiver_ptr archiver = m_problem_archiver_factory(m_resolver);
+                BOOST_ASSERT(archiver);
+                archiver->unpack(m_location.repository_root / id / m_problem.data.filename, location);
                 return true;
             }
         }
