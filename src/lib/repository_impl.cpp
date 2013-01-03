@@ -347,12 +347,8 @@ namespace bacs{namespace archive
         if (exists(id))
         {
             const shared_lock_guard lk(m_lock);
-            if (exists(id))
-            {
-                problem::info_type info;
-                // TODO
-                return info;
-            }
+            if (is_available_(id))
+                return read_info(m_location.repository_root / id / ename::info);
         }
         return boost::optional<problem::info_type>();
     }
