@@ -253,9 +253,12 @@ namespace bacs{namespace archive
         /*!
          * \brief Set problem flag.
          *
-         * \return false if problem does not exist
+         * \return false if problem does not exist or is_read_only
          *
          * Atomic, exclusive-lock.
+         *
+         * \see repository::exists
+         * \see repository::is_read_only
          */
         bool set_flag(const problem::id &id, const problem::flag &flag);
 
@@ -263,6 +266,9 @@ namespace bacs{namespace archive
          * \brief Set problem flags.
          *
          * Atomic, exclusive-lock.
+         *
+         * \see repository::exists
+         * \see repository::is_read_only
          */
         bool set_flags(const problem::id &id, const problem::flag_set &flags);
 
@@ -278,18 +284,24 @@ namespace bacs{namespace archive
         /*!
          * \brief Unset problem flag.
          *
-         * \return false if problem does not exist
+         * \return false if problem does not exist or is_read_only
          *
          * Atomic, exclusive-lock.
+         *
+         * \see repository::exists
+         * \see repository::is_read_only
          */
         bool unset_flag(const problem::id &id, const problem::flag &flag);
 
         /*!
          * \brief Unset problem flags.
          *
-         * \return false if problem does not exist
+         * \return false if problem does not exist or is_read_only
          *
          * Atomic, exclusive-lock.
+         *
+         * \see repository::exists
+         * \see repository::is_read_only
          */
         bool unset_flags(const problem::id &id, const problem::flag_set &flags);
 
@@ -305,9 +317,12 @@ namespace bacs{namespace archive
         /*!
          * \brief Clear problem flags.
          *
-         * \return false if problem does not exist
+         * \return false if problem does not exist or is_read_only
          *
          * Atomic, exclusive-lock.
+         *
+         * \see repository::exists
+         * \see repository::is_read_only
          */
         bool clear_flags(const problem::id &id);
 
@@ -338,11 +353,13 @@ namespace bacs{namespace archive
         /*!
          * \brief Alias for repository::set_flag(id, #problem::flag::ignore).
          *
-         * \return false if problem does not exists
-         *
-         * \see repository::set_flag
+         * \return false if problem does not exists or is_read_only
          *
          * \todo pair function, function rename possible (as flag)
+         *
+         * \see repository::set_flag
+         * \see repository::exists
+         * \see repository::is_read_only
          */
         bool ignore(const problem::id &id);
 
@@ -399,6 +416,7 @@ namespace bacs{namespace archive
          *
          * Atomic, exclusive-lock.
          *
+         * \see repository::exists
          * \see repository::set_flag
          */
         problem::import_info repack(const problem::id &id);
