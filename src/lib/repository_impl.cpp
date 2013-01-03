@@ -327,9 +327,15 @@ namespace bacs{namespace archive
         if (exists(id))
         {
             const lock_guard lk(m_lock);
-            if (exists(id))
+            if (exists(id) && !is_read_only(id))
             {
-                // TODO
+                for (boost::filesystem::directory_iterator i(m_location.repository_root / id / ename::flags), end; i != end; ++i)
+                {
+                    const problem::flag flag = i->path().filename().string();
+                    if (flag != problem::flags::ignore) // it is not possible to clear ignore flag
+                        BOOST_VERIFY(boost::filesystem::remove(*i));
+                }
+                return true;
             }
         }
         return false;
