@@ -28,6 +28,7 @@ bunsan_add_shared_library(${PROJECT_NAME}
     ${proto_srcs}
     src/lib/repository.cpp
     src/lib/repository_impl.cpp
+    src/lib/repository_repack.cpp
     src/lib/problem.cpp
     src/lib/config.cpp
 )
