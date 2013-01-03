@@ -1,14 +1,107 @@
 #include "bacs/archive/repository.hpp"
+#include "bacs/archive/error.hpp"
 #include "bacs/archive/problem/flags.hpp"
+
+#include "bunsan/enable_error_info.hpp"
+#include "bunsan/filesystem/fstream.hpp"
+#include "bunsan/filesystem/operations.hpp"
 
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_lock_guard.hpp>
+#include <boost/crc.hpp>
+#include <boost/assert.hpp>
 
 namespace bacs{namespace archive
 {
     typedef boost::lock_guard<boost::shared_mutex> lock_guard;
     typedef boost::shared_lock_guard<boost::shared_mutex> shared_lock_guard;
 
+    namespace
+    {
+        void touch(const boost::filesystem::path &path)
+        {
+            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            {
+                bunsan::filesystem::ofstream fout(path);
+                fout.close();
+            }
+            BUNSAN_EXCEPTIONS_WRAP_END()
+            BOOST_ASSERT(boost::filesystem::exists(path));
+        }
+
+        problem::binary read_binary(const boost::filesystem::path &path)
+        {
+            problem::binary bin;
+            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            {
+                bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
+                char buf[BUFSIZ];
+                do
+                {
+                    fin.read(buf, BUFSIZ);
+                    bin.insert(bin.end(), buf, buf + fin.gcount());
+                }
+                while (fin);
+                fin.close();
+            }
+            BUNSAN_EXCEPTIONS_WRAP_END()
+            return bin;
+        }
+
+        void write_binary(const boost::filesystem::path &path, const problem::binary &bin)
+        {
+            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            {
+                bunsan::filesystem::ofstream fout(path, std::ios_base::binary);
+                fout.write(reinterpret_cast<const char *>(bin.data()), bin.size());
+                fout.close();
+            }
+            BUNSAN_EXCEPTIONS_WRAP_END()
+        }
+
+        inline problem::hash_type read_hash(const boost::filesystem::path &path)
+        {
+            return read_binary(path);
+        }
+
+        inline problem::info_type read_info(const boost::filesystem::path &path)
+        {
+            return read_binary(path);
+        }
+
+        inline void write_hash(const boost::filesystem::path &path, const problem::hash_type &hash)
+        {
+            return write_binary(path, hash);
+        }
+
+        inline void write_info(const boost::filesystem::path &path, const problem::info_type &info)
+        {
+            return write_binary(path, info);
+        }
+
+        problem::hash_type compute_hash(const boost::filesystem::path &path)
+        {
+            boost::crc_32_type crc;
+            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            {
+                bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
+                char buf[BUFSIZ];
+                do
+                {
+                    fin.read(buf, BUFSIZ);
+                    crc.process_bytes(buf, fin.gcount());
+                }
+                while (fin);
+                fin.close();
+            }
+            BUNSAN_EXCEPTIONS_WRAP_END()
+            auto value = crc.checksum();
+            problem::hash_type hash(sizeof(value));
+            for (std::size_t i = 0; i < sizeof(value); ++i, value >>= 8)
+                hash[i] = value & 0xFF;
+            return hash;
+        }
+    }
     problem::import_info repository::insert(const problem::id &id, const boost::filesystem::path &location)
     {
         problem::validate_id(id);
