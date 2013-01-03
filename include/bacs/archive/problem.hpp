@@ -44,4 +44,10 @@ namespace bacs{namespace archive{namespace problem
 
     bool is_allowed_id(const id &id_);
     bool is_allowed_flag(const flag &flag_);
+
+    /// \throws invalid_id_error if !is_allowed_id(id_)
+    void validate_id(const id &id_);
+
+    /// \throws invalid_flag_error if !is_allowed_flag(flag_)
+    void validate_flag(const flag &flag_);
 }}}

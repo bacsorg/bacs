@@ -19,4 +19,19 @@ namespace bacs{namespace archive
     {
         typedef boost::error_info<struct tag_archiver_type, std::string> archiver_type;
     };
+
+    namespace problem
+    {
+        struct error: virtual archive::error {};
+
+        struct invalid_id_error: virtual error
+        {
+            typedef boost::error_info<struct tag_id, problem::id> id;
+        };
+
+        struct invalid_flag_error: virtual error
+        {
+            typedef boost::error_info<struct tag_flag, problem::flag> flag;
+        };
+    }
 }}
