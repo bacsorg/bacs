@@ -11,11 +11,13 @@ namespace bacs{namespace archive
 
     problem::import_info repository::insert(const problem::id &id, const boost::filesystem::path &location)
     {
+        problem::validate_id(id);
         // TODO
     }
 
     bool repository::extract(const problem::id &id, const boost::filesystem::path &location)
     {
+        problem::validate_id(id);
         if (exists(id))
         {
             const shared_lock_guard lk(m_lock);
@@ -44,6 +46,7 @@ namespace bacs{namespace archive
 
     bool repository::exists(const problem::id &id)
     {
+        problem::validate_id(id);
         // FIXME
         return false;
     }
@@ -66,6 +69,7 @@ namespace bacs{namespace archive
 
     boost::optional<problem::status_type> repository::status(const problem::id &id)
     {
+        problem::validate_id(id);
         if (exists(id))
         {
             const shared_lock_guard lk(m_lock);
@@ -81,6 +85,8 @@ namespace bacs{namespace archive
 
     bool repository::set_flag(const problem::id &id, const problem::flag &flag)
     {
+        problem::validate_id(id);
+        problem::validate_flag(flag);
         if (exists(id))
         {
             const lock_guard lk(m_lock);
@@ -95,6 +101,8 @@ namespace bacs{namespace archive
 
     bool repository::set_flags(const problem::id &id, const problem::flag_set &flags)
     {
+        problem::validate_id(id);
+        std::for_each(flags.begin(), flags.end(), problem::validate_flag);
         if (exists(id))
         {
             const lock_guard lk(m_lock);
@@ -109,6 +117,8 @@ namespace bacs{namespace archive
 
     bool repository::unset_flag(const problem::id &id, const problem::flag &flag)
     {
+        problem::validate_id(id);
+        problem::validate_flag(flag);
         if (exists(id))
         {
             const lock_guard lk(m_lock);
@@ -123,6 +133,8 @@ namespace bacs{namespace archive
 
     bool repository::unset_flags(const problem::id &id, const problem::flag_set &flags)
     {
+        problem::validate_id(id);
+        std::for_each(flags.begin(), flags.end(), problem::validate_flag);
         if (exists(id))
         {
             const lock_guard lk(m_lock);
@@ -136,6 +148,7 @@ namespace bacs{namespace archive
 
     bool repository::clear_flags(const problem::id &id)
     {
+        problem::validate_id(id);
         if (exists(id))
         {
             const lock_guard lk(m_lock);
@@ -149,6 +162,7 @@ namespace bacs{namespace archive
 
     boost::optional<problem::info_type> repository::info(const problem::id &id)
     {
+        problem::validate_id(id);
         if (exists(id))
         {
             const shared_lock_guard lk(m_lock);
@@ -164,6 +178,8 @@ namespace bacs{namespace archive
 
     bool repository::has_flag(const problem::id &id, const problem::flag &flag)
     {
+        problem::validate_id(id);
+        problem::validate_flag(flag);
         if (exists(id))
         {
             // TODO
@@ -173,6 +189,7 @@ namespace bacs{namespace archive
 
     boost::optional<problem::hash_type> repository::hash(const problem::id &id)
     {
+        problem::validate_id(id);
         if (exists(id))
         {
             const shared_lock_guard lk(m_lock);
@@ -186,6 +203,8 @@ namespace bacs{namespace archive
 
     problem::import_info repository::rename(const problem::id &current, const problem::id &future)
     {
+        problem::validate_id(current);
+        problem::validate_id(future);
         problem::import_info info;
         // TODO work on error messages
         if (exists(current) && !exists(future))
@@ -201,6 +220,7 @@ namespace bacs{namespace archive
 
     problem::import_info repository::repack(const problem::id &id)
     {
+        problem::validate_id(id);
         problem::import_info info;
         if (exists(id))
         {
