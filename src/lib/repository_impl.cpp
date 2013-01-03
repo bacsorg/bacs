@@ -212,8 +212,7 @@ namespace bacs{namespace archive
     bool repository::exists(const problem::id &id)
     {
         problem::validate_id(id);
-        // FIXME
-        return false;
+        return boost::filesystem::exists(m_location.repository_root / id);
     }
 
     bool repository::is_available(const problem::id &id)
