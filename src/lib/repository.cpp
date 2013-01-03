@@ -1,7 +1,7 @@
 #include "bacs/archive/repository.hpp"
 #include "bacs/archive/config.hpp"
-#include "bacs/archive/flags.hpp"
 #include "bacs/archive/error.hpp"
+#include "bacs/archive/problem/flags.hpp"
 
 #include "bunsan/utility/archiver.hpp"
 #include "bunsan/config/cast.hpp"

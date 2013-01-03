@@ -1,5 +1,5 @@
 #include "bacs/archive/repository.hpp"
-#include "bacs/archive/flags.hpp"
+#include "bacs/archive/problem/flags.hpp"
 
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_lock_guard.hpp>
