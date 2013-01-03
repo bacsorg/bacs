@@ -1,21 +1,15 @@
 /*!
 \page internal_storage_page Internal storage
 
-\section repository_sec Repository
+\section repository_sec Repository storage
 
 \verbatim
 repository/
            ${problem_id}/
-                         ${archive_name}
-\endverbatim
-
-\section index_sec Index
-
-\verbatim
-index/
-      ${problem_id}/
-                    problem.xml
-                    hash
+                         flags/${flag_i}
+                         info
+                         hash
+                         ${problem.filename}
 \endverbatim
 
 \section pm_sec bunsan::pm
@@ -25,10 +19,9 @@ pm/
    bacs/
         problem/
                 ${problem_id}/
-                              {unspecified}
+                              {...unspecified...}
 \endverbatim
 
 */
 
 // vim:syntax=doxygen
-
