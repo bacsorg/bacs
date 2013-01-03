@@ -260,9 +260,9 @@ namespace bacs{namespace archive
         if (exists(id))
         {
             const lock_guard lk(m_lock);
-            if (exists(id))
+            if (exists(id) && !is_read_only(id))
             {
-                // TODO
+                touch(m_location.repository_root / id / ename::flags / flag);
                 return true;
             }
         }
@@ -276,9 +276,10 @@ namespace bacs{namespace archive
         if (exists(id))
         {
             const lock_guard lk(m_lock);
-            if (exists(id))
+            if (exists(id) && !is_read_only(id))
             {
-                // TODO
+                for (const problem::flag &flag: flags)
+                    touch(m_location.repository_root / id / ename::flags / flag);
                 return true;
             }
         }
