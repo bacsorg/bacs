@@ -298,6 +298,10 @@ namespace bacs{namespace archive
          *
          * \return false if problem does not exist or is_read_only
          *
+         * \note Since problem::flags::ignore may not be removed,
+         * if flag == problem::flags::ignore this call is equivalent
+         * to atomic repository::exists(id) && !repository::is_read_only(id) call.
+         *
          * Atomic, exclusive-lock.
          *
          * \see repository::exists
@@ -355,7 +359,7 @@ namespace bacs{namespace archive
          *
          * \return false if problem does not exists or is_read_only
          *
-         * \todo pair function, function rename possible (as flag)
+         * \note It is not possible to remove ignore flag manually.
          *
          * \see repository::set_flag
          * \see repository::exists
@@ -413,6 +417,7 @@ namespace bacs{namespace archive
          * or index is corrupted
          *
          * If repack is not successful problem is marked by problem::flag::ignore.
+         * Otherwise, problem::flag::ignore is unset.
          *
          * Atomic, exclusive-lock.
          *
