@@ -1,4 +1,5 @@
 #include "bacs/archive/repository.hpp"
+#include "bacs/archive/flags.hpp"
 
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_lock_guard.hpp>
@@ -45,6 +46,22 @@ namespace bacs{namespace archive
     {
         // FIXME
         return false;
+    }
+
+    bool repository::is_available(const problem::id &id)
+    {
+        problem::validate_id(id);
+        if (exists(id))
+        {
+            const shared_lock_guard lk(m_lock);
+            return is_available_(id);
+        }
+        return false;
+    }
+
+    bool repository::is_available_(const problem::id &id)
+    {
+        return exists(id) && !has_flag(id, problem::flags::ignore);
     }
 
     boost::optional<problem::status_type> repository::status(const problem::id &id)

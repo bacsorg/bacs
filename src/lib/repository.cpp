@@ -114,11 +114,6 @@ namespace bacs{namespace archive
         return get_all_set(this, &repository::is_available, id_set);
     }
 
-    bool repository::is_available(const problem::id &id)
-    {
-        return has_flag(id, problem::flags::ignore);
-    }
-
     /* flags */
 
     problem::id_set repository::with_flag(const problem::id_set &id_set,

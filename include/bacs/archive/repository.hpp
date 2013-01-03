@@ -411,9 +411,10 @@ namespace bacs{namespace archive
          */
         bool valid(const problem::id &id);
 
-        /* lock-free function versions for internal usage */
-        // TODO
+        /* not synchronized function versions for internal usage */
+        bool is_available_(const problem::id &id);
 
+    private:
         boost::shared_mutex m_lock;
         const bunsan::interprocess::file_guard m_flock;
         const bunsan::utility::resolver m_resolver;
