@@ -34,7 +34,7 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
         if (!text::validate())
             return false;
         const archive::problem::flag_set set = value();
-        valid(std::all_of(set.begin(), set.end(), archive::problem::is_allowed_id));
+        valid(std::all_of(set.begin(), set.end(), archive::problem::is_allowed_flag));
         return valid();
     }
 }}}}}}}
