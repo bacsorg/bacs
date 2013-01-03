@@ -3,6 +3,8 @@
 #include "bacs/archive/config.hpp"
 #include "bacs/archive/problem.hpp"
 
+#include "bunsan/pm/repository.hpp"
+
 #include "bunsan/tempfile.hpp"
 #include "bunsan/utility/resolver.hpp"
 #include "bunsan/utility/archiver.hpp"
@@ -418,8 +420,10 @@ namespace bacs{namespace archive
         boost::shared_mutex m_lock;
         const bunsan::interprocess::file_guard m_flock;
         const bunsan::utility::resolver m_resolver;
-        const boost::filesystem::path m_tmpdir;
+        const location_config m_location;
         /// internal problem storage packing
         const bunsan::utility::archiver_ptr m_problem_archiver;
+        const problem_config m_problem;
+        bunsan::pm::repository m_repository;
     };
 }}
