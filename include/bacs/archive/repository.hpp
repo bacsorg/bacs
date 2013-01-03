@@ -436,7 +436,7 @@ namespace bacs{namespace archive
         const bunsan::utility::resolver m_resolver;
         const location_config m_location;
         /// internal problem storage packing
-        const bunsan::utility::archiver_ptr m_problem_archiver;
+        const bunsan::utility::archiver::factory_type m_problem_archiver_factory;
         const problem_config m_problem;
         bunsan::pm::repository m_repository;
     };

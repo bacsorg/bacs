@@ -7,6 +7,7 @@
 #include "bunsan/config/cast.hpp"
 #include "bunsan/filesystem/operations.hpp"
 #include "bunsan/system_error.hpp"
+#include "bunsan/get.hpp"
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/assert.hpp>
@@ -24,6 +25,7 @@ namespace bacs{namespace archive
         m_flock(config_.lock),
         m_resolver(config_.resolver),
         m_location(config_.location),
+        m_problem_archiver_factory(config_.problem.data.archiver.configured_factory()),
         m_problem(config_.problem),
         m_repository(config_.pm) {}
 
