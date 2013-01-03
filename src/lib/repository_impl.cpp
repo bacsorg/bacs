@@ -376,17 +376,51 @@ namespace bacs{namespace archive
     {
         problem::validate_id(current);
         problem::validate_id(future);
-        problem::import_info info;
-        // TODO work on error messages
-        if (exists(current) && !exists(future))
+        enum error_type
+        {
+            ok,
+            current_does_not_exist,
+            current_is_locked,
+            future_exists
+        } error = ok;
+        const auto rename_status =
+            [this, &current, &future]() -> error_type
+            {
+                if (!exists(current))
+                    return current_does_not_exist;
+                if (is_locked(current))
+                    return current_is_locked;
+                if (exists(future))
+                    return future_exists;
+                return ok;
+            };
+        problem::import_info import_info;
+        error = rename_status();
+        if (error == ok)
         {
             const lock_guard lk(m_lock);
-            if (exists(current))
+            error = rename_status();
+            if (error == ok)
             {
-                // TODO
+                import_info.error = "Not implemented";
             }
         }
-        return info;
+        switch (error)
+        {
+        case ok:
+            /* nothing to do */
+            break;
+        case current_does_not_exist:
+            import_info.error = "$current problem does not exist";
+            break;
+        case current_is_locked:
+            import_info.error = "$current problem is locked";
+            break;
+        case future_exists:
+            import_info.error = "$future problem exists";
+            break;
+        }
+        return import_info;
     }
 
     problem::import_info repository::repack(const problem::id &id)
