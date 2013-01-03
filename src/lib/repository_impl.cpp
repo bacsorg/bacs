@@ -392,16 +392,15 @@ namespace bacs{namespace archive
     problem::import_info repository::repack(const problem::id &id)
     {
         problem::validate_id(id);
-        problem::import_info info;
         if (exists(id))
         {
             const lock_guard lk(m_lock);
             if (exists(id))
-            {
-                // TODO
-            }
+                return repack_(id);
         }
-        return info;
+        problem::import_info import_info;
+        import_info.error = "Problem does not exist";
+        return import_info;
     }
 
     problem::import_info repository::repack_(const problem::id &id)
