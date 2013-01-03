@@ -251,14 +251,14 @@ namespace bacs{namespace archive{namespace web
         const auto handler =
             [this, &tmpfile, &filename](content::extract &data) -> void
             {
-                bunsan::tempfile tmpfile = m_repository->extract_all(data.form.ids.value(), data.form.config.value());
-                const std::string filename = "archive." + data.form.config.type.value() +
-                                             "." + data.form.config.format.value();
+                tmpfile = m_repository->extract_all(data.form.ids.value(), data.form.config.value());
+                filename = "archive." + data.form.config.type.value() +
+                           "." + data.form.config.format.value();
             };
         const auto sender =
             [this, &tmpfile, &filename]() -> void
             {
-                this->send_tempfile(std::move(tmpfile), filename);
+                send_tempfile(std::move(tmpfile), filename);
             };
         void_result<content::extract> result(handler, sender);
         handler_wrapper<content::extract>(__func__, result);
