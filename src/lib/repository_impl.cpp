@@ -102,6 +102,15 @@ namespace bacs{namespace archive
             return hash;
         }
     }
+
+    /// entry names
+    namespace ename
+    {
+        const boost::filesystem::path hash = "hash";
+        const boost::filesystem::path info = "info";
+        const boost::filesystem::path flags = "flags";
+    }
+
     problem::import_info repository::insert(const problem::id &id, const boost::filesystem::path &location)
     {
         problem::validate_id(id);
