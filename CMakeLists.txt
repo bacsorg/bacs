@@ -10,10 +10,11 @@ find_package(Protobuf REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 bunsan_use(${PROTOBUF_LIBRARIES})
 
-bunsan_use_bunsan(common bacs_single_api bacs_single_problem)
+bunsan_use_bunsan(common pm bacs_single_api bacs_single_problem)
 bunsan_use_boost(system filesystem serialization unit_test_framework thread)
 
 bunsan_add_shared_library(${PROJECT_NAME}
+    src/common.cpp
 )
 
 bunsan_install_headers()
