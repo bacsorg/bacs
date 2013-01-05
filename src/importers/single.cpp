@@ -1,6 +1,13 @@
 #include "single.hpp"
 
+#include "bacs/problem/error.hpp"
+
+#include "bacs/single/problem/driver.hpp"
+#include "bacs/single/problem/generator.hpp"
+
 #include "bunsan/config/cast.hpp"
+
+#include <sstream>
 
 namespace bacs{namespace problem{namespace importers
 {
@@ -16,6 +23,20 @@ namespace bacs{namespace problem{namespace importers
 
     info single::convert(const options &options_)
     {
-        return info();
+        const bacs::single::problem::driver_ptr drv =
+            bacs::single::problem::driver::instance(options_.problem_dir);
+        const bacs::single::problem::generator_ptr gen =
+            bacs::single::problem::generator::instance(m_config.generator.type, m_config.generator.config);
+        bacs::single::problem::generator::options opts;
+        opts.driver = drv;
+        opts.destination = options_.destination;
+        opts.root_package = options_.root_package;
+        bacs::single::api::pb::problem::Problem problem_info = gen->generate(opts);
+        problem_info.mutable_info()->mutable_system()->set_hash(options_.hash.data(), options_.hash.size());
+        std::ostringstream sout;
+        if (!problem_info.SerializeToOstream(&sout))
+            BOOST_THROW_EXCEPTION(problem_info_serialization_error());
+        const std::string info_str = sout.str();
+        return info(info_str.begin(), info_str.end());
     }
 }}}

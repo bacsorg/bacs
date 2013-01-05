@@ -1,12 +1,15 @@
 #pragma once
 
 #include "bacs/problem/importer.hpp"
+#include "bacs/problem/error.hpp"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
 namespace bacs{namespace problem{namespace importers
 {
+    struct problem_info_serialization_error: virtual error {};
+
     class single: public importer::impl
     {
     public:
