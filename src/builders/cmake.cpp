@@ -113,7 +113,7 @@ void builders::cmake::make_(
     {
     case generator_type::MAKEFILE:
         {
-            maker_ptr ptr = maker::instance("make", m_resolver);
+            const maker_ptr ptr = maker::instance("make", m_resolver);
             ptr->setup(m_config.make_maker);
             ptr->exec(bin, {});
         }
