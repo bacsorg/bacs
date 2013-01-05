@@ -12,6 +12,8 @@ namespace bacs{namespace problem
 {
     BUNSAN_FACTORY_DEFINE(importer::impl)
 
+    importer::impl::~impl() {}
+
     importer::importer(const boost::property_tree::ptree &config): m_config(config) {}
 
     importer::impl_ptr importer::impl::instance(const boost::filesystem::path &problem_dir,
