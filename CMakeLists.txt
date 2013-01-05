@@ -16,6 +16,8 @@ bunsan_use_boost(system filesystem serialization unit_test_framework thread)
 bunsan_add_shared_library(${PROJECT_NAME}
     src/common.cpp
     src/importer.cpp
+
+    src/importers/single.cpp
 )
 
 bunsan_install_headers()
