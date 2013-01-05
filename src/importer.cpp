@@ -33,7 +33,12 @@ namespace bacs{namespace problem
         if (format.find(delim, delim_pos + 1) == std::string::npos &&
             delim_pos != std::string::npos)
         {
-            impl_ = instance_optional(format.substr(delim_pos + 1), config);
+            const std::string impl_type = format.substr(delim_pos + 1);
+            const boost::property_tree::ptree::const_assoc_iterator config_iter = config.find(impl_type);
+            if (config_iter != config.not_found())
+                impl_ = instance_optional(impl_type, config_iter->second);
+            else
+                impl_ = instance_optional(impl_type, boost::property_tree::ptree());
         }
         if (!impl_)
             BOOST_THROW_EXCEPTION(unknown_format_error() <<

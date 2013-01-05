@@ -23,6 +23,27 @@ namespace bacs{namespace problem
         };
 
     public:
+        /*!
+         * \param config per-implementation config, e.g.
+         *
+         * \code{.cpp}
+         * bacs/single/problem
+         * {
+         *     generator
+         *     {
+         *         type internal0
+         *         config
+         *         {
+         *         }
+         *     }
+         * }
+         *
+         * bacs/.../another
+         * {
+         *     ; another configuration
+         * }
+         * \endcode
+         */
         explicit importer(const boost::property_tree::ptree &config);
 
         importer(const importer &)=default;
