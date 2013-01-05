@@ -33,7 +33,7 @@ namespace bacs{namespace problem
         if (format.find(delim, delim_pos + 1) == std::string::npos &&
             delim_pos != std::string::npos)
         {
-            impl_ = instance(format.substr(delim_pos + 1), config);
+            impl_ = instance_optional(format.substr(delim_pos + 1), config);
         }
         if (!impl_)
             BOOST_THROW_EXCEPTION(unknown_format_error() <<
@@ -43,8 +43,6 @@ namespace bacs{namespace problem
 
     info importer::convert(const options &options_) const
     {
-        const impl_ptr impl_ = impl::instance(options_.problem_dir, m_config);
-        BOOST_ASSERT(impl_);
-        return impl_->convert(options_);
+        return impl::instance(options_.problem_dir, m_config)->convert(options_);
     }
 }}
