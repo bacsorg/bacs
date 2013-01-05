@@ -59,27 +59,27 @@ namespace bacs{namespace archive
             BUNSAN_EXCEPTIONS_WRAP_END()
         }
 
-        inline problem::hash_type read_hash(const boost::filesystem::path &path)
+        inline problem::hash read_hash(const boost::filesystem::path &path)
         {
             return read_binary(path);
         }
 
-        inline problem::info_type read_info(const boost::filesystem::path &path)
+        inline problem::info read_info(const boost::filesystem::path &path)
         {
             return read_binary(path);
         }
 
-        inline void write_hash(const boost::filesystem::path &path, const problem::hash_type &hash)
+        inline void write_hash(const boost::filesystem::path &path, const problem::hash &hash)
         {
             return write_binary(path, hash);
         }
 
-        inline void write_info(const boost::filesystem::path &path, const problem::info_type &info)
+        inline void write_info(const boost::filesystem::path &path, const problem::info &info)
         {
             return write_binary(path, info);
         }
 
-        problem::hash_type compute_hash(const boost::filesystem::path &path)
+        problem::hash compute_hash(const boost::filesystem::path &path)
         {
             boost::crc_32_type crc;
             BUNSAN_EXCEPTIONS_WRAP_BEGIN()
@@ -96,7 +96,7 @@ namespace bacs{namespace archive
             }
             BUNSAN_EXCEPTIONS_WRAP_END()
             auto value = crc.checksum();
-            problem::hash_type hash(sizeof(value));
+            problem::hash hash(sizeof(value));
             for (std::size_t i = 0; i < sizeof(value); ++i, value >>= 8)
                 hash[i] = value & 0xFF;
             return hash;
@@ -139,7 +139,7 @@ namespace bacs{namespace archive
                 const bunsan::utility::archiver_ptr archiver = m_problem_archiver_factory(m_resolver);
                 BOOST_ASSERT(archiver);
                 archiver->pack_contents(m_location.repository_root / id / m_problem.data.filename, location);
-                const problem::hash_type hash = compute_hash(m_location.repository_root / id / m_problem.data.filename);
+                const problem::hash hash = compute_hash(m_location.repository_root / id / m_problem.data.filename);
                 write_hash(m_location.repository_root / id / ename::hash, hash);
                 import_info = repack_(id, hash);
             }
@@ -231,7 +231,7 @@ namespace bacs{namespace archive
         return exists(id) && !has_flag(id, problem::flags::ignore);
     }
 
-    boost::optional<problem::status_type> repository::status(const problem::id &id)
+    boost::optional<problem::status> repository::status(const problem::id &id)
     {
         problem::validate_id(id);
         if (exists(id))
@@ -239,7 +239,7 @@ namespace bacs{namespace archive
             const shared_lock_guard lk(m_lock);
             if (exists(id))
             {
-                problem::status_type status;
+                problem::status status;
                 status.hash = read_hash(m_location.repository_root / id / ename::hash);
                 for (boost::filesystem::directory_iterator i(m_location.repository_root / id / ename::flags), end; i != end; ++i)
                 {
@@ -250,7 +250,7 @@ namespace bacs{namespace archive
                 return status;
             }
         }
-        return boost::optional<problem::status_type>();
+        return boost::optional<problem::status>();
     }
 
     bool repository::set_flag(const problem::id &id, const problem::flag &flag)
@@ -341,7 +341,7 @@ namespace bacs{namespace archive
         return false;
     }
 
-    boost::optional<problem::info_type> repository::info(const problem::id &id)
+    boost::optional<problem::info> repository::info(const problem::id &id)
     {
         problem::validate_id(id);
         if (exists(id))
@@ -350,7 +350,7 @@ namespace bacs{namespace archive
             if (is_available_(id))
                 return read_info(m_location.repository_root / id / ename::info);
         }
-        return boost::optional<problem::info_type>();
+        return boost::optional<problem::info>();
     }
 
     bool repository::has_flag(const problem::id &id, const problem::flag &flag)
@@ -360,7 +360,7 @@ namespace bacs{namespace archive
         return boost::filesystem::exists(m_location.repository_root / id / ename::flags / flag);
     }
 
-    boost::optional<problem::hash_type> repository::hash(const problem::id &id)
+    boost::optional<problem::hash> repository::hash(const problem::id &id)
     {
         problem::validate_id(id);
         if (exists(id))
@@ -369,7 +369,7 @@ namespace bacs{namespace archive
             if (is_available_(id))
                 return read_hash(m_location.repository_root / id / ename::hash);
         }
-        return boost::optional<problem::hash_type>();
+        return boost::optional<problem::hash>();
     }
 
     problem::import_info repository::rename(const problem::id &current, const problem::id &future)

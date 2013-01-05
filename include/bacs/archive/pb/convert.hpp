@@ -58,7 +58,7 @@ namespace bacs{namespace archive{namespace pb
             convert(flags, *proto.mutable_flags());
         }
 
-        static inline void convert(const archive::problem::status_type &status, problem::Status &proto)
+        static inline void convert(const archive::problem::status &status, problem::Status &proto)
         {
             convert(status.flags, *proto.mutable_flags());
             proto.set_hash(status.hash.data(), status.hash.size());

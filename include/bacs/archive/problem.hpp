@@ -14,27 +14,27 @@ namespace bacs{namespace archive{namespace problem
     using bacs::problem::is_allowed_id;
     using bacs::problem::validate_id;
     using bacs::problem::binary;
-    using bacs::problem::hash_type;
-    using bacs::problem::info_type;
+    using bacs::problem::hash;
+    using bacs::problem::info;
 
     typedef std::unordered_set<id> id_set;
-    typedef std::unordered_map<id, boost::optional<info_type>> info_map;
-    typedef std::unordered_map<id, boost::optional<hash_type>> hash_map;
+    typedef std::unordered_map<id, boost::optional<info>> info_map;
+    typedef std::unordered_map<id, boost::optional<hash>> hash_map;
     typedef std::string flag;
     typedef std::unordered_set<flag> flag_set;
 
-    struct status_type
+    struct status
     {
         flag_set flags;
-        hash_type hash;
+        problem::hash hash;
     };
 
-    typedef std::unordered_map<id, boost::optional<status_type>> status_map;
+    typedef std::unordered_map<id, boost::optional<status>> status_map;
 
     struct import_info
     {
         boost::optional<std::string> error;  ///< null if OK, error message otherwise
-        boost::optional<status_type> status; ///< null if does not exist
+        boost::optional<problem::status> status; ///< null if does not exist
     };
 
     typedef std::unordered_map<id, import_info> import_map;

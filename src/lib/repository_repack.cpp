@@ -3,7 +3,7 @@
 
 namespace bacs{namespace archive
 {
-    problem::import_info repository::repack_(const problem::id &id, const problem::hash_type &hash)
+    problem::import_info repository::repack_(const problem::id &id, const problem::hash &hash)
     {
         problem::import_info import_info;
         // TODO

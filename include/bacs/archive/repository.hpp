@@ -211,7 +211,7 @@ namespace bacs{namespace archive
          *
          * Atomic, lock-free.
          */
-        boost::optional<problem::status_type> status(const problem::id &id);
+        boost::optional<problem::status> status(const problem::id &id);
 
         /*!
          * \brief Get problems status.
@@ -375,7 +375,7 @@ namespace bacs{namespace archive
          *
          * \see repository::is_available
          */
-        boost::optional<problem::info_type> info(const problem::id &id);
+        boost::optional<problem::info> info(const problem::id &id);
 
         /*!
          * \brief Get info map for given problems.
@@ -394,7 +394,7 @@ namespace bacs{namespace archive
          *
          * \see repository::is_available
          */
-        boost::optional<problem::hash_type> hash(const problem::id &id);
+        boost::optional<problem::hash> hash(const problem::id &id);
 
         /*!
          * \brief Get hash map for given problems.
@@ -453,7 +453,7 @@ namespace bacs{namespace archive
         /* not synchronized function versions for internal usage */
         bool is_available_(const problem::id &id);
         problem::import_info repack_(const problem::id &id);
-        problem::import_info repack_(const problem::id &id, const problem::hash_type &hash);
+        problem::import_info repack_(const problem::id &id, const problem::hash &hash);
 
     private:
         boost::shared_mutex m_lock;
