@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.8)
 include(BunsanWeb)
 
 bunsan_use_boost(system filesystem serialization unit_test_framework program_options)
-bunsan_use_bunsan(common process utility pm)
+bunsan_use_bunsan(common process utility pm bacs_problem)
 
 find_package(Protobuf REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIRS})

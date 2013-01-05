@@ -24,11 +24,6 @@ namespace bacs{namespace archive
     {
         struct error: virtual archive::error {};
 
-        struct invalid_id_error: virtual error
-        {
-            typedef boost::error_info<struct tag_id, problem::id> id;
-        };
-
         struct invalid_flag_error: virtual error
         {
             typedef boost::error_info<struct tag_flag, problem::flag> flag;
