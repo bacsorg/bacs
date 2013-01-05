@@ -1,7 +1,5 @@
 #pragma once
 
-#include "bunsan/get.hpp"
-
 #include <string>
 
 #include <boost/property_tree/ptree.hpp>
@@ -30,8 +28,7 @@ namespace bunsan{namespace utility
                 result_type>::type operator()(Args &&...args) const
             {
                 const result_type tmp = m_factory(std::forward<Args>(args)...);
-                if (tmp)
-                    tmp->setup(m_config);
+                tmp->setup(m_config);
                 return tmp;
             }
 
@@ -56,12 +53,22 @@ namespace bunsan{namespace utility
             ar & BOOST_SERIALIZATION_NVP(config);
         }
 
-        /// Try to create instance of type using Factory, setup it on success.
+        /// Try to create instance of type using Factory and setup it.
         template <typename ... Args>
         typename std::enable_if<arguments_size::value == sizeof...(Args),
             result_type>::type instance(Args &&...args) const
         {
             const result_type tmp = factory::instance(type, std::forward<Args>(args)...);
+            tmp->setup(config);
+            return tmp;
+        }
+
+        /// Try to create instance of type using Factory, setup it on success.
+        template <typename ... Args>
+        typename std::enable_if<arguments_size::value == sizeof...(Args),
+            result_type>::type instance_optional(Args &&...args) const
+        {
+            const result_type tmp = factory::instance_optional(type, std::forward<Args>(args)...);
             if (tmp)
                 tmp->setup(config);
             return tmp;
@@ -69,7 +76,7 @@ namespace bunsan{namespace utility
 
         factory_type configured_factory() const
         {
-            return detail::configured_factory<factory>(bunsan::get(factory::factory(type)), config);
+            return detail::configured_factory<factory>(factory::factory(type), config);
         }
 
         std::string type;
