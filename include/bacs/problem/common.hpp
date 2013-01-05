@@ -11,10 +11,10 @@ namespace bacs{namespace problem
     typedef std::vector<unsigned char> binary;
 
     /// information about problem, see bacs::single::api::problem::Problem
-    typedef binary info_type;
+    typedef binary info;
 
     /// hash string
-    typedef binary hash_type;
+    typedef binary hash;
 
     bool is_allowed_id(const id &id_);
 
