@@ -1,10 +1,14 @@
 #pragma once
 
+#include "bunsan/config/traits.hpp"
+
 #include <string>
 #include <vector>
 
 #include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
 
 namespace bunsan{namespace pm
 {
@@ -82,3 +86,24 @@ namespace bunsan{namespace pm
         return out << e.name();
     }
 }}
+
+namespace bunsan{namespace config{namespace traits
+{
+    template <>
+    struct serializer<bunsan::pm::entry>
+    {
+        template <typename Archive>
+        static void load(bunsan::pm::entry &obj, Archive &ar, const unsigned int)
+        {
+            std::string name_;
+            ar >> name_;
+            obj = name_;
+        }
+
+        template <typename Archive>
+        static void save(const bunsan::pm::entry &obj, Archive &ar, const unsigned int)
+        {
+            ar << obj.name();
+        }
+    };
+}}}
