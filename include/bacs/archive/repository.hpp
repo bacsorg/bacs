@@ -453,8 +453,14 @@ namespace bacs{namespace archive
         bool valid(const problem::id &id);
 
         /* not synchronized function versions for internal usage */
+
+        /// \warning requires at least shared lock
         bool is_available_(const problem::id &id);
+
+        /// \warning requires unique lock and problem existence
         problem::import_info repack_(const problem::id &id);
+
+        /// \warning requires unique lock and problem existence
         problem::import_info repack_(const problem::id &id, const problem::hash &hash);
 
     private:
