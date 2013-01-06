@@ -457,6 +457,9 @@ namespace bacs{namespace archive
         /// \warning requires at least shared lock
         bool is_available_(const problem::id &id);
 
+        /// \warning requires at least shared lock and problem existence
+        problem::status status_(const problem::id &id);
+
         /// \warning requires unique lock and problem existence
         problem::import_info repack_(const problem::id &id);
 

@@ -238,19 +238,22 @@ namespace bacs{namespace archive
         {
             const shared_lock_guard lk(m_lock);
             if (exists(id))
-            {
-                problem::status status;
-                status.hash = read_hash(m_location.repository_root / id / ename::hash);
-                for (boost::filesystem::directory_iterator i(m_location.repository_root / id / ename::flags), end; i != end; ++i)
-                {
-                    const problem::flag flag = i->path().filename().string();
-                    problem::validate_flag(flag);
-                    status.flags.insert(flag);
-                }
-                return status;
-            }
+                return status_(id);
         }
         return boost::optional<problem::status>();
+    }
+
+    problem::status repository::status_(const problem::id &id)
+    {
+        problem::status status;
+        status.hash = read_hash(m_location.repository_root / id / ename::hash);
+        for (boost::filesystem::directory_iterator i(m_location.repository_root / id / ename::flags), end; i != end; ++i)
+        {
+            const problem::flag flag = i->path().filename().string();
+            problem::validate_flag(flag);
+            status.flags.insert(flag);
+        }
+        return status;
     }
 
     bool repository::set_flag(const problem::id &id, const problem::flag &flag)
