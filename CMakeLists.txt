@@ -30,7 +30,6 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/lib/repository_impl.cpp
     src/lib/repository_repack.cpp
     src/lib/problem.cpp
-    src/lib/config.cpp
 )
 bunsan_use(${PROJECT_NAME})
 

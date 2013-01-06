@@ -5,8 +5,5 @@
 
 namespace bacs{namespace archive
 {
-    struct archiver_options: bunsan::utility::factory_options<bunsan::utility::archiver>
-    {
-        bunsan::utility::archiver_ptr instance(const bunsan::utility::resolver &resolver) const;
-    };
+    typedef bunsan::utility::factory_options<bunsan::utility::archiver> archiver_options;
 }}
