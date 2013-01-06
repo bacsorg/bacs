@@ -30,6 +30,7 @@ namespace bacs{namespace archive
         void serialize(Archive &ar, const unsigned int)
         {
             ar & BOOST_SERIALIZATION_NVP(data);
+            ar & BOOST_SERIALIZATION_NVP(importer);
         }
 
         struct
@@ -44,6 +45,8 @@ namespace bacs{namespace archive
             archiver_options archiver;
             boost::filesystem::path filename;
         } data;
+
+        boost::property_tree::ptree importer;
     };
 
     struct config

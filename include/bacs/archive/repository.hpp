@@ -3,6 +3,8 @@
 #include "bacs/archive/config.hpp"
 #include "bacs/archive/problem.hpp"
 
+#include "bacs/problem/importer.hpp"
+
 #include "bunsan/pm/repository.hpp"
 
 #include "bunsan/tempfile.hpp"
@@ -463,6 +465,7 @@ namespace bacs{namespace archive
         /// internal problem storage packing
         const bunsan::utility::archiver::factory_type m_problem_archiver_factory;
         const problem_config m_problem;
+        const bacs::problem::importer m_importer;
         bunsan::pm::repository m_repository;
     };
 }}

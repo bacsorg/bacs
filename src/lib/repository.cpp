@@ -27,6 +27,7 @@ namespace bacs{namespace archive
         m_location(config_.location),
         m_problem_archiver_factory(config_.problem.data.archiver.configured_factory()),
         m_problem(config_.problem),
+        m_importer(config_.problem.importer),
         m_repository(config_.pm) {}
 
     namespace
