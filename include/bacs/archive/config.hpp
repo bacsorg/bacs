@@ -3,6 +3,7 @@
 #include "bacs/archive/archiver_options.hpp"
 
 #include "bunsan/pm/config.hpp"
+#include "bunsan/pm/entry.hpp"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -18,10 +19,12 @@ namespace bacs{namespace archive
         {
             ar & BOOST_SERIALIZATION_NVP(tmpdir);
             ar & BOOST_SERIALIZATION_NVP(repository_root);
+            ar & BOOST_SERIALIZATION_NVP(pm_repository_root);
         }
 
         boost::filesystem::path tmpdir;
         boost::filesystem::path repository_root;
+        boost::filesystem::path pm_repository_root;
     };
 
     struct problem_config
@@ -30,6 +33,7 @@ namespace bacs{namespace archive
         void serialize(Archive &ar, const unsigned int)
         {
             ar & BOOST_SERIALIZATION_NVP(data);
+            ar & BOOST_SERIALIZATION_NVP(root_package);
             ar & BOOST_SERIALIZATION_NVP(importer);
         }
 
@@ -46,6 +50,7 @@ namespace bacs{namespace archive
             boost::filesystem::path filename;
         } data;
 
+        bunsan::pm::entry root_package;
         boost::property_tree::ptree importer;
     };
 
