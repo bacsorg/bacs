@@ -13,15 +13,9 @@ find_package(Protobuf REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 bunsan_use(${PROTOBUF_LIBRARIES})
 
-execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/bacs)
-execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/archive)
-execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/pb)
-
 # Compile proto files
-set(PROTOBUF_IMPORT_DIRS proto)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-PROTOBUF_GENERATE_CPP(proto_srcs proto_hdrs
-    proto/problem.proto
+bunsan_protobuf_generate_cpp(SOURCES proto_srcs HEADERS proto_hdrs INSTALL include PROTOS
+    bacs/archive/pb/problem.proto
 )
 
 bunsan_add_shared_library(${PROJECT_NAME}
