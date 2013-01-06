@@ -247,13 +247,20 @@ namespace bacs{namespace archive
     {
         problem::status status;
         status.hash = read_hash(m_location.repository_root / id / ename::hash);
+        status.flags = flags_(id);
+        return status;
+    }
+
+    problem::flag_set repository::flags_(const problem::id &id)
+    {
+        problem::flag_set flags;
         for (boost::filesystem::directory_iterator i(m_location.repository_root / id / ename::flags), end; i != end; ++i)
         {
             const problem::flag flag = i->path().filename().string();
             problem::validate_flag(flag);
-            status.flags.insert(flag);
+            flags.insert(flag);
         }
-        return status;
+        return flags;
     }
 
     bool repository::set_flag(const problem::id &id, const problem::flag &flag)

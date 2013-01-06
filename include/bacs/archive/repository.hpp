@@ -460,6 +460,9 @@ namespace bacs{namespace archive
         /// \warning requires at least shared lock and problem existence
         problem::status status_(const problem::id &id);
 
+        /// \warning requires at least shared lock and problem existence
+        problem::flag_set flags_(const problem::id &id);
+
         /// \warning requires unique lock and problem existence
         void set_flag_(const problem::id &id, const problem::flag &flag);
 
