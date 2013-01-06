@@ -265,11 +265,16 @@ namespace bacs{namespace archive
             const lock_guard lk(m_lock);
             if (exists(id) && !is_read_only(id))
             {
-                touch(m_location.repository_root / id / ename::flags / flag);
+                set_flag_(id, flag);
                 return true;
             }
         }
         return false;
+    }
+
+    void repository::set_flag_(const problem::id &id, const problem::flag &flag)
+    {
+        touch(m_location.repository_root / id / ename::flags / flag);
     }
 
     bool repository::set_flags(const problem::id &id, const problem::flag_set &flags)
@@ -282,7 +287,7 @@ namespace bacs{namespace archive
             if (exists(id) && !is_read_only(id))
             {
                 for (const problem::flag &flag: flags)
-                    touch(m_location.repository_root / id / ename::flags / flag);
+                    set_flag_(id, flag);
                 return true;
             }
         }
@@ -299,11 +304,16 @@ namespace bacs{namespace archive
             if (exists(id) && !is_read_only(id))
             {
                 if (flag != problem::flags::ignore) // it is not possible to remove ignore flag
-                    boost::filesystem::remove(m_location.repository_root / id / ename::flags / flag);
+                    unset_flag_(id, flag);
                 return true;
             }
         }
         return false;
+    }
+
+    void repository::unset_flag_(const problem::id &id, const problem::flag &flag)
+    {
+        boost::filesystem::remove(m_location.repository_root / id / ename::flags / flag);
     }
 
     bool repository::unset_flags(const problem::id &id, const problem::flag_set &flags)
@@ -317,7 +327,7 @@ namespace bacs{namespace archive
             {
                 for (const problem::flag &flag: flags)
                     if (flag != problem::flags::ignore) // it is not possible to remove ignore flag
-                        boost::filesystem::remove(m_location.repository_root / id / ename::flags / flag);
+                        unset_flag_(id, flag);
                 return true;
             }
         }

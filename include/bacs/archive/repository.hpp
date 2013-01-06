@@ -461,6 +461,12 @@ namespace bacs{namespace archive
         problem::status status_(const problem::id &id);
 
         /// \warning requires unique lock and problem existence
+        void set_flag_(const problem::id &id, const problem::flag &flag);
+
+        /// \warning requires unique lock and problem existence
+        void unset_flag_(const problem::id &id, const problem::flag &flag);
+
+        /// \warning requires unique lock and problem existence
         problem::import_info repack_(const problem::id &id);
 
         /// \warning requires unique lock and problem existence
