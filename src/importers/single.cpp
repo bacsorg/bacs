@@ -11,7 +11,7 @@
 
 namespace bacs{namespace problem{namespace importers
 {
-    const bool single::factory_reg_hook = importer::impl::register_new("bacs/problem/single",
+    const bool single::factory_reg_hook = importer::impl::register_new("bacs/single/problem",
         [](const boost::property_tree::ptree &config_)
         {
             impl_ptr tmp(new single(config_));
