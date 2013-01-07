@@ -74,6 +74,7 @@ namespace bacs{namespace archive
                                                const boost::filesystem::path &archive)
     {
         const bunsan::tempfile unpacked = bunsan::tempfile::in_dir(m_location.tmpdir);
+        BOOST_VERIFY(boost::filesystem::create_directory(unpacked.path()));
         const bunsan::utility::archiver_ptr archiver = archiver_options_.instance(m_resolver);
         archiver->unpack(archive, unpacked.path());
         return insert_all(unpacked.path());
