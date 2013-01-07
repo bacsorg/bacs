@@ -59,26 +59,6 @@ namespace bacs{namespace archive
             BUNSAN_EXCEPTIONS_WRAP_END()
         }
 
-        inline problem::hash read_hash(const boost::filesystem::path &path)
-        {
-            return read_binary(path);
-        }
-
-        inline problem::info read_info(const boost::filesystem::path &path)
-        {
-            return read_binary(path);
-        }
-
-        inline void write_hash(const boost::filesystem::path &path, const problem::hash &hash)
-        {
-            return write_binary(path, hash);
-        }
-
-        inline void write_info(const boost::filesystem::path &path, const problem::info &info)
-        {
-            return write_binary(path, info);
-        }
-
         problem::hash compute_hash(const boost::filesystem::path &path)
         {
             boost::crc_32_type crc;
@@ -140,7 +120,7 @@ namespace bacs{namespace archive
                 BOOST_ASSERT(archiver);
                 archiver->pack_contents(m_location.repository_root / id / m_problem.data.filename, location);
                 const problem::hash hash = compute_hash(m_location.repository_root / id / m_problem.data.filename);
-                write_hash(m_location.repository_root / id / ename::hash, hash);
+                write_hash_(id, hash);
                 import_info = repack_(id, hash);
             }
             else
@@ -251,7 +231,7 @@ namespace bacs{namespace archive
     problem::status repository::status_(const problem::id &id)
     {
         problem::status status;
-        status.hash = read_hash(m_location.repository_root / id / ename::hash);
+        status.hash = read_hash_(id);
         status.flags = flags_(id);
         return status;
     }
@@ -373,9 +353,19 @@ namespace bacs{namespace archive
         {
             const shared_lock_guard lk(m_lock);
             if (is_available_(id))
-                return read_info(m_location.repository_root / id / ename::info);
+                return read_info_(id);
         }
         return boost::optional<problem::info>();
+    }
+
+    problem::info repository::read_info_(const problem::id &id)
+    {
+        return read_binary(m_location.repository_root / id / ename::info);
+    }
+
+    void repository::write_info_(const problem::id &id, const problem::info &info)
+    {
+        write_binary(m_location.repository_root / id / ename::info, info);
     }
 
     bool repository::has_flag(const problem::id &id, const problem::flag &flag)
@@ -392,9 +382,19 @@ namespace bacs{namespace archive
         {
             const shared_lock_guard lk(m_lock);
             if (is_available_(id))
-                return read_hash(m_location.repository_root / id / ename::hash);
+                return read_hash_(id);
         }
         return boost::optional<problem::hash>();
+    }
+
+    problem::hash repository::read_hash_(const problem::id &id)
+    {
+        return read_binary(m_location.repository_root / id / ename::hash);
+    }
+
+    void repository::write_hash_(const problem::id &id, const problem::hash &hash)
+    {
+        write_binary(m_location.repository_root / id / ename::hash, hash);
     }
 
     problem::import_info repository::rename(const problem::id &current, const problem::id &future)
@@ -465,6 +465,6 @@ namespace bacs{namespace archive
     problem::import_info repository::repack_(const problem::id &id)
     {
         BOOST_ASSERT(exists(id));
-        return repack_(id, read_hash(m_location.repository_root / id / ename::hash));
+        return repack_(id, read_hash_(id));
     }
 }}

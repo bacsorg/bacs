@@ -472,6 +472,18 @@ namespace bacs{namespace archive
         /// \warning requires unique lock and problem existence
         void unset_flag_(const problem::id &id, const problem::flag &flag);
 
+        /// \warning requires at least shared lock and problem existence
+        problem::hash read_hash_(const problem::id &id);
+
+        /// \warning requires unique lock and problem existence
+        void write_hash_(const problem::id &id, const problem::hash &hash);
+
+        /// \warning requires at least shared lock and problem existence
+        problem::info read_info_(const problem::id &id);
+
+        /// \warning requires unique lock and problem existence
+        void write_info_(const problem::id &id, const problem::info &info);
+
         /// \warning requires unique lock and problem existence
         problem::import_info repack_(const problem::id &id);
 
