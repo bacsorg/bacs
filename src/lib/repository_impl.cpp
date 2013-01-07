@@ -121,7 +121,7 @@ namespace bacs{namespace archive
                 archiver->pack_contents(m_location.repository_root / id / m_problem.data.filename, location);
                 const problem::hash hash = compute_hash(m_location.repository_root / id / m_problem.data.filename);
                 write_hash_(id, hash);
-                import_info = repack_(id, hash);
+                import_info = repack_(id, hash, location);
             }
             else
             {
@@ -466,5 +466,12 @@ namespace bacs{namespace archive
     {
         BOOST_ASSERT(exists(id));
         return repack_(id, read_hash_(id));
+    }
+
+    problem::import_info repository::repack_(const problem::id &id, const problem::hash &hash)
+    {
+        const bunsan::tempfile tmpdir = bunsan::tempfile::in_dir(m_location.tmpdir);
+        extract_(id, tmpdir.path());
+        return repack_(id, hash, tmpdir.path());
     }
 }}

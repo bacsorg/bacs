@@ -490,6 +490,11 @@ namespace bacs{namespace archive
         /// \warning requires unique lock and problem existence
         problem::import_info repack_(const problem::id &id, const problem::hash &hash);
 
+        /// \warning requires unique lock and problem existence
+        problem::import_info repack_(const problem::id &id,
+                                     const problem::hash &hash,
+                                     const boost::filesystem::path &problem_location);
+
     private:
         boost::shared_mutex m_lock;
         const bunsan::interprocess::file_guard m_flock;
