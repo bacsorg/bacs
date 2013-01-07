@@ -13,7 +13,7 @@ namespace bacs{namespace archive
         {
             bacs::problem::importer::options options;
             options.problem_dir = problem_location;
-            options.destination = m_location.pm_repository_root / m_problem.root_package.location();
+            options.destination = m_location.pm_repository_root / m_problem.root_package.location() / id;
             options.root_package = m_problem.root_package / id;
             options.id = id;
             options.hash = hash;
