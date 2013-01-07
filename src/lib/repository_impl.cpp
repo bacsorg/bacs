@@ -172,14 +172,19 @@ namespace bacs{namespace archive
             const shared_lock_guard lk(m_lock);
             if (is_available_(id))
             {
-                bunsan::filesystem::reset_dir(location);
-                const bunsan::utility::archiver_ptr archiver = m_problem_archiver_factory(m_resolver);
-                BOOST_ASSERT(archiver);
-                archiver->unpack(m_location.repository_root / id / m_problem.data.filename, location);
+                extract_(id, location);
                 return true;
             }
         }
         return false;
+    }
+
+    void repository::extract_(const problem::id &id, const boost::filesystem::path &location)
+    {
+        bunsan::filesystem::reset_dir(location);
+        const bunsan::utility::archiver_ptr archiver = m_problem_archiver_factory(m_resolver);
+        BOOST_ASSERT(archiver);
+        archiver->unpack(m_location.repository_root / id / m_problem.data.filename, location);
     }
 
     problem::id_set repository::existing()

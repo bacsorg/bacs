@@ -454,6 +454,9 @@ namespace bacs{namespace archive
 
         /* not synchronized function versions for internal usage */
 
+        /// \warning requires at least shared lock and problem existence
+        void extract_(const problem::id &id, const boost::filesystem::path &location);
+
         /// \warning requires at least shared lock
         bool is_available_(const problem::id &id);
 
