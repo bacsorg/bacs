@@ -9,8 +9,26 @@ namespace bacs{namespace archive
                                              const boost::filesystem::path &problem_location)
     {
         problem::import_info import_info;
-        // TODO
-        import_info.error = "Not implemented";
+        try
+        {
+            bacs::problem::importer::options options;
+            options.problem_dir = problem_location;
+            options.destination = m_location.pm_repository_root / m_problem.root_package.location();
+            options.root_package = m_problem.root_package / id;
+            options.id = id;
+            options.hash = hash;
+            write_info_(id, m_importer.convert(options));
+            unset_flag_(id, problem::flags::ignore);
+            problem::status status;
+            status.hash = hash;
+            status.flags = flags_(id);
+            import_info.status = status;
+        }
+        catch (std::exception &e)
+        {
+            set_flag_(id, problem::flags::ignore);
+            import_info.error = e.what();
+        }
         return import_info;
     }
 }}
