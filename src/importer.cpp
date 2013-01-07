@@ -35,7 +35,7 @@ namespace bacs{namespace problem
         if (format.find(delim, delim_pos + 1) == std::string::npos &&
             delim_pos != std::string::npos)
         {
-            const std::string impl_type = format.substr(delim_pos + 1);
+            const std::string impl_type = format.substr(0, delim_pos);
             const boost::property_tree::ptree::const_assoc_iterator config_iter = config.find(impl_type);
             if (config_iter != config.not_found())
                 impl_ = instance_optional(impl_type, config_iter->second);
