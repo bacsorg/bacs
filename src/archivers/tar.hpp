@@ -6,6 +6,7 @@
 
 #include <set>
 
+#include <boost/optional.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -28,7 +29,7 @@ namespace bunsan{namespace utility{namespace archivers
                 exclude_vcs
             ))
 
-            std::string format;
+            boost::optional<std::string> format;
             std::set<flag> flags; ///< \note: std::hash is not specialized for this type
         };
 
@@ -48,7 +49,7 @@ namespace bunsan{namespace utility{namespace archivers
             const boost::filesystem::path &file) override;
 
     private:
-        std::string format_argument() const;
+        boost::optional<std::string> format_argument() const;
         std::vector<std::string> flag_arguments() const;
 
     private:

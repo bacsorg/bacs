@@ -1,5 +1,7 @@
 #include "tar.hpp"
 
+#include "bunsan/utility/detail/join.hpp"
+
 #include "bunsan/config/cast.hpp"
 #include "bunsan/process/execute.hpp"
 
@@ -24,20 +26,18 @@ void archivers::tar::pack_from(
 {
     bunsan::process::context ctx;
     ctx.executable(m_exe);
-    std::vector<std::string> argv_ = {
+    ctx.argv(detail::join<std::string>(
         m_exe.filename().string(),
         "--create",
         format_argument(),
         "--file",
         archive.string(),
         "--directory",
-        cwd.string()
-    };
-    const std::vector<std::string> flags = flag_arguments();
-    argv_.insert(argv_.end(), flags.begin(), flags.end());
-    argv_.push_back("--");
-    argv_.push_back(file.string());
-    ctx.argv(argv_);
+        cwd.string(),
+        flag_arguments(),
+        "--",
+        file.string()
+    ));
     bunsan::process::check_sync_execute(ctx);
 }
 
@@ -47,24 +47,24 @@ void archivers::tar::unpack(
 {
     bunsan::process::context ctx;
     ctx.executable(m_exe);
-    std::vector<std::string> argv_ = {
+    ctx.argv(detail::join<std::string>(
         m_exe.filename().string(),
         "--extract",
         format_argument(),
         "--file",
         boost::filesystem::absolute(archive).string(),
         "--directory",
-        boost::filesystem::absolute(dir).string()
-    };
-    const std::vector<std::string> flags = flag_arguments();
-    argv_.insert(argv_.end(), flags.begin(), flags.end());
-    ctx.argv(argv_);
+        boost::filesystem::absolute(dir).string(),
+        flag_arguments()
+    ));
     bunsan::process::check_sync_execute(ctx);
 }
 
-std::string archivers::tar::format_argument() const
+boost::optional<std::string> archivers::tar::format_argument() const
 {
-    return (m_config.format.size() == 1 ? "-" : "--") + m_config.format;
+    if (m_config.format)
+        return (m_config.format->size() == 1 ? "-" : "--") + m_config.format.get();
+    return boost::optional<std::string>();
 }
 
 std::vector<std::string> archivers::tar::flag_arguments() const

@@ -2,6 +2,7 @@
 
 #include "cwd_split.hpp"
 
+#include <boost/optional.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -18,7 +19,7 @@ namespace bunsan{namespace utility{namespace archivers
                 ar & BOOST_SERIALIZATION_NVP(format);
             }
 
-            std::string format;
+            boost::optional<std::string> format;
         };
 
     public:
@@ -35,6 +36,9 @@ namespace bunsan{namespace utility{namespace archivers
             const boost::filesystem::path &cwd,
             const boost::filesystem::path &archive,
             const boost::filesystem::path &file) override;
+
+    private:
+        boost::optional<std::string> format_argument() const;
 
     private:
         static const bool factory_reg_hook_7z;

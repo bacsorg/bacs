@@ -1,5 +1,7 @@
 #include "7z.hpp"
 
+#include "bunsan/utility/detail/join.hpp"
+
 #include "bunsan/config/cast.hpp"
 #include "bunsan/process/execute.hpp"
 
@@ -20,11 +22,7 @@ BUNSAN_UTILITY_ARCHIVER_7Z(7z)
 BUNSAN_UTILITY_ARCHIVER_7Z(7za)
 BUNSAN_UTILITY_ARCHIVER_7Z(7zr)
 
-archivers::_7z::_7z(const boost::filesystem::path &exe):
-    m_exe(exe)
-{
-    m_config.format = "7z";
-}
+archivers::_7z::_7z(const boost::filesystem::path &exe): m_exe(exe) {}
 
 void archivers::_7z::pack_from(
     const boost::filesystem::path &cwd,
@@ -34,14 +32,14 @@ void archivers::_7z::pack_from(
     bunsan::process::context ctx;
     ctx.executable(m_exe);
     ctx.current_path(cwd);
-    ctx.argv({
-            m_exe.filename().string(),
-            "a",
-            "-t" + m_config.format,
-            "--",
-            archive.string(),
-            file.string()
-        });
+    ctx.argv(detail::join<std::string>(
+        m_exe.filename().string(),
+        "a",
+        format_argument(),
+        "--",
+        archive.string(),
+        file.string()
+    ));
     bunsan::process::check_sync_execute(ctx);
 }
 
@@ -51,15 +49,22 @@ void archivers::_7z::unpack(
 {
     bunsan::process::context ctx;
     ctx.executable(m_exe);
-    ctx.argv({
-            m_exe.filename().string(),
-            "x",
-            "-t" + m_config.format,
-            "-o" + dir.string(),
-            "--",
-            archive.string(),
-        });
+    ctx.argv(detail::join<std::string>(
+        m_exe.filename().string(),
+        "x",
+        format_argument(),
+        "-o" + dir.string(),
+        "--",
+        archive.string()
+    ));
     bunsan::process::check_sync_execute(ctx);
+}
+
+boost::optional<std::string> archivers::_7z::format_argument() const
+{
+    if (m_config.format)
+        return "-t" + m_config.format.get();
+    return boost::optional<std::string>();
 }
 
 void archivers::_7z::setup(const boost::property_tree::ptree &ptree)
