@@ -1,5 +1,7 @@
 #include "bacs/archive/web/content/form/widgets/archiver_config.hpp"
 
+#include <boost/algorithm/string/trim.hpp>
+
 namespace bacs{namespace archive{namespace web{namespace content{namespace form{namespace widgets
 {
     archiver_config::archiver_config()
@@ -16,7 +18,11 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
     {
         archiver_options config;
         config.type = type.value();
-        config.config.put("format", format.value());
+        boost::algorithm::trim(config.type);
+        std::string format_ = format.value();
+        boost::algorithm::trim(format_);
+        if (!format_.empty())
+            config.config.put("format", format_);
         return config;
     }
 }}}}}}
