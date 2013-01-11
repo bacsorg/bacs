@@ -5,34 +5,27 @@
             <!DOCTYPE html>
             <html>
                 <head>
+                    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+                    <script>
+                        function load_menu()
+                        {
+                            path = window.location.pathname;
+                            $("ul.menu li a[href='" + path + "']").attr('class', 'current');
+                            $("ul.menu li a[href!='" + path + "']").attr('class', 'other');
+                        }
+                    </script>
+                    <% include stylesheets() %>
                     <title>
                         <% include title() %>
                     </title>
                 </head>
-                <body>
+                <body onload="load_menu();">
                     <% include body() %>
                 </body>
             </html>
         <% end template %>
-        <% template menu() %>
-            <table border="1">
-                <tr>
-                    <td style="padding:5px"><a href="<% url "/insert" %>"><% gt "insert" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/extract" %>"><% gt "extract" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/rename" %>"><% gt "rename" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/existing" %>"><% gt "existing" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/available" %>"><% gt "available" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/status" %>"><% gt "status" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/with_flag" %>"><% gt "with_flag" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/set_flags" %>"><% gt "set_flags" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/unset_flags" %>"><% gt "unset_flags" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/clear_flags" %>"><% gt "clear_flags" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/ignore" %>"><% gt "ignore" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/info" %>"><% gt "info" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/hash" %>"><% gt "hash" %></a></td>
-                    <td style="padding:5px"><a href="<% url "/repack" %>"><% gt "repack" %></a></td>
-                </tr>
-            </table>
+        <% template stylesheets() %>
+            <link href="/static/plain/base.css" rel="stylesheet" type="text/css">
         <% end template %>
         <% template title() %>
             BACS Archive ::
@@ -44,6 +37,24 @@
         <% template body() %>
             <% include menu() %>
             <% include main() %>
+        <% end template %>
+        <% template menu() %>
+            <ul class="menu">
+                <li><a href="<% url "/insert" %>"><% gt "insert" %></a></li>
+                <li><a href="<% url "/extract" %>"><% gt "extract" %></a></li>
+                <li><a href="<% url "/rename" %>"><% gt "rename" %></a></li>
+                <li><a href="<% url "/existing" %>"><% gt "existing" %></a></li>
+                <li><a href="<% url "/available" %>"><% gt "available" %></a></li>
+                <li><a href="<% url "/status" %>"><% gt "status" %></a></li>
+                <li><a href="<% url "/with_flag" %>"><% gt "with_flag" %></a></li>
+                <li><a href="<% url "/set_flags" %>"><% gt "set_flags" %></a></li>
+                <li><a href="<% url "/unset_flags" %>"><% gt "unset_flags" %></a></li>
+                <li><a href="<% url "/clear_flags" %>"><% gt "clear_flags" %></a></li>
+                <li><a href="<% url "/ignore" %>"><% gt "ignore" %></a></li>
+                <li><a href="<% url "/info" %>"><% gt "info" %></a></li>
+                <li><a href="<% url "/hash" %>"><% gt "hash" %></a></li>
+                <li><a href="<% url "/repack" %>"><% gt "repack" %></a></li>
+            </ul>
         <% end template %>
         <% template main() %>
             Hi, folks!
