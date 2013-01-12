@@ -77,5 +77,6 @@ bunsan_install_headers()
 bunsan_install_targets(${PROJECT_NAME} ${PROJECT_NAME}_cli ${PROJECT_NAME}_web)
 install(FILES ${proto_hdrs} DESTINATION include/bacs/archive/pb)
 install(TARGETS plain DESTINATION lib/${PROJECT_NAME}/skins)
+install(DIRECTORY static DESTINATION share/${PROJECT_NAME})
 
 bunsan_include_tests()
