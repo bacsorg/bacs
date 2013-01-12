@@ -35,9 +35,11 @@
                                 <% if id_import.second.status %>
                                     <td>
                                         <% foreach flag in id_import.second.status->flags %>
-                                            <% item %>
-                                                <%= flag %>
-                                            <% end %>
+                                            <ul class="problem_flags">
+                                                <% item %>
+                                                    <li><%= flag %></li>
+                                                <% end %>
+                                            </ul>
                                         <% end %>
                                     </td>
                                     <td><%= id_import.second.status->hash | base64_binary %></td>

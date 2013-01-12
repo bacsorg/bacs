@@ -13,7 +13,7 @@
         <% template result() %>
             <% if result %>
                 <% foreach id_status in result.get() %>
-                    <table>
+                    <table border="1" cellspacing="0" cellpadding="10">
                         <caption><% gt "Problem status" %></caption>
                         <tr>
                             <th><% gt "Problem" %></th>
@@ -26,9 +26,11 @@
                                 <% if id_status.second %>
                                     <td>
                                         <% foreach flag in id_status.second->flags %>
-                                            <% item %>
-                                                <%= flag %>
-                                            <% end %>
+                                            <ul class="problem_flags">
+                                                <% item %>
+                                                    <li><%= flag %></li>
+                                                <% end %>
+                                            </ul>
                                         <% end %>
                                     </td>
                                     <td><%= id_status.second->hash | base64_binary %></td>

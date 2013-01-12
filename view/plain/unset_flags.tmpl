@@ -14,7 +14,7 @@
             <% if result %>
                 <% foreach id in result.get() %>
                     <% gt "Flags were unset for the following problems:" %>
-                    <ul>
+                    <ul class="problem_ids">
                         <% item %>
                             <li><%= id %></li>
                         <% end %>

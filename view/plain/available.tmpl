@@ -14,7 +14,7 @@
             <% if result %>
                 <% foreach id in result.get() %>
                     <% gt "The following problems are available:" %>
-                    <ul>
+                    <ul class="problem_ids">
                         <% item %>
                             <li><%= id %></li>
                         <% end %>
