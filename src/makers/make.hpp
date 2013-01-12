@@ -40,7 +40,7 @@ namespace bunsan{namespace utility{namespace makers
         void setup(const boost::property_tree::ptree &ptree) override;
 
     private:
-        std::vector<std::string> argv_(
+        std::vector<std::string> arguments_(
             const std::vector<std::string> &targets) const;
 
     private:

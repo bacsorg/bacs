@@ -1,7 +1,5 @@
 #include "tar.hpp"
 
-#include "bunsan/utility/detail/join.hpp"
-
 #include "bunsan/config/cast.hpp"
 #include "bunsan/process/execute.hpp"
 
@@ -26,18 +24,18 @@ void archivers::tar::pack_from(
 {
     bunsan::process::context ctx;
     ctx.executable(m_exe);
-    ctx.argv(detail::join<std::string>(
-        m_exe.filename().string(),
+    ctx.arguments(
+        m_exe.filename(),
         "--create",
         format_argument(),
         "--file",
-        archive.string(),
+        archive,
         "--directory",
-        cwd.string(),
+        cwd,
         flag_arguments(),
         "--",
-        file.string()
-    ));
+        file
+    );
     bunsan::process::check_sync_execute(ctx);
 }
 
@@ -47,16 +45,16 @@ void archivers::tar::unpack(
 {
     bunsan::process::context ctx;
     ctx.executable(m_exe);
-    ctx.argv(detail::join<std::string>(
-        m_exe.filename().string(),
+    ctx.arguments(
+        m_exe.filename(),
         "--extract",
         format_argument(),
         "--file",
-        boost::filesystem::absolute(archive).string(),
+        boost::filesystem::absolute(archive),
         "--directory",
-        boost::filesystem::absolute(dir).string(),
+        boost::filesystem::absolute(dir),
         flag_arguments()
-    ));
+    );
     bunsan::process::check_sync_execute(ctx);
 }
 

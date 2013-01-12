@@ -1,7 +1,5 @@
 #include "7z.hpp"
 
-#include "bunsan/utility/detail/join.hpp"
-
 #include "bunsan/config/cast.hpp"
 #include "bunsan/process/execute.hpp"
 
@@ -32,14 +30,14 @@ void archivers::_7z::pack_from(
     bunsan::process::context ctx;
     ctx.executable(m_exe);
     ctx.current_path(cwd);
-    ctx.argv(detail::join<std::string>(
-        m_exe.filename().string(),
+    ctx.arguments(
+        m_exe.filename(),
         "a",
         format_argument(),
         "--",
-        archive.string(),
-        file.string()
-    ));
+        archive,
+        file
+    );
     bunsan::process::check_sync_execute(ctx);
 }
 
@@ -49,14 +47,14 @@ void archivers::_7z::unpack(
 {
     bunsan::process::context ctx;
     ctx.executable(m_exe);
-    ctx.argv(detail::join<std::string>(
-        m_exe.filename().string(),
+    ctx.arguments(
+        m_exe.filename(),
         "x",
         format_argument(),
         "-o" + dir.string(),
         "--",
-        archive.string()
-    ));
+        archive
+    );
     bunsan::process::check_sync_execute(ctx);
 }
 

@@ -21,13 +21,13 @@ void fetchers::curl::fetch(const std::string &uri, const boost::filesystem::path
 {
     bunsan::process::context ctx;
     ctx.executable(m_exe);
-    ctx.argv({
-        m_exe.filename().string(),
+    ctx.arguments(
+        m_exe.filename(),
         "--output",
-        boost::filesystem::absolute(dst).string(),
+        boost::filesystem::absolute(dst),
         "--silent",
         uri
-        });
+    );
     bunsan::process::check_sync_execute(ctx);
     if (!boost::filesystem::exists(dst))
     {

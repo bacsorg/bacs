@@ -112,7 +112,7 @@ t 2
 t 3)EOF");
     read_info(in_1, pt);
     vs out_1 = {"1", "2", "3"};
-    BOOST_CHECK(executor(pt).context().built().argv() == out_1);
+    BOOST_CHECK(executor(pt).context().built().arguments() == out_1);
     ss in_2(R"EOF(
 t 1
 p 0
@@ -122,7 +122,7 @@ t 5
 p 1)EOF");
     read_info(in_2, pt);
     vs out_2 = {"1", "2", "3", "4", "5", "6"};
-    BOOST_CHECK(executor(pt).add_argument("2", "6", "4").context().built().argv() == out_2);
+    BOOST_CHECK(executor(pt).add_argument("2", "6", "4").context().built().arguments() == out_2);
     ss in_3(R"EOF(
 t 1       ; 1
 c         ; 234
@@ -138,7 +138,7 @@ c
 })EOF");
     read_info(in_3, pt);
     vs out_3 = {"1", "234", "5", "678"};
-    BOOST_CHECK(executor(pt).add_argument("2", "678", "5", "4").context().built().argv() == out_3);
+    BOOST_CHECK(executor(pt).add_argument("2", "678", "5", "4").context().built().arguments() == out_3);
     ss in_4(R"EOF(
 n first       ; 1
 c             ; _2_3_4
@@ -164,7 +164,7 @@ c             ; 678
             .set_argument("third", "_3")
             .set_argument("_4", "_4")
             .set_argument("_5", "_5")
-            .set_argument("_6", "7").context().built().argv() == out_4);
+            .set_argument("_6", "7").context().built().arguments() == out_4);
     ss in_5(R"EOF(
 n first       ; 1
 c             ; _2_3_4
@@ -192,14 +192,14 @@ d
 })EOF");
     read_info(in_5, pt);
     vs out_5 = out_4;
-    BOOST_CHECK(executor(pt).add_argument("6", "8", "5").context().built().argv() == out_5);
+    BOOST_CHECK(executor(pt).add_argument("6", "8", "5").context().built().arguments() == out_5);
     ss in_6(R"EOF(
 t 1
 t 2
 p 1)EOF");
     read_info(in_6, pt);
     vs out_6 = {"1", "2", "3", "4"};
-    BOOST_CHECK(executor(pt).add_argument("O_O", "3", "4").context().built().argv() == out_6);
+    BOOST_CHECK(executor(pt).add_argument("O_O", "3", "4").context().built().arguments() == out_6);
 }
 
 BOOST_AUTO_TEST_SUITE_END() // executor

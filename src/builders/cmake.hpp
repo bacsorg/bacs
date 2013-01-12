@@ -83,7 +83,7 @@ namespace bunsan{namespace utility{namespace builders
         void set_default_generator();
         void set_generator(const std::string &generator_name);
         const generator &get_generator() const;
-        std::vector<std::string> argv_(
+        std::vector<std::string> arguments_(
             const boost::filesystem::path &src) const;
 
     private:

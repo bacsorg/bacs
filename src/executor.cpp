@@ -185,7 +185,7 @@ bunsan::process::context bunsan::utility::executor::context() const
     token_visitor visitor(&positional, &named);
     prepare(args, visitor);
     bunsan::process::context ctx;
-    ctx.argv(args);
+    ctx.arguments(args);
     auto iter = named.find(executable_key);
     if (iter != named.end())
         ctx.executable(iter->second);

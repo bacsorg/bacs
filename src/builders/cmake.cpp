@@ -74,22 +74,22 @@ builders::cmake::cmake(const resolver &resolver_):
     set_default_generator();
 }
 
-std::vector<std::string> builders::cmake::argv_(const boost::filesystem::path &src) const
+std::vector<std::string> builders::cmake::arguments_(const boost::filesystem::path &src) const
 {
-    std::vector<std::string> argv;
-    argv.push_back(m_cmake_exe.filename().string());
+    std::vector<std::string> arguments;
+    arguments.push_back(m_cmake_exe.filename().string());
     if (m_generator)
     {
-        argv.push_back("-G");
-        argv.push_back(get_generator().name);
+        arguments.push_back("-G");
+        arguments.push_back(get_generator().name);
     }
     for (const auto &i: m_config.cmake.defines)
     {
         // TODO arguments check
-        argv.push_back("-D" + i.first + "=" + i.second);
+        arguments.push_back("-D" + i.first + "=" + i.second);
     }
-    argv.push_back(boost::filesystem::absolute(src).string());
-    return argv;
+    arguments.push_back(boost::filesystem::absolute(src).string());
+    return arguments;
 }
 
 void builders::cmake::configure_(
@@ -99,7 +99,7 @@ void builders::cmake::configure_(
     bunsan::process::context ctx;
     ctx.executable(m_cmake_exe);
     ctx.current_path(bin);
-    ctx.argv(argv_(src));
+    ctx.arguments(arguments_(src));
     bunsan::process::check_sync_execute(ctx);
 }
 

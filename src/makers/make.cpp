@@ -16,21 +16,21 @@ const bool makers::make::factory_reg_hook = maker::register_new("make",
 
 makers::make::make(const boost::filesystem::path &exe): m_exe(exe) {}
 
-std::vector<std::string> makers::make::argv_(
+std::vector<std::string> makers::make::arguments_(
     const std::vector<std::string> &targets) const
 {
-    std::vector<std::string> argv;
-    argv.push_back(m_exe.filename().string());
+    std::vector<std::string> arguments;
+    arguments.push_back(m_exe.filename().string());
     for (const auto &i: m_config.defines)
     {
         // TODO arguments check
-        argv.push_back(i.first + "=" + i.second);
+        arguments.push_back(i.first + "=" + i.second);
     }
     if (m_config.jobs)
-        argv.push_back("-j" + boost::lexical_cast<std::string>(m_config.jobs.get()));
-    argv.insert(argv.end(), m_config.targets.begin(), m_config.targets.end());
-    argv.insert(argv.end(), targets.begin(), targets.end());
-    return argv;
+        arguments.push_back("-j" + boost::lexical_cast<std::string>(m_config.jobs.get()));
+    arguments.insert(arguments.end(), m_config.targets.begin(), m_config.targets.end());
+    arguments.insert(arguments.end(), targets.begin(), targets.end());
+    return arguments;
 }
 
 void makers::make::exec(
@@ -40,7 +40,7 @@ void makers::make::exec(
     bunsan::process::context ctx;
     ctx.executable(m_exe);
     ctx.current_path(cwd);
-    ctx.argv(argv_(targets));
+    ctx.arguments(arguments_(targets));
     check_sync_execute(ctx);
 }
 
