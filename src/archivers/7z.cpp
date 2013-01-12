@@ -30,12 +30,19 @@ void archivers::_7z::pack_from(
     bunsan::process::context ctx;
     ctx.executable(m_exe);
     ctx.current_path(cwd);
+    /*
+     * 7z behavior note:
+     * When archive.filename() does not contain '.'
+     * some suffix is appended depending on format.
+     * If archive.filename().back() == '.', last dot is removed.
+     * So, in any case we should append '.' to get it work correct.
+     */
     ctx.arguments(
         m_exe.filename(),
         "a",
         format_argument(),
         "--",
-        archive,
+        archive.string() + ".",
         file
     );
     bunsan::process::check_sync_execute(ctx);
