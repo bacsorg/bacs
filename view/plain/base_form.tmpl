@@ -1,6 +1,10 @@
 <% c++ #include "bacs/archive/web/content/base_form.hpp" %>
 <% skin plain %>
     <% view base_form uses bacs::archive::web::content::base_form extends base %>
+        <% template stylesheets() %>
+            <% include base::stylesheets() %>
+            <link href="/static/plain/base_form.css" rel="stylesheet" type="text/css">
+        <% end template %>
         <% template subtitle() %>
             Form
         <% end template %>
