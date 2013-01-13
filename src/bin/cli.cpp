@@ -15,6 +15,7 @@ int main(int argc, char **argv)
     std::string extract_to;
     std::string package;
     std::string create;
+    std::string create_recursively;
     try
     {
         //command line parse
@@ -27,18 +28,19 @@ int main(int argc, char **argv)
             ("package,p", boost::program_options::value<std::string>(&package), "Package name")
             ("extract,e", boost::program_options::value<std::string>(&extract_to), "Extract package to location")
             ("create,r", boost::program_options::value<std::string>(&create), "Create source package from source")
+            ("create-recursively,R", boost::program_options::value<std::string>(&create_recursively), "Create source package from source")
             ("strip,s", "Strip source package from excess files.");
         boost::program_options::variables_map vm;
         boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
         boost::program_options::notify(vm);
         if (vm.count("help"))
         {
-            std::cerr<<desc<<std::endl;
+            std::cerr << desc << std::endl;
             return 1;
         }
         if (vm.count("version"))
         {
-            std::cerr<<"It is too early to announce project version"<<std::endl;
+            std::cerr << "It is too early to announce project version" << std::endl;
             return 1;
         }
         DLOG(config parse);
@@ -47,32 +49,37 @@ int main(int argc, char **argv)
         bunsan::pm::repository repo(config);
         if (vm.count("clean"))
         {
-            std::cerr<<"Attempt to clean repository"<<std::endl;
+            std::cerr << "Attempt to clean repository" << std::endl;
             repo.clean();
         }
         else if (vm.count("package"))
         {
             if (vm.count("extract"))
             {//extracting
-                std::cerr<<"Attempt to extract \""<<package<<"\" to \""<<extract_to<<"\""<<std::endl;
+                std::cerr << "Attempt to extract \"" << package << "\" to \"" << extract_to << "\"" << std::endl;
                 repo.extract(package, extract_to);
             }
             else
             {//package info
-                std::cerr<<"Package \""<<package<<"\""<<std::endl;
+                std::cerr << "Package \"" << package << "\"" << std::endl;
             }
         }
         else if (vm.count("create"))
         {
-            std::cerr<<"Attempt to create source package from source \""<<create<<"\""<<std::endl;
+            std::cerr << "Attempt to create source package from source \"" << create << "\"" << std::endl;
             repo.create(create, vm.count("strip"));
+        }
+        else if (vm.count("create-recursively"))
+        {
+            std::cerr << "Attempt to create source packages recursively from source starting from \"" << create_recursively << "\"" << std::endl;
+            repo.create_recursively(create_recursively, vm.count("strip"));
         }
         //end parse
     }
     catch (std::exception &e)
     {
         DLOG(Oops! An exception has occured);
-        std::cerr<<e.what()<<std::endl;
+        std::cerr << e.what() << std::endl;
         return 200;
     }
 }
