@@ -2,13 +2,12 @@
 
 #include "bunsan/pm/config.hpp"
 #include "bunsan/pm/index.hpp"
+#include "bunsan/pm/snapshot.hpp"
 
 #include "bunsan/pm/checksum.hpp"
 
 #include "bunsan/logging/legacy.hpp"
 
-#include <map>
-#include <set>
 #include <unordered_set>
 
 #include <boost/filesystem/operations.hpp>
@@ -19,10 +18,10 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 {
     const boost::filesystem::path index_name = source / m_config.name.file.index;
     const boost::filesystem::path checksum_name = source / m_config.name.file.checksum;
-    std::map<std::string, std::string> checksum;
+    snapshot_entry checksum;
     // we need to save index checksum
     checksum[m_config.name.file.index] = bunsan::pm::checksum(index_name);
-    std::set<std::string> to_remove;
+    std::unordered_set<std::string> to_remove;
     index index_;
     index_.load(index_name);
     for (const auto &i: index_.source.self)
@@ -45,7 +44,7 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
     }
     // we will remove all files at the end to provide exception guarantee that we will not remove anything accidentally
     if (strip)
-        for (const auto &i: to_remove)
+        for (const std::string &i: to_remove)
         {
             boost::filesystem::path path = source / i;
             SLOG("Removing excess file from source package: " << path);
