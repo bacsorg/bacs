@@ -58,6 +58,12 @@ void bunsan::pm::repository::create(const boost::filesystem::path &source, bool 
     ntv->create(source, strip);
 }
 
+void bunsan::pm::repository::create_recursively(const boost::filesystem::path &root, bool strip)
+{
+    SLOG("recursively creating source packages from " << root << " with" << (strip ? "" : "out") << " stripping");
+    ntv->create_recursively(root, strip);
+}
+
 namespace
 {
     void require_lock(bool has, const char *func)

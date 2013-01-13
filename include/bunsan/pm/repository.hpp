@@ -42,6 +42,13 @@ namespace bunsan{namespace pm
         void create(const boost::filesystem::path &source, bool strip=false);
 
         /*!
+         * \brief Create source packages from sources recursively starting from root.
+         *
+         * \see repository::create()
+         */
+        void create_recursively(const boost::filesystem::path &root, bool strip=false);
+
+        /*!
          * \brief Extract package data to destination.
          *
          * \todo We can do explicit update.

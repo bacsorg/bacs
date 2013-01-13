@@ -9,6 +9,7 @@
 
 #include <map>
 #include <set>
+#include <unordered_set>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -50,4 +51,23 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
             SLOG("Removing excess file from source package: " << path);
             boost::filesystem::remove_all(path);
         }
+}
+
+void bunsan::pm::repository::native::create_recursively(const boost::filesystem::path &root, bool strip)
+{
+    std::unordered_set<std::string> ignore;
+    if (boost::filesystem::is_regular_file(root / m_config.name.file.index))
+    {
+        ignore.insert(m_config.name.file.index);
+        create(root, strip);
+        index index_;
+        index_.load(root / m_config.name.file.index);
+        for (const auto &i: index_.source.self)
+            ignore.insert(i.second);
+    }
+    for (boost::filesystem::directory_iterator i(root), end; i != end; ++i)
+    {
+        if (boost::filesystem::is_directory(*i) && ignore.find(i->path().filename().string()) == ignore.end())
+            create_recursively(i->path(), strip);
+    }
 }

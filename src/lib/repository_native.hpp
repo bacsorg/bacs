@@ -13,6 +13,7 @@ public:
     explicit native(const pm::config &config_);
 
     void create(const boost::filesystem::path &source, bool strip);
+    void create_recursively(const boost::filesystem::path &root, bool strip);
     void fetch_source(const entry &package);
     void update_index(const entry &package);
 
