@@ -55,12 +55,14 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 void bunsan::pm::repository::native::create_recursively(const boost::filesystem::path &root, bool strip)
 {
     std::unordered_set<std::string> ignore;
-    if (boost::filesystem::is_regular_file(root / m_config.name.file.index))
+    const boost::filesystem::path index_path = root / m_config.name.file.index;
+    if (boost::filesystem::is_regular_file(index_path))
     {
+        SLOG("Found index file at " << root << ", trying to create source package...");
         ignore.insert(m_config.name.file.index);
         create(root, strip);
         index index_;
-        index_.load(root / m_config.name.file.index);
+        index_.load(index_path);
         for (const auto &i: index_.source.self)
             ignore.insert(i.second);
     }
