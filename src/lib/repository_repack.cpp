@@ -18,6 +18,7 @@ namespace bacs{namespace archive
             options.id = id;
             options.hash = hash;
             write_info_(id, m_importer.convert(options));
+            m_repository.create_recursively(options.destination, m_problem.strip);
             unset_flag_(id, problem::flags::ignore);
             problem::status status;
             status.hash = hash;
