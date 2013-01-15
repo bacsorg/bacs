@@ -34,6 +34,7 @@ namespace bacs{namespace archive
         {
             ar & BOOST_SERIALIZATION_NVP(data);
             ar & BOOST_SERIALIZATION_NVP(root_package);
+            ar & BOOST_SERIALIZATION_NVP(strip);
             ar & BOOST_SERIALIZATION_NVP(importer);
         }
 
@@ -51,6 +52,7 @@ namespace bacs{namespace archive
         } data;
 
         bunsan::pm::entry root_package;
+        bool strip = false;
         boost::property_tree::ptree importer;
     };
 
