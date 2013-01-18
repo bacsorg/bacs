@@ -16,7 +16,7 @@
                 <p>
                     <% gt "Import status:" %>
                     <% if result->error %>
-                        <%= result->error.get() %>
+                        <pre class="error"><%= result->error.get() %></pre>
                     <% else %>
                         <% gt "OK" %>
                     <% end %>

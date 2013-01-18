@@ -27,7 +27,7 @@
                                 <td><%= id_import.first %></td>
                                 <td>
                                     <% if id_import.second.error %>
-                                        <%= id_import.second.error.get() %>
+                                        <pre class="error"><%= id_import.second.error.get() %></pre>
                                     <% else %>
                                         <% gt "OK" %>
                                     <% end %>
