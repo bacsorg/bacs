@@ -20,7 +20,7 @@
 
 void bunsan::pm::repository::native::build(const entry &package)
 {
-    tempfile build_dir = tempfile::in_dir(m_config.dir.tmp);
+    const tempfile build_dir = tempfile::in_dir(m_config.dir.tmp);
     filesystem::reset_dir(build_dir.path());
     unpack(package, build_dir.path());
     pack(package, build_dir.path());
@@ -93,7 +93,7 @@ namespace
         SLOG("merging dirs: source = " << source << ", destination = " << destination);
         for (boost::filesystem::directory_iterator i(source), end; i != end; ++i)
         {
-            boost::filesystem::path src = i->path(), dst = destination / i->path().filename();
+            const boost::filesystem::path src = i->path(), dst = destination / i->path().filename();
             if (boost::filesystem::is_directory(src) && boost::filesystem::is_directory(dst))
                 merge_dir(src, dst);
             else
@@ -104,7 +104,7 @@ namespace
         const boost::filesystem::path &destination, const boost::filesystem::path &subsource=boost::filesystem::path())
     {
         boost::filesystem::create_directories(destination);
-        bunsan::tempfile tmp = bunsan::tempfile::in_dir(destination);
+        const bunsan::tempfile tmp = bunsan::tempfile::in_dir(destination);
         bunsan::filesystem::reset_dir(tmp.path());
         extractor->unpack(source, tmp.path());
         merge_dir(tmp.path() / subsource, destination);
@@ -135,7 +135,7 @@ void bunsan::pm::repository::native::unpack_source(
     for (const auto &i: deps.source.import.package)
     {
         SLOG("starting \"" << package << "\" import extraction");
-        boost::filesystem::path snp = package_resource(i.second, m_config.name.file.installation_snapshot);
+        const boost::filesystem::path snp = package_resource(i.second, m_config.name.file.installation_snapshot);
         extract_installation(i.second, destination / i.first, false);
         merge_maps(snapshot_, read_snapshot(snp));
     }
@@ -167,7 +167,7 @@ void bunsan::pm::repository::native::pack(const entry &package, const boost::fil
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
         SLOG("starting \"" << package << "\" " << __func__);
-        boost::filesystem::path snp = build_dir / m_config.name.file.build_snapshot;
+        const boost::filesystem::path snp = build_dir / m_config.name.file.build_snapshot;
         builder->install(
             build_dir / m_config.name.dir.source,
             build_dir / m_config.name.dir.build,
@@ -202,7 +202,7 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
         SLOG("starting " << package << " " << __func__);
-        tempfile build_dir = tempfile::in_dir(m_config.dir.tmp);
+        const tempfile build_dir = tempfile::in_dir(m_config.dir.tmp);
         filesystem::reset_dir(build_dir.path());
         boost::filesystem::path install_dir = build_dir.path() / m_config.name.dir.installation;
         // unpack
