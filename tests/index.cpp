@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE entry
+#define BOOST_TEST_MODULE index
 #include <boost/test/unit_test.hpp>
 
 #include "bunsan/pm/index.hpp"
@@ -7,7 +7,8 @@
 
 #include <boost/property_tree/info_parser.hpp>
 
-BOOST_AUTO_TEST_SUITE(entry)
+/// \note ::index is defined by gcc
+BOOST_AUTO_TEST_SUITE(index_)
 
 BOOST_AUTO_TEST_CASE(load)
 {
@@ -75,4 +76,4 @@ source
     BOOST_CHECK(index.all() == all);
 }
 
-BOOST_AUTO_TEST_SUITE_END() // entry
+BOOST_AUTO_TEST_SUITE_END() // index
