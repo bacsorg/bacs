@@ -1,13 +1,13 @@
 
 lock
 {
-    global /home/lex/istu/dev/bunsan/pm/test/repo.lock
+    global /home/lex/dev/bunsan/pm/test/repo.lock
 }
 dir
 {
     tmp /tmp/bunsan_pm_tmp ; for build
-    source /home/lex/istu/dev/bunsan/pm/test/source_dir
-    package /home/lex/istu/dev/bunsan/pm/test/package_dir
+    source /home/lex/dev/bunsan/pm/test/source_dir
+    package /home/lex/dev/bunsan/pm/test/package_dir
 }
 name
 {
@@ -33,7 +33,8 @@ suffix
     source_archive .tgz
 }
 ;repository_url "http://localhost/~lex/repo"
-repository_url "/home/lex/public_html/repo"
+;repository_url "/home/lex/public_html/repo"
+repository_url "/home/lex/dev/bunsan/bacs/single/repository"
 
 utility
 {
@@ -52,8 +53,11 @@ utility
         type tar
         config
         {
-            format J
-            exclude-vcs 1
+            format z
+            flags
+            {
+                "" exclude_vcs
+            }
         }
     }
     cache_archiver
@@ -61,7 +65,7 @@ utility
         type tar
         config
         {
-            format J
+            format z
         }
     }
     fetcher
@@ -83,7 +87,7 @@ utility
             }
             make_maker
             {
-                threads 3
+                jobs 4
             }
             ;install_maker
             ;{
@@ -91,4 +95,3 @@ utility
         }
     }
 }
-
