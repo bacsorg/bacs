@@ -17,9 +17,7 @@ namespace bunsan{namespace pm
         void serialize(Archive &ar, const unsigned int)
         {
             ar & BOOST_SERIALIZATION_NVP(package);
-            ar & BOOST_SERIALIZATION_NVP(source.self);
-            ar & BOOST_SERIALIZATION_NVP(source.import.source);
-            ar & BOOST_SERIALIZATION_NVP(source.import.package);
+            ar & BOOST_SERIALIZATION_NVP(source);
         }
 
         index()=default;
@@ -45,6 +43,14 @@ namespace bunsan{namespace pm
         std::multimap<boost::filesystem::path, entry> package;
         struct
         {
+            template <typename Archive>
+            void serialize(Archive &ar, const unsigned int)
+            {
+                ar & BOOST_SERIALIZATION_NVP(self);
+                ar & BOOST_SERIALIZATION_NVP(import.source);
+                ar & BOOST_SERIALIZATION_NVP(import.package);
+            }
+
             struct
             {
                 std::multimap<boost::filesystem::path, entry> source, package;
