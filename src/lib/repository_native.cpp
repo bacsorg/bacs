@@ -77,11 +77,14 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
         SLOG("starting \"" << package << "\" " << __func__);
         const std::string src_sfx = m_config.suffix.source_archive;
         const boost::filesystem::path output = package.local_resource(m_config.dir.source);
-        for (const auto &i: sources(package))
+        for (const std::string &src_name: read_index(package).sources())
+        {
+            const std::string src = src_name + src_sfx;
             load(fetcher,
-                 remote_resource(package, i.second + src_sfx),
-                 output / (i.second + src_sfx),
-                 read_checksum(package).at(i.second));
+                 remote_resource(package, src),
+                 output / src,
+                 read_checksum(package).at(src_name));
+        }
     }
     BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
 }
@@ -186,6 +189,32 @@ void bunsan::pm::repository::native::pack(const entry &package, const boost::fil
     BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
 }
 
+void bunsan::pm::repository::native::build_empty(const entry &package)
+{
+    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    {
+        SLOG("starting \"" << package << "\" " << __func__);
+        const tempfile build_dir = tempfile::in_dir(m_config.dir.tmp);
+        boost::filesystem::create_directory(build_dir.path());
+        // create empty archive
+        boost::filesystem::create_directory(build_dir.path() / m_config.name.dir.installation);
+        cache_archiver->pack(
+            build_dir.path() / m_config.name.file.build,
+            build_dir.path() / m_config.name.dir.installation);
+        // create build cache
+        boost::filesystem::create_directories(package.local_resource(m_config.dir.package));
+        boost::filesystem::copy_file(
+            build_dir.path() / m_config.name.file.build,
+            package_resource(package, m_config.name.file.build),
+            boost::filesystem::copy_option::overwrite_if_exists);
+        const snapshot snapshot_ = {
+            {package, read_checksum(package)}
+        };
+        write_snapshot(package_resource(package, m_config.name.file.build_snapshot), snapshot_);
+    }
+    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+}
+
 void bunsan::pm::repository::native::extract_build(const entry &package, const boost::filesystem::path &destination)
 {
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
@@ -209,10 +238,13 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
         extract_build(package, install_dir);
         snapshot snapshot_ = read_snapshot(package_resource(package, m_config.name.file.build_snapshot));
         const index deps = read_index(package);
-        for (const auto &i: deps.package)
+        for (const auto &i: deps.package.self)
+            ::extract(source_archiver, source_resource(package, i.second + m_config.suffix.source_archive), install_dir / i.first, i.second);
+        for (const auto &i: deps.package.import.source)
+            unpack_source(i.second, install_dir / i.first, snapshot_);
+        for (const auto &i: deps.package.import.package)
         {
-            boost::filesystem::path dest = install_dir / i.first;
-            extract_installation(i.second, dest, false);
+            extract_installation(i.second, install_dir / i.first, false);
             merge_maps(snapshot_, read_snapshot(package_resource(i.second, m_config.name.file.installation_snapshot)));
         }
         // save snapshot

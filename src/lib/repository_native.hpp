@@ -20,6 +20,9 @@ public:
     /// unpack, configure, compile, pack
     void build(const entry &package);
 
+    /// create empty build (for packages without sources)
+    void build_empty(const entry &package);
+
     void build_installation(const entry &package);
 
     /// check system directories existance and create them if they are missing
@@ -35,7 +38,6 @@ private:
     std::string remote_resource(const entry &package, const boost::filesystem::path &name);
     boost::filesystem::path source_resource(const entry &package, const std::string &name);
     boost::filesystem::path package_resource(const entry &package, const std::string &name);
-    std::multimap<boost::filesystem::path, std::string> sources(const entry &package);
     snapshot read_snapshot(const boost::filesystem::path &path);
     void write_snapshot(const boost::filesystem::path &path, const snapshot &snapshot_);
 

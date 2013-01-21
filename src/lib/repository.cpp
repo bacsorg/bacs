@@ -91,6 +91,7 @@ enum class bunsan::pm::repository::stage_type: int
 {
     installation,
     build,
+    build_empty,
     source
 };
 
@@ -100,6 +101,7 @@ namespace
     {
         "installation",
         "build",
+        "build_empty",
         "source"
     };
 }
@@ -160,14 +162,31 @@ bool bunsan::pm::repository::update_package_depends(
     {
     case stage_type::installation:
         {
-            for (const auto &i: deps.package)
+            for (const auto &i: deps.package.import.package)
             {
                 snapshot snapshot_;
                 const bool ret = update_package_depends(stage(i.second, stage_type::installation), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
                 merge_maps(current_snapshot, snapshot_);
             }
+            for (const auto &i: deps.package.import.source)
             {
+                snapshot snapshot_;
+                const bool ret = update_package_depends(stage(i.second, stage_type::source), updated, in, snapshot_, snapshot_cache);
+                upd = upd || ret;
+                merge_maps(current_snapshot, snapshot_);
+            }
+            if (deps.source.empty())
+            {
+                snapshot snapshot_;
+                /// \note build is not needed because no sources provided
+                const bool ret = update_package_depends(stage(package.first, stage_type::build_empty), updated, in, snapshot_, snapshot_cache);
+                upd = upd || ret;
+                merge_maps(current_snapshot, snapshot_);
+            }
+            else
+            {
+                /// \note source is updated by build
                 snapshot snapshot_;
                 const bool ret = update_package_depends(stage(package.first, stage_type::build), updated, in, snapshot_, snapshot_cache);
                 upd = upd || ret;
@@ -193,6 +212,22 @@ bool bunsan::pm::repository::update_package_depends(
             if (upd)
             {
                 ntv->build(package.first);
+                BOOST_ASSERT(!ntv->build_outdated(package.first, current_snapshot));
+            }
+        }
+        break;
+    case stage_type::build_empty:
+        {
+            {
+                snapshot snapshot_;
+                const bool ret = update_package_depends(stage(package.first, stage_type::source), updated, in, snapshot_, snapshot_cache);
+                upd = upd || ret;
+                merge_maps(current_snapshot, snapshot_);
+            }
+            upd = upd || ntv->build_outdated(package.first, current_snapshot);
+            if (upd)
+            {
+                ntv->build_empty(package.first);
                 BOOST_ASSERT(!ntv->build_outdated(package.first, current_snapshot));
             }
         }

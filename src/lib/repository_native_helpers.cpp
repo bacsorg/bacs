@@ -31,11 +31,6 @@ boost::filesystem::path bunsan::pm::repository::native::package_resource(const e
     return package.local_resource(m_config.dir.package, name);
 }
 
-std::multimap<boost::filesystem::path, std::string> bunsan::pm::repository::native::sources(const entry &package)
-{
-    return read_index(package).source.self;
-}
-
 bunsan::pm::repository::native::native(const pm::config &config_):
     m_config(config_),
     m_resolver(m_config.utility.resolver)

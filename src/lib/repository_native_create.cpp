@@ -24,9 +24,8 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
     std::unordered_set<std::string> to_remove;
     index index_;
     index_.load(index_name);
-    for (const auto &i: index_.source.self)
+    for (const std::string &src_name: index_.sources())
     {
-        const std::string src_name = i.second;
         const std::string src_value = src_name + m_config.suffix.source_archive;
         const boost::filesystem::path src = source / src_name;
         const boost::filesystem::path dst = boost::filesystem::absolute(source / src_value);
@@ -63,8 +62,8 @@ void bunsan::pm::repository::native::create_recursively(const boost::filesystem:
         create(root, strip);
         index index_;
         index_.load(index_path);
-        for (const auto &i: index_.source.self)
-            ignore.insert(i.second);
+        const std::unordered_set<std::string> sources = index_.sources();
+        ignore.insert(sources.begin(), sources.end());
     }
     for (boost::filesystem::directory_iterator i(root), end; i != end; ++i)
     {

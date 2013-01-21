@@ -5,6 +5,8 @@
 #include <set>
 #include <map>
 
+#include <unordered_set>
+
 #include <boost/filesystem/path.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -16,8 +18,8 @@ namespace bunsan{namespace pm
         template <typename Archive>
         void serialize(Archive &ar, const unsigned int)
         {
-            ar & BOOST_SERIALIZATION_NVP(package);
             ar & BOOST_SERIALIZATION_NVP(source);
+            ar & BOOST_SERIALIZATION_NVP(package);
         }
 
         index()=default;
@@ -38,10 +40,12 @@ namespace bunsan{namespace pm
         void load(const boost::filesystem::path &path);
         void save(const boost::filesystem::path &path) const;
 
+        // TODO make it unordered
         std::set<entry> all() const;
 
-        std::multimap<boost::filesystem::path, entry> package;
-        struct
+        std::unordered_set<std::string> sources() const;
+
+        struct stage
         {
             template <typename Archive>
             void serialize(Archive &ar, const unsigned int)
@@ -56,6 +60,10 @@ namespace bunsan{namespace pm
                 std::multimap<boost::filesystem::path, entry> source, package;
             } import;
             std::multimap<boost::filesystem::path, std::string> self;
-        } source;
+
+            bool empty() const;
+
+            std::set<entry> all() const;
+        } source, package;
     };
 }}

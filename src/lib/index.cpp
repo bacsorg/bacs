@@ -7,17 +7,37 @@
 
 #include <boost/property_tree/info_parser.hpp>
 
+bool bunsan::pm::index::stage::empty() const
+{
+    return self.empty() && import.package.empty() && import.source.empty();
+}
+
+std::set<bunsan::pm::entry> bunsan::pm::index::stage::all() const
+{
+    std::set<entry> all_;
+    for (const auto &i: import.package)
+        all_.insert(i.second);
+    for (const auto &i: import.source)
+        all_.insert(i.second);
+    return all_;
+}
+
 std::set<bunsan::pm::entry> bunsan::pm::index::all() const
 {
-    // TODO make it unordered
-    std::set<entry> all_;
-    for (const auto &i: package)
-        all_.insert(i.second);
-    for (const auto &i: source.import.package)
-        all_.insert(i.second);
-    for (const auto &i: source.import.source)
-        all_.insert(i.second);
-    return std::move(all_);
+    std::set<entry> all_ = source.all();
+    const std::set<entry> all_package = package.all();
+    all_.insert(all_package.begin(), all_package.end());
+    return all_;
+}
+
+std::unordered_set<std::string> bunsan::pm::index::sources() const
+{
+    std::unordered_set<std::string> sources_;
+    for (const auto &i: source.self)
+        sources_.insert(i.second);
+    for (const auto &i: package.self)
+        sources_.insert(i.second);
+    return sources_;
 }
 
 namespace bunsan{namespace config{namespace traits
