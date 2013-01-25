@@ -1,10 +1,16 @@
-#include <boost/program_options.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include "bacs/archive/repository.hpp"
+#include "bacs/archive/pb/problem.pb.h"
+#include "bacs/archive/pb/convert.hpp"
 
+#include "bunsan/enable_error_info.hpp"
 #include "bunsan/property_tree/info_parser.hpp"
 #include "bunsan/logging/legacy.hpp"
+#include "bunsan/filesystem/fstream.hpp"
 
-#include "bacs/archive/repository.hpp"
+#include <memory>
+
+#include <boost/program_options.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 int main(int argc, char **argv)
 {
@@ -20,7 +26,7 @@ int main(int argc, char **argv)
             ("config,c", boost::program_options::value<std::string>(&config_file))
             ("format,f", boost::program_options::value<std::string>(&format))
             ("input,i", boost::program_options::value<std::string>(&input))
-            ("output,i", boost::program_options::value<std::string>(&output))
+            ("output,o", boost::program_options::value<std::string>(&output))
             ("insert", "Insert problem from directory")
             ("insert_all", "Insert all problems from archive");
         boost::program_options::variables_map vm;
@@ -40,33 +46,56 @@ int main(int argc, char **argv)
         boost::property_tree::ptree config;
         bunsan::property_tree::read_info(config_file, config);
         bacs::archive::repository repo(config);
-        bacs::archive::archiver_options archiver_options;
+        boost::optional<bacs::archive::archiver_options> archiver_options;
+        if (vm.count("format"))
         {
+            archiver_options = bacs::archive::archiver_options();
             const std::string::size_type pos = format.find(':');
-            archiver_options.type = format.substr(0, pos);
+            archiver_options->type = format.substr(0, pos);
             if (pos != std::string::npos)
-                archiver_options.config.put("format", format.substr(pos + 1));
+                archiver_options->config.put("format", format.substr(pos + 1));
         }
-        if (vm.count("insert_all"))
+        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
         {
-            bacs::archive::problem::import_map map = repo.insert_all(archiver_options, input);
-            // TODO import_map output
+            std::ostream *out = &std::cout;
+            std::unique_ptr<bunsan::filesystem::ofstream> fout;
+            if (vm.count("output"))
+            {
+                fout.reset(new bunsan::filesystem::ofstream(output, std::ios_base::binary));
+                out = fout.get();
+            }
+            if (vm.count("insert_all"))
+            {
+                const bacs::archive::problem::import_map map =
+                    archiver_options ? repo.insert_all(archiver_options.get(), input) : repo.insert_all(input);
+                bacs::archive::pb::problem::ImportMap pb_map;
+                bacs::archive::pb::convert(map, pb_map);
+                *out << pb_map.DebugString() << std::flush;
+            }
+            else if (vm.count("insert"))
+            {
+                const boost::filesystem::path path = boost::filesystem::absolute(input);
+                const bacs::archive::problem::import_info info = repo.insert(path.filename().string(), path);
+                bacs::archive::pb::problem::ImportInfo pb_info;
+                bacs::archive::pb::convert(info, pb_info);
+                *out << pb_info.DebugString() << std::flush;
+            }
+            else if (vm.count("extract"))
+            {
+                // TODO
+            }
+            else if (vm.count("info"))
+            {
+                // TODO
+            }
+            else if (vm.count("hash"))
+            {
+                // TODO
+            }
+            if (fout)
+                fout->close();
         }
-        else if (vm.count("insert"))
-        {
-            boost::filesystem::path path = boost::filesystem::absolute(input);
-            bacs::archive::problem::import_info info = repo.insert(path.filename().string(), path);
-            // TODO info output
-        }
-        else if (vm.count("extract"))
-        {
-        }
-        else if (vm.count("info"))
-        {
-        }
-        else if (vm.count("hash"))
-        {
-        }
+        BUNSAN_EXCEPTIONS_WRAP_END()
     }
     catch (std::exception &e)
     {
