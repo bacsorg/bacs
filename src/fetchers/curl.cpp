@@ -23,6 +23,7 @@ void fetchers::curl::fetch(const std::string &uri, const boost::filesystem::path
     ctx.executable(m_exe);
     ctx.arguments(
         m_exe.filename(),
+        "--fail",
         "--output",
         boost::filesystem::absolute(dst),
         "--silent",
