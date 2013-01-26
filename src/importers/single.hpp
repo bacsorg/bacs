@@ -3,6 +3,8 @@
 #include "bacs/problem/importer.hpp"
 #include "bacs/problem/error.hpp"
 
+#include "bacs/single/problem/generator.hpp"
+
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -35,7 +37,7 @@ namespace bacs{namespace problem{namespace importers
         info convert(const options &options_) override;
 
     private:
-        const config m_config;
+        const bacs::single::problem::generator_ptr m_generator;
 
     private:
         static const bool factory_reg_hook;

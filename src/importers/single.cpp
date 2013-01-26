@@ -18,20 +18,27 @@ namespace bacs{namespace problem{namespace importers
             return tmp;
         });
 
+    namespace
+    {
+        template <typename GeneratorConfig>
+        bacs::single::problem::generator_ptr get_generator(const GeneratorConfig &config)
+        {
+            return bacs::single::problem::generator::instance(config.type, config.config);
+        }
+    }
+
     single::single(const boost::property_tree::ptree &config_):
-        m_config(bunsan::config::load<config>(config_)) {}
+        m_generator(get_generator(bunsan::config::load<config>(config_).generator)) {}
 
     info single::convert(const options &options_)
     {
         const bacs::single::problem::driver_ptr drv =
             bacs::single::problem::driver::instance(options_.problem_dir);
-        const bacs::single::problem::generator_ptr gen =
-            bacs::single::problem::generator::instance(m_config.generator.type, m_config.generator.config);
         bacs::single::problem::generator::options opts;
         opts.driver = drv;
         opts.destination = options_.destination;
         opts.root_package = options_.root_package;
-        bacs::single::api::pb::problem::Problem problem_info = gen->generate(opts);
+        bacs::single::api::pb::problem::Problem problem_info = m_generator->generate(opts);
         problem_info.mutable_info()->mutable_system()->set_hash(options_.hash.data(), options_.hash.size());
         std::ostringstream sout;
         if (!problem_info.SerializeToOstream(&sout))
