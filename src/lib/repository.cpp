@@ -148,7 +148,7 @@ bool bunsan::pm::repository::update_package_depends(
     if (in.find(package) != in.end())
         BOOST_THROW_EXCEPTION(circular_dependencies() << circular_dependencies::package(package.first.name()));
     {
-        auto iter = updated.find(package);
+        const auto iter = updated.find(package);
         if (iter != updated.end())
         {
             current_snapshot = snapshot_cache.at(package);
