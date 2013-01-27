@@ -1,6 +1,53 @@
 <% c++ #include "bacs/archive/web/content/base_form.hpp" %>
 <% skin plain %>
     <% view base_form uses bacs::archive::web::content::base_form extends base %>
+        <% template script() %>
+            <% include base::script() %>
+            // jQuery replaceTagName plugin
+            (function(a){a.fn.replaceTagName=function(e){var f=[],g=this.length;while(g--){var j=document.createElement(e),b=this[g],d=b.attributes;for(var c=d.length-1;c>=0;c--){var h=d[c];j.setAttribute(h.name,h.value)}j.innerHTML=b.innerHTML;a(b).after(j).remove();f[g-1]=j}return f}})(window.jQuery);
+
+            function update_archiver_format(index, type)
+            {
+                parent = $(type);
+                // does not allow infinite loop
+                left = 100;
+                do
+                {
+                    parent = parent.parent();
+                    formats = parent.find("select[name='archiver_format']");
+                    --left;
+                }
+                while (left && !formats.length);
+                formats.empty();
+                switch (type.value)
+                {
+                case "tar":
+                    formats.append('<option value="">tar</option>');
+                    values = ["gzip", "bzip2", "xz", "lzma", "lzop"];
+                    break;
+                case "7z":
+                    formats.append('<option value="">auto</option>');
+                    values = ["7z", "zip", "tar"];
+                    break;
+                }
+                for (i = 0; i < values.length; ++i)
+                    formats.append('<option value="' + values[i] + '">' + values[i] + '</option>');
+            }
+        <% end template %>
+        <% template script_onload() %>
+            <% include base::script_onload() %>
+            {
+                // update format
+                $("input[name='archiver_format']").replaceTagName('select');
+                $("select[name='archiver_format']").removeAttr('type');
+                // update type + update format list
+                $("input[name='archiver_type']").replaceTagName('select');
+                $("select[name='archiver_type']").removeAttr('type').attr('onchange', 'update_archiver_format(0, this);')
+                    .append('<option value="tar">tar</option>')
+                    .append('<option value="7z">7z</option>')
+                    .map(update_archiver_format);
+            }
+        <% end template %>
         <% template stylesheets() %>
             <% include base::stylesheets() %>
             <link href="/static/plain/base_form.css" rel="stylesheet" type="text/css">
