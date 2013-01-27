@@ -3,4 +3,3 @@
 */
 
 // vim:syntax=doxygen
-

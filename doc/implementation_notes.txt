@@ -18,4 +18,3 @@ and without stack-overflow checks, so the depth of depends is limited by stack s
 */
 
 // vim:syntax=doxygen
-

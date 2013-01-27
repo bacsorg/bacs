@@ -140,4 +140,3 @@ Note the following facts:
 */
 
 // vim:syntax=doxygen
-

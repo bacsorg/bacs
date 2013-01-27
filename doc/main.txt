@@ -14,4 +14,3 @@ This library provides implementation of package management system, that
 */
 
 // vim:syntax=doxygen
-

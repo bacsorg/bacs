@@ -44,4 +44,3 @@ Instead of real names configuration aliases will be used, such as <b>name::file:
 */
 
 // vim:syntax=doxygen
-
