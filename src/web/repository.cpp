@@ -252,8 +252,9 @@ namespace bacs{namespace archive{namespace web
             [this, &tmpfile, &filename](content::extract &data) -> void
             {
                 tmpfile = m_repository->extract_all(data.form.ids.value(), data.form.config.value());
-                filename = "archive." + data.form.config.type.value() +
-                           "." + data.form.config.format.value();
+                filename = "archive." + data.form.config.type.value();
+                if (!data.form.config.format.value().empty())
+                    filename.append("." + data.form.config.format.value());
             };
         const auto sender =
             [this, &tmpfile, &filename]() -> void
