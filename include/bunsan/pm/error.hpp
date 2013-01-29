@@ -24,6 +24,13 @@ namespace bunsan{namespace pm
         typedef boost::error_info<struct tag_meta, boost::filesystem::path> meta;
     };
 
+    struct create_error: virtual error {};
+
+    struct source_does_not_exist_error: virtual create_error
+    {
+        typedef boost::error_info<struct tag_source, std::string> source;
+    };
+
     /// \todo consider rename
     struct invalid_entry_name_error: virtual error
     {
