@@ -29,9 +29,11 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
         const std::string src_value = src_name + m_config.name.suffix.source_archive;
         const boost::filesystem::path src = source / src_name;
         const boost::filesystem::path dst = boost::filesystem::absolute(source / src_value);
-        if (!boost::filesystem::exists(source / src_name))
-            BOOST_THROW_EXCEPTION(error("Source does not exist") << error::path(src_name)); // TODO better error name
-        source_archiver->pack(dst, source / src_name);
+        if (!boost::filesystem::exists(src))
+            BOOST_THROW_EXCEPTION(source_does_not_exist_error() <<
+                                  source_does_not_exist_error::source(src_name) <<
+                                  source_does_not_exist_error::path(src));
+        source_archiver->pack(dst, src);
         checksum[src_name] = bunsan::pm::checksum(source / src_value);
         to_remove.insert(src_name); // we will remove all sources
     }
