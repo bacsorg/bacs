@@ -13,6 +13,8 @@ int main(int argc, char **argv)
 {
     std::string config_file;
     std::string extract_to;
+    std::string install_to;
+    std::string update_installation;
     std::string package;
     std::string create;
     std::string create_recursively;
@@ -27,6 +29,8 @@ int main(int argc, char **argv)
             ("clean", "Clean repository")
             ("package,p", boost::program_options::value<std::string>(&package), "Package name")
             ("extract,e", boost::program_options::value<std::string>(&extract_to), "Extract package to location")
+            ("install,i", boost::program_options::value<std::string>(&install_to), "Install package to location")
+            ("update,u", boost::program_options::value<std::string>(&update_installation), "Update installed package")
             ("create,r", boost::program_options::value<std::string>(&create), "Create source package from source")
             ("create-recursively,R", boost::program_options::value<std::string>(&create_recursively), "Create source package from source")
             ("strip,s", "Strip source package from excess files.");
@@ -58,6 +62,14 @@ int main(int argc, char **argv)
             {//extracting
                 std::cerr << "Attempt to extract \"" << package << "\" to \"" << extract_to << "\"" << std::endl;
                 repo.extract(package, extract_to);
+            }
+            else if (vm.count("install"))
+            {
+                repo.install(package, install_to);
+            }
+            else if (vm.count("update"))
+            {
+                repo.update(package, update_installation);
             }
             else
             {//package info

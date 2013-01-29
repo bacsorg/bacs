@@ -32,6 +32,10 @@ name
     {
         source_archive .tgz
     }
+    installation
+    {
+        meta .bunsan_pm
+    }
 }
 
 ;repository_url "http://localhost/~lex/repo"

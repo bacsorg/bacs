@@ -17,6 +17,13 @@ namespace bunsan{namespace pm
         typedef filesystem::error::path path;
     };
 
+    struct invalid_installation_error: virtual error {};
+
+    struct installation_meta_exists_error: virtual invalid_installation_error
+    {
+        typedef boost::error_info<struct tag_meta, boost::filesystem::path> meta;
+    };
+
     /// \todo consider rename
     struct invalid_entry_name_error: virtual error
     {

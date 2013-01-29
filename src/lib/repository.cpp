@@ -79,12 +79,34 @@ namespace
 void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
 {
     require_lock(static_cast<bool>(m_flock), __func__);
-    SLOG("extract \"" << package << "\" to " << destination);
+    SLOG("Attempt to extract \"" << package << "\" to " << destination);
     boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
     DLOG(trying to update);
     update(package);
     DLOG(trying to extract);
     ntv->extract_installation(package, destination);
+}
+
+void bunsan::pm::repository::install(const entry &package, const boost::filesystem::path &destination)
+{
+    require_lock(static_cast<bool>(m_flock), __func__);
+    SLOG("Attempt to install \"" << package << "\" to " << destination);
+    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
+    DLOG(trying to update);
+    update(package);
+    DLOG(trying to install);
+    ntv->install_installation(package, destination);
+}
+
+void bunsan::pm::repository::update(const entry &package, const boost::filesystem::path &destination)
+{
+    require_lock(static_cast<bool>(m_flock), __func__);
+    SLOG("Attempt to update \"" << package << "\" installation in " << destination);
+    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
+    DLOG(trying to update package);
+    update(package);
+    DLOG(trying to update installation);
+    ntv->update_installation(package, destination);
 }
 
 enum class bunsan::pm::repository::stage_type: int

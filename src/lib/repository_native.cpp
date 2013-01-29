@@ -278,3 +278,54 @@ void bunsan::pm::repository::native::extract_installation(const entry &package, 
     }
     BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
 }
+
+void bunsan::pm::repository::native::install_installation(const entry &package, const boost::filesystem::path &destination)
+{
+    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    {
+        SLOG("starting " << package << " " << __func__);
+        const boost::filesystem::path meta = destination / m_config.name.installation.meta;
+        const boost::filesystem::path snp = package_resource(package, m_config.name.file.installation_snapshot);
+        boost::filesystem::path dst = destination;
+        if (m_config.name.installation.data)
+            dst /= m_config.name.installation.data.get();
+        bunsan::filesystem::reset_dir(destination);
+        extract_installation(package, dst);
+        if (boost::filesystem::exists(meta))
+        {
+            BOOST_ASSERT(!m_config.name.installation.data);
+            BOOST_THROW_EXCEPTION(installation_meta_exists_error() <<
+                                  installation_meta_exists_error::meta(meta));
+        }
+        boost::filesystem::copy_file(snp, meta, boost::filesystem::copy_option::fail_if_exists);
+    }
+    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+}
+
+void bunsan::pm::repository::native::update_installation(const entry &package, const boost::filesystem::path &destination)
+{
+    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    {
+        SLOG("starting " << package << " " << __func__);
+        const boost::filesystem::path meta = destination / m_config.name.installation.meta;
+        const boost::filesystem::path snp = package_resource(package, m_config.name.file.installation_snapshot);
+        boost::optional<snapshot> snapshot_;
+        if (boost::filesystem::is_regular_file(meta))
+        {
+            try
+            {
+                snapshot_ = read_snapshot(meta);
+            }
+            catch (std::exception &)
+            {
+                SLOG("warning: unable to read snapshot from " << meta << ", falling back to outdated.");
+            }
+        }
+        if (!snapshot_ || snapshot_.get() != read_snapshot(snp))
+        {
+            SLOG("\"" << package << "\" installation at " << destination << " is outdated, updating...");
+            install_installation(package, destination);
+        }
+    }
+    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+}

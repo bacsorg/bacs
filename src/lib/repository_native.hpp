@@ -48,6 +48,8 @@ public:
     snapshot_entry read_checksum(const entry &package);
     void extract_build(const entry &package, const boost::filesystem::path &destination);
     void extract_installation(const entry &package, const boost::filesystem::path &destination, bool reset=true);
+    void install_installation(const entry &package, const boost::filesystem::path &destination);
+    void update_installation(const entry &package, const boost::filesystem::path &destination);
 
 private:
     const pm::config &m_config;

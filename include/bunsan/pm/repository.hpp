@@ -56,6 +56,16 @@ namespace bunsan{namespace pm
         void extract(const entry &package, const boost::filesystem::path &destination);
 
         /*!
+         * \brief Install package to destination.
+         */
+        void install(const entry &package, const boost::filesystem::path &destination);
+
+        /*!
+         * \brief Update previously installed package.
+         */
+        void update(const entry &package, const boost::filesystem::path &destination);
+
+        /*!
          * \brief Run clean up actions, may have negative effect on performance because of cleaning the cache, but can free disk space.
          *
          * \todo It seems that such method should be, but semantics can be different.

@@ -71,6 +71,7 @@ namespace bunsan{namespace pm
                 ar & BOOST_SERIALIZATION_NVP(file);
                 ar & BOOST_SERIALIZATION_NVP(dir);
                 ar & BOOST_SERIALIZATION_NVP(suffix);
+                ar & BOOST_SERIALIZATION_NVP(installation);
             }
 
             struct
@@ -121,6 +122,19 @@ namespace bunsan{namespace pm
 
                 std::string source_archive; ///< suffix of archive files
             } suffix;
+
+            struct
+            {
+                template <typename Archive>
+                void serialize(Archive &ar, const unsigned int)
+                {
+                    ar & BOOST_SERIALIZATION_NVP(meta);
+                    ar & BOOST_SERIALIZATION_NVP(data);
+                }
+
+                boost::filesystem::path meta;
+                boost::optional<boost::filesystem::path> data; ///< if null data is placed in root folder
+            } installation;
         } name;
 
         struct
