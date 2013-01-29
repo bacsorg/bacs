@@ -40,7 +40,6 @@ namespace bunsan{namespace pm
             ar & BOOST_SERIALIZATION_NVP(dir);
             ar & BOOST_SERIALIZATION_NVP(name);
             ar & BOOST_SERIALIZATION_NVP(utility);
-            ar & BOOST_SERIALIZATION_NVP(suffix.source_archive);
             ar & BOOST_SERIALIZATION_NVP(repository_url);
         }
 
@@ -71,6 +70,7 @@ namespace bunsan{namespace pm
             {
                 ar & BOOST_SERIALIZATION_NVP(file);
                 ar & BOOST_SERIALIZATION_NVP(dir);
+                ar & BOOST_SERIALIZATION_NVP(suffix);
             }
 
             struct
@@ -110,12 +110,18 @@ namespace bunsan{namespace pm
                 boost::filesystem::path build;          ///< subdirectory for package building
                 boost::filesystem::path installation;   ///< subdirectory for package installation
             } dir;
-        } name;
 
-        struct
-        {
-            std::string source_archive; ///< suffix of archive files
-        } suffix;
+            struct
+            {
+                template <typename Archive>
+                void serialize(Archive &ar, const unsigned int)
+                {
+                    ar & BOOST_SERIALIZATION_NVP(source_archive);
+                }
+
+                std::string source_archive; ///< suffix of archive files
+            } suffix;
+        } name;
 
         struct
         {

@@ -28,11 +28,10 @@ name
         build build
         installation installation
     }
-}
-
-suffix
-{
-    source_archive .tgz
+    suffix
+    {
+        source_archive .tgz
+    }
 }
 
 ;repository_url "http://localhost/~lex/repo"

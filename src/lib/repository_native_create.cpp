@@ -26,7 +26,7 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
     index_.load(index_name);
     for (const std::string &src_name: index_.sources())
     {
-        const std::string src_value = src_name + m_config.suffix.source_archive;
+        const std::string src_value = src_name + m_config.name.suffix.source_archive;
         const boost::filesystem::path src = source / src_name;
         const boost::filesystem::path dst = boost::filesystem::absolute(source / src_value);
         if (!boost::filesystem::exists(source / src_name))

@@ -75,7 +75,7 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
         SLOG("starting \"" << package << "\" " << __func__);
-        const std::string src_sfx = m_config.suffix.source_archive;
+        const std::string src_sfx = m_config.name.suffix.source_archive;
         const boost::filesystem::path output = package.local_resource(m_config.dir.source);
         for (const std::string &src_name: read_index(package).sources())
         {
@@ -121,7 +121,7 @@ void bunsan::pm::repository::native::unpack_source(
     const index deps = read_index(package);
     // extract sources
     for (const auto &i: deps.source.self)
-        ::extract(source_archiver, source_resource(package, i.second + m_config.suffix.source_archive), destination / i.first, i.second);
+        ::extract(source_archiver, source_resource(package, i.second + m_config.name.suffix.source_archive), destination / i.first, i.second);
     // dump package checksum into snapshot
     {
         const auto iter = snapshot_.find(package);
@@ -239,7 +239,7 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
         snapshot snapshot_ = read_snapshot(package_resource(package, m_config.name.file.build_snapshot));
         const index deps = read_index(package);
         for (const auto &i: deps.package.self)
-            ::extract(source_archiver, source_resource(package, i.second + m_config.suffix.source_archive), install_dir / i.first, i.second);
+            ::extract(source_archiver, source_resource(package, i.second + m_config.name.suffix.source_archive), install_dir / i.first, i.second);
         for (const auto &i: deps.package.import.source)
             unpack_source(i.second, install_dir / i.first, snapshot_);
         for (const auto &i: deps.package.import.package)
