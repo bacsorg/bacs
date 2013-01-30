@@ -12,6 +12,7 @@
 
 #include <functional>
 
+#include <boost/filesystem/operations.hpp>
 #include <boost/assert.hpp>
 
 namespace bacs{namespace archive{namespace web
@@ -352,6 +353,7 @@ namespace bacs{namespace archive{namespace web
         response().content_type("application/octet-stream");
         BOOST_ASSERT(filename.find('"') == std::string::npos);
         response().set_header("Content-Disposition", "filename=\"" + filename + "\"");
+        response().content_length(boost::filesystem::file_size(path));
         BUNSAN_EXCEPTIONS_WRAP_BEGIN()
         {
             // FIXME be careful about large files
