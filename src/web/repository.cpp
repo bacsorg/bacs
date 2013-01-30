@@ -161,7 +161,7 @@ namespace bacs{namespace archive{namespace web
                         break;
                     case content::form::base::response_type::protobuf:
                         response().status(cppcms::http::response::internal_server_error, "Exception occurred");
-                        response().content_type("text/plain");
+                        response().set_plain_text_header();
                         response().out() << e.what();
                         break;
                     }
