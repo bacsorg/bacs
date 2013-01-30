@@ -150,7 +150,7 @@ namespace bacs{namespace archive
         if (exists(id))
         {
             const shared_lock_guard lk(m_lock);
-            if (is_available_(id))
+            if (exists(id))
             {
                 extract_(id, location);
                 return true;

@@ -84,11 +84,11 @@ namespace bacs{namespace archive
         /*!
          * \brief Extract problems from repository.
          *
-         * Ignores unavailable problems.
+         * Ignores nonexistent problems.
          *
          * Not atomic.
          *
-         * \see repository::is_available
+         * \see repository::exists
          * \see repository::extract
          */
         void extract_all(const problem::id_set &id_set, const boost::filesystem::path &location);
@@ -111,11 +111,11 @@ namespace bacs{namespace archive
         /*!
          * \brief Extract problem from repository.
          *
-         * \return false if problem is not available
+         * \return false if problem does not exist
          *
          * Atomic, shared-lock.
          *
-         * \see repository::is_available
+         * \see repository::exists
          */
         bool extract(const problem::id &id, const boost::filesystem::path &location);
 
