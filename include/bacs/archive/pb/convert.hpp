@@ -41,7 +41,7 @@ namespace bacs{namespace archive{namespace pb
             convert(info_map, *proto.mutable_items());
         }
 
-        static inline void convert(const archive::problem::info_map::value_type &id_hash, problem::HashMap::Entry &proto)
+        static inline void convert(const archive::problem::hash_map::value_type &id_hash, problem::HashMap::Entry &proto)
         {
             proto.set_id(id_hash.first);
             if (id_hash.second)
