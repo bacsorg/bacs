@@ -44,6 +44,6 @@ namespace bacs{namespace problem{namespace importers
         if (!problem_info.SerializeToOstream(&sout))
             BOOST_THROW_EXCEPTION(problem_info_serialization_error());
         const std::string info_str = sout.str();
-        return info(info_str.begin(), info_str.end());
+        return info{"bacs/single/problem", {info_str.begin(), info_str.end()}};
     }
 }}}
