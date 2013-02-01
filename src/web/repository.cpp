@@ -2,6 +2,7 @@
 #include "bacs/archive/web/content/form.hpp"
 #include "bacs/archive/web/content/error.hpp"
 #include "bacs/archive/pb/convert.hpp"
+#include "bacs/archive/error.hpp"
 
 #include "bunsan/enable_error_info.hpp"
 #include "bunsan/filesystem/fstream.hpp"
@@ -344,7 +345,8 @@ namespace bacs{namespace archive{namespace web
         response().content_type("application/octet-stream");
         BOOST_ASSERT(filename.find('"') == std::string::npos);
         response().set_header("Content-Disposition", "filename=\"" + filename + "\"");
-        protobuf.SerializeToOstream(&response().out());
+        if (!protobuf.SerializeToOstream(&response().out()))
+            BOOST_THROW_EXCEPTION(protobuf_serialization_error());
     }
 
     // FIXME note: these implementations are workarounds, use xsendfile and xsendtempfile instead
