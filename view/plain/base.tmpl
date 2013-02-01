@@ -5,16 +5,7 @@
             <!DOCTYPE html>
             <html>
                 <head>
-                    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
-                    <script>
-                        function body_onload()
-                        {
-                            <% include script_onload() %>
-                        }
-                    </script>
-                    <script>
-                        <% include script() %>
-                    </script>
+                    <% include scripts() %>
                     <% include stylesheets() %>
                     <title>
                         <% include title() %>
@@ -24,6 +15,18 @@
                     <% include body() %>
                 </body>
             </html>
+        <% end template %>
+        <% template scripts() %>
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+            <script>
+                function body_onload()
+                {
+                    <% include script_onload() %>
+                }
+            </script>
+            <script>
+                <% include script() %>
+            </script>
         <% end template %>
         <% template script() %>
             <!-- Nothing here by default -->
