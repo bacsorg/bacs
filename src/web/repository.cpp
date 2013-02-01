@@ -359,7 +359,7 @@ namespace bacs{namespace archive{namespace web
         BUNSAN_EXCEPTIONS_WRAP_BEGIN()
         {
             // FIXME be careful about large files
-            bunsan::filesystem::ifstream fin(path);
+            bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
             response().out() << fin.rdbuf();
             fin.close();
         }
