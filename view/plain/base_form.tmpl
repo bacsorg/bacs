@@ -8,17 +8,7 @@
         <% end template %>
         <% template script_onload() %>
             <% include base::script_onload() %>
-            {
-                // update format
-                $("input[name='archiver_format']").replaceTagName('select');
-                $("select[name='archiver_format']").removeAttr('type');
-                // update type + update format list
-                $("input[name='archiver_type']").replaceTagName('select');
-                $("select[name='archiver_type']").removeAttr('type').attr('onchange', 'update_archiver_format(0, this);')
-                    .append('<option value="tar">tar</option>')
-                    .append('<option value="7z">7z</option>')
-                    .map(update_archiver_format);
-            }
+            archiver_onload();
         <% end template %>
         <% template stylesheets() %>
             <% include base::stylesheets() %>
