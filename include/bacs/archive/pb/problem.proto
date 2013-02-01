@@ -5,12 +5,18 @@ message IdSet
     repeated string ids = 1;
 }
 
+message Info
+{
+    required string type = 1;
+    required bytes data = 2;
+}
+
 message InfoMap
 {
     message Entry
     {
         required string id = 1;
-        optional bytes info = 2;
+        optional Info info = 2;
     }
 
     repeated Entry items = 1;

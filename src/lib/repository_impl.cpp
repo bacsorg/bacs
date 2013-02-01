@@ -1,6 +1,8 @@
 #include "bacs/archive/repository.hpp"
 #include "bacs/archive/error.hpp"
 #include "bacs/archive/problem/flags.hpp"
+#include "bacs/archive/pb/problem.pb.h"
+#include "bacs/archive/pb/convert.hpp"
 
 #include "bunsan/enable_error_info.hpp"
 #include "bunsan/filesystem/fstream.hpp"
@@ -360,12 +362,32 @@ namespace bacs{namespace archive
 
     problem::info repository::read_info_(const problem::id &id)
     {
-        return read_binary(m_location.repository_root / id / ename::info);
+        pb::problem::Info pb_info;
+        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        {
+            bunsan::filesystem::ifstream fin(m_location.repository_root / id / ename::info);
+            if (!pb_info.ParseFromIstream(&fin))
+                BOOST_THROW_EXCEPTION(protobuf_parsing_error());
+            fin.close();
+        }
+        BUNSAN_EXCEPTIONS_WRAP_END()
+        problem::info info;
+        pb::convert(pb_info, info);
+        return info;
     }
 
     void repository::write_info_(const problem::id &id, const problem::info &info)
     {
-        write_binary(m_location.repository_root / id / ename::info, info);
+        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        {
+            bunsan::filesystem::ofstream fout(m_location.repository_root / id / ename::info);
+            pb::problem::Info pb_info;
+            pb::convert(info, pb_info);
+            if (!pb_info.SerializeToOstream(&fout))
+                BOOST_THROW_EXCEPTION(protobuf_serialization_error());
+            fout.close();
+        }
+        BUNSAN_EXCEPTIONS_WRAP_END()
     }
 
     bool repository::has_flag(const problem::id &id, const problem::flag &flag)

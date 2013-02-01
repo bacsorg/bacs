@@ -29,11 +29,23 @@ namespace bacs{namespace archive{namespace pb
             dst = src;
         }
 
+        static inline void convert(const problem::Info &proto, archive::problem::info &info)
+        {
+            info.type = proto.type();
+            info.data.assign(proto.data().begin(), proto.data().end());
+        }
+
+        static inline void convert(const archive::problem::info &info, problem::Info &proto)
+        {
+            proto.set_type(info.type);
+            proto.set_data(info.data.data(), info.data.size());
+        }
+
         static inline void convert(const archive::problem::info_map::value_type &id_info, problem::InfoMap::Entry &proto)
         {
             proto.set_id(id_info.first);
             if (id_info.second)
-                proto.set_info(id_info.second->data(), id_info.second->size());
+                convert(id_info.second.get(), *proto.mutable_info());
         }
 
         static inline void convert(const archive::problem::info_map &info_map, problem::InfoMap &proto)
@@ -96,9 +108,9 @@ namespace bacs{namespace archive{namespace pb
         }
     };
 
-    template <typename T, typename ProtoBuf>
-    void convert(const T &obj, ProtoBuf &proto)
+    template <typename Src, typename Dst>
+    void convert(const Src &src, Dst &dst)
     {
-        detail::convert(obj, proto);
+        detail::convert(src, dst);
     }
 }}}

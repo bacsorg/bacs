@@ -18,16 +18,24 @@
                         <caption><% gt "Problem info" %></caption>
                         <tr>
                             <th><% gt "Problem" %></th>
-                            <th><% gt "Info" %></th>
+                            <th><% gt "Info type" %></th>
+                            <th><% gt "Info data" %></th>
                         </tr>
                         <% item %>
                             <tr>
                                 <td><%= id_info.first %></td>
                                 <td>
                                     <% if id_info.second %>
-                                        <%= id_info.second.get() | base64_binary %>
+                                        <%= id_info.second->type %>
                                     <% else %>
                                         <% gt "Not found" %>
+                                    <% end %>
+                                </td>
+                                <td>
+                                    <% if id_info.second %>
+                                        <%= id_info.second->data | base64_binary %>
+                                    <% else %>
+                                        <% gt "N/A" %>
                                     <% end %>
                                 </td>
                             </tr>
