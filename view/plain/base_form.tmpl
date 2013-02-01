@@ -1,11 +1,12 @@
 <% c++ #include "bacs/archive/web/content/base_form.hpp" %>
 <% skin plain %>
     <% view base_form uses bacs::archive::web::content::base_form extends base %>
+        <% template scripts() %>
+            <% include base::scripts() %>
+            <script src="/static/plain/jquery.replaceTagName.js" type="text/javascript"></script>
+        <% end template %>
         <% template script() %>
             <% include base::script() %>
-            // jQuery replaceTagName plugin
-            (function(a){a.fn.replaceTagName=function(e){var f=[],g=this.length;while(g--){var j=document.createElement(e),b=this[g],d=b.attributes;for(var c=d.length-1;c>=0;c--){var h=d[c];j.setAttribute(h.name,h.value)}j.innerHTML=b.innerHTML;a(b).after(j).remove();f[g-1]=j}return f}})(window.jQuery);
-
             function update_archiver_format(index, type)
             {
                 parent = $(type);
