@@ -345,6 +345,7 @@ namespace bacs{namespace archive{namespace web
         response().content_type("application/octet-stream");
         BOOST_ASSERT(filename.find('"') == std::string::npos);
         response().set_header("Content-Disposition", "filename=\"" + filename + "\"");
+        response().content_length(protobuf.ByteSize());
         if (!protobuf.SerializeToOstream(&response().out()))
             BOOST_THROW_EXCEPTION(protobuf_serialization_error());
     }
