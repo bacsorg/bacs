@@ -39,7 +39,7 @@ namespace bunsan{namespace pm
          * \brief Create source package from source
          *
          * \param source path to source
-         * \param strip remove unnecesarry sources from packed source
+         * \param strip remove unnecessary sources from packed source
          */
         void create(const boost::filesystem::path &source, bool strip=false);
 

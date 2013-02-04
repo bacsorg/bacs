@@ -25,7 +25,7 @@ public:
 
     void build_installation(const entry &package);
 
-    /// check system directories existance and create them if they are missing
+    /// check system directories existence and create them if they are missing
     void check_dirs();
 
     /// clean caches
