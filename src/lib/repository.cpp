@@ -109,6 +109,21 @@ void bunsan::pm::repository::update(const entry &package, const boost::filesyste
     ntv->update_installation(package, destination);
 }
 
+void bunsan::pm::repository::update(const entry &package,
+                                    const boost::filesystem::path &destination,
+                                    const std::time_t &lifetime)
+{
+    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    {
+        if (ntv->need_update_installation(destination, lifetime))
+            update(package, destination);
+        else
+            SLOG("Skipping \"" << package << "\" update since lifetime = " <<
+                 lifetime << " has not passed since previous attempt.");
+    }
+    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::package(package))
+}
+
 enum class bunsan::pm::repository::stage_type: int
 {
     installation,

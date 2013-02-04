@@ -298,6 +298,7 @@ void bunsan::pm::repository::native::install_installation(const entry &package, 
                                   installation_meta_exists_error::meta(meta));
         }
         boost::filesystem::copy_file(snp, meta, boost::filesystem::copy_option::fail_if_exists);
+        boost::filesystem::last_write_time(meta, std::time(nullptr));
     }
     BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
 }
@@ -326,6 +327,21 @@ void bunsan::pm::repository::native::update_installation(const entry &package, c
             SLOG("\"" << package << "\" installation at " << destination << " is outdated, updating...");
             install_installation(package, destination);
         }
+        else
+        {
+            boost::filesystem::last_write_time(meta, std::time(nullptr));
+        }
     }
     BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+}
+
+bool bunsan::pm::repository::native::need_update_installation(const boost::filesystem::path &destination, const std::time_t &lifetime)
+{
+    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    {
+        SLOG("starting " << destination << " " << __func__);
+        const boost::filesystem::path meta = destination / m_config.name.installation.meta;
+        return !boost::filesystem::is_regular_file(meta) || std::time(nullptr) > lifetime + boost::filesystem::last_write_time(meta);
+    }
+    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__))
 }

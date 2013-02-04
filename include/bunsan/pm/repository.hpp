@@ -13,6 +13,8 @@
 #include <vector>
 #include <memory>
 
+#include <ctime>
+
 #include <boost/noncopyable.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
@@ -64,6 +66,13 @@ namespace bunsan{namespace pm
          * \brief Update previously installed package.
          */
         void update(const entry &package, const boost::filesystem::path &destination);
+
+        /*!
+         * \brief Update previously installed package.
+         *
+         * Will not update package index tree if lifetime has not passed since previous update.
+         */
+        void update(const entry &package, const boost::filesystem::path &destination, const std::time_t &lifetime);
 
         /*!
          * \brief Run clean up actions, may have negative effect on performance because of cleaning the cache, but can free disk space.

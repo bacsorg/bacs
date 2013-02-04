@@ -18,6 +18,7 @@ int main(int argc, char **argv)
     std::string package;
     std::string create;
     std::string create_recursively;
+    std::time_t lifetime;
     try
     {
         //command line parse
@@ -31,6 +32,7 @@ int main(int argc, char **argv)
             ("extract,e", boost::program_options::value<std::string>(&extract_to), "Extract package to location")
             ("install,i", boost::program_options::value<std::string>(&install_to), "Install package to location")
             ("update,u", boost::program_options::value<std::string>(&update_installation), "Update installed package")
+            ("lifetime,l", boost::program_options::value<std::time_t>(&lifetime), "Only check for update if lifetime has passed since previous attempt")
             ("create,r", boost::program_options::value<std::string>(&create), "Create source package from source")
             ("create-recursively,R", boost::program_options::value<std::string>(&create_recursively), "Create source package from source")
             ("strip,s", "Strip source package from excess files.");
@@ -69,7 +71,10 @@ int main(int argc, char **argv)
             }
             else if (vm.count("update"))
             {
-                repo.update(package, update_installation);
+                if (vm.count("lifetime"))
+                    repo.update(package, update_installation, lifetime);
+                else
+                    repo.update(package, update_installation);
             }
             else
             {//package info

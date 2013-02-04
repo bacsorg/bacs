@@ -50,6 +50,7 @@ public:
     void extract_installation(const entry &package, const boost::filesystem::path &destination, bool reset=true);
     void install_installation(const entry &package, const boost::filesystem::path &destination);
     void update_installation(const entry &package, const boost::filesystem::path &destination);
+    bool need_update_installation(const boost::filesystem::path &destination, const std::time_t &lifetime);
 
 private:
     const pm::config &m_config;
