@@ -73,5 +73,6 @@ namespace bacs{namespace archive{namespace web
 
     private:
         const std::shared_ptr<archive::repository> m_repository;
+        const boost::filesystem::path m_upload_directory;
     };
 }}}

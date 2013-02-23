@@ -16,9 +16,7 @@ int main(int argc, char *argv[])
     try
     {
         cppcms::service srv(argc, argv);
-        const char *const cfg = std::getenv("BACS_ARCHIVE_CONFIG");
-        if (!cfg)
-            throw std::runtime_error("BACS_ARCHIVE_CONFIG environment variable is not defined");
+        const std::string cfg = srv.settings().get<std::string>("repository.config");
         boost::property_tree::ptree config;
         boost::property_tree::read_info(cfg, config);
         const std::shared_ptr<bacs::archive::repository> repository(new bacs::archive::repository(config));

@@ -10,6 +10,7 @@
 #include <cppcms/url_dispatcher.h>
 #include <cppcms/url_mapper.h>
 #include <cppcms/http_file.h>
+#include <cppcms/service.h>
 
 #include <functional>
 
@@ -20,7 +21,8 @@ namespace bacs{namespace archive{namespace web
 {
     repository::repository(cppcms::service &srv,
                            const std::shared_ptr<archive::repository> &repository_):
-        cppcms::application(srv), m_repository(repository_)
+        cppcms::application(srv), m_repository(repository_),
+        m_upload_directory(srv.settings().get<std::string>("repository.upload_directory"))
     {
         dispatcher().assign("/insert", &repository::insert, this);
         mapper().assign("insert", "/insert");
@@ -224,7 +226,7 @@ namespace bacs{namespace archive{namespace web
 
     DEFINE_CONVERTIBLE_HANDLER(insert, problem::import_map, pb::problem::ImportMap)
     {
-        const bunsan::tempfile tmpfile = bunsan::tempfile::unique(); // FIXME use specified dir from config
+        const bunsan::tempfile tmpfile = bunsan::tempfile::in_dir(m_upload_directory);
         data.form.archive.value()->save_to(tmpfile.string());
         return m_repository->insert_all(data.form.config.value(), tmpfile.path());
     }
