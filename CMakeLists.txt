@@ -8,12 +8,8 @@ include(BunsanWeb)
 
 bunsan_use_boost(system filesystem serialization unit_test_framework program_options)
 bunsan_use_bunsan(common process utility pm bacs_problem)
+bunsan_use_protobuf()
 
-find_package(Protobuf REQUIRED)
-include_directories(${PROTOBUF_INCLUDE_DIRS})
-bunsan_use(${PROTOBUF_LIBRARIES})
-
-# Compile proto files
 bunsan_protobuf_generate_cpp(SOURCES proto_srcs HEADERS proto_hdrs INSTALL include PROTOS
     bacs/archive/pb/problem.proto
 )
