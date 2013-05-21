@@ -17,6 +17,10 @@ namespace bacs{namespace statement_provider{namespace web
                const std::shared_ptr<bunsan::pm::repository> &repository);
 
     private:
+        void get_index(std::string referrer, std::string query);
+        void get(std::string referrer, std::string query, std::string path);
+
+    private:
         const std::shared_ptr<bunsan::pm::repository> m_repository;
         const boost::filesystem::path m_server_root;
     };
