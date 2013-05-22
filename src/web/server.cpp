@@ -1,5 +1,7 @@
 #include "bacs/statement_provider/web/server.hpp"
+#include "bacs/statement_provider/pb/request.pb.h"
 
+#include <cppcms/base64.h>
 #include <cppcms/url_dispatcher.h>
 #include <cppcms/url_mapper.h>
 #include <cppcms/http_response.h>
@@ -22,13 +24,13 @@ namespace bacs{namespace statement_provider{namespace web
         mapper().root("/statement");
     }
 
-    void server::get_index(std::string referrer, std::string query)
+    void server::get_index(std::string referrer, std::string request)
     {
         response().status(cppcms::http::response::temporary_redirect);
-        response().set_redirect_header(url("get", referrer, query, ""));
+        response().set_redirect_header(url("get", referrer, request, ""));
     }
 
-    void server::get(std::string referrer, std::string query, std::string path)
+    void server::get(std::string referrer, std::string request, std::string path)
     {
     }
 }}}
