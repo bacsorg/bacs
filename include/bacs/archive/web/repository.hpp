@@ -15,6 +15,8 @@ namespace bacs{namespace archive{namespace web
         repository(cppcms::service &srv,
                    const std::shared_ptr<archive::repository> &repository_);
 
+        void main(std::string url) override;
+
     private:
         template <typename Model>
         class void_result;
@@ -30,8 +32,6 @@ namespace bacs{namespace archive{namespace web
 
         template <typename Model, typename Result>
         void handler_wrapper(const std::string &name, Result &result);
-
-        void main(std::string url) override;
 
         void insert();
         void extract();
