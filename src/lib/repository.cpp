@@ -113,13 +113,20 @@ void bunsan::pm::repository::update(const entry &package,
                                     const boost::filesystem::path &destination,
                                     const std::time_t &lifetime)
 {
+    if (need_update(package, destination, lifetime))
+        update(package, destination);
+    else
+        SLOG("Skipping \"" << package << "\" update since lifetime = " <<
+             lifetime << " has not passed since previous attempt.");
+}
+
+bool bunsan::pm::repository::need_update(const entry &package,
+                                         const boost::filesystem::path &destination,
+                                         const std::time_t &lifetime)
+{
     BUNSAN_EXCEPTIONS_WRAP_BEGIN()
     {
-        if (ntv->need_update_installation(destination, lifetime))
-            update(package, destination);
-        else
-            SLOG("Skipping \"" << package << "\" update since lifetime = " <<
-                 lifetime << " has not passed since previous attempt.");
+        return ntv->need_update_installation(destination, lifetime);
     }
     BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::package(package))
 }

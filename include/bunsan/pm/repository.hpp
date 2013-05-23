@@ -75,6 +75,13 @@ namespace bunsan{namespace pm
         void update(const entry &package, const boost::filesystem::path &destination, const std::time_t &lifetime);
 
         /*!
+         * \brief Check if actual update is needed.
+         *
+         * \note Does not block.
+         */
+        bool need_update(const entry &package, const boost::filesystem::path &destination, const std::time_t &lifetime);
+
+        /*!
          * \brief Run clean up actions, may have negative effect on performance because of cleaning the cache, but can free disk space.
          *
          * \todo It seems that such method should be, but semantics can be different.
