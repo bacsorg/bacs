@@ -20,6 +20,8 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/lib/repository_native.hpp
     src/lib/repository.cpp
     src/lib/repository_native_helpers.cpp
+
+    src/lib/cache.cpp
 )
 bunsan_use(${PROJECT_NAME})
 
