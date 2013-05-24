@@ -3,7 +3,7 @@
 #include "bunsan/pm/repository.hpp"
 #include "bunsan/pm/config.hpp"
 
-#include "bunsan/config/input_archive.hpp"
+#include "bunsan/config/cast.hpp"
 #include "bunsan/enable_error_info.hpp"
 #include "bunsan/logging/legacy.hpp"
 
@@ -33,19 +33,8 @@ bunsan::pm::repository::repository(const pm::config &config_): ntv(nullptr), m_c
     ntv = new native(m_config);
 }
 
-bunsan::pm::repository::repository(const boost::property_tree::ptree &config_): ntv(nullptr)
-{
-    DLOG(creating repository instance);
-    // TODO translate some exceptions to invalid_configuration_error
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
-    {
-        bunsan::config::input_archive<boost::property_tree::ptree>::load_from_ptree(m_config, config_);
-    }
-    BUNSAN_EXCEPTIONS_WRAP_END()
-    if (m_config.lock.global)
-        m_flock.reset(new bunsan::interprocess::file_lock(m_config.lock.global->c_str()));
-    ntv = new native(m_config);
-}
+bunsan::pm::repository::repository(const boost::property_tree::ptree &config_):
+    repository(bunsan::config::load<pm::config>(config_)) {}
 
 const bunsan::pm::config &bunsan::pm::repository::config() const
 {
