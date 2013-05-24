@@ -15,12 +15,12 @@ int main(int argc, char *argv[])
     try
     {
         cppcms::service srv(argc, argv);
-        const std::string cfg = srv.settings().get<std::string>("statement_provider.pm.config");
+        const std::string cfg = srv.settings().get<std::string>("statement_provider.cache.config");
         boost::property_tree::ptree config;
         boost::property_tree::read_info(cfg, config);
-        const std::shared_ptr<bunsan::pm::repository> repository(new bunsan::pm::repository(config));
+        const std::shared_ptr<bunsan::pm::cache> cache(new bunsan::pm::cache(config));
         srv.applications_pool().mount(
-            cppcms::applications_factory<bacs::statement_provider::web::server>(repository)
+            cppcms::applications_factory<bacs::statement_provider::web::server>(cache)
         );
         srv.run();
     }
