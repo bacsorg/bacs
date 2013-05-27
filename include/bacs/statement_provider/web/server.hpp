@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bunsan/pm/cache.hpp"
+#include "bunsan/web/mime_file.hpp"
 
 #include <cppcms/application.h>
 
@@ -30,5 +31,6 @@ namespace bacs{namespace statement_provider{namespace web
 
     private:
         const std::shared_ptr<bunsan::pm::cache> m_cache;
+        const bunsan::web::mime_file m_mime_file;
     };
 }}}

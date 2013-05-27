@@ -19,10 +19,21 @@
 
 namespace bacs{namespace statement_provider{namespace web
 {
+    namespace
+    {
+        bunsan::web::mime_file load_mime_file(const boost::filesystem::path &path)
+        {
+            bunsan::web::mime_file mime_file;
+            mime_file.load(path);
+            return mime_file;
+        }
+    }
+
     server::server(cppcms::service &srv,
                    const std::shared_ptr<bunsan::pm::cache> &cache):
         cppcms::application(srv),
-        m_cache(cache)
+        m_cache(cache),
+        m_mime_file(load_mime_file(srv.settings().get<std::string>("statement_provider.mime_types")))
     {
         dispatcher().assign("/([^/]+)/get/([^/]+)", &server::get_index, this, 1, 2);
         mapper().assign("get_index", "/{1}/get/{2}");
@@ -49,9 +60,13 @@ namespace bacs{namespace statement_provider{namespace web
         if (get_(referrer, request, &cache_entry))
         {
             const boost::filesystem::path filepath = cache_entry.root() / "data" / path; //FIXME "data"
+            const std::string filename = filepath.filename().string();
             if (boost::filesystem::is_regular_file(filepath))
             {
-                response().set_plain_text_header();//FIXME
+                response().content_type(m_mime_file.mime_type_by_name(filepath));
+                BOOST_ASSERT(filename.find('"') == std::string::npos);
+                response().set_header("Content-Disposition", "filename=\"" + filename + "\"");
+                response().content_length(boost::filesystem::file_size(filepath));
                 BUNSAN_EXCEPTIONS_WRAP_BEGIN()
                 {
                     bunsan::filesystem::ifstream fin(filepath);
