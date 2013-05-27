@@ -413,10 +413,10 @@ namespace bacs{namespace archive
          * \brief Repack problem.
          *
          * Repacking is similar to import
-         * except using internal copy of problem
+         * except using internal copy of problem.
          *
          * Can be useful if problem conversion utility is changed
-         * or index is corrupted
+         * or index is corrupted.
          *
          * If repack is not successful problem is marked by problem::flag::ignore.
          * Otherwise, problem::flag::ignore is unset.
