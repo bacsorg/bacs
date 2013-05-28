@@ -19,21 +19,11 @@
 
 namespace bacs{namespace statement_provider{namespace web
 {
-    namespace
-    {
-        bunsan::web::mime_file load_mime_file(const boost::filesystem::path &path)
-        {
-            bunsan::web::mime_file mime_file;
-            mime_file.load(path);
-            return mime_file;
-        }
-    }
-
     server::server(cppcms::service &srv,
                    const std::shared_ptr<bunsan::pm::cache> &cache):
         cppcms::application(srv),
         m_cache(cache),
-        m_mime_file(load_mime_file(srv.settings().get<std::string>("statement_provider.mime_types")))
+        m_mime_file(bunsan::web::load_mime_file(srv.settings().get<std::string>("statement_provider.mime_types")))
     {
         dispatcher().assign("/([^/]+)/get/([^/]+)", &server::get_index, this, 1, 2);
         mapper().assign("get_index", "/{1}/get/{2}");
