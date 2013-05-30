@@ -18,10 +18,14 @@ bunsan_add_shared_library(${PROJECT_NAME}
     ${proto_srcs}
 
     src/buildable.cpp
+    src/utility.cpp
     src/common.cpp
     src/importer.cpp
     src/statement.cpp
     src/resource/parse.cpp
+
+    src/utilities/none.cpp
+    src/utilities/single.cpp
 
     src/statement_versions/copy.cpp
     src/statement_versions/pdflatex.cpp
