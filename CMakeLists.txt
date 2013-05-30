@@ -17,6 +17,7 @@ bunsan_protobuf_generate_cpp(SOURCES proto_srcs HEADERS proto_hdrs INSTALL inclu
 bunsan_add_shared_library(${PROJECT_NAME}
     ${proto_srcs}
 
+    src/buildable.cpp
     src/common.cpp
     src/importer.cpp
 
