@@ -21,6 +21,7 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/common.cpp
     src/importer.cpp
     src/statement.cpp
+    src/resource/parse.cpp
 
     src/statement_versions/copy.cpp
     src/statement_versions/pdflatex.cpp
