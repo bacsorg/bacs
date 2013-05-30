@@ -20,8 +20,6 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/buildable.cpp
     src/common.cpp
     src/importer.cpp
-
-    src/importers/single.cpp
 )
 
 bunsan_install_headers()
