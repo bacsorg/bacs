@@ -48,7 +48,7 @@ namespace bacs{namespace problem
         return impl_;
     }
 
-    info importer::convert(const options &options_) const
+    pb::Problem importer::convert(const options &options_) const
     {
         return impl::instance(options_.problem_dir, m_config)->convert(options_);
     }

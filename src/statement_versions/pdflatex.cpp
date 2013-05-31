@@ -72,9 +72,9 @@ namespace bacs{namespace problem{namespace statement_versions
         index.save(destination / "index");
     }
 
-    pb::problem::Statement::Version pdflatex::info() const
+    pb::Statement::Version pdflatex::info() const
     {
-        pb::problem::Statement::Version v;
+        pb::Statement::Version v;
         v.set_lang(lang());
         v.set_format(format());
         v.set_package(subpackage().name());

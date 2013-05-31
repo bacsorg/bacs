@@ -35,9 +35,9 @@ namespace bacs{namespace problem
             boost::filesystem::absolute(location).filename().string())),
         m_config(config) {}
 
-    pb::problem::Utility utility::info() const
+    pb::Utility utility::info() const
     {
-        pb::problem::Utility info_;
+        pb::Utility info_;
         info_.set_builder(m_config.get<std::string>("build.builder"));
         return info_;
     }

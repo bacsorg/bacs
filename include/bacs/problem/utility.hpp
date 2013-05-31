@@ -22,7 +22,7 @@ namespace bacs{namespace problem
                 const boost::property_tree::ptree &config);
 
     public:
-        virtual pb::problem::Utility info() const;
+        virtual pb::Utility info() const;
 
         /// One of sections in configuration.
         virtual boost::property_tree::ptree section(const std::string &name) const;

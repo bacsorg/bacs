@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bacs/problem/common.hpp"
+#include "bacs/problem/pb/problem.pb.h"
 
 #include "bunsan/pm/entry.hpp"
 #include "bunsan/factory_helper.hpp"
@@ -27,7 +28,7 @@ namespace bacs{namespace problem
          * \param config per-implementation config, e.g.
          *
          * \code{.cpp}
-         * bacs/single/problem
+         * bacs/problem/single
          * {
          *     generator
          *     {
@@ -38,7 +39,7 @@ namespace bacs{namespace problem
          *     }
          * }
          *
-         * bacs/.../another
+         * bacs/problem/.../another
          * {
          *     ; another configuration
          * }
@@ -52,7 +53,7 @@ namespace bacs{namespace problem
         importer &operator=(importer &&)=default;
 
         /// It is safe to call this function from different threads.
-        info convert(const options &options_) const;
+        pb::Problem convert(const options &options_) const;
 
     public:
         class impl
@@ -68,7 +69,7 @@ namespace bacs{namespace problem
                                      const boost::property_tree::ptree &config);
 
         public:
-            virtual info convert(const options &options_)=0;
+            virtual pb::Problem convert(const options &options_)=0;
         BUNSAN_FACTORY_END(impl)
 
     private:

@@ -10,13 +10,6 @@ namespace bacs{namespace problem
 
     typedef std::vector<unsigned char> binary;
 
-    /// information about problem
-    struct info
-    {
-        std::string type; ///< generator project name
-        binary data;      ///< generated data
-    };
-
     /// hash string
     typedef binary hash;
 
