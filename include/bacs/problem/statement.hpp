@@ -56,6 +56,25 @@ namespace bacs{namespace problem
                 } data;
             };
 
+            /// Built statement version.
+            class built
+            {
+            public:
+                explicit built(const boost::filesystem::path &package_root);
+
+                const boost::filesystem::path &package_root() const;
+
+                const version::manifest &manifest() const;
+
+                boost::filesystem::path data_root() const;
+
+                boost::filesystem::path index() const;
+
+            private:
+                const boost::filesystem::path m_package_root;
+                const version::manifest m_manifest;
+            };
+
         public:
             /// \note config_location.parent_path() is location
             static version_ptr instance(const boost::filesystem::path &config_location);
@@ -78,6 +97,10 @@ namespace bacs{namespace problem
 
             /// relative unique entry name for this statement version
             virtual bunsan::pm::entry subpackage() const;
+
+        protected:
+            friend class built;
+            static const boost::filesystem::path manifest_path, data_path;
 
         private:
             std::string m_lang;

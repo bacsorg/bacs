@@ -1,6 +1,7 @@
 #include "bacs/problem/statement.hpp"
 #include "bacs/problem/error.hpp"
 
+#include "bunsan/config/cast.hpp"
 #include "bunsan/filesystem/operations.hpp"
 
 #include "bunsan/pm/index.hpp"
@@ -44,6 +45,43 @@ namespace bacs{namespace problem
     bunsan::pm::entry statement::version::subpackage() const
     {
         return bunsan::pm::entry(lang()) / format();
+    }
+
+    const boost::filesystem::path statement::version::manifest_path = "manifest.ini";
+    const boost::filesystem::path statement::version::data_path = "data"; ///< \warning keep in sync with bacs/system/statement
+
+    namespace
+    {
+        statement::version::manifest load_manifest(const boost::filesystem::path &path)
+        {
+            boost::property_tree::ptree ptree;
+            boost::property_tree::read_ini(path.string(), ptree);
+            return bunsan::config::load<statement::version::manifest>(ptree);
+        }
+    }
+
+    statement::version::built::built(const boost::filesystem::path &package_root):
+        m_package_root(package_root),
+        m_manifest(load_manifest(package_root)) {}
+
+    const boost::filesystem::path &statement::version::built::package_root() const
+    {
+        return m_package_root;
+    }
+
+    const statement::version::manifest &statement::version::built::manifest() const
+    {
+        return m_manifest;
+    }
+
+    boost::filesystem::path statement::version::built::data_root() const
+    {
+        return m_package_root / version::data_path;
+    }
+
+    boost::filesystem::path statement::version::built::index() const
+    {
+        return data_root() / manifest().data.index;
     }
 
     namespace
