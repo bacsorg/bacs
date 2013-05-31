@@ -48,7 +48,7 @@ namespace bacs{namespace problem{namespace statement_versions
         statement_manifest.version.lang = lang();
         statement_manifest.version.format = format();
         statement_manifest.data.index = m_source;
-        boost::property_tree::write_ini((destination / "pkg" / "manifest.ini").string(),
+        boost::property_tree::write_ini((destination / "pkg" / manifest_path).string(),
                                         bunsan::config::save<boost::property_tree::ptree>(statement_manifest));
         index.save(destination / "index");
     }
