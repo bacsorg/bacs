@@ -51,10 +51,10 @@ namespace bacs{namespace problem
             explicit universal_importer(const boost::property_tree::ptree &config):
                 m_config(config) {}
 
-            pb::Problem convert(const options &options_) override
+            Problem convert(const options &options_) override
             {
                 const std::string type = get_problem_type(options_.problem_dir);
-                const pb::Problem problem = get_implementation(type)->convert(options_);
+                const Problem problem = get_implementation(type)->convert(options_);
                 BOOST_ASSERT(problem.info().system().has_problem_type());
                 BOOST_ASSERT(problem.info().system().problem_type() == type);
                 return problem;

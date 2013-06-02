@@ -1,7 +1,7 @@
 #pragma once
 
 #include "bacs/problem/buildable.hpp"
-#include "bacs/problem/pb/problem.pb.h"
+#include "bacs/problem/problem.pb.h"
 
 #include "bunsan/factory_helper.hpp"
 
@@ -22,7 +22,7 @@ namespace bacs{namespace problem
                 const boost::property_tree::ptree &config);
 
     public:
-        virtual pb::Utility info() const;
+        virtual Utility info() const;
 
         /// One of sections in configuration.
         virtual boost::property_tree::ptree section(const std::string &name) const;

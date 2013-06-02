@@ -1,7 +1,7 @@
 #pragma once
 
 #include "bacs/problem/common.hpp"
-#include "bacs/problem/pb/problem.pb.h"
+#include "bacs/problem/problem.pb.h"
 
 #include "bunsan/pm/entry.hpp"
 #include "bunsan/factory_helper.hpp"
@@ -56,7 +56,7 @@ namespace bacs{namespace problem
 
     public:
         /// It is safe to call this function from different threads.
-        virtual pb::Problem convert(const options &options_)=0;
+        virtual Problem convert(const options &options_)=0;
 
         virtual ~importer();
 

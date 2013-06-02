@@ -11,7 +11,7 @@ bunsan_use_boost(system filesystem serialization unit_test_framework thread)
 bunsan_use_protobuf()
 
 bunsan_protobuf_generate_cpp(SOURCES proto_srcs HEADERS proto_hdrs INSTALL include PROTOS
-    bacs/problem/pb/problem.proto
+    bacs/problem/problem.proto
 )
 
 bunsan_add_shared_library(${PROJECT_NAME}

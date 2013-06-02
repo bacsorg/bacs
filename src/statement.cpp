@@ -98,7 +98,7 @@ namespace bacs{namespace problem
                 boost::filesystem::is_regular_file(i->path()))
             {
                 tmp->m_versions.push_back(version::instance(i->path()));
-                pb::Statement::Version &info = *(tmp->m_info.add_versions()) = tmp->m_versions.back()->info();
+                Statement::Version &info = *(tmp->m_info.add_versions()) = tmp->m_versions.back()->info();
                 const bunsan::pm::entry package = versions_subpackage / info.package();
                 info.set_package(package.name());
             }
@@ -140,7 +140,7 @@ namespace bacs{namespace problem
         return true;
     }
 
-    const pb::Statement &statement::info() const
+    const Statement &statement::info() const
     {
         return m_info;
     }

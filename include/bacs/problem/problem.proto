@@ -1,4 +1,4 @@
-package bacs.problem.pb;
+package bacs.problem;
 
 message Problem
 {

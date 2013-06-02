@@ -2,7 +2,7 @@
 
 #include "bacs/problem/buildable.hpp"
 
-#include "bacs/problem/pb/problem.pb.h"
+#include "bacs/problem/problem.pb.h"
 
 #include "bunsan/factory_helper.hpp"
 #include "bunsan/forward_constructor.hpp"
@@ -89,7 +89,7 @@ namespace bacs{namespace problem
                                       const bunsan::pm::entry &resources_package) const=0;
 
             /// \warning package name is relative to statement version package
-            virtual pb::Statement::Version info() const=0;
+            virtual Statement::Version info() const=0;
 
         public:
             virtual std::string lang() const;
@@ -121,12 +121,12 @@ namespace bacs{namespace problem
                           const bunsan::pm::entry &package) const override;
 
         /// \warning package names are relative to statement package
-        const pb::Statement &info() const;
+        const Statement &info() const;
 
     private:
         const boost::filesystem::path m_location;
         std::vector<version_ptr> m_versions;
-        pb::Statement m_info;
+        Statement m_info;
     };
     typedef statement::statement_ptr statement_ptr;
 }}
