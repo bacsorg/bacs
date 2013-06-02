@@ -10,46 +10,80 @@
 
 namespace bacs{namespace problem
 {
-    BUNSAN_FACTORY_DEFINE(importer::impl)
+    BUNSAN_FACTORY_DEFINE(importer)
 
-    importer::impl::~impl() {}
+    importer::~importer() {}
 
-    importer::importer(const boost::property_tree::ptree &config): m_config(config) {}
-
-    importer::impl_ptr importer::impl::instance(const boost::filesystem::path &problem_dir,
-                                                const boost::property_tree::ptree &config)
+    std::string importer::get_problem_format(const boost::filesystem::path &problem_dir)
     {
         std::string format;
         BUNSAN_EXCEPTIONS_WRAP_BEGIN()
         {
             bunsan::filesystem::ifstream fin(problem_dir / "format");
             format.assign(std::istreambuf_iterator<char>(fin),
-                          std::istreambuf_iterator<char>());
+                        std::istreambuf_iterator<char>());
             fin.close();
         }
         BUNSAN_EXCEPTIONS_WRAP_END()
         boost::algorithm::trim(format);
-        constexpr char delim = '#';
-        const std::string::size_type delim_pos = format.find(delim);
-        impl_ptr impl_;
-        if (format.find(delim, delim_pos + 1) == std::string::npos &&
-            delim_pos != std::string::npos)
-        {
-            const std::string impl_type = format.substr(0, delim_pos);
-            const boost::property_tree::ptree::const_assoc_iterator config_iter = config.find(impl_type);
-            if (config_iter != config.not_found())
-                impl_ = instance_optional(impl_type, config_iter->second);
-            else
-                impl_ = instance_optional(impl_type, boost::property_tree::ptree());
-        }
-        if (!impl_)
-            BOOST_THROW_EXCEPTION(unknown_format_error() <<
-                                  unknown_format_error::format(format));
-        return impl_;
+        if (format.empty())
+            BOOST_THROW_EXCEPTION(empty_problem_format_error());
+        return format;
     }
 
-    pb::Problem importer::convert(const options &options_) const
+    std::string importer::get_problem_type(const boost::filesystem::path &problem_dir)
     {
-        return impl::instance(options_.problem_dir, m_config)->convert(options_);
+        const std::string format = get_problem_format(problem_dir);
+        constexpr char delim = '#';
+        const std::string::size_type delim_pos = format.find(delim);
+        const std::string type = format.substr(0, delim_pos);
+        if (type.empty())
+            BOOST_THROW_EXCEPTION(empty_problem_type_error() <<
+                                  empty_problem_type_error::problem_format(format));
+        return type;
+    }
+
+    namespace
+    {
+        class universal_importer: public importer
+        {
+        public:
+            explicit universal_importer(const boost::property_tree::ptree &config):
+                m_config(config) {}
+
+            pb::Problem convert(const options &options_) override
+            {
+                const std::string type = get_problem_type(options_.problem_dir);
+                const pb::Problem problem = get_implementation(type)->convert(options_);
+                BOOST_ASSERT(problem.info().system().has_problem_type());
+                BOOST_ASSERT(problem.info().system().problem_type() == type);
+                return problem;
+            }
+
+        private:
+            // TODO consider implementation caching
+            importer_ptr get_implementation(const std::string &type)
+            {
+                importer_ptr impl;
+                const boost::property_tree::ptree::const_assoc_iterator config_iter = m_config.find(type);
+                if (config_iter != m_config.not_found())
+                    impl = instance_optional(type, config_iter->second);
+                else
+                    impl = instance_optional(type, boost::property_tree::ptree());
+                if (!impl)
+                    BOOST_THROW_EXCEPTION(unknown_problem_type_error() <<
+                                          unknown_problem_type_error::problem_type(type));
+                return impl;
+            }
+
+        private:
+            const boost::property_tree::ptree m_config;
+        };
+    }
+
+    importer_ptr importer::instance(const boost::property_tree::ptree &config)
+    {
+        const importer_ptr tmp(new universal_importer(config));
+        return tmp;
     }
 }}

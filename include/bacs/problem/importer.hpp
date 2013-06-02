@@ -11,8 +11,13 @@
 
 namespace bacs{namespace problem
 {
-    class importer
-    {
+    /*!
+     * \brief Imports problems into internal storage.
+     *
+     * Use bunsan::factory to register problem types.
+     */
+    class importer: private boost::noncopyable
+    BUNSAN_FACTORY_BEGIN(importer, const boost::property_tree::ptree &)
     public:
         struct options
         {
@@ -25,6 +30,8 @@ namespace bacs{namespace problem
 
     public:
         /*!
+         * \return importer that converts problems for registered types.
+         *
          * \param config per-implementation config, e.g.
          *
          * \code{.cpp}
@@ -45,34 +52,16 @@ namespace bacs{namespace problem
          * }
          * \endcode
          */
-        explicit importer(const boost::property_tree::ptree &config);
-
-        importer(const importer &)=default;
-        importer(importer &&)=default;
-        importer &operator=(const importer &)=default;
-        importer &operator=(importer &&)=default;
-
-        /// It is safe to call this function from different threads.
-        pb::Problem convert(const options &options_) const;
+        static importer_ptr instance(const boost::property_tree::ptree &config);
 
     public:
-        class impl
-        BUNSAN_FACTORY_BEGIN(impl, const boost::property_tree::ptree &)
-        public:
-            typedef importer::options options;
+        /// It is safe to call this function from different threads.
+        virtual pb::Problem convert(const options &options_)=0;
 
-        public:
-            virtual ~impl();
+        virtual ~importer();
 
-        public:
-            static impl_ptr instance(const boost::filesystem::path &problem_dir,
-                                     const boost::property_tree::ptree &config);
-
-        public:
-            virtual pb::Problem convert(const options &options_)=0;
-        BUNSAN_FACTORY_END(impl)
-
-    private:
-        boost::property_tree::ptree m_config;
-    };
+    protected:
+        static std::string get_problem_format(const boost::filesystem::path &problem_dir);
+        static std::string get_problem_type(const boost::filesystem::path &problem_dir);
+    BUNSAN_FACTORY_END(importer)
 }}
