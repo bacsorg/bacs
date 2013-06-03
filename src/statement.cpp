@@ -62,7 +62,7 @@ namespace bacs{namespace problem
 
     statement::version::built::built(const boost::filesystem::path &package_root):
         m_package_root(package_root),
-        m_manifest(load_manifest(package_root)) {}
+        m_manifest(load_manifest(package_root / manifest_path)) {}
 
     const boost::filesystem::path &statement::version::built::package_root() const
     {
