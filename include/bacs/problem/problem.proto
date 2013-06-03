@@ -26,8 +26,7 @@ message Info
     repeated string authors = 2;
     optional string source = 3;
     repeated string maintainers = 4;
-    repeated string restrictions = 5;
-    required System system = 6;
+    required System system = 5;
 }
 
 message Statement
