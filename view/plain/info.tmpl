@@ -18,24 +18,20 @@
                         <caption><% gt "Problem info" %></caption>
                         <tr>
                             <th><% gt "Problem" %></th>
-                            <th><% gt "Info type" %></th>
-                            <th><% gt "Info data" %></th>
+                            <th><% gt "Info" %></th>
                         </tr>
                         <% item %>
                             <tr>
                                 <td><%= id_info.first %></td>
                                 <td>
                                     <% if id_info.second %>
-                                        <%= id_info.second->info().system().problem_type() %>
+                                        <div onclick="$(this).parent().find('pre.protobuf').toggle(); $(this).find('.action').toggle()">
+                                            <span class="action"><% gt "Show" %>&nbsp;"<%= id_info.second->info().system().problem_type() %>"&nbsp;<% gt "info" %></span>
+                                            <span class="action" style="display: none"><% gt "Hide" %>&nbsp;"<%= id_info.second->info().system().problem_type() %>"&nbsp;<% gt "info" %></span>
+                                        </div>
+                                        <pre class="protobuf" style="display: none"><%= id_info.second->DebugString() %></pre>
                                     <% else %>
                                         <% gt "Not found" %>
-                                    <% end %>
-                                </td>
-                                <td>
-                                    <% if id_info.second %>
-                                        <pre><%= id_info.second->DebugString() %></pre>
-                                    <% else %>
-                                        <% gt "N/A" %>
                                     <% end %>
                                 </td>
                             </tr>
