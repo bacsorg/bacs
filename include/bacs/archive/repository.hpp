@@ -2,8 +2,7 @@
 
 #include "bacs/archive/config.hpp"
 #include "bacs/archive/problem.hpp"
-
-#include "bacs/problem/importer.hpp"
+#include "bacs/archive/importer.hpp"
 
 #include "bunsan/pm/repository.hpp"
 
@@ -12,13 +11,13 @@
 #include "bunsan/utility/archiver.hpp"
 #include "bunsan/interprocess/sync/file_guard.hpp"
 
-#include <string>
-
-#include <boost/thread/shared_mutex.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/optional.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/thread/shared_mutex.hpp>
+
+#include <string>
 
 namespace bacs{namespace archive
 {
@@ -503,7 +502,7 @@ namespace bacs{namespace archive
         /// internal problem storage packing
         const bunsan::utility::archiver::factory_type m_problem_archiver_factory;
         const problem_config m_problem;
-        const bacs::problem::importer m_importer;
+        importer m_importer;
         bunsan::pm::repository m_repository;
     };
 }}

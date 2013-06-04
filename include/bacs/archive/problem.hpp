@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bacs/problem/common.hpp"
+#include "bacs/problem/problem.pb.h"
 
 #include <string>
 #include <unordered_set>
@@ -15,7 +16,7 @@ namespace bacs{namespace archive{namespace problem
     using bacs::problem::validate_id;
     using bacs::problem::binary;
     using bacs::problem::hash;
-    using bacs::problem::info;
+    typedef bacs::problem::Problem info;
 
     typedef std::unordered_set<id> id_set;
     typedef std::unordered_map<id, boost::optional<info>> info_map;

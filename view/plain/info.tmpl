@@ -26,14 +26,14 @@
                                 <td><%= id_info.first %></td>
                                 <td>
                                     <% if id_info.second %>
-                                        <%= id_info.second->type %>
+                                        <%= id_info.second->info().system().problem_type() %>
                                     <% else %>
                                         <% gt "Not found" %>
                                     <% end %>
                                 </td>
                                 <td>
                                     <% if id_info.second %>
-                                        <%= id_info.second->data | base64_binary %>
+                                        <pre><%= id_info.second->DebugString() %></pre>
                                     <% else %>
                                         <% gt "N/A" %>
                                     <% end %>

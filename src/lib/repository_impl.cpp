@@ -362,17 +362,15 @@ namespace bacs{namespace archive
 
     problem::info repository::read_info_(const problem::id &id)
     {
-        pb::problem::Info pb_info;
+        problem::info info;
         BUNSAN_EXCEPTIONS_WRAP_BEGIN()
         {
             bunsan::filesystem::ifstream fin(m_location.repository_root / id / ename::info);
-            if (!pb_info.ParseFromIstream(&fin))
+            if (!info.ParseFromIstream(&fin))
                 BOOST_THROW_EXCEPTION(protobuf_parsing_error());
             fin.close();
         }
         BUNSAN_EXCEPTIONS_WRAP_END()
-        problem::info info;
-        pb::convert(pb_info, info);
         return info;
     }
 
@@ -381,9 +379,7 @@ namespace bacs{namespace archive
         BUNSAN_EXCEPTIONS_WRAP_BEGIN()
         {
             bunsan::filesystem::ofstream fout(m_location.repository_root / id / ename::info);
-            pb::problem::Info pb_info;
-            pb::convert(info, pb_info);
-            if (!pb_info.SerializeToOstream(&fout))
+            if (!info.SerializeToOstream(&fout))
                 BOOST_THROW_EXCEPTION(protobuf_serialization_error());
             fout.close();
         }

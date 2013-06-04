@@ -19,26 +19,15 @@ namespace bacs{namespace archive{namespace pb
                 convert(i, *repeated.Add());
         }
 
-        static inline void convert(const archive::problem::id_set &ids, problem::IdSet &proto)
-        {
-            convert(ids, *proto.mutable_ids());
-        }
-
-        static inline void convert(const std::string &src, std::string &dst)
+        template <typename T>
+        static inline void convert(const T &src, T &dst)
         {
             dst = src;
         }
 
-        static inline void convert(const problem::Info &proto, archive::problem::info &info)
+        static inline void convert(const archive::problem::id_set &ids, problem::IdSet &proto)
         {
-            info.type = proto.type();
-            info.data.assign(proto.data().begin(), proto.data().end());
-        }
-
-        static inline void convert(const archive::problem::info &info, problem::Info &proto)
-        {
-            proto.set_type(info.type);
-            proto.set_data(info.data.data(), info.data.size());
+            convert(ids, *proto.mutable_ids());
         }
 
         static inline void convert(const archive::problem::info_map::value_type &id_info, problem::InfoMap::Entry &proto)
