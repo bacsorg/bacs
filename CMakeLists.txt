@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8)
 
 include(BunsanWeb)
 
-bunsan_use_boost(system filesystem serialization unit_test_framework program_options)
+bunsan_use_boost(system filesystem serialization unit_test_framework program_options thread)
 bunsan_use_bunsan(common process utility pm bacs_problem)
 bunsan_use_protobuf()
 
@@ -16,6 +16,8 @@ bunsan_protobuf_generate_cpp(SOURCES proto_srcs HEADERS proto_hdrs INSTALL inclu
 
 bunsan_add_shared_library(${PROJECT_NAME}
     ${proto_srcs}
+
+    src/lib/importer.cpp
     src/lib/repository.cpp
     src/lib/repository_impl.cpp
     src/lib/repository_repack.cpp
