@@ -27,7 +27,8 @@ namespace bacs{namespace statement_provider{namespace web
         bool get_(const std::string &referrer,
                   const std::string &request,
                   bunsan::pm::cache::entry *cache_entry=nullptr,
-                  boost::filesystem::path *const index=nullptr);
+                  boost::filesystem::path *const index=nullptr,
+                  boost::filesystem::path *const data_root=nullptr);
 
     private:
         const std::shared_ptr<bunsan::pm::cache> m_cache;

@@ -1,9 +1,8 @@
 #include "bacs/statement_provider/web/server.hpp"
 #include "bacs/statement_provider/pb/request.pb.h"
 
-#include "bacs/single/problem/statement.hpp"
+#include "bacs/problem/statement.hpp"
 
-#include "bunsan/config/cast.hpp"
 #include "bunsan/enable_error_info.hpp"
 #include "bunsan/filesystem/fstream.hpp"
 #include "bunsan/filesystem/operations.hpp"
@@ -13,9 +12,6 @@
 #include <cppcms/url_mapper.h>
 #include <cppcms/http_response.h>
 #include <cppcms/service.h>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ini_parser.hpp>
 
 namespace bacs{namespace statement_provider{namespace web
 {
@@ -47,9 +43,10 @@ namespace bacs{namespace statement_provider{namespace web
     void server::get(std::string referrer, std::string request, std::string path)
     {
         bunsan::pm::cache::entry cache_entry;
-        if (get_(referrer, request, &cache_entry))
+        boost::filesystem::path data_root;
+        if (get_(referrer, request, &cache_entry, nullptr, &data_root))
         {
-            const boost::filesystem::path filepath = cache_entry.root() / "data" / path; //FIXME "data"
+            const boost::filesystem::path filepath = bunsan::filesystem::keep_in_root(path, data_root);
             const std::string filename = filepath.filename().string();
             if (boost::filesystem::is_regular_file(filepath))
             {
@@ -75,7 +72,8 @@ namespace bacs{namespace statement_provider{namespace web
     bool server::get_(const std::string &referrer,
                       const std::string &request,
                       bunsan::pm::cache::entry *cache_entry,
-                      boost::filesystem::path *const index)
+                      boost::filesystem::path *const index,
+                      boost::filesystem::path *const data_root)
     {
         std::string cipherdata;
         if (!cppcms::b64url::decode(request, cipherdata))
@@ -105,20 +103,16 @@ namespace bacs{namespace statement_provider{namespace web
             cache_entry = &entry;
         *cache_entry = m_cache->get(package);
         const boost::filesystem::path package_dir = cache_entry->root();
-        // FIXME refactoring is needed
-        const boost::filesystem::path manifest_file = package_dir / "manifest.ini";
-        const boost::filesystem::path data_dir = package_dir / "data";
+        const problem::statement::version::built statement_version(package_dir);
         if (false) // TODO check hash
         {
             response().status(cppcms::http::response::gone, "Problem's hash is not equal to statement version's hash");
             return false;
         }
-        boost::property_tree::ptree manifest_ptree;
-        boost::property_tree::read_ini(manifest_file.string(), manifest_ptree);
-        single::problem::statement::version::manifest manifest =
-            bunsan::config::load<single::problem::statement::version::manifest>(manifest_ptree);
         if (index)
-            *index = manifest.data.index;
+            *index = statement_version.manifest().data.index;
+        if (data_root)
+            *data_root = statement_version.data_root();
         return true;
     }
 }}}
