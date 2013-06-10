@@ -2,6 +2,10 @@
 <% c++ #include "bacs/archive/web/filters/base64_binary.hpp" %>
 <% skin plain %>
     <% view info uses bacs::archive::web::content::info extends base_form %>
+        <% template scripts() %>
+            <% include base_form::scripts() %>
+            <script src="/static/plain/protobuf.js" type="text/javascript"></script>
+        <% end template %>
         <% template subtitle() %>
             <% gt "Problems info" %>
         <% end template %>
@@ -25,11 +29,17 @@
                                 <td><%= id_info.first %></td>
                                 <td>
                                     <% if id_info.second %>
-                                        <div onclick="$(this).parent().find('pre.protobuf').toggle(); $(this).find('.action').toggle()">
-                                            <span class="action"><% gt "Show" %>&nbsp;"<%= id_info.second->info().system().problem_type() %>"&nbsp;<% gt "info" %></span>
-                                            <span class="action" style="display: none"><% gt "Hide" %>&nbsp;"<%= id_info.second->info().system().problem_type() %>"&nbsp;<% gt "info" %></span>
+                                        <div class="protobuf">
+                                            <div class="spoiler">
+                                                <span class="action">
+                                                    <% gt "Show" %>&nbsp;"<%= id_info.second->info().system().problem_type() %>"&nbsp;<% gt "info" %>
+                                                </span>
+                                                <span class="action" style="display: none">
+                                                    <% gt "Hide" %>&nbsp;"<%= id_info.second->info().system().problem_type() %>"&nbsp;<% gt "info" %>
+                                                </span>
+                                            </div>
+                                            <pre style="display: none"><%= id_info.second->DebugString() %></pre>
                                         </div>
-                                        <pre class="protobuf" style="display: none"><%= id_info.second->DebugString() %></pre>
                                     <% else %>
                                         <% gt "Not found" %>
                                     <% end %>
