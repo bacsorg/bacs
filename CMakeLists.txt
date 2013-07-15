@@ -8,7 +8,7 @@ include(BunsanCommon)
 
 bunsan_use_bunsan(common process)
 
-bunsan_use_boost(system filesystem serialization unit_test_framework thread)
+bunsan_use_boost(system filesystem serialization thread)
 
 bunsan_add_shared_library(${PROJECT_NAME}
     src/error.cpp
