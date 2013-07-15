@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8)
 
 include(BunsanWeb)
 
-bunsan_use_boost(system filesystem serialization unit_test_framework program_options thread)
+bunsan_use_boost(system filesystem serialization program_options thread)
 bunsan_use_bunsan(common process utility pm bacs_problem bacs_problems)
 bunsan_use_protobuf()
 
