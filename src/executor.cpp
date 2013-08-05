@@ -2,8 +2,8 @@
 
 #include <bunsan/logging/legacy.hpp>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 
 bunsan::utility::executor::executor(const std::string &command): positional(0), next_positional(0)
 {

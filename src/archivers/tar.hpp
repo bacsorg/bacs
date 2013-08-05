@@ -4,11 +4,11 @@
 
 #include <bunsan/stream_enum.hpp>
 
-#include <set>
-
 #include <boost/optional.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+
+#include <set>
 
 namespace bunsan{namespace utility{namespace archivers
 {

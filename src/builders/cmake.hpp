@@ -2,17 +2,16 @@
 
 #include "conf_make_install.hpp"
 
-#include <bunsan/utility/maker.hpp>
-
 #include <bunsan/stream_enum.hpp>
-
-#include <unordered_map>
-#include <string>
-#include <vector>
+#include <bunsan/utility/maker.hpp>
 
 #include <boost/optional.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace bunsan{namespace utility{namespace builders
 {

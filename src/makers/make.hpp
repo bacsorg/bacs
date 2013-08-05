@@ -2,13 +2,13 @@
 
 #include <bunsan/utility/maker.hpp>
 
-#include <string>
-#include <vector>
-#include <unordered_map>
-
 #include <boost/optional.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace bunsan{namespace utility{namespace makers
 {

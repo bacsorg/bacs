@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
-
 #include <boost/property_tree/ptree.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+
+#include <string>
 
 namespace bunsan{namespace utility
 {

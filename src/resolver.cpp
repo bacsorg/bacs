@@ -1,4 +1,5 @@
 #include <bunsan/utility/resolver.hpp>
+
 #include <bunsan/utility/error.hpp>
 
 #include <bunsan/config/cast.hpp>

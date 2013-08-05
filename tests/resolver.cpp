@@ -1,12 +1,12 @@
 #define BOOST_TEST_MODULE resolver
 #include <boost/test/unit_test.hpp>
 
-#include <bunsan/utility/resolver.hpp>
 #include <bunsan/utility/error.hpp>
-
-#include <sstream>
+#include <bunsan/utility/resolver.hpp>
 
 #include <boost/property_tree/info_parser.hpp>
+
+#include <sstream>
 
 namespace cfg
 {

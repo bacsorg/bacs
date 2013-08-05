@@ -4,9 +4,9 @@
 #include <bunsan/config/cast.hpp>
 #include <bunsan/process/execute.hpp>
 
-#include <algorithm>
-
 #include <boost/filesystem/operations.hpp>
+
+#include <algorithm>
 
 using namespace bunsan::utility;
 
