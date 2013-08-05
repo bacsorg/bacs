@@ -11,19 +11,8 @@ bunsan::utility::executor::executor(const std::string &command): positional(0), 
     arguments.push_back(string(1, token(command)));
 }
 
-// TODO delegating constructor
-
-bunsan::utility::executor::executor(const boost::filesystem::path &command): positional(0), next_positional(0)
-{
-    SLOG("creating executor object from " << command);
-    arguments.push_back(string(1, token(command.string())));
-}
-
-bunsan::utility::executor::executor(const char *command): positional(0), next_positional(0)
-{
-    SLOG("creating executor object from " << command);
-    arguments.push_back(string(1, token(std::string(command))));
-}
+bunsan::utility::executor::executor(const boost::filesystem::path &command): executor(command.string()) {}
+bunsan::utility::executor::executor(const char *const command): executor(std::string(command)) {}
 
 void bunsan::utility::executor::process(string &arg, const boost::property_tree::ptree::value_type &arg_value)
 {

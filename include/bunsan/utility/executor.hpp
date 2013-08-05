@@ -25,7 +25,7 @@ namespace bunsan{namespace utility
     public:
         explicit executor(const std::string &command);
         explicit executor(const boost::filesystem::path &command);
-        explicit executor(const char *command);
+        explicit executor(const char *const command);
         explicit executor(const boost::property_tree::ptree &command);
         executor(const executor &)=default;
         executor(executor &&)=default;
