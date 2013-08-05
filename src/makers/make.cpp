@@ -1,7 +1,7 @@
 #include "make.hpp"
 
-#include "bunsan/config/cast.hpp"
-#include "bunsan/process/execute.hpp"
+#include <bunsan/config/cast.hpp>
+#include <bunsan/process/execute.hpp>
 
 #include <boost/filesystem/operations.hpp>
 

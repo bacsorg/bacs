@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bunsan/utility/error.hpp"
+#include <bunsan/utility/error.hpp>
 
 #include <boost/optional.hpp>
 #include <boost/unordered_map.hpp>

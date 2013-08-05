@@ -2,7 +2,7 @@
 
 #include "cwd_split.hpp"
 
-#include "bunsan/stream_enum.hpp"
+#include <bunsan/stream_enum.hpp>
 
 #include <set>
 

@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE executor
 #include <boost/test/unit_test.hpp>
 
-#include "bunsan/utility/executor.hpp"
+#include <bunsan/utility/executor.hpp>
 
 #include <sstream>
 

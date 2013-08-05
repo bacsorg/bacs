@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bunsan/utility/error.hpp"
+#include <bunsan/utility/error.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/any.hpp>

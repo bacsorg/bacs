@@ -1,4 +1,4 @@
-#include "bunsan/config.hpp"
+#include <bunsan/config.hpp>
 #include "copy.hpp"
 
 #include <boost/filesystem/operations.hpp>

@@ -1,8 +1,8 @@
 #define BOOST_TEST_MODULE resolver
 #include <boost/test/unit_test.hpp>
 
-#include "bunsan/utility/resolver.hpp"
-#include "bunsan/utility/error.hpp"
+#include <bunsan/utility/resolver.hpp>
+#include <bunsan/utility/error.hpp>
 
 #include <sstream>
 
