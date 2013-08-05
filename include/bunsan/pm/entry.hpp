@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bunsan/config/traits.hpp"
+#include <bunsan/config/traits.hpp>
 
 #include <string>
 #include <vector>

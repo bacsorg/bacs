@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE entry
 #include <boost/test/unit_test.hpp>
 
-#include "bunsan/pm/entry.hpp"
+#include <bunsan/pm/entry.hpp>
 
 #include <sstream>
 

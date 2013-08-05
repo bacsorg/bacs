@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE index
 #include <boost/test/unit_test.hpp>
 
-#include "bunsan/pm/index.hpp"
+#include <bunsan/pm/index.hpp>
 
 #include <sstream>
 
