@@ -4,8 +4,8 @@
 
 #include <bunsan/config/cast.hpp>
 #include <bunsan/enable_error_info.hpp>
-#include <bunsan/logging/legacy.hpp>
 #include <bunsan/filesystem/operations.hpp>
+#include <bunsan/logging/legacy.hpp>
 
 #include <boost/property_tree/info_parser.hpp>
 

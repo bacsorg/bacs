@@ -1,18 +1,17 @@
 #include "repository_native.hpp"
 
+#include <bunsan/pm/checksum.hpp>
 #include <bunsan/pm/config.hpp>
 #include <bunsan/pm/index.hpp>
 #include <bunsan/pm/snapshot.hpp>
 
-#include <bunsan/pm/checksum.hpp>
-
 #include <bunsan/logging/legacy.hpp>
 
-#include <unordered_set>
-
 #include <boost/filesystem/operations.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+#include <unordered_set>
 
 void bunsan::pm::repository::native::create(const boost::filesystem::path &source, bool strip)
 {

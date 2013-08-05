@@ -3,10 +3,10 @@
 
 #include <bunsan/pm/entry.hpp>
 
-#include <sstream>
-
-#include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+#include <sstream>
 
 BOOST_AUTO_TEST_CASE(entry)
 {

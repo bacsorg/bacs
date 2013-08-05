@@ -1,7 +1,7 @@
 #pragma once
 
-#include <bunsan/pm/repository.hpp>
 #include <bunsan/pm/index.hpp>
+#include <bunsan/pm/repository.hpp>
 
 #include <bunsan/utility/archiver.hpp>
 #include <bunsan/utility/builder.hpp>

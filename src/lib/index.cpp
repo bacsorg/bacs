@@ -3,9 +3,9 @@
 #include <bunsan/config/input_archive.hpp>
 #include <bunsan/config/output_archive.hpp>
 
-#include <algorithm>
-
 #include <boost/property_tree/info_parser.hpp>
+
+#include <algorithm>
 
 bool bunsan::pm::index::stage::empty() const
 {

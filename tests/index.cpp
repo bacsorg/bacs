@@ -3,9 +3,10 @@
 
 #include <bunsan/pm/index.hpp>
 
-#include <sstream>
-
+#include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
+
+#include <sstream>
 
 /// \note ::index is defined by gcc
 BOOST_AUTO_TEST_SUITE(index_)

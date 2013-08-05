@@ -1,13 +1,14 @@
 #include <bunsan/pm/checksum.hpp>
-#include <bunsan/filesystem/fstream.hpp>
+
 #include <bunsan/enable_error_info.hpp>
-
-#include <sstream>
-#include <iomanip>
-
-#include <cstdio>
+#include <bunsan/filesystem/fstream.hpp>
 
 #include <boost/crc.hpp>
+
+#include <iomanip>
+#include <sstream>
+
+#include <cstdio>
 
 namespace
 {

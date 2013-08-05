@@ -1,10 +1,11 @@
 #include <bunsan/pm/entry.hpp>
+
 #include <bunsan/pm/error.hpp>
 
-#include <boost/assert.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/join.hpp>
+#include <boost/assert.hpp>
 
 bool bunsan::pm::entry::is_allowed_symbol(char c)
 {

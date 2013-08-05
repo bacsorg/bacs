@@ -1,17 +1,17 @@
 #pragma once
 
-#include <bunsan/utility/factory_options.hpp>
 #include <bunsan/utility/archiver.hpp>
 #include <bunsan/utility/builder.hpp>
+#include <bunsan/utility/factory_options.hpp>
 #include <bunsan/utility/fetcher.hpp>
 
-#include <string>
-
+#include <boost/filesystem/path.hpp>
 #include <boost/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+
+#include <string>
 
 namespace bunsan{namespace pm
 {

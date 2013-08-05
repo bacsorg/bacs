@@ -2,11 +2,11 @@
 
 #include <bunsan/pm/repository.hpp>
 
-#include <boost/noncopyable.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/thread/shared_mutex.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 namespace bunsan{namespace pm
 {

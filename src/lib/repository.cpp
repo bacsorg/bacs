@@ -1,23 +1,11 @@
 #include "repository_native.hpp"
 
-#include <bunsan/pm/repository.hpp>
 #include <bunsan/pm/config.hpp>
+#include <bunsan/pm/repository.hpp>
 
 #include <bunsan/config/cast.hpp>
 #include <bunsan/enable_error_info.hpp>
 #include <bunsan/logging/legacy.hpp>
-
-#include <stdexcept>
-#include <string>
-#include <set>
-#include <map>
-#include <deque>
-#include <queue>
-#include <vector>
-#include <memory>
-
-#include <cstdlib>
-#include <cassert>
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -25,6 +13,17 @@
 #include <boost/interprocess/sync/sharable_lock.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/assert.hpp>
+
+#include <deque>
+#include <map>
+#include <memory>
+#include <queue>
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+#include <cstdlib>
 
 bunsan::pm::repository::repository(const pm::config &config_): ntv(nullptr), m_config(config_)
 {

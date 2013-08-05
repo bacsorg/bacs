@@ -6,17 +6,14 @@
 #include <bunsan/pm/config.hpp>
 
 #include <bunsan/enable_error_info.hpp>
-#include <bunsan/logging/legacy.hpp>
 #include <bunsan/filesystem/operations.hpp>
+#include <bunsan/logging/legacy.hpp>
 #include <bunsan/tempfile.hpp>
 
-#include <stdexcept>
-
-#include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
-#include <boost/format.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+#include <stdexcept>
 
 void bunsan::pm::repository::native::build(const entry &package)
 {
