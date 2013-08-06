@@ -4,7 +4,7 @@ include(${CMAKE_SOURCE_DIR}/system-config.cmake OPTIONAL)
 
 cmake_minimum_required(VERSION 2.8)
 
-include(BunsanWeb)
+include(BunsanCommon)
 
 bunsan_use_boost(system filesystem serialization program_options thread)
 bunsan_use_bunsan(common process utility pm bacs_problem bacs_problems)
@@ -73,8 +73,7 @@ bunsan_web_add_skin(plain
 
 bunsan_install_headers()
 bunsan_install_targets(${PROJECT_NAME} ${PROJECT_NAME}_cli ${PROJECT_NAME}_web)
-install(FILES ${proto_hdrs} DESTINATION include/bacs/archive/pb)
-install(TARGETS plain DESTINATION lib/${PROJECT_NAME}/skins)
-install(DIRECTORY static DESTINATION share/${PROJECT_NAME})
+install(TARGETS plain DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/skins)
+install(DIRECTORY static DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
 
 bunsan_include_tests()
