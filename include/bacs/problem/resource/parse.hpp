@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bacs/problem/resource/error.hpp"
+#include <bacs/problem/resource/error.hpp>
 
 #include <string>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bunsan/pm/entry.hpp"
+#include <bunsan/pm/entry.hpp>
 
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem/path.hpp>

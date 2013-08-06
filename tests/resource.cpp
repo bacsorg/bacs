@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE resource
 #include <boost/test/unit_test.hpp>
 
-#include "bacs/problem/resource/parse.hpp"
+#include <bacs/problem/resource/parse.hpp>
 
 BOOST_AUTO_TEST_SUITE(resource)
 
