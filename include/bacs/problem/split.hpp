@@ -1,12 +1,12 @@
 #pragma once
 
+#include <google/protobuf/repeated_field.h>
+
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
+
 #include <string>
 #include <vector>
-
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
-
-#include <google/protobuf/repeated_field.h>
 
 namespace bacs{namespace problem{namespace split
 {

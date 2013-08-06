@@ -1,5 +1,5 @@
-#include <bacs/problem/statement.hpp>
 #include <bacs/problem/error.hpp>
+#include <bacs/problem/statement.hpp>
 
 #include <boost/filesystem/path.hpp>
 

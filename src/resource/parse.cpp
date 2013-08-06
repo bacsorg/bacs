@@ -1,13 +1,13 @@
 #include <bacs/problem/resource/parse.hpp>
 
-#include <string>
+#include <boost/cast.hpp>
+#include <boost/spirit/include/phoenix_operator.hpp>
+#include <boost/spirit/include/qi.hpp>
+
 #include <algorithm>
+#include <string>
 
 #include <cmath>
-
-#include <boost/cast.hpp>
-#include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix_operator.hpp>
 
 namespace bacs{namespace problem{namespace resource{namespace parse
 {

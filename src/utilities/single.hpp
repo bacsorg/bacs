@@ -1,9 +1,9 @@
 #include <bacs/problem/utility.hpp>
 
+#include <boost/optional.hpp>
+
 #include <string>
 #include <vector>
-
-#include <boost/optional.hpp>
 
 namespace bacs{namespace problem{namespace utilities
 {

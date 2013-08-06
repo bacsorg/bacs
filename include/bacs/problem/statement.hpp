@@ -1,17 +1,16 @@
 #pragma once
 
 #include <bacs/problem/buildable.hpp>
-
 #include <bacs/problem/problem.pb.h>
 
 #include <bunsan/factory_helper.hpp>
 #include <bunsan/forward_constructor.hpp>
 
-#include <unordered_set>
-
 #include <boost/filesystem/path.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+
+#include <unordered_set>
 
 namespace bacs{namespace problem
 {

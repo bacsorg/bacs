@@ -1,12 +1,13 @@
 #include <bacs/problem/importer.hpp>
+
 #include <bacs/problem/error.hpp>
 
 #include <bunsan/enable_error_info.hpp>
 #include <bunsan/filesystem/fstream.hpp>
 
-#include <iterator>
-
 #include <boost/algorithm/string/trim.hpp>
+
+#include <iterator>
 
 namespace bacs{namespace problem
 {

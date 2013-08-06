@@ -2,8 +2,8 @@
 
 #include <bunsan/pm/entry.hpp>
 
-#include <boost/noncopyable.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/noncopyable.hpp>
 
 namespace bacs{namespace problem
 {
