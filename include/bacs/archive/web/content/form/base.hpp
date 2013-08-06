@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bunsan/stream_enum.hpp"
+#include <bunsan/stream_enum.hpp>
 
 #include <cppcms/form.h>
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "bacs/archive/problem.hpp"
-#include "bacs/archive/pb/problem.pb.h"
+#include <bacs/archive/problem.hpp>
+#include <bacs/archive/pb/problem.pb.h>
 
 #include <algorithm>
 
