@@ -1,20 +1,19 @@
 #pragma once
 
 #include <bacs/archive/config.hpp>
-#include <bacs/archive/problem.hpp>
 #include <bacs/archive/importer.hpp>
+#include <bacs/archive/problem.hpp>
 
-#include <bunsan/pm/repository.hpp>
-
-#include <bunsan/tempfile.hpp>
-#include <bunsan/utility/resolver.hpp>
-#include <bunsan/utility/archiver.hpp>
 #include <bunsan/interprocess/sync/file_guard.hpp>
+#include <bunsan/pm/repository.hpp>
+#include <bunsan/tempfile.hpp>
+#include <bunsan/utility/archiver.hpp>
+#include <bunsan/utility/resolver.hpp>
 
-#include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/optional.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <boost/thread/shared_mutex.hpp>
 
 #include <string>

@@ -1,12 +1,12 @@
 #include <bacs/archive/web/content/form/widgets/problem/optional_id_set.hpp>
 
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/trim.hpp>
+
 #include <algorithm>
 #include <vector>
-
-#include <boost/algorithm/string/trim.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/join.hpp>
-#include <boost/algorithm/string/classification.hpp>
 
 namespace bacs{namespace archive{namespace web{namespace content{namespace form{namespace widgets{namespace problem
 {

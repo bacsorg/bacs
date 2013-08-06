@@ -3,11 +3,11 @@
 #include <bacs/problem/common.hpp>
 #include <bacs/problem/problem.pb.h>
 
-#include <string>
-#include <unordered_set>
-#include <unordered_map>
-
 #include <boost/optional.hpp>
+
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace bacs{namespace archive{namespace problem
 {

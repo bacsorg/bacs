@@ -1,15 +1,16 @@
-#include <bacs/archive/web/repository.hpp>
 #include <bacs/archive/repository.hpp>
+#include <bacs/archive/web/repository.hpp>
 
 #include <cppcms/applications_pool.h>
 #include <cppcms/service.h>
 
+#include <boost/property_tree/info_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+
 #include <iostream>
 #include <memory>
-#include <cstdlib>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/info_parser.hpp>
+#include <cstdlib>
 
 int main(int argc, char *argv[])
 {
