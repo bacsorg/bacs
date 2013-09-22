@@ -1,6 +1,5 @@
 #include <bunsan/pm/checksum.hpp>
 
-#include <bunsan/enable_error_info.hpp>
 #include <bunsan/filesystem/fstream.hpp>
 
 #include <boost/crc.hpp>
@@ -16,9 +15,9 @@ namespace
     {
         boost::crc_32_type crc;
         std::stringstream out;
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        bunsan::filesystem::ifstream in(file, std::ios_base::binary);
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(in)
         {
-            bunsan::filesystem::ifstream in(file, std::ios_base::binary);
             char buf[BUFSIZ];
             do
             {
@@ -29,7 +28,7 @@ namespace
             in.close();
             out << std::hex << std::uppercase << crc.checksum();
         }
-        BUNSAN_EXCEPTIONS_WRAP_END()
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(in)
         return out.str();
     }
 }
@@ -45,9 +44,9 @@ namespace
         static_assert(sizeof(byte) == sizeof(char), "size of byte have to be equal size of char");
         HASH hash;
         std::stringstream sout;
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        bunsan::filesystem::ifstream in(file, std::ios_base::binary);
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(in)
         {
-            bunsan::filesystem::ifstream in(file, std::ios_base::binary);
             do
             {
                 in.read(reinterpret_cast<char *>(buf), BUFSIZ);
@@ -61,7 +60,7 @@ namespace
             for (const byte i: out)
                 sout << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << int(i);
         }
-        BUNSAN_EXCEPTIONS_WRAP_END()
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(in)
         return sout.str();
     }
 }
