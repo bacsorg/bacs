@@ -112,8 +112,12 @@ namespace bacs{namespace problem
     public:
         static statement_ptr instance(const boost::filesystem::path &location);
 
+    protected:
+        statement(const boost::filesystem::path &location,
+                  const std::vector<version_ptr> &versions);
+
     private:
-        explicit statement(const boost::filesystem::path &location);
+        void update_info();
 
     public:
         bool make_package(const boost::filesystem::path &destination,

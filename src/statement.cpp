@@ -91,22 +91,35 @@ namespace bacs{namespace problem
 
     statement_ptr statement::instance(const boost::filesystem::path &location)
     {
-        const statement_ptr tmp(new statement(location));
+        std::vector<version_ptr> versions;
         for (boost::filesystem::directory_iterator i(location), end; i != end; ++i)
         {
             if (i->path().filename().extension() == ".ini" &&
                 boost::filesystem::is_regular_file(i->path()))
             {
-                tmp->m_versions.push_back(version::instance(i->path()));
-                Statement::Version &info = *(tmp->m_info.add_versions()) = tmp->m_versions.back()->info();
-                const bunsan::pm::entry package = versions_subpackage / info.package();
-                info.set_package(package.name());
+                versions.push_back(version::instance(i->path()));
             }
         }
+        statement_ptr tmp(new statement(location, versions));
         return tmp;
     }
 
-    statement::statement(const boost::filesystem::path &location): m_location(location) {}
+    statement::statement(const boost::filesystem::path &location,
+                         const std::vector<version_ptr> &versions):
+        m_location(location), m_versions(versions)
+    {
+        update_info();
+    }
+
+    void statement::update_info()
+    {
+        for (const version_ptr &version: m_versions)
+        {
+            Statement::Version &info = *m_info.add_versions() = version->info();
+            const bunsan::pm::entry package = versions_subpackage / info.package();
+            info.set_package(package.name());
+        }
+    }
 
     bool statement::make_package(const boost::filesystem::path &destination,
                                  const bunsan::pm::entry &package) const
