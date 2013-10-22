@@ -9,12 +9,20 @@ namespace bacs{namespace problem
 {
     BUNSAN_FACTORY_DEFINE(utility)
 
+    namespace
+    {
+        std::string get_builder(const boost::property_tree::ptree &config)
+        {
+            // note: "no" is equivalent to empty section
+            return config.get<std::string>("build.builder", "no");
+        }
+    }
+
     utility_ptr utility::instance(const boost::filesystem::path &location)
     {
         boost::property_tree::ptree config;
         boost::property_tree::read_ini((location / "config.ini").string(), config);
-        // note: "no" is equivalent to empty section
-        return instance(config.get<std::string>("build.builder", "no"), location, config);
+        return instance(get_builder(config), location, config);
     }
 
     utility_ptr utility::instance_optional(const boost::filesystem::path &location)
@@ -39,7 +47,7 @@ namespace bacs{namespace problem
     Utility utility::info() const
     {
         Utility info_;
-        info_.set_builder(m_config.get<std::string>("build.builder"));
+        info_.set_builder(get_builder(m_config));
         return info_;
     }
 
