@@ -47,6 +47,15 @@ namespace bacs{namespace problem
         return bunsan::pm::entry(lang()) / format();
     }
 
+    Statement::Version statement::version::info() const
+    {
+        Statement::Version v;
+        v.set_lang(lang());
+        v.set_format(format());
+        v.set_package(subpackage().name());
+        return v;
+    }
+
     const boost::filesystem::path statement::version::manifest_path = "manifest.ini";
     const boost::filesystem::path statement::version::data_path = "data"; ///< \warning keep in sync with bacs/system/statement
 

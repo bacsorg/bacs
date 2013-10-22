@@ -88,7 +88,7 @@ namespace bacs{namespace problem
                                       const bunsan::pm::entry &resources_package) const=0;
 
             /// \warning package name is relative to statement version package
-            virtual Statement::Version info() const=0;
+            virtual Statement::Version info() const;
 
         public:
             virtual std::string lang() const;

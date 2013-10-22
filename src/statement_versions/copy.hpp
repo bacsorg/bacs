@@ -24,8 +24,6 @@ namespace bacs{namespace problem{namespace statement_versions
                           const bunsan::pm::entry &package,
                           const bunsan::pm::entry &resources_package) const override;
 
-        Statement::Version info() const override;
-
     private:
         const boost::filesystem::path m_source;
 

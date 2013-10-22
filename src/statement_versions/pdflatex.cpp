@@ -70,13 +70,4 @@ namespace bacs{namespace problem{namespace statement_versions
                                         bunsan::config::save<boost::property_tree::ptree>(statement_manifest));
         index.save(destination / "index");
     }
-
-    Statement::Version pdflatex::info() const
-    {
-        Statement::Version v;
-        v.set_lang(lang());
-        v.set_format(format());
-        v.set_package(subpackage().name());
-        return v;
-    }
 }}}
