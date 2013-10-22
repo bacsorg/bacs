@@ -16,25 +16,35 @@ namespace bacs{namespace problem
             // note: "no" is equivalent to empty section
             return config.get<std::string>("build.builder", "no");
         }
+
+        boost::property_tree::ptree get_config(const boost::filesystem::path &location)
+        {
+            boost::property_tree::ptree config;
+            boost::property_tree::read_ini((location / "config.ini").string(), config);
+            return config;
+        }
     }
 
     utility_ptr utility::instance(const boost::filesystem::path &location)
     {
-        boost::property_tree::ptree config;
-        boost::property_tree::read_ini((location / "config.ini").string(), config);
-        return instance(get_builder(config), location, config);
+        return instance(location, get_config(location));
     }
 
     utility_ptr utility::instance_optional(const boost::filesystem::path &location)
     {
-        try
-        {
-            return instance(location);
-        }
-        catch (unknown_utility_error &)
-        {
-            return utility_ptr();
-        }
+        return instance_optional(location, get_config(location));
+    }
+
+    utility_ptr utility::instance(const boost::filesystem::path &location,
+                                  const boost::property_tree::ptree &config)
+    {
+        return instance(get_builder(config), location, config);
+    }
+
+    utility_ptr utility::instance_optional(const boost::filesystem::path &location,
+                                           const boost::property_tree::ptree &config)
+    {
+        return instance_optional(get_builder(config), location, config);
     }
 
     utility::utility(const boost::filesystem::path &location,

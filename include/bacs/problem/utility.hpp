@@ -17,6 +17,11 @@ namespace bacs{namespace problem
         static utility_ptr instance(const boost::filesystem::path &location);
         static utility_ptr instance_optional(const boost::filesystem::path &location);
 
+        static utility_ptr instance(const boost::filesystem::path &location,
+                                    const boost::property_tree::ptree &config);
+        static utility_ptr instance_optional(const boost::filesystem::path &location,
+                                             const boost::property_tree::ptree &config);
+
     public:
         utility(const boost::filesystem::path &location,
                 const boost::property_tree::ptree &config);
