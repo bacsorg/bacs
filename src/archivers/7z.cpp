@@ -27,42 +27,63 @@ void archivers::_7z::pack_from(
     const boost::filesystem::path &archive,
     const boost::filesystem::path &file)
 {
-    bunsan::process::context ctx;
-    ctx.executable(m_exe);
-    ctx.current_path(cwd);
-    /*
-     * 7z behavior note:
-     * When archive.filename() does not contain '.'
-     * some suffix is appended depending on format.
-     * If archive.filename().back() == '.', last dot is removed.
-     * So, in any case we should append '.' to make it work properly.
-     */
-    ctx.arguments(
-        m_exe.filename(),
-        "a",
-        format_argument(),
-        "--",
-        archive.string() + ".",
-        file
-    );
-    bunsan::process::check_sync_execute(ctx);
+    try
+    {
+        bunsan::process::context ctx;
+        ctx.executable(m_exe);
+        ctx.current_path(cwd);
+        /*
+         * 7z behavior note:
+         * When archive.filename() does not contain '.'
+         * some suffix is appended depending on format.
+         * If archive.filename().back() == '.', last dot is removed.
+         * So, in any case we should append '.' to make it work properly.
+         */
+        ctx.arguments(
+            m_exe.filename(),
+            "a",
+            format_argument(),
+            "--",
+            archive.string() + ".",
+            file
+        );
+        bunsan::process::check_sync_execute(ctx);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cwd_split_pack_from_error() <<
+                              cwd_split_pack_from_error::cwd(cwd) <<
+                              cwd_split_pack_from_error::archive(archive) <<
+                              cwd_split_pack_from_error::file(file) <<
+                              enable_nested_current());
+    }
 }
 
 void archivers::_7z::unpack(
     const boost::filesystem::path &archive,
     const boost::filesystem::path &dir)
 {
-    bunsan::process::context ctx;
-    ctx.executable(m_exe);
-    ctx.arguments(
-        m_exe.filename(),
-        "x",
-        format_argument(),
-        "-o" + dir.string(),
-        "--",
-        archive
-    );
-    bunsan::process::check_sync_execute(ctx);
+    try
+    {
+        bunsan::process::context ctx;
+        ctx.executable(m_exe);
+        ctx.arguments(
+            m_exe.filename(),
+            "x",
+            format_argument(),
+            "-o" + dir.string(),
+            "--",
+            archive
+        );
+        bunsan::process::check_sync_execute(ctx);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(archiver_unpack_error() <<
+                              archiver_unpack_error::archive(archive) <<
+                              archiver_unpack_error::file(dir) <<
+                              enable_nested_current());
+    }
 }
 
 boost::optional<std::string> archivers::_7z::format_argument() const

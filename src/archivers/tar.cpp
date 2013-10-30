@@ -22,40 +22,61 @@ void archivers::tar::pack_from(
     const boost::filesystem::path &archive,
     const boost::filesystem::path &file)
 {
-    bunsan::process::context ctx;
-    ctx.executable(m_exe);
-    ctx.arguments(
-        m_exe.filename(),
-        "--create",
-        format_argument(),
-        "--file",
-        archive,
-        "--directory",
-        cwd,
-        flag_arguments(),
-        "--",
-        file
-    );
-    bunsan::process::check_sync_execute(ctx);
+    try
+    {
+        bunsan::process::context ctx;
+        ctx.executable(m_exe);
+        ctx.arguments(
+            m_exe.filename(),
+            "--create",
+            format_argument(),
+            "--file",
+            archive,
+            "--directory",
+            cwd,
+            flag_arguments(),
+            "--",
+            file
+        );
+        bunsan::process::check_sync_execute(ctx);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cwd_split_pack_from_error() <<
+                              cwd_split_pack_from_error::cwd(cwd) <<
+                              cwd_split_pack_from_error::archive(archive) <<
+                              cwd_split_pack_from_error::file(file) <<
+                              enable_nested_current());
+    }
 }
 
 void archivers::tar::unpack(
     const boost::filesystem::path &archive,
     const boost::filesystem::path &dir)
 {
-    bunsan::process::context ctx;
-    ctx.executable(m_exe);
-    ctx.arguments(
-        m_exe.filename(),
-        "--extract",
-        format_argument(),
-        "--file",
-        boost::filesystem::absolute(archive),
-        "--directory",
-        boost::filesystem::absolute(dir),
-        flag_arguments()
-    );
-    bunsan::process::check_sync_execute(ctx);
+    try
+    {
+        bunsan::process::context ctx;
+        ctx.executable(m_exe);
+        ctx.arguments(
+            m_exe.filename(),
+            "--extract",
+            format_argument(),
+            "--file",
+            boost::filesystem::absolute(archive),
+            "--directory",
+            boost::filesystem::absolute(dir),
+            flag_arguments()
+        );
+        bunsan::process::check_sync_execute(ctx);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(archiver_unpack_error() <<
+                              archiver_unpack_error::archive(archive) <<
+                              archiver_unpack_error::file(dir) <<
+                              enable_nested_current());
+    }
 }
 
 boost::optional<std::string> archivers::tar::format_argument() const

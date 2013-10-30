@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bunsan/utility/error.hpp>
 #include <bunsan/utility/resolver.hpp>
 #include <bunsan/utility/utility.hpp>
 
@@ -7,6 +8,15 @@
 
 namespace bunsan{namespace utility
 {
+    struct archiver_error: virtual error
+    {
+        typedef boost::error_info<struct tag_archive, boost::filesystem::path> archive;
+        typedef boost::error_info<struct tag_file, boost::filesystem::path> file;
+    };
+    struct archiver_pack_error: virtual archiver_error {};
+    struct archiver_pack_contents_error: virtual archiver_error {};
+    struct archiver_unpack_error: virtual archiver_error {};
+
     class archiver: public utility
     BUNSAN_FACTORY_BEGIN(archiver, const resolver &)
     public:
