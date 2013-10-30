@@ -21,6 +21,16 @@ BUNSAN_UTILITY_FETCHER_COPY(copy)
 
 void fetchers::copy::fetch(const std::string &uri, const boost::filesystem::path &dst)
 {
-    boost::filesystem::copy_file(uri, dst,
-        boost::filesystem::copy_option::overwrite_if_exists);
+    try
+    {
+        boost::filesystem::copy_file(uri, dst,
+            boost::filesystem::copy_option::overwrite_if_exists);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(fetcher_fetch_error() <<
+                              fetcher_fetch_error::uri(uri) <<
+                              fetcher_fetch_error::destination(dst) <<
+                              enable_nested_current());
+    }
 }

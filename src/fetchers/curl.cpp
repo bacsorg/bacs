@@ -18,20 +18,30 @@ fetchers::curl::curl(const boost::filesystem::path &exe): m_exe(exe) {}
 
 void fetchers::curl::fetch(const std::string &uri, const boost::filesystem::path &dst)
 {
-    bunsan::process::context ctx;
-    ctx.executable(m_exe);
-    ctx.arguments(
-        m_exe.filename(),
-        "--fail",
-        "--output",
-        boost::filesystem::absolute(dst),
-        "--silent",
-        uri
-    );
-    bunsan::process::check_sync_execute(ctx);
-    if (!boost::filesystem::exists(dst))
+    try
     {
-        bunsan::filesystem::ofstream touch(dst);
-        touch.close();
+        bunsan::process::context ctx;
+        ctx.executable(m_exe);
+        ctx.arguments(
+            m_exe.filename(),
+            "--fail",
+            "--output",
+            boost::filesystem::absolute(dst),
+            "--silent",
+            uri
+        );
+        bunsan::process::check_sync_execute(ctx);
+        if (!boost::filesystem::exists(dst))
+        {
+            bunsan::filesystem::ofstream touch(dst);
+            touch.close();
+        }
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(fetcher_fetch_error() <<
+                              fetcher_fetch_error::uri(uri) <<
+                              fetcher_fetch_error::destination(dst) <<
+                              enable_nested_current());
     }
 }

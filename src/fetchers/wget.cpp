@@ -17,13 +17,23 @@ fetchers::wget::wget(const boost::filesystem::path &exe): m_exe(exe) {}
 
 void fetchers::wget::fetch(const std::string &uri, const boost::filesystem::path &dst)
 {
-    bunsan::process::context ctx;
-    ctx.executable(m_exe);
-    ctx.arguments(
-        m_exe.filename(),
-        "--output-document=" + boost::filesystem::absolute(dst).string(),
-        "--quiet",
-        uri
-    );
-    bunsan::process::check_sync_execute(ctx);
+    try
+    {
+        bunsan::process::context ctx;
+        ctx.executable(m_exe);
+        ctx.arguments(
+            m_exe.filename(),
+            "--output-document=" + boost::filesystem::absolute(dst).string(),
+            "--quiet",
+            uri
+        );
+        bunsan::process::check_sync_execute(ctx);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(fetcher_fetch_error() <<
+                              fetcher_fetch_error::uri(uri) <<
+                              fetcher_fetch_error::destination(dst) <<
+                              enable_nested_current());
+    }
 }
