@@ -12,6 +12,18 @@
 
 namespace bunsan{namespace utility
 {
+    struct resolver_error: virtual error {};
+    struct resolver_find_error: virtual resolver_error {};
+    struct resolver_find_executable_error: virtual resolver_find_error
+    {
+        typedef boost::error_info<struct tag_executable, boost::filesystem::path> executable;
+    };
+    struct resolver_find_library_error: virtual resolver_find_error
+    {
+        typedef boost::error_info<struct tag_library, boost::filesystem::path> library;
+    };
+    struct resolver_circular_alias_dependencies_error: virtual resolver_error {};
+
     class resolver
     {
     public:
@@ -67,7 +79,4 @@ namespace bunsan{namespace utility
     {
         a.swap(b);
     }
-
-    struct resolver_error: virtual error {};
-    struct resolver_circular_alias_dependencies_error: virtual resolver_error {};
 }}

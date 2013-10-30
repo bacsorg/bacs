@@ -108,15 +108,33 @@ void bunsan::utility::resolver::apply_path(boost::filesystem::path &name) const
 
 boost::filesystem::path bunsan::utility::resolver::find_executable(const boost::filesystem::path &exe) const
 {
-    boost::filesystem::path ret = exe;
-    apply_alias(ret);
-    apply_absolute(ret);
-    apply_path(ret);
-    return ret;
+    try
+    {
+        boost::filesystem::path ret = exe;
+        apply_alias(ret);
+        apply_absolute(ret);
+        apply_path(ret);
+        return ret;
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(resolver_find_executable_error() <<
+                              resolver_find_executable_error::executable(exe) <<
+                              enable_nested_current());
+    }
 }
 
 boost::filesystem::path bunsan::utility::resolver::find_library(const boost::filesystem::path &lib) const
 {
+    try
+    {
 #warning unimplemented
-    return lib;
+        return lib;
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(resolver_find_library_error() <<
+                              resolver_find_library_error::library(lib) <<
+                              enable_nested_current());
+    }
 }
