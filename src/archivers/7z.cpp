@@ -35,7 +35,7 @@ void archivers::_7z::pack_from(
      * When archive.filename() does not contain '.'
      * some suffix is appended depending on format.
      * If archive.filename().back() == '.', last dot is removed.
-     * So, in any case we should append '.' to get it work correct.
+     * So, in any case we should append '.' to make it work properly.
      */
     ctx.arguments(
         m_exe.filename(),
