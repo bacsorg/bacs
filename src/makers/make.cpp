@@ -37,11 +37,21 @@ void makers::make::exec(
     const boost::filesystem::path &cwd,
     const std::vector<std::string> &targets)
 {
-    bunsan::process::context ctx;
-    ctx.executable(m_exe);
-    ctx.current_path(cwd);
-    ctx.arguments(arguments_(targets));
-    check_sync_execute(ctx);
+    try
+    {
+        bunsan::process::context ctx;
+        ctx.executable(m_exe);
+        ctx.current_path(cwd);
+        ctx.arguments(arguments_(targets));
+        check_sync_execute(ctx);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(maker_exec_error() <<
+                              maker_exec_error::cwd(cwd) <<
+                              maker_exec_error::targets(targets) <<
+                              enable_nested_current());
+    }
 }
 
 void makers::make::setup(const boost::property_tree::ptree &ptree)
