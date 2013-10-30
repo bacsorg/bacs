@@ -96,11 +96,21 @@ void builders::cmake::configure_(
     const boost::filesystem::path &src,
     const boost::filesystem::path &bin)
 {
-    bunsan::process::context ctx;
-    ctx.executable(m_cmake_exe);
-    ctx.current_path(bin);
-    ctx.arguments(arguments_(src));
-    bunsan::process::check_sync_execute(ctx);
+    try
+    {
+        bunsan::process::context ctx;
+        ctx.executable(m_cmake_exe);
+        ctx.current_path(bin);
+        ctx.arguments(arguments_(src));
+        bunsan::process::check_sync_execute(ctx);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(conf_make_install_configure_error() <<
+                              conf_make_install_configure_error::src(src) <<
+                              conf_make_install_configure_error::bin(bin) <<
+                              enable_nested_current());
+    }
 }
 
 void builders::cmake::make_(
@@ -108,21 +118,31 @@ void builders::cmake::make_(
     const boost::filesystem::path &bin)
 {
     BOOST_ASSERT(m_generator);
-    const generator_type type = generators[m_generator.get()].type;
-    switch (type)
+    try
     {
-    case generator_type::MAKEFILE:
+        const generator_type type = generators[m_generator.get()].type;
+        switch (type)
         {
-            const maker_ptr ptr = maker::instance("make", m_resolver);
-            ptr->setup(m_config.make_maker);
-            ptr->exec(bin, {});
+        case generator_type::MAKEFILE:
+            {
+                const maker_ptr ptr = maker::instance("make", m_resolver);
+                ptr->setup(m_config.make_maker);
+                ptr->exec(bin, {});
+            }
+            break;
+        case generator_type::NMAKEFILE:
+        case generator_type::VISUAL_STUDIO:
+        default:
+            BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error() <<
+                                  cmake_unknown_generator_type_error::generator_type(type));
         }
-        break;
-    case generator_type::NMAKEFILE:
-    case generator_type::VISUAL_STUDIO:
-    default:
-        BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error() <<
-                              cmake_unknown_generator_type_error::generator_type(type));
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(conf_make_install_make_error() <<
+                              // conf_make_install_make_error::src(src) <<
+                              conf_make_install_make_error::bin(bin) <<
+                              enable_nested_current());
     }
 }
 
@@ -132,23 +152,34 @@ void builders::cmake::install_(
     const boost::filesystem::path &root)
 {
     BOOST_ASSERT(m_generator);
-    const generator_type type = generators[m_generator.get()].type;
-    switch (type)
+    try
     {
-    case generator_type::MAKEFILE:
+        const generator_type type = generators[m_generator.get()].type;
+        switch (type)
         {
-            maker_ptr ptr = maker::instance("make", m_resolver);
-            makers::make::config make_config = bunsan::config::load<makers::make::config>(m_config.install_maker);
-            make_config.defines["DESTDIR"] = boost::filesystem::absolute(root).string();
-            ptr->setup(bunsan::config::save<boost::property_tree::ptree>(make_config));
-            ptr->exec(bin, {"install"});
+        case generator_type::MAKEFILE:
+            {
+                maker_ptr ptr = maker::instance("make", m_resolver);
+                makers::make::config make_config = bunsan::config::load<makers::make::config>(m_config.install_maker);
+                make_config.defines["DESTDIR"] = boost::filesystem::absolute(root).string();
+                ptr->setup(bunsan::config::save<boost::property_tree::ptree>(make_config));
+                ptr->exec(bin, {"install"});
+            }
+            break;
+        case generator_type::NMAKEFILE:
+        case generator_type::VISUAL_STUDIO:
+        default:
+            BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error() <<
+                                  cmake_unknown_generator_type_error::generator_type(type));
         }
-        break;
-    case generator_type::NMAKEFILE:
-    case generator_type::VISUAL_STUDIO:
-    default:
-        BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error() <<
-                              cmake_unknown_generator_type_error::generator_type(type));
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(conf_make_install_install_error() <<
+                              // conf_make_install_install_error::src(src) <<
+                              conf_make_install_install_error::bin(bin) <<
+                              conf_make_install_install_error::root(root) <<
+                              enable_nested_current());
     }
 }
 

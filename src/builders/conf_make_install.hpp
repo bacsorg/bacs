@@ -4,6 +4,11 @@
 
 namespace bunsan{namespace utility{namespace builders
 {
+    struct conf_make_install_error: virtual builder_install_error {};
+    struct conf_make_install_configure_error: virtual conf_make_install_error {};
+    struct conf_make_install_make_error: virtual conf_make_install_error {};
+    struct conf_make_install_install_error: virtual conf_make_install_error {};
+
     class conf_make_install: public builder
     {
     public:
