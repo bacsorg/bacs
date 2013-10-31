@@ -7,9 +7,9 @@
 
 #include <bunsan/interprocess/sync/file_lock.hpp>
 
+#include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/filesystem/path.hpp>
 
 #include <map>
 #include <memory>

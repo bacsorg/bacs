@@ -4,15 +4,14 @@
 #include <bunsan/pm/repository.hpp>
 
 #include <bunsan/config/cast.hpp>
-#include <bunsan/enable_error_info.hpp>
 #include <bunsan/logging/legacy.hpp>
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/assert.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/interprocess/sync/sharable_lock.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/assert.hpp>
 
 #include <deque>
 #include <map>
@@ -42,81 +41,148 @@ const bunsan::pm::config &bunsan::pm::repository::config() const
 
 void bunsan::pm::repository::create(const boost::filesystem::path &source, bool strip)
 {
-    SLOG("creating source package from " << source << " with" << (strip ? "" : "out") << " stripping");
-    ntv->create(source, strip);
+    try
+    {
+        SLOG("creating source package from " << source << " with" << (strip ? "" : "out") << " stripping");
+        ntv->create(source, strip);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(create_error() <<
+                              create_error::source(source) <<
+                              create_error::strip(strip) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::create_recursively(const boost::filesystem::path &root, bool strip)
 {
-    SLOG("recursively creating source packages from " << root << " with" << (strip ? "" : "out") << " stripping");
-    ntv->create_recursively(root, strip);
+    try
+    {
+        SLOG("recursively creating source packages from " << root << " with" << (strip ? "" : "out") << " stripping");
+        ntv->create_recursively(root, strip);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(create_error() <<
+                              create_error::root(root) <<
+                              create_error::strip(strip) <<
+                              enable_nested_current());
+    }
 }
 
 namespace
 {
-    void require_lock(bool has, const char *func)
+    void require_lock(const bool has)
     {
         using bunsan::pm::invalid_configuration_key_error;
         if (!has)
             BOOST_THROW_EXCEPTION(invalid_configuration_key_error() <<
-                                  invalid_configuration_key_error::path("config.lock.global") <<
-                                  invalid_configuration_key_error::action(func));
+                                  invalid_configuration_key_error::configuration_key("config.lock.global"));
     }
 }
 
 void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
 {
-    require_lock(static_cast<bool>(m_flock), __func__);
-    SLOG("Attempt to extract \"" << package << "\" to " << destination);
-    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
-    DLOG(trying to update);
-    update(package);
-    DLOG(trying to extract);
-    ntv->extract_installation(package, destination);
+    try
+    {
+        require_lock(static_cast<bool>(m_flock));
+        SLOG("Attempt to extract \"" << package << "\" to " << destination);
+        boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
+        DLOG(trying to update);
+        update(package);
+        DLOG(trying to extract);
+        ntv->extract_installation(package, destination);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(extract_error() <<
+                              extract_error::package(package) <<
+                              extract_error::destination(destination) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::install(const entry &package, const boost::filesystem::path &destination)
 {
-    require_lock(static_cast<bool>(m_flock), __func__);
-    SLOG("Attempt to install \"" << package << "\" to " << destination);
-    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
-    DLOG(trying to update);
-    update(package);
-    DLOG(trying to install);
-    ntv->install_installation(package, destination);
+    try
+    {
+        require_lock(static_cast<bool>(m_flock));
+        SLOG("Attempt to install \"" << package << "\" to " << destination);
+        boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
+        DLOG(trying to update);
+        update(package);
+        DLOG(trying to install);
+        ntv->install_installation(package, destination);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(install_error() <<
+                              install_error::package(package) <<
+                              install_error::destination(destination) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::update(const entry &package, const boost::filesystem::path &destination)
 {
-    require_lock(static_cast<bool>(m_flock), __func__);
-    SLOG("Attempt to update \"" << package << "\" installation in " << destination);
-    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
-    DLOG(trying to update package);
-    update(package);
-    DLOG(trying to update installation);
-    ntv->update_installation(package, destination);
+    try
+    {
+        require_lock(static_cast<bool>(m_flock));
+        SLOG("Attempt to update \"" << package << "\" installation in " << destination);
+        boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
+        DLOG(trying to update package);
+        update(package);
+        DLOG(trying to update installation);
+        ntv->update_installation(package, destination);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(update_error() <<
+                              update_error::package(package) <<
+                              update_error::destination(destination) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::update(const entry &package,
                                     const boost::filesystem::path &destination,
                                     const std::time_t &lifetime)
 {
-    if (need_update(package, destination, lifetime))
-        update(package, destination);
-    else
-        SLOG("Skipping \"" << package << "\" update since lifetime = " <<
-             lifetime << " has not passed since previous attempt.");
+    try
+    {
+        if (need_update(package, destination, lifetime))
+            update(package, destination);
+        else
+            SLOG("Skipping \"" << package << "\" update since lifetime = " <<
+                 lifetime << " has not passed since previous attempt.");
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(update_error() <<
+                              update_error::package(package) <<
+                              update_error::destination(destination) <<
+                              update_error::lifetime(lifetime) <<
+                              enable_nested_current());
+    }
 }
 
 bool bunsan::pm::repository::need_update(const entry &package,
                                          const boost::filesystem::path &destination,
                                          const std::time_t &lifetime)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         return ntv->need_update_installation(destination, lifetime);
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(need_update_error() <<
+                              need_update_error::package(package) <<
+                              need_update_error::destination(destination) <<
+                              need_update_error::lifetime(lifetime) <<
+                              enable_nested_current());
+    }
 }
 
 enum class bunsan::pm::repository::stage_type: int
@@ -303,9 +369,17 @@ bool bunsan::pm::repository::update_package_depends(
 
 void bunsan::pm::repository::clean()
 {
-    require_lock(static_cast<bool>(m_flock), __func__);
-    boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
-    ntv->clean();
+    try
+    {
+        require_lock(static_cast<bool>(m_flock));
+        boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
+        ntv->clean();
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(clean_error() <<
+                              enable_nested_current());
+    }
 }
 
 bunsan::pm::repository::~repository()

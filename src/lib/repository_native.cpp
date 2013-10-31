@@ -44,17 +44,21 @@ namespace
 
 void bunsan::pm::repository::native::update_index(const entry &package)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting \"" << package << "\" " << __func__);
         const tempfile checksum_tmp = tempfile::from_model(m_config.name.file.tmp);
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        try
         {
             fetcher->fetch(remote_resource(package, m_config.name.file.checksum), checksum_tmp.path());
         }
-        BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action("fetch index") <<
-                                              error::message("no such package in repository") <<
-                                              error::package(package))
+        catch (std::exception &)
+        {
+            BOOST_THROW_EXCEPTION(native_fetch_index_error() <<
+                                  native_fetch_index_error::path(checksum_tmp.path()) <<
+                                  native_fetch_index_error::message("no such package in repository") <<
+                                  enable_nested_current());
+        }
         boost::filesystem::path output = package.local_resource(m_config.dir.source);
         boost::filesystem::create_directories(output);
         boost::filesystem::copy_file(checksum_tmp.path(), output / m_config.name.file.checksum,
@@ -64,12 +68,17 @@ void bunsan::pm::repository::native::update_index(const entry &package)
              output / m_config.name.file.index,
              read_checksum(package).at(m_config.name.file.index));
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_update_index_error() <<
+                              native_update_index_error::package(package) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::native::fetch_source(const entry &package)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting \"" << package << "\" " << __func__);
         const std::string src_sfx = m_config.name.suffix.source_archive;
@@ -83,7 +92,12 @@ void bunsan::pm::repository::native::fetch_source(const entry &package)
                  read_checksum(package).at(src_name));
         }
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_fetch_source_error() <<
+                              native_fetch_source_error::package(package) <<
+                              enable_nested_current());
+    }
 }
 
 namespace
@@ -143,7 +157,7 @@ void bunsan::pm::repository::native::unpack_source(
 
 void bunsan::pm::repository::native::unpack(const entry &package, const boost::filesystem::path &build_dir)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting \"" << package << "\" " << __func__);
         const boost::filesystem::path src = build_dir / m_config.name.dir.source;
@@ -159,12 +173,18 @@ void bunsan::pm::repository::native::unpack(const entry &package, const boost::f
         unpack_source(package, src, snapshot_);
         write_snapshot(snp, snapshot_);
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_unpack_error() <<
+                              native_unpack_error::package(package) <<
+                              native_unpack_error::build_dir(build_dir) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::native::pack(const entry &package, const boost::filesystem::path &build_dir)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting \"" << package << "\" " << __func__);
         const boost::filesystem::path snp = build_dir / m_config.name.file.build_snapshot;
@@ -183,12 +203,18 @@ void bunsan::pm::repository::native::pack(const entry &package, const boost::fil
         boost::filesystem::copy_file(snp, package_resource(package, m_config.name.file.build_snapshot),
             boost::filesystem::copy_option::overwrite_if_exists);
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_pack_error() <<
+                              native_pack_error::package(package) <<
+                              native_pack_error::build_dir(build_dir) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::native::build_empty(const entry &package)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting \"" << package << "\" " << __func__);
         const tempfile build_dir = tempfile::in_dir(m_config.dir.tmp);
@@ -209,23 +235,34 @@ void bunsan::pm::repository::native::build_empty(const entry &package)
         };
         write_snapshot(package_resource(package, m_config.name.file.build_snapshot), snapshot_);
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_build_empty_error() <<
+                              native_build_empty_error::package(package) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::native::extract_build(const entry &package, const boost::filesystem::path &destination)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting \"" << package << "\" " << __func__);
         filesystem::reset_dir(destination);
         ::extract(cache_archiver, package_resource(package, m_config.name.file.build), destination, m_config.name.dir.installation);
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_extract_build_error() <<
+                              native_extract_build_error::package(package) <<
+                              native_extract_build_error::destination(destination) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::native::build_installation(const entry &package)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting " << package << " " << __func__);
         const tempfile build_dir = tempfile::in_dir(m_config.dir.tmp);
@@ -259,12 +296,17 @@ void bunsan::pm::repository::native::build_installation(const entry &package)
             package_resource(package, m_config.name.file.installation_snapshot),
             boost::filesystem::copy_option::overwrite_if_exists);
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_build_installation_error() <<
+                              native_build_installation_error::package(package) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::native::extract_installation(const entry &package, const boost::filesystem::path &destination, bool reset)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting " << package << " " << __func__);
         if (reset)
@@ -273,12 +315,19 @@ void bunsan::pm::repository::native::extract_installation(const entry &package, 
             boost::filesystem::create_directories(destination);
         ::extract(cache_archiver, package_resource(package, m_config.name.file.installation), destination, m_config.name.dir.installation);
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_extract_installation_error() <<
+                              native_extract_installation_error::package(package) <<
+                              native_extract_installation_error::destination(destination) <<
+                              native_extract_installation_error::reset(reset) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::native::install_installation(const entry &package, const boost::filesystem::path &destination)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting " << package << " " << __func__);
         const boost::filesystem::path meta = destination / m_config.name.installation.meta;
@@ -297,12 +346,18 @@ void bunsan::pm::repository::native::install_installation(const entry &package, 
         boost::filesystem::copy_file(snp, meta, boost::filesystem::copy_option::fail_if_exists);
         boost::filesystem::last_write_time(meta, std::time(nullptr));
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_install_installation_error() <<
+                              native_install_installation_error::package(package) <<
+                              native_install_installation_error::destination(destination) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::native::update_installation(const entry &package, const boost::filesystem::path &destination)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting " << package << " " << __func__);
         const boost::filesystem::path meta = destination / m_config.name.installation.meta;
@@ -329,16 +384,28 @@ void bunsan::pm::repository::native::update_installation(const entry &package, c
             boost::filesystem::last_write_time(meta, std::time(nullptr));
         }
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_update_installation_error() <<
+                              native_update_installation_error::package(package) <<
+                              native_update_installation_error::destination(destination) <<
+                              enable_nested_current());
+    }
 }
 
 bool bunsan::pm::repository::native::need_update_installation(const boost::filesystem::path &destination, const std::time_t &lifetime)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         SLOG("starting " << destination << " " << __func__);
         const boost::filesystem::path meta = destination / m_config.name.installation.meta;
         return !boost::filesystem::is_regular_file(meta) || std::time(nullptr) > lifetime + boost::filesystem::last_write_time(meta);
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_need_update_installation_error() <<
+                              native_need_update_installation_error::destination(destination) <<
+                              native_need_update_installation_error::lifetime(lifetime) <<
+                              enable_nested_current());
+    }
 }

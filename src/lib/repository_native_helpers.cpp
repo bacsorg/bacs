@@ -11,9 +11,18 @@
 
 bunsan::pm::snapshot_entry bunsan::pm::repository::native::read_checksum(const entry &package)
 {
-    boost::property_tree::ptree ptree;
-    boost::property_tree::read_info(source_resource(package, m_config.name.file.checksum).string(), ptree);
-    return bunsan::config::load<snapshot_entry>(ptree);
+    try
+    {
+        boost::property_tree::ptree ptree;
+        boost::property_tree::read_info(source_resource(package, m_config.name.file.checksum).string(), ptree);
+        return bunsan::config::load<snapshot_entry>(ptree);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_read_checksum_error() <<
+                              native_read_checksum_error::package(package) <<
+                              enable_nested_current());
+    }
 }
 
 std::string bunsan::pm::repository::native::remote_resource(const entry &package, const boost::filesystem::path &name)
@@ -56,89 +65,152 @@ bunsan::pm::repository::native::native(const pm::config &config_):
 
 void bunsan::pm::repository::native::write_snapshot(const boost::filesystem::path &path, const snapshot &snapshot_)
 {
-    boost::property_tree::write_info(path.string(), bunsan::config::save<boost::property_tree::ptree>(snapshot_));
+    try
+    {
+        boost::property_tree::write_info(path.string(), bunsan::config::save<boost::property_tree::ptree>(snapshot_));
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_write_snapshot_error() <<
+                              native_write_snapshot_error::path(path) <<
+                              enable_nested_current());
+    }
 }
 
 bunsan::pm::snapshot bunsan::pm::repository::native::read_snapshot(const boost::filesystem::path &path)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         boost::property_tree::ptree ptree;
         boost::property_tree::read_info(path.string(), ptree);
         return bunsan::config::load<snapshot>(ptree);
     }
-    BUNSAN_EXCEPTIONS_WRAP_END()
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_read_snapshot_error() <<
+                              native_read_snapshot_error::path(path) <<
+                              enable_nested_current());
+    }
 }
 
 bunsan::pm::index bunsan::pm::repository::native::read_index(const entry &package)
 {
-    BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+    try
     {
         return index(source_resource(package, m_config.name.file.index));
     }
-    BUNSAN_EXCEPTIONS_WRAP_END_ERROR_INFO(error::action(__func__) << error::package(package))
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_read_index_error() <<
+                              native_read_index_error::package(package) <<
+                              enable_nested_current());
+    }
 }
 
 namespace
 {
     void check_dir(const boost::filesystem::path &dir)
     {
-        if (!dir.is_absolute())
-            BOOST_THROW_EXCEPTION(bunsan::pm::invalid_configuration_error() <<
-                                  bunsan::pm::invalid_configuration_error::path(dir) <<
-                                  bunsan::pm::invalid_configuration_error::message(
-                                      "You have to specify absolute path"));
-        SLOG("checking " << dir);
-        if (!boost::filesystem::is_directory(dir))
+        using namespace bunsan;
+        using namespace pm;
+        try
         {
-            if (!boost::filesystem::exists(dir))
+            if (!dir.is_absolute())
+                BOOST_THROW_EXCEPTION(invalid_configuration_error() <<
+                                      invalid_configuration_error::path(dir) <<
+                                      invalid_configuration_error::message(
+                                          "You have to specify absolute path"));
+            SLOG("checking " << dir);
+            if (!boost::filesystem::is_directory(dir))
             {
-                SLOG("directory " << dir << " was not found");
+                if (!boost::filesystem::exists(dir))
+                {
+                    SLOG("directory " << dir << " was not found");
+                }
+                else
+                {
+                    SLOG(dir << " is not a directory: starting recursive remove");
+                    boost::filesystem::remove_all(dir);
+                }
+                if (boost::filesystem::create_directory(dir))
+                    SLOG("created missing " << dir << " directory");
             }
-            else
-            {
-                SLOG(dir << " is not a directory: starting recursive remove");
-                boost::filesystem::remove_all(dir);
-            }
-            SLOG("trying to create " << dir);
-            boost::filesystem::create_directory(dir);
-            DLOG(created);
+        }
+        catch (std::exception &)
+        {
+            BOOST_THROW_EXCEPTION(native_check_dir_error() <<
+                                  native_check_dir_error::path(dir) <<
+                                  enable_nested_current());
         }
     }
 }
 
 bool bunsan::pm::repository::native::build_outdated(const entry &package, const snapshot &snapshot_)
 {
-    const boost::filesystem::path snp = package_resource(package, m_config.name.file.build_snapshot);
-    const boost::filesystem::path build = package_resource(package, m_config.name.file.build);
-    if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(build))
-        return true;
-    return snapshot_ != read_snapshot(snp);
+    try
+    {
+        const boost::filesystem::path snp = package_resource(package, m_config.name.file.build_snapshot);
+        const boost::filesystem::path build = package_resource(package, m_config.name.file.build);
+        if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(build))
+            return true;
+        return snapshot_ != read_snapshot(snp);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_build_outdated_error() <<
+                              native_build_outdated_error::package(package) <<
+                              enable_nested_current());
+    }
 }
 
 bool bunsan::pm::repository::native::installation_outdated(const entry &package, const snapshot &snapshot_)
 {
-    const boost::filesystem::path snp = package_resource(package, m_config.name.file.installation_snapshot);
-    const boost::filesystem::path installation = package_resource(package, m_config.name.file.installation);
-    if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(installation))
-        return true;
-    return snapshot_ != read_snapshot(snp);
+    try
+    {
+        const boost::filesystem::path snp = package_resource(package, m_config.name.file.installation_snapshot);
+        const boost::filesystem::path installation = package_resource(package, m_config.name.file.installation);
+        if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(installation))
+            return true;
+        return snapshot_ != read_snapshot(snp);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_installation_outdated_error() <<
+                              native_installation_outdated_error::package(package) <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::native::check_dirs()
 {
-    DLOG(checking directories);
-    check_dir(m_config.dir.source);
-    check_dir(m_config.dir.package);
-    check_dir(m_config.dir.tmp);
-    DLOG(checked);
+    try
+    {
+        DLOG(checking directories);
+        check_dir(m_config.dir.source);
+        check_dir(m_config.dir.package);
+        check_dir(m_config.dir.tmp);
+        DLOG(directories checked);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_check_dirs_error() <<
+                              enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::native::clean()
 {
-    DLOG(trying to clean cache);
-    filesystem::reset_dir(m_config.dir.source);
-    filesystem::reset_dir(m_config.dir.package);
-    filesystem::reset_dir(m_config.dir.tmp);
-    DLOG(cleaned);
+    try
+    {
+        DLOG(trying to clean cache);
+        filesystem::reset_dir(m_config.dir.source);
+        filesystem::reset_dir(m_config.dir.package);
+        filesystem::reset_dir(m_config.dir.tmp);
+        DLOG(cache cleaned);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_clean_error() <<
+                              enable_nested_current());
+    }
 }
