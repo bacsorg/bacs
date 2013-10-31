@@ -244,7 +244,11 @@ bool bunsan::pm::repository::update_package_depends(
 {
     SLOG("starting \"" << package.first << "\" (" << stage_type_name[static_cast<int>(package.second)] << ") " << __func__);
     if (in.find(package) != in.end())
-        BOOST_THROW_EXCEPTION(circular_dependencies() << circular_dependencies::package(package.first.name()));
+    {
+        BOOST_THROW_EXCEPTION(circular_dependencies_error() <<
+                              circular_dependencies_error::package(package.first.name()));
+    }
+    // update current_snapshot
     {
         const auto iter = updated.find(package);
         if (iter != updated.end())

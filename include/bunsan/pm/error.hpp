@@ -58,7 +58,7 @@ namespace bunsan{namespace pm
     struct invalid_configuration_builder_error: virtual invalid_configuration_utility_error {};
     struct invalid_configuration_fetcher_error: virtual invalid_configuration_utility_error {};
 
-    struct circular_dependencies: virtual error {};
+    struct circular_dependencies_error: virtual error {};
 
     // native
     struct native_error: virtual error
