@@ -44,7 +44,8 @@ void bunsan::pm::entry::build(const std::string &name_, char delim)
                             boost::algorithm::token_compress_on);
     for (const std::string &i: m_location)
         if (!is_allowed_subpath(i))
-            BOOST_THROW_EXCEPTION(invalid_entry_name_error() << invalid_entry_name_error::entry_name(name_));
+            BOOST_THROW_EXCEPTION(invalid_entry_name_error() <<
+                                  invalid_entry_name_error::entry_name(name_));
     BOOST_ASSERT(!m_location.empty());
 }
 
