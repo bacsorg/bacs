@@ -11,7 +11,6 @@ bunsan_use(cryptopp)
 bunsan_use_boost(system filesystem serialization program_options thread)
 
 bunsan_add_shared_library(${PROJECT_NAME}
-    src/lib/error.cpp
     src/lib/index.cpp
     src/lib/entry.cpp
     src/lib/checksum.cpp

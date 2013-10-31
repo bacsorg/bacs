@@ -9,9 +9,6 @@ namespace bunsan{namespace pm
 {
     struct error: virtual bunsan::error
     {
-        error()=default;
-        explicit error(const std::string &message_);
-
         typedef boost::error_info<struct tag_package, entry> package;
         typedef filesystem::error::path path;
         typedef boost::error_info<struct tag_source, boost::filesystem::path> source;
