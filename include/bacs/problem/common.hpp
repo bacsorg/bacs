@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bacs/problem/id.hpp>
+
 #include <vector>
 
 namespace bacs{namespace problem
