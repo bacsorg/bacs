@@ -28,6 +28,7 @@ namespace bacs{namespace problem
         if (!bunsan::pm::entry::is_allowed_subpath(m_format))
             BOOST_THROW_EXCEPTION(invalid_statement_format_error() <<
                                   invalid_statement_format_error::format(m_format));
+        // TODO format -> mime_type?
     }
 
     statement::version::~version() {}
@@ -133,33 +134,43 @@ namespace bacs{namespace problem
     bool statement::make_package(const boost::filesystem::path &destination,
                                  const bunsan::pm::entry &package) const
     {
-        const bunsan::pm::entry &root_package = package;
-        bunsan::filesystem::reset_dir(destination);
-        // resources
-        const bunsan::pm::entry resources_package = root_package / "resources";
+        try
         {
-            const boost::filesystem::path package_root = destination / resources_package.location().filename();
-            boost::filesystem::create_directory(package_root);
-            bunsan::pm::index index;
-            index.source.self.insert(std::make_pair(".", "src"));
-            bunsan::filesystem::copy_tree(m_location, package_root / "src");
-            index.save(package_root / "index");
-        }
-        // versions
-        {
-            const boost::filesystem::path versions_path = destination / versions_subpackage.location();
-            boost::filesystem::create_directory(versions_path);
-            for (const version_ptr &v: m_versions)
+            const bunsan::pm::entry &root_package = package;
+            bunsan::filesystem::reset_dir(destination);
+            // resources
+            const bunsan::pm::entry resources_package = root_package / "resources";
             {
-                const bunsan::pm::entry package = v->info().package();
-                const boost::filesystem::path package_path = versions_path / package.location();
-                boost::filesystem::create_directories(package_path);
-                v->make_package(package_path,
-                                root_package / versions_subpackage / package,
-                                resources_package);
+                const boost::filesystem::path package_root = destination / resources_package.location().filename();
+                boost::filesystem::create_directory(package_root);
+                bunsan::pm::index index;
+                index.source.self.insert(std::make_pair(".", "src"));
+                bunsan::filesystem::copy_tree(m_location, package_root / "src");
+                index.save(package_root / "index");
             }
+            // versions
+            {
+                const boost::filesystem::path versions_path = destination / versions_subpackage.location();
+                boost::filesystem::create_directory(versions_path);
+                for (const version_ptr &v: m_versions)
+                {
+                    const bunsan::pm::entry package = v->info().package();
+                    const boost::filesystem::path package_path = versions_path / package.location();
+                    boost::filesystem::create_directories(package_path);
+                    v->make_package(package_path,
+                                    root_package / versions_subpackage / package,
+                                    resources_package);
+                }
+            }
+            return true;
         }
-        return true;
+        catch (std::exception &)
+        {
+            BOOST_THROW_EXCEPTION(buildable_make_package_error() <<
+                                  buildable_make_package_error::destination(destination) <<
+                                  buildable_make_package_error::package(package) <<
+                                  bunsan::enable_nested_current());
+        }
     }
 
     const Statement &statement::info() const

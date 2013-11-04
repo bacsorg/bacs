@@ -1,5 +1,6 @@
 #include "single.hpp"
 
+#include <bacs/problem/error.hpp>
 #include <bacs/problem/split.hpp>
 
 #include <bunsan/enable_error_info.hpp>
@@ -49,36 +50,46 @@ namespace bacs{namespace problem{namespace utilities
     bool single::make_package(const boost::filesystem::path &destination,
                               const bunsan::pm::entry &/*package*/) const
     {
-        boost::filesystem::create_directories(destination);
-        bunsan::pm::index index;
-        const std::string lang = get_lang(m_source.filename().string());
-        // builder itself
-        index.source.import.source.insert(std::make_pair(".", "bacs/system/utility/single/" + lang));
-        // sources, note: only build section is needed from config
-        index.source.self.insert(std::make_pair("src", "src"));
-        bunsan::filesystem::copy_tree(location(), destination / "src");
-        // modules: set binary name
-        index.source.self.insert(std::make_pair("modules", "modules"));
-        boost::filesystem::create_directory(destination / "modules");
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        try
         {
-            bunsan::filesystem::ofstream fout(destination / "modules" / "utility.cmake");
-            fout << "set(target " << target().string() << ")\n";
-            fout << "set(source " << m_source.string() << ")\n";
-            fout << "set(libraries";
+            boost::filesystem::create_directories(destination);
+            bunsan::pm::index index;
+            const std::string lang = get_lang(m_source.filename().string());
+            // builder itself
+            index.source.import.source.insert(std::make_pair(".", "bacs/system/utility/single/" + lang));
+            // sources, note: only build section is needed from config
+            index.source.self.insert(std::make_pair("src", "src"));
+            bunsan::filesystem::copy_tree(location(), destination / "src");
+            // modules: set binary name
+            index.source.self.insert(std::make_pair("modules", "modules"));
+            boost::filesystem::create_directory(destination / "modules");
+            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            {
+                bunsan::filesystem::ofstream fout(destination / "modules" / "utility.cmake");
+                fout << "set(target " << target().string() << ")\n";
+                fout << "set(source " << m_source.string() << ")\n";
+                fout << "set(libraries";
+                for (const std::string &lib: m_libs)
+                    fout << " " << lib;
+                fout << ")\n";
+                if (m_std)
+                    fout << "set(std " << m_std << ")\n";
+                fout.close();
+            }
+            BUNSAN_EXCEPTIONS_WRAP_END()
+            // dependencies
             for (const std::string &lib: m_libs)
-                fout << " " << lib;
-            fout << ")\n";
-            if (m_std)
-                fout << "set(std " << m_std << ")\n";
-            fout.close();
+                index.source.import.package.insert(std::make_pair(".", "bacs/lib/" + lang + "/" + lib));
+            // save it
+            index.save(destination / "index");
+            return true;
         }
-        BUNSAN_EXCEPTIONS_WRAP_END()
-        // dependencies
-        for (const std::string &lib: m_libs)
-            index.source.import.package.insert(std::make_pair(".", "bacs/lib/" + lang + "/" + lib));
-        // save it
-        index.save(destination / "index");
-        return true;
+        catch (std::exception &)
+        {
+            BOOST_THROW_EXCEPTION(utility_make_package_error() <<
+                                  utility_make_package_error::destination(destination) <<
+                                  //utility_make_package_error::package(package) <<
+                                  bunsan::enable_nested_current());
+        }
     }
 }}}

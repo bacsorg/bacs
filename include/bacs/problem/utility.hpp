@@ -9,6 +9,13 @@
 
 namespace bacs{namespace problem
 {
+    struct utility_error: virtual buildable_error {};
+    struct utility_make_package_error: virtual buildable_make_package_error {};
+    struct invalid_target_error: virtual utility_error
+    {
+        typedef boost::error_info<struct tag_target, boost::filesystem::path> target;
+    };
+
     /// \see \ref utility_page
     class utility: public buildable
     BUNSAN_FACTORY_BEGIN(utility, const boost::filesystem::path &/*location*/,

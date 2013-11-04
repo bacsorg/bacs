@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bacs/problem/buildable.hpp>
+#include <bacs/problem/id.hpp>
 #include <bacs/problem/problem.pb.h>
 
 #include <bunsan/factory_helper.hpp>
@@ -14,6 +15,23 @@
 
 namespace bacs{namespace problem
 {
+    struct statement_error: virtual buildable_error {};
+    struct statement_version_error: virtual statement_error {};
+    struct statement_version_make_package_error:
+        virtual statement_version_error,
+        virtual buildable_make_package_error
+    {
+        typedef boost::error_info<struct tag_resources_package, bunsan::pm::entry> resources_package;
+    };
+    struct invalid_statement_lang_error: virtual invalid_id_error, virtual statement_error
+    {
+        typedef boost::error_info<struct tag_lang, std::string> lang;
+    };
+    struct invalid_statement_format_error: virtual invalid_id_error, virtual statement_error
+    {
+        typedef boost::error_info<struct tag_format, std::string> format;
+    };
+
     class statement: public buildable
     {
     public:

@@ -19,7 +19,7 @@ bunsan_add_shared_library(${PROJECT_NAME}
 
     src/buildable.cpp
     src/utility.cpp
-    src/common.cpp
+    src/id.cpp
     src/importer.cpp
     src/statement.cpp
     src/resource/parse.cpp

@@ -7,6 +7,7 @@
 #include <boost/algorithm/string/trim.hpp>
 
 #include <iterator>
+#include <sstream>
 
 namespace bacs{namespace problem
 {
@@ -53,11 +54,24 @@ namespace bacs{namespace problem
 
             Problem convert(const options &options_) override
             {
-                const std::string type = get_problem_type(options_.problem_dir);
-                const Problem problem = get_implementation(type)->convert(options_);
-                BOOST_ASSERT(problem.info().system().has_problem_type());
-                BOOST_ASSERT(problem.info().system().problem_type() == type);
-                return problem;
+                try
+                {
+                    const std::string type = get_problem_type(options_.problem_dir);
+                    const Problem problem = get_implementation(type)->convert(options_);
+                    BOOST_ASSERT(problem.info().system().has_problem_type());
+                    BOOST_ASSERT(problem.info().system().problem_type() == type);
+                    return problem;
+                }
+                catch (importer_convert_error &)
+                {
+                    throw;
+                }
+                catch (std::exception &)
+                {
+                    BOOST_THROW_EXCEPTION(importer_convert_error() <<
+                                          importer_convert_error::options(options_) <<
+                                          bunsan::enable_nested_current());
+                }
             }
 
         private:
@@ -87,3 +101,18 @@ namespace bacs{namespace problem
         return tmp;
     }
 }}
+
+namespace boost
+{
+    std::string to_string(const bacs::problem::importer_convert_error::options &options)
+    {
+        std::ostringstream sout;
+        sout << "[" << bunsan::error::info_name(options) << "] = { ";
+        sout << "problem_dir = " << options.value().problem_dir << ", ";
+        sout << "destination = " << options.value().destination << ", ";
+        sout << "root_package = " << options.value().root_package << ", ";
+        sout << "id = " << options.value().id;
+        sout << " }\n";
+        return sout.str();
+    }
+}

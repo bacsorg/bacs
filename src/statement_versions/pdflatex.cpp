@@ -45,29 +45,40 @@ namespace bacs{namespace problem{namespace statement_versions
                                 const bunsan::pm::entry &/*package*/,
                                 const bunsan::pm::entry &resources_package) const
     {
-        bunsan::filesystem::reset_dir(destination);
-        bunsan::pm::index index;
-        index.source.import.source.insert(std::make_pair(".", "bacs/system/statement/pdflatex"));
-        index.source.import.source.insert(std::make_pair("src", resources_package));
-        index.source.self.insert(std::make_pair(".", "src"));
-        index.package.self.insert(std::make_pair(".", "pkg"));
-        boost::filesystem::create_directory(destination / "src");
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        try
         {
-            bunsan::filesystem::ofstream fout(destination / "src" / "source.cmake");
-            fout << "set(root " << m_root << ")\n";
-            fout << "set(source " << m_source << ")\n";
-            fout << "set(target " << m_target << ")\n";
-            fout.close();
+            bunsan::filesystem::reset_dir(destination);
+            bunsan::pm::index index;
+            index.source.import.source.insert(std::make_pair(".", "bacs/system/statement/pdflatex"));
+            index.source.import.source.insert(std::make_pair("src", resources_package));
+            index.source.self.insert(std::make_pair(".", "src"));
+            index.package.self.insert(std::make_pair(".", "pkg"));
+            boost::filesystem::create_directory(destination / "src");
+            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            {
+                bunsan::filesystem::ofstream fout(destination / "src" / "source.cmake");
+                fout << "set(root " << m_root << ")\n";
+                fout << "set(source " << m_source << ")\n";
+                fout << "set(target " << m_target << ")\n";
+                fout.close();
+            }
+            BUNSAN_EXCEPTIONS_WRAP_END()
+            boost::filesystem::create_directory(destination / "pkg");
+            manifest statement_manifest;
+            statement_manifest.version.lang = lang();
+            statement_manifest.version.format = format();
+            statement_manifest.data.index = m_target;
+            boost::property_tree::write_ini((destination / "pkg" / manifest_path).string(),
+                                            bunsan::config::save<boost::property_tree::ptree>(statement_manifest));
+            index.save(destination / "index");
         }
-        BUNSAN_EXCEPTIONS_WRAP_END()
-        boost::filesystem::create_directory(destination / "pkg");
-        manifest statement_manifest;
-        statement_manifest.version.lang = lang();
-        statement_manifest.version.format = format();
-        statement_manifest.data.index = m_target;
-        boost::property_tree::write_ini((destination / "pkg" / manifest_path).string(),
-                                        bunsan::config::save<boost::property_tree::ptree>(statement_manifest));
-        index.save(destination / "index");
+        catch (std::exception &)
+        {
+            BOOST_THROW_EXCEPTION(statement_version_make_package_error() <<
+                                  statement_version_make_package_error::destination(destination) <<
+                                  //statement_version_make_package_error::package(package) <<
+                                  statement_version_make_package_error::resources_package(resources_package) <<
+                                  bunsan::enable_nested_current());
+        }
     }
 }}}
