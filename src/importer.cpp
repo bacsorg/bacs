@@ -2,7 +2,6 @@
 
 #include <bacs/problem/error.hpp>
 
-#include <bunsan/enable_error_info.hpp>
 #include <bunsan/filesystem/fstream.hpp>
 
 #include <boost/algorithm/string/trim.hpp>
@@ -18,14 +17,14 @@ namespace bacs{namespace problem
     std::string importer::get_problem_format(const boost::filesystem::path &problem_dir)
     {
         std::string format;
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        bunsan::filesystem::ifstream fin(problem_dir / "format");
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin)
         {
-            bunsan::filesystem::ifstream fin(problem_dir / "format");
             format.assign(std::istreambuf_iterator<char>(fin),
-                        std::istreambuf_iterator<char>());
-            fin.close();
+                          std::istreambuf_iterator<char>());
         }
-        BUNSAN_EXCEPTIONS_WRAP_END()
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
+        fin.close();
         boost::algorithm::trim(format);
         if (format.empty())
             BOOST_THROW_EXCEPTION(empty_problem_format_error());
