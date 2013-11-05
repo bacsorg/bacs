@@ -5,7 +5,6 @@
 #include <bacs/archive/pb/problem.pb.h>
 #include <bacs/archive/problem/flags.hpp>
 
-#include <bunsan/enable_error_info.hpp>
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
 
@@ -23,21 +22,17 @@ namespace bacs{namespace archive
     {
         void touch(const boost::filesystem::path &path)
         {
-            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
-            {
-                bunsan::filesystem::ofstream fout(path);
-                fout.close();
-            }
-            BUNSAN_EXCEPTIONS_WRAP_END()
+            bunsan::filesystem::ofstream fout(path);
+            fout.close();
             BOOST_ASSERT(boost::filesystem::exists(path));
         }
 
         problem::binary read_binary(const boost::filesystem::path &path)
         {
             problem::binary bin;
-            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
+            BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin)
             {
-                bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
                 char buf[BUFSIZ];
                 do
                 {
@@ -45,29 +40,29 @@ namespace bacs{namespace archive
                     bin.insert(bin.end(), buf, buf + fin.gcount());
                 }
                 while (fin);
-                fin.close();
             }
-            BUNSAN_EXCEPTIONS_WRAP_END()
+            BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
+            fin.close();
             return bin;
         }
 
         void write_binary(const boost::filesystem::path &path, const problem::binary &bin)
         {
-            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            bunsan::filesystem::ofstream fout(path, std::ios_base::binary);
+            BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout)
             {
-                bunsan::filesystem::ofstream fout(path, std::ios_base::binary);
                 fout.write(reinterpret_cast<const char *>(bin.data()), bin.size());
-                fout.close();
             }
-            BUNSAN_EXCEPTIONS_WRAP_END()
+            BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fout)
+            fout.close();
         }
 
         problem::hash compute_hash(const boost::filesystem::path &path)
         {
             boost::crc_32_type crc;
-            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
+            BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin)
             {
-                bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
                 char buf[BUFSIZ];
                 do
                 {
@@ -75,9 +70,9 @@ namespace bacs{namespace archive
                     crc.process_bytes(buf, fin.gcount());
                 }
                 while (fin);
-                fin.close();
             }
-            BUNSAN_EXCEPTIONS_WRAP_END()
+            BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
+            fin.close();
             auto value = crc.checksum();
             problem::hash hash(sizeof(value));
             for (std::size_t i = 0; i < sizeof(value); ++i, value >>= 8)
@@ -364,27 +359,27 @@ namespace bacs{namespace archive
     problem::info repository::read_info_(const problem::id &id)
     {
         problem::info info;
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        bunsan::filesystem::ifstream fin(m_location.repository_root / id / ename::info);
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin)
         {
-            bunsan::filesystem::ifstream fin(m_location.repository_root / id / ename::info);
             if (!info.ParseFromIstream(&fin))
                 BOOST_THROW_EXCEPTION(protobuf_parsing_error());
-            fin.close();
         }
-        BUNSAN_EXCEPTIONS_WRAP_END()
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
+        fin.close();
         return info;
     }
 
     void repository::write_info_(const problem::id &id, const problem::info &info)
     {
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        bunsan::filesystem::ofstream fout(m_location.repository_root / id / ename::info);
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout)
         {
-            bunsan::filesystem::ofstream fout(m_location.repository_root / id / ename::info);
             if (!info.SerializeToOstream(&fout))
                 BOOST_THROW_EXCEPTION(protobuf_serialization_error());
-            fout.close();
         }
-        BUNSAN_EXCEPTIONS_WRAP_END()
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fout)
+        fout.close();
     }
 
     bool repository::has_flag(const problem::id &id, const problem::flag &flag)

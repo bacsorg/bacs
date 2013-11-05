@@ -360,14 +360,14 @@ namespace bacs{namespace archive{namespace web
         BOOST_ASSERT(filename.find('"') == std::string::npos);
         response().set_header("Content-Disposition", "filename=\"" + filename + "\"");
         response().content_length(boost::filesystem::file_size(path));
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+        bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin)
         {
             // FIXME be careful about large files
-            bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
             response().out() << fin.rdbuf();
-            fin.close();
         }
-        BUNSAN_EXCEPTIONS_WRAP_END()
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
+        fin.close();
     }
 
     void repository::send_tempfile(bunsan::tempfile &&tmpfile, const std::string &filename)
