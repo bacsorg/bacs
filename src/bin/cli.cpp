@@ -18,7 +18,6 @@ int main(int argc, char **argv)
     std::string config_file;
     std::string insert, insert_all;
     std::string format;
-    std::string output;
     std::vector<std::string> arguments;
     try
     {
@@ -26,7 +25,6 @@ int main(int argc, char **argv)
             ("version,V", "Program version")
             ("config,c", boost::program_options::value<std::string>(&config_file))
             ("format,f", boost::program_options::value<std::string>(&format))
-            ("output,o", boost::program_options::value<std::string>(&output), "Log file (stdout if not specified)")
             ("insert", boost::program_options::value<std::string>(&insert), "Insert problem from directory")
             ("insert_all", boost::program_options::value<std::string>(&insert_all), "Insert all problems from archive")
             ("repack", "Insert all problems from archive");
@@ -62,22 +60,14 @@ int main(int argc, char **argv)
             if (pos != std::string::npos)
                 archiver_options->config.put("format", format.substr(pos + 1));
         }
-        BUNSAN_EXCEPTIONS_WRAP_BEGIN()
         {
-            std::ostream *out = &std::cout;
-            std::unique_ptr<bunsan::filesystem::ofstream> fout;
-            if (vm.count("output"))
-            {
-                fout.reset(new bunsan::filesystem::ofstream(output, std::ios_base::binary));
-                out = fout.get();
-            }
             if (vm.count("insert_all"))
             {
                 const bacs::archive::problem::import_map map =
                     archiver_options ? repo.insert_all(archiver_options.get(), insert_all) : repo.insert_all(insert_all);
                 bacs::archive::pb::problem::ImportMap pb_map;
                 bacs::archive::pb::convert(map, pb_map);
-                *out << pb_map.DebugString() << std::flush;
+                std::cout << pb_map.DebugString() << std::flush;
             }
             else if (vm.count("insert"))
             {
@@ -85,7 +75,7 @@ int main(int argc, char **argv)
                 const bacs::archive::problem::import_info info = repo.insert(path.filename().string(), path);
                 bacs::archive::pb::problem::ImportInfo pb_info;
                 bacs::archive::pb::convert(info, pb_info);
-                *out << pb_info.DebugString() << std::flush;
+                std::cout << pb_info.DebugString() << std::flush;
             }
             else if (vm.count("extract"))
             {
@@ -105,12 +95,9 @@ int main(int argc, char **argv)
                 const bacs::archive::problem::import_map map = repo.repack_all(ids);
                 bacs::archive::pb::problem::ImportMap pb_map;
                 bacs::archive::pb::convert(map, pb_map);
-                *out << pb_map.DebugString() << std::flush;
+                std::cout << pb_map.DebugString() << std::flush;
             }
-            if (fout)
-                fout->close();
         }
-        BUNSAN_EXCEPTIONS_WRAP_END()
     }
     catch (boost::program_options::error &e)
     {
