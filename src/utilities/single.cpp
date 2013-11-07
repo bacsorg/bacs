@@ -36,7 +36,9 @@ namespace bacs{namespace problem{namespace utilities
             if (dot == std::string::npos)
                 return "unknown";
             const std::string suff = source.substr(dot + 1);
-            if (suff == "cpp" || suff == "cc")
+            if (suff == "c")
+                return "c";
+            else if (suff == "cpp" || suff == "cc")
                 return "cpp";
             else if (suff == "pas" || suff == "dpr")
                 return "pas";
