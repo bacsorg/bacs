@@ -4,7 +4,7 @@ include(${CMAKE_SOURCE_DIR}/system-config.cmake OPTIONAL)
 
 cmake_minimum_required(VERSION 2.8)
 
-include(BunsanWeb)
+include(BunsanCommon)
 
 bunsan_use_boost(system filesystem serialization)
 bunsan_use_bunsan(common process utility pm bacs_problem bacs_problems)
