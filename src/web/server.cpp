@@ -3,7 +3,6 @@
 
 #include "bacs/problem/statement.hpp"
 
-#include "bunsan/enable_error_info.hpp"
 #include "bunsan/filesystem/fstream.hpp"
 #include "bunsan/filesystem/operations.hpp"
 
@@ -54,13 +53,13 @@ namespace bacs{namespace statement_provider{namespace web
                 BOOST_ASSERT(filename.find('"') == std::string::npos);
                 response().set_header("Content-Disposition", "filename=\"" + filename + "\"");
                 response().content_length(boost::filesystem::file_size(filepath));
-                BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+                bunsan::filesystem::ifstream fin(filepath);
+                BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin)
                 {
-                    bunsan::filesystem::ifstream fin(filepath);
                     response().out() << fin.rdbuf();
-                    fin.close();
                 }
-                BUNSAN_EXCEPTIONS_WRAP_END()
+                BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
+                fin.close();
             }
             else
             {
