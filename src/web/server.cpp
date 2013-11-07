@@ -1,5 +1,6 @@
 #include "bacs/statement_provider/web/server.hpp"
-#include "bacs/statement_provider/pb/request.pb.h"
+
+#include "bacs/statement_provider/request.pb.h"
 
 #include "bacs/problem/statement.hpp"
 
@@ -81,7 +82,7 @@ namespace bacs{namespace statement_provider{namespace web
             return false;
         }
         std::string data = cipherdata; // TODO decrypt, this step is skipped for now
-        bacs::statement_provider::pb::Request statement_request;
+        bacs::statement_provider::Request statement_request;
         if (!statement_request.ParseFromString(data))
         {
             response().status(cppcms::http::response::bad_request, "Invalid protobuf message");

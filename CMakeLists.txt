@@ -12,7 +12,7 @@ bunsan_use(cryptopp)
 bunsan_use_protobuf()
 
 bunsan_protobuf_generate_cpp(SOURCES proto_srcs HEADERS proto_hdrs INSTALL include PROTOS
-    bacs/statement_provider/pb/request.proto
+    bacs/statement_provider/request.proto
 )
 
 bunsan_add_shared_library(${PROJECT_NAME}

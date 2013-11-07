@@ -1,4 +1,4 @@
-package bacs.statement_provider.pb;
+package bacs.statement_provider;
 
 message Request
 {
