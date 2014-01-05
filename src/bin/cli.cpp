@@ -46,8 +46,8 @@ int main(int argc, char **argv)
         }
         if (vm.count("version"))
         {
-            std::cerr << "It is too early to announce project version" << std::endl;
-            return 1;
+            std::cerr << bunsan::pm::repository::version() << std::endl;
+            return 0;
         }
         DLOG(config parse);
         boost::property_tree::ptree config;

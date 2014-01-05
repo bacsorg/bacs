@@ -92,6 +92,14 @@ namespace bunsan{namespace pm
 
         ~repository();
 
+    public:
+        /*!
+         * \brief Library build version. Unspecified string.
+         *
+         * \note May be overridden by BUNSAN_PM_VERSION
+         */
+        static std::string version();
+
     private:
         /// update logic
         void update(const entry &package);

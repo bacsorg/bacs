@@ -386,6 +386,15 @@ void bunsan::pm::repository::clean()
     }
 }
 
+std::string bunsan::pm::repository::version()
+{
+#ifdef BUNSAN_PM_VERSION
+    return #BUNSAN_PM_VERSION;
+#else
+    return "bunsan::pm version " __DATE__ " " __TIME__;
+#endif
+}
+
 bunsan::pm::repository::~repository()
 {
     delete ntv;
