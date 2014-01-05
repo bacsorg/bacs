@@ -207,7 +207,7 @@ namespace
 void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 {
     SLOG("updating \"" << package << "\"");
-    ntv->check_dirs();
+    ntv->check_cache();
     DLOG(starting build);
     update_index_tree(package);
     std::map<stage, bool> updated;

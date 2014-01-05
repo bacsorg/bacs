@@ -42,6 +42,19 @@ namespace
     }
 }
 
+void bunsan::pm::repository::native::check_cache()
+{
+    try
+    {
+        check_dirs();
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(native_check_cache_error() <<
+                              enable_nested_current());
+    }
+}
+
 void bunsan::pm::repository::native::check_dirs()
 {
     try

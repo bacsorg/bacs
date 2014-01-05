@@ -87,6 +87,7 @@ namespace bunsan{namespace pm
     struct native_write_snapshot_error: virtual native_error {};
     struct native_read_snapshot_error: virtual native_error {};
     struct native_read_index_error: virtual native_error {};
+    struct native_check_cache_error: virtual native_error {};
     struct native_check_dir_error: virtual native_error {};
     struct native_build_outdated_error: virtual native_error {};
     struct native_installation_outdated_error: virtual native_error {};

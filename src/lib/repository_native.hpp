@@ -25,6 +25,9 @@ public:
 
     void build_installation(const entry &package);
 
+    /// Should be called before cache usage.
+    void check_cache();
+
     /// check system directories existence and create them if they are missing
     void check_dirs();
 
