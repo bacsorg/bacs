@@ -30,12 +30,12 @@ std::string bunsan::pm::repository::native::remote_resource(const entry &package
     return package.remote_resource(m_config.repository_url, name);
 }
 
-boost::filesystem::path bunsan::pm::repository::native::source_resource(const entry &package, const std::string &name)
+boost::filesystem::path bunsan::pm::repository::native::source_resource(const entry &package, const boost::filesystem::path &name)
 {
     return package.local_resource(m_config.dir.source, name);
 }
 
-boost::filesystem::path bunsan::pm::repository::native::package_resource(const entry &package, const std::string &name)
+boost::filesystem::path bunsan::pm::repository::native::package_resource(const entry &package, const boost::filesystem::path &name)
 {
     return package.local_resource(m_config.dir.package, name);
 }

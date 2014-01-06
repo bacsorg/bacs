@@ -39,8 +39,8 @@ private:
     void unpack(const entry &package, const boost::filesystem::path &build_dir);
     void pack(const entry &package, const boost::filesystem::path &build_dir);
     std::string remote_resource(const entry &package, const boost::filesystem::path &name);
-    boost::filesystem::path source_resource(const entry &package, const std::string &name);
-    boost::filesystem::path package_resource(const entry &package, const std::string &name);
+    boost::filesystem::path source_resource(const entry &package, const boost::filesystem::path &name);
+    boost::filesystem::path package_resource(const entry &package, const boost::filesystem::path &name);
     snapshot read_snapshot(const boost::filesystem::path &path);
     void write_snapshot(const boost::filesystem::path &path, const snapshot &snapshot_);
 
