@@ -15,146 +15,190 @@
 
 namespace bunsan{namespace pm
 {
-    namespace detail
+    struct format_config
     {
-        struct factory_config
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int)
+        {
+            ar & BOOST_SERIALIZATION_NVP(builder);
+            ar & BOOST_SERIALIZATION_NVP(archiver);
+            ar & BOOST_SERIALIZATION_NVP(name);
+        }
+
+        std::string builder;
+        utility::factory_options<utility::archiver> archiver;
+
+        struct
         {
             template <typename Archive>
             void serialize(Archive &ar, const unsigned int)
             {
-                ar & BOOST_SERIALIZATION_NVP(type);
-                ar & BOOST_SERIALIZATION_NVP(config);
+                ar & BOOST_SERIALIZATION_NVP(suffix.archive);
+                ar & BOOST_SERIALIZATION_NVP(index);
+                ar & BOOST_SERIALIZATION_NVP(checksum);
             }
 
-            std::string type;
-            boost::property_tree::ptree config;
-        };
-    }
+            struct
+            {
+                std::string archive;
+            } suffix;
+
+            boost::optional<std::string> index;
+            boost::optional<std::string> checksum;
+
+            inline std::string get_index() const { return index.get_value_or("index"); }
+            inline std::string get_checksum() const { return index.get_value_or("checksum"); }
+        } name;
+    };
+
+    struct remote_config
+    {
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int)
+        {
+            ar & BOOST_SERIALIZATION_NVP(url);
+            ar & BOOST_SERIALIZATION_NVP(fetcher);
+            ar & BOOST_SERIALIZATION_NVP(format);
+        }
+
+        std::string url;
+        utility::factory_options<utility::fetcher> fetcher;
+        format_config format;
+    };
+
+    struct build_config
+    {
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int)
+        {
+            ar & BOOST_SERIALIZATION_NVP(builders);
+            ar & BOOST_SERIALIZATION_NVP(name);
+        }
+
+        std::unordered_map<
+            std::string,
+            utility::factory_options<utility::builder>
+        > builders;
+
+        struct
+        {
+            template <typename Archive>
+            void serialize(Archive &, const unsigned int)
+            {
+                // nop
+            }
+
+            struct
+            {
+                inline boost::filesystem::path get_source() const { return "source"; }
+                inline boost::filesystem::path get_build() const { return "build"; }
+                inline boost::filesystem::path get_installation() const { return "installation"; }
+            } dir;
+        } name;
+    };
+
+    struct local_system_config
+    {
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int)
+        {
+            ar & BOOST_SERIALIZATION_NVP(resolver);
+            ar & BOOST_SERIALIZATION_NVP(build_dir);
+            ar & BOOST_SERIALIZATION_NVP(tmp_file);
+        }
+
+        boost::property_tree::ptree resolver;
+        boost::filesystem::path build_dir;                  ///< directory for large temporary files
+        boost::optional<boost::filesystem::path> tmp_file;  ///< file mask for small temporary files,
+                                                            ///< should be absolute, '%' occurrences
+                                                            ///< are replaced by random symbols
+                                                            ///< by default is placed into system tempdir
+    };
+
+    struct cache_config
+    {
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int)
+        {
+            ar & BOOST_SERIALIZATION_NVP(root);
+            ar & BOOST_SERIALIZATION_NVP(lock);
+            ar & BOOST_SERIALIZATION_NVP(archiver);
+            ar & BOOST_SERIALIZATION_NVP(name);
+        }
+
+        boost::filesystem::path root;
+
+        boost::optional<boost::filesystem::path> lock;  ///< lock file for synchronization,
+                                                        ///< placed somewhere inside root
+                                                        ///< if not specified
+                                                        ///< \warning filesystem must support flock(2)
+
+        inline boost::filesystem::path get_lock() const { return lock.get_value_or(root / "lock"); }
+        inline boost::filesystem::path get_source() const { return root / "source"; }
+        inline boost::filesystem::path get_package() const { return root / "package"; }
+        inline boost::filesystem::path get_installation() const { return root / "installation"; }
+
+        utility::factory_options<utility::archiver> archiver;
+
+        struct
+        {
+            template <typename Archive>
+            void serialize(Archive &ar, const unsigned int)
+            {
+                ar & BOOST_SERIALIZATION_NVP(suffix.archive);
+            }
+
+            struct
+            {
+                std::string archive;
+            } suffix;
+
+            inline boost::filesystem::path get_build_snapshot() const { return "build_snapshot"; }
+            inline boost::filesystem::path get_installation_snapshot() const { return "installation_snapshot"; }
+            inline boost::filesystem::path get_build_archive() const { return "build" + suffix.archive; }
+            inline boost::filesystem::path get_installation_archive() const { return "installation" + suffix.archive; }
+        } name;
+    };
+
+    struct extract_config
+    {
+        template <typename Archive>
+        void serialize(Archive &ar, const unsigned int)
+        {
+            ar & BOOST_SERIALIZATION_NVP(installation);
+        }
+
+        struct
+        {
+            template <typename Archive>
+            void serialize(Archive &ar, const unsigned int)
+            {
+                ar & BOOST_SERIALIZATION_NVP(meta);
+                ar & BOOST_SERIALIZATION_NVP(data);
+            }
+
+            boost::filesystem::path meta;
+            boost::optional<boost::filesystem::path> data; ///< if null data is placed in root folder
+        } installation;
+    };
+
 
     struct config
     {
         template <typename Archive>
         void serialize(Archive &ar, const unsigned int)
         {
-            ar & BOOST_SERIALIZATION_NVP(lock.global);
-            ar & BOOST_SERIALIZATION_NVP(dir);
-            ar & BOOST_SERIALIZATION_NVP(name);
-            ar & BOOST_SERIALIZATION_NVP(utility);
-            ar & BOOST_SERIALIZATION_NVP(repository_url);
+            ar & BOOST_SERIALIZATION_NVP(remote);
+            ar & BOOST_SERIALIZATION_NVP(build);
+            ar & BOOST_SERIALIZATION_NVP(local_system);
+            ar & BOOST_SERIALIZATION_NVP(cache);
+            ar & BOOST_SERIALIZATION_NVP(extract);
         }
 
-        struct
-        {
-            boost::optional<boost::filesystem::path> global;    ///< global lock for synchronization
-        } lock;
-
-        struct
-        {
-            template <typename Archive>
-            void serialize(Archive &ar, const unsigned int)
-            {
-                ar & BOOST_SERIALIZATION_NVP(tmp);
-                ar & BOOST_SERIALIZATION_NVP(package);
-                ar & BOOST_SERIALIZATION_NVP(source);
-            }
-
-            boost::filesystem::path tmp;        ///< directory for large temporary files
-            boost::filesystem::path package;    ///< directory for built packages
-            boost::filesystem::path source;     ///< directory for package sources
-        } dir;
-
-        struct
-        {
-            template <typename Archive>
-            void serialize(Archive &ar, const unsigned int)
-            {
-                ar & BOOST_SERIALIZATION_NVP(file);
-                ar & BOOST_SERIALIZATION_NVP(dir);
-                ar & BOOST_SERIALIZATION_NVP(suffix);
-                ar & BOOST_SERIALIZATION_NVP(installation);
-            }
-
-            struct
-            {
-                template <typename Archive>
-                void serialize(Archive &ar, const unsigned int)
-                {
-                    ar & BOOST_SERIALIZATION_NVP(tmp);
-                    ar & BOOST_SERIALIZATION_NVP(index);
-                    ar & BOOST_SERIALIZATION_NVP(checksum);
-                    ar & BOOST_SERIALIZATION_NVP(build_snapshot);
-                    ar & BOOST_SERIALIZATION_NVP(installation_snapshot);
-                    ar & BOOST_SERIALIZATION_NVP(build);
-                    ar & BOOST_SERIALIZATION_NVP(installation);
-                }
-
-                std::string tmp;                    ///< file mask for small temporary files,
-                                                    ///< should be absolute
-                std::string index;                  ///< index file name
-                std::string checksum;               ///< checksum file name
-                std::string build_snapshot;         ///< build snapshot file name
-                std::string installation_snapshot;  ///< installation snapshot file name
-                std::string build;                  ///< build archive name
-                std::string installation;           ///< installation archive name
-            } file;
-
-            struct
-            {
-                template <typename Archive>
-                void serialize(Archive &ar, const unsigned int)
-                {
-                    ar & BOOST_SERIALIZATION_NVP(build);
-                    ar & BOOST_SERIALIZATION_NVP(installation);
-                }
-
-                boost::filesystem::path source;         ///< subdirectory for package source
-                boost::filesystem::path build;          ///< subdirectory for package building
-                boost::filesystem::path installation;   ///< subdirectory for package installation
-            } dir;
-
-            struct
-            {
-                template <typename Archive>
-                void serialize(Archive &ar, const unsigned int)
-                {
-                    ar & BOOST_SERIALIZATION_NVP(source_archive);
-                }
-
-                std::string source_archive; ///< suffix of archive files
-            } suffix;
-
-            struct
-            {
-                template <typename Archive>
-                void serialize(Archive &ar, const unsigned int)
-                {
-                    ar & BOOST_SERIALIZATION_NVP(meta);
-                    ar & BOOST_SERIALIZATION_NVP(data);
-                }
-
-                boost::filesystem::path meta;
-                boost::optional<boost::filesystem::path> data; ///< if null data is placed in root folder
-            } installation;
-        } name;
-
-        struct
-        {
-            template <typename Archive>
-            void serialize(Archive &ar, const unsigned int)
-            {
-                ar & BOOST_SERIALIZATION_NVP(resolver);
-                ar & BOOST_SERIALIZATION_NVP(builder);
-                ar & BOOST_SERIALIZATION_NVP(fetcher);
-                ar & BOOST_SERIALIZATION_NVP(source_archiver);
-                ar & BOOST_SERIALIZATION_NVP(cache_archiver);
-            }
-
-            boost::property_tree::ptree resolver;
-            utility::factory_options<utility::builder> builder;
-            utility::factory_options<utility::fetcher> fetcher;
-            utility::factory_options<utility::archiver> source_archiver, cache_archiver;
-        } utility;
-
-        std::string repository_url; ///< repository location
+        remote_config remote;
+        build_config build;
+        local_system_config local_system;
+        cache_config cache;
+        extract_config extract;
     };
 }}

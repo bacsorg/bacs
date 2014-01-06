@@ -17,17 +17,17 @@ void bunsan::pm::repository::native::create(const boost::filesystem::path &sourc
 {
     try
     {
-        const boost::filesystem::path index_name = source / m_config.name.file.index;
-        const boost::filesystem::path checksum_name = source / m_config.name.file.checksum;
+        const boost::filesystem::path index_name = source / m_config.remote.format.name.get_index();
+        const boost::filesystem::path checksum_name = source / m_config.remote.format.name.get_checksum();
         snapshot_entry checksum;
         // we need to save index checksum
-        checksum[m_config.name.file.index] = bunsan::pm::checksum(index_name);
+        checksum[m_config.remote.format.name.get_index()] = bunsan::pm::checksum(index_name);
         std::unordered_set<std::string> to_remove;
         index index_;
         index_.load(index_name);
         for (const std::string &src_name: index_.sources())
         {
-            const std::string src_value = src_name + m_config.name.suffix.source_archive;
+            const std::string src_value = src_name + m_config.remote.format.name.suffix.archive;
             const boost::filesystem::path src = source / src_name;
             const boost::filesystem::path dst = boost::filesystem::absolute(source / src_value);
             if (!boost::filesystem::exists(src))
@@ -67,11 +67,11 @@ void bunsan::pm::repository::native::create_recursively(const boost::filesystem:
     try
     {
         std::unordered_set<std::string> ignore;
-        const boost::filesystem::path index_path = root / m_config.name.file.index;
+        const boost::filesystem::path index_path = root / m_config.remote.format.name.get_index();
         if (boost::filesystem::is_regular_file(index_path))
         {
             SLOG("Found index file at " << root << ", trying to create source package...");
-            ignore.insert(m_config.name.file.index);
+            ignore.insert(m_config.remote.format.name.get_index());
             create(root, strip);
             index index_;
             index_.load(index_path);

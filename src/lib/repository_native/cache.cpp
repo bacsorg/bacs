@@ -60,9 +60,9 @@ void bunsan::pm::repository::native::check_dirs()
     try
     {
         DLOG(checking directories);
-        check_dir(m_config.dir.source);
-        check_dir(m_config.dir.package);
-        check_dir(m_config.dir.tmp);
+        check_dir(m_config.cache.get_source());
+        check_dir(m_config.cache.get_package());
+        check_dir(m_config.local_system.build_dir);
         DLOG(directories checked);
     }
     catch (std::exception &)
@@ -77,9 +77,9 @@ void bunsan::pm::repository::native::clean()
     try
     {
         DLOG(trying to clean cache);
-        filesystem::reset_dir(m_config.dir.source);
-        filesystem::reset_dir(m_config.dir.package);
-        filesystem::reset_dir(m_config.dir.tmp);
+        filesystem::reset_dir(m_config.cache.get_source());
+        filesystem::reset_dir(m_config.cache.get_package());
+        filesystem::reset_dir(m_config.local_system.build_dir);
         DLOG(cache cleaned);
     }
     catch (std::exception &)

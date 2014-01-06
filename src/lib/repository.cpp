@@ -26,8 +26,8 @@
 
 bunsan::pm::repository::repository(const pm::config &config_): ntv(nullptr), m_config(config_)
 {
-    if (m_config.lock.global)
-        m_flock.reset(new bunsan::interprocess::file_lock(m_config.lock.global->c_str()));
+    if (boost::filesystem::exists(m_config.cache.get_lock()))
+        m_flock.reset(new bunsan::interprocess::file_lock(m_config.cache.get_lock()));
     ntv = new native(m_config);
 }
 

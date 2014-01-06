@@ -14,7 +14,7 @@ bunsan::pm::snapshot_entry bunsan::pm::repository::native::read_checksum(const e
     try
     {
         boost::property_tree::ptree ptree;
-        boost::property_tree::read_info(source_resource(package, m_config.name.file.checksum).string(), ptree);
+        boost::property_tree::read_info(source_resource(package, m_config.remote.format.name.get_checksum()).string(), ptree);
         return bunsan::config::load<snapshot_entry>(ptree);
     }
     catch (std::exception &)
@@ -27,40 +27,43 @@ bunsan::pm::snapshot_entry bunsan::pm::repository::native::read_checksum(const e
 
 std::string bunsan::pm::repository::native::remote_resource(const entry &package, const boost::filesystem::path &name)
 {
-    return package.remote_resource(m_config.repository_url, name);
+    return package.remote_resource(m_config.remote.url, name);
 }
 
 boost::filesystem::path bunsan::pm::repository::native::source_resource(const entry &package, const boost::filesystem::path &name)
 {
-    return package.local_resource(m_config.dir.source, name);
+    return package.local_resource(m_config.cache.get_source(), name);
 }
 
 boost::filesystem::path bunsan::pm::repository::native::package_resource(const entry &package, const boost::filesystem::path &name)
 {
-    return package.local_resource(m_config.dir.package, name);
+    return package.local_resource(m_config.cache.get_package(), name);
 }
 
 bunsan::pm::repository::native::native(const pm::config &config_):
     m_config(config_),
-    m_resolver(m_config.utility.resolver)
+    m_resolver(m_config.local_system.resolver)
 {
-    auto &utility = m_config.utility;
-
-    if (!(cache_archiver = utility.cache_archiver.instance_optional(m_resolver)))
+    if (!(cache_archiver = m_config.cache.archiver.instance_optional(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_cache_archiver_error() <<
-                              invalid_configuration_cache_archiver_error::utility_type(utility.cache_archiver.type));
+                              invalid_configuration_cache_archiver_error::utility_type(m_config.cache.archiver.type));
 
-    if (!(source_archiver = utility.source_archiver.instance_optional(m_resolver)))
+    if (!(source_archiver = m_config.remote.format.archiver.instance_optional(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_source_archiver_error() <<
-                              invalid_configuration_source_archiver_error::utility_type(utility.source_archiver.type));
+                              invalid_configuration_source_archiver_error::utility_type(m_config.remote.format.archiver.type));
 
-    if (!(builder = utility.builder.instance_optional(m_resolver)))
+    const auto builder_iter = m_config.build.builders.find(m_config.remote.format.builder);
+    if (builder_iter == m_config.build.builders.end())
+        BOOST_THROW_EXCEPTION(invalid_configuration_builder_not_found_error() <<
+                              invalid_configuration_builder_not_found_error::builder(m_config.remote.format.builder));
+
+    if (!(builder = builder_iter->second.instance_optional(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_builder_error() <<
-                              invalid_configuration_builder_error::utility_type(utility.builder.type));
+                              invalid_configuration_builder_error::utility_type(builder_iter->second.type));
 
-    if (!(fetcher = utility.fetcher.instance_optional(m_resolver)))
+    if (!(fetcher = m_config.remote.fetcher.instance_optional(m_resolver)))
         BOOST_THROW_EXCEPTION(invalid_configuration_fetcher_error() <<
-                              invalid_configuration_fetcher_error::utility_type(utility.fetcher.type));
+                              invalid_configuration_fetcher_error::utility_type(m_config.remote.fetcher.type));
 }
 
 void bunsan::pm::repository::native::write_snapshot(const boost::filesystem::path &path, const snapshot &snapshot_)
@@ -97,7 +100,7 @@ bunsan::pm::index bunsan::pm::repository::native::read_index(const entry &packag
 {
     try
     {
-        return index(source_resource(package, m_config.name.file.index));
+        return index(source_resource(package, m_config.remote.format.name.get_index()));
     }
     catch (std::exception &)
     {
@@ -111,8 +114,8 @@ bool bunsan::pm::repository::native::build_outdated(const entry &package, const 
 {
     try
     {
-        const boost::filesystem::path snp = package_resource(package, m_config.name.file.build_snapshot);
-        const boost::filesystem::path build = package_resource(package, m_config.name.file.build);
+        const boost::filesystem::path snp = package_resource(package, m_config.cache.name.get_build_snapshot());
+        const boost::filesystem::path build = package_resource(package, m_config.cache.name.get_build_archive());
         if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(build))
             return true;
         return snapshot_ != read_snapshot(snp);
@@ -129,8 +132,8 @@ bool bunsan::pm::repository::native::installation_outdated(const entry &package,
 {
     try
     {
-        const boost::filesystem::path snp = package_resource(package, m_config.name.file.installation_snapshot);
-        const boost::filesystem::path installation = package_resource(package, m_config.name.file.installation);
+        const boost::filesystem::path snp = package_resource(package, m_config.cache.name.get_installation_snapshot());
+        const boost::filesystem::path installation = package_resource(package, m_config.cache.name.get_installation_archive());
         if (!boost::filesystem::exists(snp) || !boost::filesystem::exists(installation))
             return true;
         return snapshot_ != read_snapshot(snp);

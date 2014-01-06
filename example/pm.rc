@@ -1,48 +1,72 @@
-lock
+remote
 {
-    global /home/lex/dev/bunsan/pm/test/repo.lock
+    ;url "http://localhost/~lex/repo"
+    url "/home/lex/dev/bunsan/bacs/repository"
+
+    fetcher
+    {
+        ;type curl
+        type copy
+    }
+
+    format ; TODO implement fetching from server
+    {
+        builder cmake0
+
+        archiver
+        {
+            type tar
+            config
+            {
+                format z
+                flags
+                {
+                    "" exclude_vcs
+                }
+            }
+        }
+
+        name
+        {
+            suffix
+            {
+                archive .tgz
+            }
+            ; index index
+            ; checksum checksum
+        }
+    }
 }
 
-dir
+build
 {
-    tmp /tmp/bunsan_pm_tmp ; for build
-    source /home/lex/dev/bunsan/pm/test/source_dir
-    package /home/lex/dev/bunsan/pm/test/package_dir
-}
-
-name
-{
-    file
+    builders
     {
-        tmp /tmp/%%%%-%%%%-%%%%-%%%%.tmp ; for small files
-        index index
-        checksum checksum
-        build build.tar.gz
-        installation installation.tar.gz
-        installation_snapshot installation_snapshot
-        build_snapshot build_snapshot
-    }
-    dir
-    {
-        source source
-        build build
-        installation installation
-    }
-    suffix
-    {
-        source_archive .tgz
-    }
-    installation
-    {
-        meta .bunsan_pm
+        cmake0
+        {
+            type cmake
+            config
+            {
+                cmake
+                {
+                    defines
+                    {
+                        CMAKE_INSTALL_PREFIX /
+                    }
+                }
+                make_maker
+                {
+                    jobs 4
+                }
+                ;install_maker
+                ;{
+                ;}
+            }
+        }
     }
 }
 
-;repository_url "http://localhost/~lex/repo"
-;repository_url "/home/lex/public_html/repo"
-repository_url "/home/lex/dev/bunsan/bacs/single/repository"
-
-utility
+local_system
 {
     resolver
     {
@@ -54,50 +78,41 @@ utility
             "" curl
         }
     }
-    source_archiver
+
+    build_dir /tmp/bunsan_pm_tmp
+    ; tmp_file /tmp/%%%%-%%%%-%%%%-%%%%.tmp ; for small files, usually faster
+}
+
+cache
+{
+    root /home/lex/dev/bunsan/pm/test/cache
+
+    ; can be overridden if not supported inside root
+    ; lock /home/lex/dev/bunsan/pm/test/repo.lock
+
+    archiver
     {
         type tar
         config
         {
             format z
-            flags
-            {
-                "" exclude_vcs
-            }
         }
     }
-    cache_archiver
+
+    name
     {
-        type tar
-        config
+        suffix
         {
-            format z
+            archive .tgz
         }
     }
-    fetcher
+}
+
+extract
+{
+    installation
     {
-        ;type curl
-        type copy
-    }
-    builder
-    {
-        type cmake
-        config
-        {
-            cmake
-            {
-                defines
-                {
-                    CMAKE_INSTALL_PREFIX /
-                }
-            }
-            make_maker
-            {
-                jobs 4
-            }
-            ;install_maker
-            ;{
-            ;}
-        }
+        meta .bunsan_pm
+        ; data data_subdir
     }
 }
