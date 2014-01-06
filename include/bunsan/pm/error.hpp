@@ -61,6 +61,8 @@ namespace bunsan{namespace pm
         typedef boost::error_info<struct tag_builder, std::string> builder;
     };
     struct invalid_configuration_fetcher_error: virtual invalid_configuration_utility_error {};
+    struct invalid_configuration_lock_error: virtual invalid_configuration_error {};
+    struct invalid_configuration_lock_not_found_error: virtual invalid_configuration_lock_error {};
 
     struct circular_dependencies_error: virtual error {};
 

@@ -71,22 +71,13 @@ void bunsan::pm::repository::create_recursively(const boost::filesystem::path &r
     }
 }
 
-namespace
-{
-    void require_lock(const bool has)
-    {
-        using bunsan::pm::invalid_configuration_key_error;
-        if (!has)
-            BOOST_THROW_EXCEPTION(invalid_configuration_key_error() <<
-                                  invalid_configuration_key_error::configuration_key("config.lock.global"));
-    }
-}
-
 void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
 {
     try
     {
-        require_lock(static_cast<bool>(m_flock));
+        if (!m_flock)
+            BOOST_THROW_EXCEPTION(invalid_configuration_lock_not_found_error() <<
+                                  invalid_configuration_lock_not_found_error::path(m_config.cache.get_lock()));
         SLOG("Attempt to extract \"" << package << "\" to " << destination);
         boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
         DLOG(trying to update);
@@ -107,7 +98,9 @@ void bunsan::pm::repository::install(const entry &package, const boost::filesyst
 {
     try
     {
-        require_lock(static_cast<bool>(m_flock));
+        if (!m_flock)
+            BOOST_THROW_EXCEPTION(invalid_configuration_lock_not_found_error() <<
+                                  invalid_configuration_lock_not_found_error::path(m_config.cache.get_lock()));
         SLOG("Attempt to install \"" << package << "\" to " << destination);
         boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
         DLOG(trying to update);
@@ -128,7 +121,9 @@ void bunsan::pm::repository::update(const entry &package, const boost::filesyste
 {
     try
     {
-        require_lock(static_cast<bool>(m_flock));
+        if (!m_flock)
+            BOOST_THROW_EXCEPTION(invalid_configuration_lock_not_found_error() <<
+                                  invalid_configuration_lock_not_found_error::path(m_config.cache.get_lock()));
         SLOG("Attempt to update \"" << package << "\" installation in " << destination);
         boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
         DLOG(trying to update package);
@@ -375,7 +370,9 @@ void bunsan::pm::repository::clean()
 {
     try
     {
-        require_lock(static_cast<bool>(m_flock));
+        if (!m_flock)
+            BOOST_THROW_EXCEPTION(invalid_configuration_lock_not_found_error() <<
+                                  invalid_configuration_lock_not_found_error::path(m_config.cache.get_lock()));
         boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
         ntv->clean();
     }
