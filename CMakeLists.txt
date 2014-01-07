@@ -14,12 +14,7 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/lib/index.cpp
     src/lib/entry.cpp
     src/lib/checksum.cpp
-    src/lib/repository_native/create.cpp
-    src/lib/repository_native.cpp
-    src/lib/repository_native.hpp
     src/lib/repository.cpp
-    src/lib/repository_native/helpers.cpp
-    src/lib/repository_native/cache.cpp
 
     src/lib/cache.cpp
 )

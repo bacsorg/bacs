@@ -195,10 +195,10 @@ namespace bunsan{namespace pm
             ar & BOOST_SERIALIZATION_NVP(extract);
         }
 
-        remote_config remote;
-        build_config build;
-        local_system_config local_system;
-        cache_config cache;
-        extract_config extract;
+        boost::optional<remote_config> remote;
+        boost::optional<build_config> build;
+        boost::optional<local_system_config> local_system;
+        boost::optional<cache_config> cache;
+        boost::optional<extract_config> extract;
     };
 }}

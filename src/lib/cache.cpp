@@ -15,7 +15,9 @@ namespace bunsan{namespace pm
 
         pm::config update_config_data(pm::config config)
         {
-            config.extract.installation.data = installation_data;
+            if (!config.extract)
+                BOOST_THROW_EXCEPTION(null_extractor_error());
+            config.extract->installation.data = installation_data;
             return config;
         }
     }

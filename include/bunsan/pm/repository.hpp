@@ -5,8 +5,6 @@
 #include <bunsan/pm/error.hpp>
 #include <bunsan/pm/snapshot.hpp>
 
-#include <bunsan/interprocess/sync/file_lock.hpp>
-
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -104,8 +102,8 @@ namespace bunsan{namespace pm
         /// update logic
         void update(const entry &package);
 
-        /// updates package depends and imports "index" files tree
-        void update_index_tree(const entry &package);
+        /// updates meta-data of package and recursive dependencies
+        void update_meta_tree(const entry &package);
 
         /// dfs topological-sort order update algorithm
         enum class stage_type: int;
@@ -120,9 +118,33 @@ namespace bunsan{namespace pm
             std::map<stage, snapshot> &snapshot_cache);
 
     private:
-        class native;
-        native *ntv;
-        std::unique_ptr<bunsan::interprocess::file_lock> m_flock;
+        class local_system;
+        friend class local_system;
+
+        class cache;
+        friend class cache;
+
+        class distributor;
+        friend class distributor;
+
+        class builder;
+        friend class builder;
+
+        class extractor;
+        friend class extractor;
+
+        local_system &local_system_();
+        cache &cache_();
+        distributor &distributor_();
+        builder &builder_();
+        extractor &extractor_();
+
         pm::config m_config;
+
+        std::unique_ptr<local_system> m_local_system;
+        std::unique_ptr<cache> m_cache;
+        std::unique_ptr<distributor> m_distributor;
+        std::unique_ptr<builder> m_builder;
+        std::unique_ptr<extractor> m_extractor;
     };
 }}

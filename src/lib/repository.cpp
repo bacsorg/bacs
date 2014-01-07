@@ -1,7 +1,11 @@
-#include "repository_native.hpp"
-
-#include <bunsan/pm/config.hpp>
 #include <bunsan/pm/repository.hpp>
+
+#include "repository/builder.hpp"
+#include "repository/cache.hpp"
+#include "repository/distributor.hpp"
+#include "repository/extractor.hpp"
+#include "repository/local_system.hpp"
+#include "repository/merge_maps.hpp"
 
 #include <bunsan/config/cast.hpp>
 #include <bunsan/logging/legacy.hpp>
@@ -24,11 +28,21 @@
 
 #include <cstdlib>
 
-bunsan::pm::repository::repository(const pm::config &config_): ntv(nullptr), m_config(config_)
+bunsan::pm::repository::repository(const pm::config &config_):
+    m_config(config_)
 {
-    if (boost::filesystem::exists(m_config.cache.get_lock()))
-        m_flock.reset(new bunsan::interprocess::file_lock(m_config.cache.get_lock()));
-    ntv = new native(m_config);
+    // note: repository reference is stored,
+    // it must be noncopyable and non-movable or references must be updated
+    if (m_config.remote)
+        m_distributor.reset(new distributor(*this, *m_config.remote));
+    if (m_config.build)
+        m_builder.reset(new builder(*this, *m_config.build));
+    if (m_config.local_system)
+        m_local_system.reset(new local_system(*this, *m_config.local_system));
+    if (m_config.cache)
+        m_cache.reset(new cache(*this, *m_config.cache));
+    if (m_config.extract)
+        m_extractor.reset(new extractor(*this, *m_config.extract));
 }
 
 bunsan::pm::repository::repository(const boost::property_tree::ptree &config_):
@@ -44,7 +58,7 @@ void bunsan::pm::repository::create(const boost::filesystem::path &source, bool 
     try
     {
         SLOG("creating source package from " << source << " with" << (strip ? "" : "out") << " stripping");
-        ntv->create(source, strip);
+        distributor_().create(source, strip);
     }
     catch (std::exception &)
     {
@@ -55,12 +69,14 @@ void bunsan::pm::repository::create(const boost::filesystem::path &source, bool 
     }
 }
 
-void bunsan::pm::repository::create_recursively(const boost::filesystem::path &root, bool strip)
+void bunsan::pm::repository::create_recursively(
+    const boost::filesystem::path &root, bool strip)
 {
     try
     {
-        SLOG("recursively creating source packages from " << root << " with" << (strip ? "" : "out") << " stripping");
-        ntv->create_recursively(root, strip);
+        SLOG("recursively creating source packages from " <<
+             root << " with" << (strip ? "" : "out") << " stripping");
+        distributor_().create_recursively(root, strip);
     }
     catch (std::exception &)
     {
@@ -71,19 +87,17 @@ void bunsan::pm::repository::create_recursively(const boost::filesystem::path &r
     }
 }
 
-void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boost::filesystem::path &destination)
+void bunsan::pm::repository::extract(
+    const bunsan::pm::entry &package, const boost::filesystem::path &destination)
 {
     try
     {
-        if (!m_flock)
-            BOOST_THROW_EXCEPTION(invalid_configuration_lock_not_found_error() <<
-                                  invalid_configuration_lock_not_found_error::path(m_config.cache.get_lock()));
         SLOG("Attempt to extract \"" << package << "\" to " << destination);
-        boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
+        const auto cache_guard = cache_().lock();
         DLOG(trying to update);
         update(package);
         DLOG(trying to extract);
-        ntv->extract_installation(package, destination);
+        extractor_().extract(package, destination);
     }
     catch (std::exception &)
     {
@@ -94,19 +108,17 @@ void bunsan::pm::repository::extract(const bunsan::pm::entry &package, const boo
     }
 }
 
-void bunsan::pm::repository::install(const entry &package, const boost::filesystem::path &destination)
+void bunsan::pm::repository::install(
+    const entry &package, const boost::filesystem::path &destination)
 {
     try
     {
-        if (!m_flock)
-            BOOST_THROW_EXCEPTION(invalid_configuration_lock_not_found_error() <<
-                                  invalid_configuration_lock_not_found_error::path(m_config.cache.get_lock()));
         SLOG("Attempt to install \"" << package << "\" to " << destination);
-        boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
+        const auto cache_guard = cache_().lock();
         DLOG(trying to update);
         update(package);
         DLOG(trying to install);
-        ntv->install_installation(package, destination);
+        extractor_().install(package, destination);
     }
     catch (std::exception &)
     {
@@ -117,19 +129,17 @@ void bunsan::pm::repository::install(const entry &package, const boost::filesyst
     }
 }
 
-void bunsan::pm::repository::update(const entry &package, const boost::filesystem::path &destination)
+void bunsan::pm::repository::update(
+    const entry &package, const boost::filesystem::path &destination)
 {
     try
     {
-        if (!m_flock)
-            BOOST_THROW_EXCEPTION(invalid_configuration_lock_not_found_error() <<
-                                  invalid_configuration_lock_not_found_error::path(m_config.cache.get_lock()));
         SLOG("Attempt to update \"" << package << "\" installation in " << destination);
-        boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
+        const auto cache_guard = cache_().lock();
         DLOG(trying to update package);
         update(package);
         DLOG(trying to update installation);
-        ntv->update_installation(package, destination);
+        extractor_().update(package, destination);
     }
     catch (std::exception &)
     {
@@ -168,7 +178,7 @@ bool bunsan::pm::repository::need_update(const entry &package,
 {
     try
     {
-        return ntv->need_update_installation(destination, lifetime);
+        return extractor_().need_update(destination, lifetime);
     }
     catch (std::exception &)
     {
@@ -202,32 +212,38 @@ namespace
 void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 {
     SLOG("updating \"" << package << "\"");
-    ntv->check_cache();
+    cache_().validate_and_repair();
     DLOG(starting build);
-    update_index_tree(package);
+    update_meta_tree(package);
     std::map<stage, bool> updated;
     std::map<stage, snapshot> snapshot_cache;
     std::set<stage> in;
     snapshot current_snapshot;
-    update_package_depends(stage(package, stage_type::installation), updated, in, current_snapshot, snapshot_cache);
+    update_package_depends(
+        stage(package, stage_type::installation),
+        updated,
+        in,
+        current_snapshot,
+        snapshot_cache
+    );
 }
 
-void bunsan::pm::repository::update_index_tree(const entry &package)
+void bunsan::pm::repository::update_meta_tree(const entry &package)
 {
     std::set<entry> visited;
-    std::function<void(const entry &)> update_index =
-        [this, &visited, &update_index](const entry &package)
+    const std::function<void (const entry &)> update_meta =
+        [this, &visited, &update_meta](const entry &package)
         {
             if (visited.find(package) == visited.end())
             {
-                ntv->update_index(package);
+                distributor_().update_meta(package);
                 visited.insert(package);
-                const index deps = ntv->read_index(package);
+                const index deps = cache_().read_index(package);
                 for (const entry &i: deps.all())
-                    update_index(i);
+                    update_meta(i);
             }
         };
-    update_index(package);
+    update_meta(package);
 }
 
 bool bunsan::pm::repository::update_package_depends(
@@ -237,7 +253,8 @@ bool bunsan::pm::repository::update_package_depends(
     snapshot &current_snapshot,
     std::map<stage, snapshot> &snapshot_cache)
 {
-    SLOG("starting \"" << package.first << "\" (" << stage_type_name[static_cast<int>(package.second)] << ") " << __func__);
+    SLOG("starting \"" << package.first << "\" (" <<
+         stage_type_name[static_cast<int>(package.second)] << ") " << __func__);
     if (in.find(package) != in.end())
     {
         BOOST_THROW_EXCEPTION(circular_dependencies_error() <<
@@ -254,7 +271,7 @@ bool bunsan::pm::repository::update_package_depends(
     }
     in.insert(package);
     bool upd = false;
-    const index deps = ntv->read_index(package.first);
+    const index deps = cache_().read_index(package.first);
     switch (package.second)
     {
     case stage_type::installation:
@@ -262,14 +279,26 @@ bool bunsan::pm::repository::update_package_depends(
             for (const auto &i: deps.package.import.package)
             {
                 snapshot snapshot_;
-                const bool ret = update_package_depends(stage(i.second, stage_type::installation), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(
+                    stage(i.second, stage_type::installation),
+                    updated,
+                    in,
+                    snapshot_,
+                    snapshot_cache
+                );
                 upd = upd || ret;
                 merge_maps(current_snapshot, snapshot_);
             }
             for (const auto &i: deps.package.import.source)
             {
                 snapshot snapshot_;
-                const bool ret = update_package_depends(stage(i.second, stage_type::source), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(
+                    stage(i.second, stage_type::source),
+                    updated,
+                    in,
+                    snapshot_,
+                    snapshot_cache
+                );
                 upd = upd || ret;
                 merge_maps(current_snapshot, snapshot_);
             }
@@ -277,7 +306,13 @@ bool bunsan::pm::repository::update_package_depends(
             {
                 snapshot snapshot_;
                 /// \note build is not needed because no sources provided
-                const bool ret = update_package_depends(stage(package.first, stage_type::build_empty), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(
+                    stage(package.first, stage_type::build_empty),
+                    updated,
+                    in,
+                    snapshot_,
+                    snapshot_cache
+                );
                 upd = upd || ret;
                 merge_maps(current_snapshot, snapshot_);
             }
@@ -285,15 +320,21 @@ bool bunsan::pm::repository::update_package_depends(
             {
                 /// \note source is updated by build
                 snapshot snapshot_;
-                const bool ret = update_package_depends(stage(package.first, stage_type::build), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(
+                    stage(package.first, stage_type::build),
+                    updated,
+                    in,
+                    snapshot_,
+                    snapshot_cache
+                );
                 upd = upd || ret;
                 merge_maps(current_snapshot, snapshot_);
             }
-            upd = upd || ntv->installation_outdated(package.first, current_snapshot);
+            upd = upd || cache_().installation_outdated(package.first, current_snapshot);
             if (upd)
             {
-                ntv->build_installation(package.first);
-                BOOST_ASSERT(!ntv->installation_outdated(package.first, current_snapshot));
+                builder_().build_installation(package.first);
+                BOOST_ASSERT(!cache_().installation_outdated(package.first, current_snapshot));
             }
         }
         break;
@@ -301,15 +342,21 @@ bool bunsan::pm::repository::update_package_depends(
         {
             {
                 snapshot snapshot_;
-                const bool ret = update_package_depends(stage(package.first, stage_type::source), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(
+                    stage(package.first, stage_type::source),
+                    updated,
+                    in,
+                    snapshot_,
+                    snapshot_cache
+                );
                 upd = upd || ret;
                 merge_maps(current_snapshot, snapshot_);
             }
-            upd = upd || ntv->build_outdated(package.first, current_snapshot);
+            upd = upd || cache_().build_outdated(package.first, current_snapshot);
             if (upd)
             {
-                ntv->build(package.first);
-                BOOST_ASSERT(!ntv->build_outdated(package.first, current_snapshot));
+                builder_().build(package.first);
+                BOOST_ASSERT(!cache_().build_outdated(package.first, current_snapshot));
             }
         }
         break;
@@ -317,15 +364,21 @@ bool bunsan::pm::repository::update_package_depends(
         {
             {
                 snapshot snapshot_;
-                const bool ret = update_package_depends(stage(package.first, stage_type::source), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(
+                    stage(package.first, stage_type::source),
+                    updated,
+                    in,
+                    snapshot_,
+                    snapshot_cache
+                );
                 upd = upd || ret;
                 merge_maps(current_snapshot, snapshot_);
             }
-            upd = upd || ntv->build_outdated(package.first, current_snapshot);
+            upd = upd || cache_().build_outdated(package.first, current_snapshot);
             if (upd)
             {
-                ntv->build_empty(package.first);
-                BOOST_ASSERT(!ntv->build_outdated(package.first, current_snapshot));
+                builder_().build_empty(package.first);
+                BOOST_ASSERT(!cache_().build_outdated(package.first, current_snapshot));
             }
         }
         break;
@@ -334,22 +387,34 @@ bool bunsan::pm::repository::update_package_depends(
             for (const auto &i: deps.source.import.package)
             {
                 snapshot snapshot_;
-                const bool ret = update_package_depends(stage(i.second, stage_type::installation), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(
+                    stage(i.second, stage_type::installation),
+                    updated,
+                    in,
+                    snapshot_,
+                    snapshot_cache
+                );
                 upd = upd || ret;
                 merge_maps(current_snapshot, snapshot_);
             }
             for (const auto &i: deps.source.import.source)
             {
                 snapshot snapshot_;
-                const bool ret = update_package_depends(stage(i.second, stage_type::source), updated, in, snapshot_, snapshot_cache);
+                const bool ret = update_package_depends(
+                    stage(i.second, stage_type::source),
+                    updated,
+                    in,
+                    snapshot_,
+                    snapshot_cache
+                );
                 upd = upd || ret;
                 merge_maps(current_snapshot, snapshot_);
             }
-            // we will always try to fetch source
-            // native object will download source only if it is outdated or does not exist
-            ntv->fetch_source(package.first);
+            // we always try to fetch source
+            // distributor will download source only if it is outdated or does not exist
+            distributor_().fetch_source(package.first);
             {
-                const snapshot_entry checksum = ntv->read_checksum(package.first);
+                const snapshot_entry checksum = cache_().read_checksum(package.first);
                 const auto iter = current_snapshot.find(package.first);
                 if (iter != current_snapshot.end())
                     BOOST_ASSERT(iter->second == checksum);
@@ -370,11 +435,7 @@ void bunsan::pm::repository::clean()
 {
     try
     {
-        if (!m_flock)
-            BOOST_THROW_EXCEPTION(invalid_configuration_lock_not_found_error() <<
-                                  invalid_configuration_lock_not_found_error::path(m_config.cache.get_lock()));
-        boost::interprocess::scoped_lock<bunsan::interprocess::file_lock> lk(*m_flock);
-        ntv->clean();
+        cache_().clean();
     }
     catch (std::exception &)
     {
@@ -394,5 +455,23 @@ std::string bunsan::pm::repository::version()
 
 bunsan::pm::repository::~repository()
 {
-    delete ntv;
+    // implicit ptr destructors
 }
+
+#define BUNSAN_PM_GETTER(X, CFG) \
+    bunsan::pm::repository::X &bunsan::pm::repository::X##_() \
+    { \
+        if (!m_##X) \
+            BOOST_THROW_EXCEPTION(\
+                null_##X##_error() << \
+                null_##X##_error::message("\"" CFG "\" was not initialized")); \
+        return *m_##X; \
+    }
+
+BUNSAN_PM_GETTER(local_system, "local_system")
+BUNSAN_PM_GETTER(cache, "cache")
+BUNSAN_PM_GETTER(distributor, "remote")
+BUNSAN_PM_GETTER(builder, "build")
+BUNSAN_PM_GETTER(extractor, "extract")
+
+#undef BUNSAN_PM_GETTER
