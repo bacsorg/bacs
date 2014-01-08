@@ -97,4 +97,17 @@ namespace bunsan{namespace pm
         virtual distributor_update_meta_error {};
     struct distributor_update_meta_no_package_error: virtual distributor_update_meta_error {};
     struct distributor_update_sources_error: virtual distributor_error {};
+
+    // cache
+    struct cache_error: virtual repository_component_error {};
+    struct cache_read_index_error: virtual cache_error {};
+    struct cache_read_checksum_error: virtual cache_error {};
+    struct cache_build_outdated_error: virtual cache_error {};
+    struct cache_installation_outdated_error: virtual cache_error {};
+    struct cache_file_path_error: virtual cache_error
+    {
+        typedef boost::error_info<struct tag_root, boost::filesystem::path> root;
+        typedef boost::error_info<struct tag_filename, boost::filesystem::path> filename;
+    };
+    struct cache_file_path_invalid_filename_error: virtual cache_file_path_error {};
 }}
