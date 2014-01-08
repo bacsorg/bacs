@@ -166,6 +166,27 @@ void bunsan::pm::repository::distributor::update_meta(const entry &package)
     }
 }
 
+void bunsan::pm::repository::distributor::update_sources(const entry &package)
+{
+    try
+    {
+        SLOG("starting \"" << package << "\" " << __func__);
+        for (const std::string &src_name: cache_().read_index(package).sources())
+        {
+            update_file(
+                source_url(package, src_name),
+                cache_().source_path(package, src_name),
+                cache_().read_checksum(package).at(src_name));
+        }
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(distributor_update_sources_error() <<
+                              distributor_update_sources_error::package(package) <<
+                              enable_nested_current());
+    }
+}
+
 void bunsan::pm::repository::distributor::update_file(
     const std::string &url,
     const boost::filesystem::path &file,
@@ -198,9 +219,9 @@ std::string bunsan::pm::repository::distributor::checksum_url(const entry &packa
 }
 
 std::string bunsan::pm::repository::distributor::source_url(
-    const entry &package, const std::string &source) const
+    const entry &package, const std::string &source_id) const
 {
-    return url(package, source + format().name.suffix.archive);
+    return url(package, source_id + format().name.suffix.archive);
 }
 
 std::string bunsan::pm::repository::distributor::url(

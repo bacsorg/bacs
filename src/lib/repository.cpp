@@ -410,9 +410,7 @@ bool bunsan::pm::repository::update_package_depends(
                 upd = upd || ret;
                 merge_maps(current_snapshot, snapshot_);
             }
-            // we always try to fetch source
-            // distributor will download source only if it is outdated or does not exist
-            distributor_().fetch_source(package.first);
+            distributor_().update_sources(package.first);
             {
                 const snapshot_entry checksum = cache_().read_checksum(package.first);
                 const auto iter = current_snapshot.find(package.first);

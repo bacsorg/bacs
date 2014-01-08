@@ -30,7 +30,7 @@ public:
     boost::filesystem::path index_path(const entry &package);
 
     /// \note Parent directory is created if necessary.
-    boost::filesystem::path source_path(const entry &package);
+    boost::filesystem::path source_path(const entry &package, const std::string &source_id);
 
 private:
     repository &m_self;

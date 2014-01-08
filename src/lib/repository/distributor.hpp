@@ -18,7 +18,7 @@ public:
     void create_recursively(const boost::filesystem::path &root, bool strip);
 
     void update_meta(const entry &package);
-    void fetch_source(const entry &package);
+    void update_sources(const entry &package);
 
 private:
     void update_file(
@@ -28,7 +28,7 @@ private:
 
     std::string index_url(const entry &package) const;
     std::string checksum_url(const entry &package) const;
-    std::string source_url(const entry &package, const std::string &source) const;
+    std::string source_url(const entry &package, const std::string &source_id) const;
     std::string url(const entry &package, const boost::filesystem::path &name) const;
 
 private:

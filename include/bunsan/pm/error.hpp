@@ -86,4 +86,5 @@ namespace bunsan{namespace pm
     struct distributor_update_meta_inconsistent_checksum_error:
         virtual distributor_update_meta_error {};
     struct distributor_update_meta_no_package_error: virtual distributor_update_meta_error {};
+    struct distributor_update_sources_error: virtual distributor_error {};
 }}
