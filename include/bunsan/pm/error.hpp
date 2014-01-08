@@ -18,7 +18,13 @@ namespace bunsan{namespace pm
         typedef boost::error_info<struct tag_lifetime, std::time_t> lifetime;
     };
 
-    struct snapshot_error: virtual error {};
+    struct metadata_error: virtual error {};
+
+    struct checksum_error: virtual metadata_error {};
+    struct read_checksum_error: virtual checksum_error {};
+    struct write_checksum_error: virtual checksum_error {};
+
+    struct snapshot_error: virtual metadata_error {};
     struct read_snapshot_error: virtual snapshot_error {};
     struct write_snapshot_error: virtual snapshot_error {};
 
