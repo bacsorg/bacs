@@ -18,6 +18,10 @@ namespace bunsan{namespace pm
         typedef boost::error_info<struct tag_lifetime, std::time_t> lifetime;
     };
 
+    struct snapshot_error: virtual error {};
+    struct read_snapshot_error: virtual snapshot_error {};
+    struct write_snapshot_error: virtual snapshot_error {};
+
     struct invalid_installation_error: virtual error {};
     struct installation_meta_exists_error: virtual invalid_installation_error
     {

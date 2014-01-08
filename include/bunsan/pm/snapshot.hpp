@@ -14,4 +14,7 @@ namespace bunsan{namespace pm
     typedef std::string checksum_type;
     typedef std::map<source_name_type, checksum_type> snapshot_entry;
     typedef std::map<entry, snapshot_entry> snapshot;
+
+    snapshot read_snapshot(const boost::filesystem::path &path);
+    void write_snapshot(const boost::filesystem::path &path, const snapshot &snapshot_);
 }}

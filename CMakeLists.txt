@@ -15,6 +15,7 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/lib/entry.cpp
     src/lib/checksum.cpp
     src/lib/repository.cpp
+    src/lib/snapshot.cpp
 
     src/lib/repository/distributor.cpp
 
