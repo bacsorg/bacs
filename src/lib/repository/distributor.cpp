@@ -1,3 +1,5 @@
+#include <bunsan/config.hpp>
+
 #include "distributor.hpp"
 
 #include "cache.hpp"
@@ -21,12 +23,11 @@ bunsan::pm::repository::distributor::distributor(
         m_self(self),
         m_config(config)
 {
-    if (!(m_archiver = m_config.format.archiver.instance_optional(local_system_().resolver())))
+    if (!(m_archiver = format().archiver.instance_optional(local_system_().resolver())))
     {
         BOOST_THROW_EXCEPTION(
             invalid_configuration_remote_archiver_error() <<
-            invalid_configuration_remote_archiver_error::utility_type(
-                m_config.format.archiver.type));
+            invalid_configuration_remote_archiver_error::utility_type(format().archiver.type));
     }
     if (!(m_fetcher = m_config.fetcher.instance_optional(local_system_().resolver())))
     {
@@ -36,28 +37,29 @@ bunsan::pm::repository::distributor::distributor(
     }
 }
 
+const bunsan::pm::format_config &bunsan::pm::repository::distributor::format() const
+{
+    return m_config.format;
+}
+
 void bunsan::pm::repository::distributor::create(
     const boost::filesystem::path &source, bool strip)
 {
     try
     {
-        const boost::filesystem::path index_name =
-            source / m_config.format.name.get_index();
-        const boost::filesystem::path checksum_name =
-            source / m_config.format.name.get_checksum();
+        const boost::filesystem::path index_name = source / format().name.get_index();
+        const boost::filesystem::path checksum_name = source / format().name.get_checksum();
         snapshot_entry checksum;
         // we need to save index checksum
-        checksum[m_config.format.name.get_index()] = bunsan::pm::checksum(index_name);
+        checksum[format().name.get_index()] = bunsan::pm::checksum(index_name);
         std::unordered_set<std::string> to_remove;
         index index_;
         index_.load(index_name);
         for (const std::string &src_name: index_.sources())
         {
-            const std::string src_value =
-                src_name + m_config.format.name.suffix.archive;
+            const std::string src_value = src_name + format().name.suffix.archive;
             const boost::filesystem::path src = source / src_name;
-            const boost::filesystem::path dst =
-                boost::filesystem::absolute(source / src_value);
+            const boost::filesystem::path dst = boost::filesystem::absolute(source / src_value);
             if (!boost::filesystem::exists(src))
                 BOOST_THROW_EXCEPTION(source_does_not_exist_error() <<
                                       source_does_not_exist_error::source(src_name) <<
@@ -97,11 +99,11 @@ void bunsan::pm::repository::distributor::create_recursively(
     try
     {
         std::unordered_set<std::string> ignore;
-        const boost::filesystem::path index_path = root / m_config.format.name.get_index();
+        const boost::filesystem::path index_path = root / format().name.get_index();
         if (boost::filesystem::is_regular_file(index_path))
         {
             SLOG("Found index file at " << root << ", trying to create source package...");
-            ignore.insert(m_config.format.name.get_index());
+            ignore.insert(format().name.get_index());
             create(root, strip);
             index index_;
             index_.load(index_path);
@@ -128,6 +130,83 @@ void bunsan::pm::repository::distributor::create_recursively(
                               distributor_create_recursively_error::strip(strip) <<
                               enable_nested_current());
     }
+}
+
+void bunsan::pm::repository::distributor::update_meta(const entry &package)
+{
+    try
+    {
+        SLOG("starting \"" << package << "\" " << __func__);
+        const tempfile checksum_tmp = local_system_().small_tempfile();
+        try
+        {
+            m_fetcher->fetch(checksum_url(package), checksum_tmp.path());
+        }
+        catch (std::exception &)
+        {
+            BOOST_THROW_EXCEPTION(
+                distributor_update_meta_no_package_error() <<
+                distributor_update_meta_no_package_error::path(checksum_tmp.path()) <<
+                distributor_update_meta_no_package_error::message("Unable to fetch checksum") <<
+                enable_nested_current());
+        }
+        boost::filesystem::copy_file(checksum_tmp.path(), cache_().checksum_path(package),
+                                     boost::filesystem::copy_option::overwrite_if_exists);
+        update_file(
+            index_url(package),
+            cache_().index_path(package),
+            // \pre index is treated like regular source
+            cache_().read_checksum(package).at(format().name.get_index()));
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(distributor_update_meta_error() <<
+                              distributor_update_meta_error::package(package) <<
+                              enable_nested_current());
+    }
+}
+
+void bunsan::pm::repository::distributor::update_file(
+    const std::string &url,
+    const boost::filesystem::path &file,
+    const std::string &checksum)
+{
+    const auto outdated =
+        [](const boost::filesystem::path &file, const std::string &checksum)
+        {
+            return !boost::filesystem::exists(file) || bunsan::pm::checksum(file) != checksum;
+        };
+    if (outdated(file, checksum))
+    {
+        m_fetcher->fetch(url, file);
+        if (outdated(file, checksum))
+            BOOST_THROW_EXCEPTION(
+                distributor_update_meta_inconsistent_checksum_error() <<
+                distributor_update_meta_inconsistent_checksum_error::url(url) <<
+                distributor_update_meta_inconsistent_checksum_error::path(file));
+    }
+}
+
+std::string bunsan::pm::repository::distributor::index_url(const entry &package) const
+{
+    return url(package, format().name.get_index());
+}
+
+std::string bunsan::pm::repository::distributor::checksum_url(const entry &package) const
+{
+    return url(package, format().name.get_checksum());
+}
+
+std::string bunsan::pm::repository::distributor::source_url(
+    const entry &package, const std::string &source) const
+{
+    return url(package, source + format().name.suffix.archive);
+}
+
+std::string bunsan::pm::repository::distributor::url(
+    const entry &package, const boost::filesystem::path &name) const
+{
+    return package.remote_resource(m_config.url, name);
 }
 
 bunsan::pm::repository::local_system &bunsan::pm::repository::distributor::local_system_()

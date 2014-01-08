@@ -2,6 +2,7 @@
 
 #include <bunsan/pm/repository.hpp>
 
+#include <bunsan/tempfile.hpp>
 #include <bunsan/utility/resolver.hpp>
 
 #include <boost/noncopyable.hpp>
@@ -12,6 +13,12 @@ public:
     local_system(repository &self, const local_system_config &config);
 
     utility::resolver &resolver();
+
+    /// Empty dir for possibly large files.
+    tempfile tempdir_for_build();
+
+    /// Empty file.
+    tempfile small_tempfile();
 
 private:
     repository &m_self;

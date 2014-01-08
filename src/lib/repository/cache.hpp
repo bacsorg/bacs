@@ -23,6 +23,15 @@ public:
     bool installation_outdated(const entry &package, const snapshot &snapshot_);
     bool build_outdated(const entry &package, const snapshot &snapshot_);
 
+    /// \note Parent directory is created if necessary.
+    boost::filesystem::path checksum_path(const entry &package);
+
+    /// \note Parent directory is created if necessary.
+    boost::filesystem::path index_path(const entry &package);
+
+    /// \note Parent directory is created if necessary.
+    boost::filesystem::path source_path(const entry &package);
+
 private:
     repository &m_self;
 };

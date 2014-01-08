@@ -76,7 +76,14 @@ namespace bunsan{namespace pm
     struct repository_component_error: virtual repository_error {};
 
     // distributor
-    struct distributor_error: virtual repository_component_error {};
+    struct distributor_error: virtual repository_component_error
+    {
+        typedef boost::error_info<struct tag_url, std::string> url;
+    };
     struct distributor_create_error: virtual distributor_error {};
     struct distributor_create_recursively_error: virtual distributor_error {};
+    struct distributor_update_meta_error: virtual distributor_error {};
+    struct distributor_update_meta_inconsistent_checksum_error:
+        virtual distributor_update_meta_error {};
+    struct distributor_update_meta_no_package_error: virtual distributor_update_meta_error {};
 }}

@@ -12,11 +12,24 @@ class bunsan::pm::repository::distributor: private boost::noncopyable
 public:
     distributor(repository &self, const remote_config &config);
 
+    const format_config &format() const;
+
     void create(const boost::filesystem::path &source, bool strip);
     void create_recursively(const boost::filesystem::path &root, bool strip);
 
     void update_meta(const entry &package);
     void fetch_source(const entry &package);
+
+private:
+    void update_file(
+        const std::string &url,
+        const boost::filesystem::path &file,
+        const std::string &checksum);
+
+    std::string index_url(const entry &package) const;
+    std::string checksum_url(const entry &package) const;
+    std::string source_url(const entry &package, const std::string &source) const;
+    std::string url(const entry &package, const boost::filesystem::path &name) const;
 
 private:
     local_system &local_system_();
