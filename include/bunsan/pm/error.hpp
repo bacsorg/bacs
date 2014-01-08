@@ -55,7 +55,7 @@ namespace bunsan{namespace pm
         typedef boost::error_info<struct tag_utility_type, std::string> utility_type;
     };
     struct invalid_configuration_archiver_error: virtual invalid_configuration_utility_error {};
-    struct invalid_configuration_source_archiver_error: virtual invalid_configuration_archiver_error {};
+    struct invalid_configuration_remote_archiver_error: virtual invalid_configuration_archiver_error {};
     struct invalid_configuration_cache_archiver_error: virtual invalid_configuration_archiver_error {};
     struct invalid_configuration_builder_error: virtual invalid_configuration_utility_error
     {
@@ -72,4 +72,11 @@ namespace bunsan{namespace pm
     struct null_distributor_error: virtual invalid_configuration_error {};
     struct null_builder_error: virtual invalid_configuration_error {};
     struct null_extractor_error: virtual invalid_configuration_error {};
+
+    struct repository_component_error: virtual repository_error {};
+
+    // distributor
+    struct distributor_error: virtual repository_component_error {};
+    struct distributor_create_error: virtual distributor_error {};
+    struct distributor_create_recursively_error: virtual distributor_error {};
 }}

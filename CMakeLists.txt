@@ -16,6 +16,8 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/lib/checksum.cpp
     src/lib/repository.cpp
 
+    src/lib/repository/distributor.cpp
+
     src/lib/cache.cpp
 )
 bunsan_use(${PROJECT_NAME})
