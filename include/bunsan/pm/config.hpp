@@ -136,7 +136,6 @@ namespace bunsan{namespace pm
         inline boost::filesystem::path get_lock() const { return lock.get_value_or(root / "lock"); }
         inline boost::filesystem::path get_source() const { return root / "source"; }
         inline boost::filesystem::path get_package() const { return root / "package"; }
-        inline boost::filesystem::path get_installation() const { return root / "installation"; }
 
         utility::factory_options<utility::archiver> archiver;
 
@@ -153,10 +152,11 @@ namespace bunsan{namespace pm
                 std::string archive;
             } suffix;
 
-            inline boost::filesystem::path get_build_snapshot() const { return "build_snapshot"; }
-            inline boost::filesystem::path get_installation_snapshot() const { return "installation_snapshot"; }
             inline boost::filesystem::path get_build_archive() const { return "build" + suffix.archive; }
+            inline boost::filesystem::path get_build_snapshot() const { return "build_snapshot"; }
+
             inline boost::filesystem::path get_installation_archive() const { return "installation" + suffix.archive; }
+            inline boost::filesystem::path get_installation_snapshot() const { return "installation_snapshot"; }
         } name;
     };
 
