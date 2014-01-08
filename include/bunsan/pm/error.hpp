@@ -24,18 +24,20 @@ namespace bunsan{namespace pm
         typedef boost::error_info<struct tag_meta, boost::filesystem::path> meta;
     };
 
-    struct create_error: virtual error {};
+    struct repository_error: virtual error {};
+
+    struct create_error: virtual repository_error {};
     struct source_does_not_exist_error: virtual create_error {};
 
-    struct extract_error: virtual error {};
+    struct extract_error: virtual repository_error {};
 
-    struct install_error: virtual error {};
+    struct install_error: virtual repository_error {};
 
-    struct update_error: virtual error {};
+    struct update_error: virtual repository_error {};
 
-    struct need_update_error: virtual error {};
+    struct need_update_error: virtual repository_error {};
 
-    struct clean_error: virtual error {};
+    struct clean_error: virtual repository_error {};
 
     /// \todo consider rename
     struct invalid_entry_name_error: virtual error
