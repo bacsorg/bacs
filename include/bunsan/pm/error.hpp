@@ -102,6 +102,13 @@ namespace bunsan{namespace pm
     struct cache_error: virtual repository_component_error {};
     struct cache_read_index_error: virtual cache_error {};
     struct cache_read_checksum_error: virtual cache_error {};
+    struct cache_read_build_snapshot_error: virtual cache_error {};
+    struct cache_read_installation_snapshot_error: virtual cache_error {};
+    struct cache_unpack_source_error: virtual cache_error {};
+    struct cache_unpack_build_error: virtual cache_error {};
+    struct cache_unpack_installation_error: virtual cache_error {};
+    struct cache_pack_build_error: virtual cache_error {};
+    struct cache_pack_installation_error: virtual cache_error {};
     struct cache_build_outdated_error: virtual cache_error {};
     struct cache_installation_outdated_error: virtual cache_error {};
     struct cache_file_path_error: virtual cache_error

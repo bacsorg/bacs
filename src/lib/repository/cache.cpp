@@ -18,11 +18,16 @@ bunsan::pm::repository::cache::cache(repository &self, const cache_config &confi
     }
 }
 
-//bunsan::pm::repository::cache::lock_guard bunsan::pm::repository::cache::lock();
+#if 0
+bunsan::pm::repository::cache::lock_guard bunsan::pm::repository::cache::lock()
+{}
 
-// void bunsan::pm::repository::cache::validate_and_repair();
+void bunsan::pm::repository::cache::validate_and_repair()
+{}
 
-// void bunsan::pm::repository::cache::clean();
+void bunsan::pm::repository::cache::clean()
+{}
+#endif
 
 bunsan::pm::index bunsan::pm::repository::cache::read_index(const entry &package)
 {
@@ -48,6 +53,120 @@ bunsan::pm::snapshot_entry bunsan::pm::repository::cache::read_checksum(const en
     {
         BOOST_THROW_EXCEPTION(cache_read_checksum_error() <<
                               cache_read_checksum_error::package(package) <<
+                              enable_nested_current());
+    }
+}
+
+bunsan::pm::snapshot bunsan::pm::repository::cache::read_build_snapshot(
+    const entry &package)
+{
+    try
+    {
+        return read_snapshot(build_snapshot_path(package));
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_read_build_snapshot_error() <<
+                              cache_read_build_snapshot_error::package(package) <<
+                              enable_nested_current());
+    }
+}
+
+bunsan::pm::snapshot bunsan::pm::repository::cache::read_installation_snapshot(
+    const entry &package)
+{
+    try
+    {
+        return read_snapshot(installation_snapshot_path(package));
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_read_installation_snapshot_error() <<
+                              cache_read_installation_snapshot_error::package(package) <<
+                              enable_nested_current());
+    }
+}
+
+void bunsan::pm::repository::cache::unpack_source(
+    const entry &package,
+    const std::string &source_id,
+    const boost::filesystem::path &destination)
+{
+    try
+    {
+        distributor_().archiver().unpack(source_file_path(package, source_id), destination);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_unpack_source_error() <<
+                              cache_unpack_source_error::package(package) <<
+                              cache_unpack_source_error::destination(destination) <<
+                              enable_nested_current());
+    }
+}
+
+void bunsan::pm::repository::cache::unpack_build(
+    const entry &package,
+    const boost::filesystem::path &destination)
+{
+    try
+    {
+        m_archiver->unpack(build_archive_path(package), destination);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_unpack_build_error() <<
+                              cache_unpack_build_error::package(package) <<
+                              cache_unpack_build_error::destination(destination) <<
+                              enable_nested_current());
+    }
+}
+
+void bunsan::pm::repository::cache::unpack_installation(
+    const entry &package,
+    const boost::filesystem::path &destination)
+{
+    try
+    {
+        m_archiver->unpack(installation_archive_path(package), destination);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_unpack_installation_error() <<
+                              cache_unpack_installation_error::package(package) <<
+                              cache_unpack_installation_error::destination(destination) <<
+                              enable_nested_current());
+    }
+}
+
+void bunsan::pm::repository::cache::pack_build(
+    const entry &package, const boost::filesystem::path &path)
+{
+    try
+    {
+        m_archiver->pack_contents(build_archive_path(package), path);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_pack_build_error() <<
+                              cache_pack_build_error::package(package) <<
+                              cache_pack_build_error::path(path) <<
+                              enable_nested_current());
+    }
+}
+
+void bunsan::pm::repository::cache::pack_installation(
+    const entry &package, const boost::filesystem::path &path)
+{
+    try
+    {
+        m_archiver->pack_contents(installation_archive_path(package), path);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_pack_installation_error() <<
+                              cache_pack_installation_error::package(package) <<
+                              cache_pack_installation_error::path(path) <<
                               enable_nested_current());
     }
 }
