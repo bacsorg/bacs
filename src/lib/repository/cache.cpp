@@ -143,7 +143,7 @@ boost::filesystem::path bunsan::pm::repository::cache::file_path(
             BOOST_THROW_EXCEPTION(cache_file_path_invalid_filename_error() <<
                                   cache_file_path_invalid_filename_error::filename(filename));
         const boost::filesystem::path package_root = root / package.location();
-        boost::filesystem::create_directory(package_root);
+        boost::filesystem::create_directories(package_root);
         return package_root / filename;
     }
     catch (std::exception &)
