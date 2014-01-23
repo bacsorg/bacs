@@ -68,6 +68,9 @@ public:
     boost::filesystem::path installation_snapshot_path(const entry &package);
 
 private:
+    static void verify_and_repair_directory(const boost::filesystem::path &path);
+
+private:
     boost::filesystem::path file_path(
         const boost::filesystem::path &root,
         const entry &package,

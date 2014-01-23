@@ -74,6 +74,7 @@ namespace bunsan{namespace pm
     struct invalid_configuration_duplicate_builder_error: virtual invalid_configuration_builder_error {};
     struct invalid_configuration_builder_not_found_error: virtual invalid_configuration_builder_error {};
     struct invalid_configuration_fetcher_error: virtual invalid_configuration_utility_error {};
+    struct invalid_configuration_relative_path_error: virtual invalid_configuration_error {};
 
     struct circular_dependencies_error: virtual error {};
 
@@ -100,6 +101,10 @@ namespace bunsan{namespace pm
 
     // cache
     struct cache_error: virtual repository_component_error {};
+    struct cache_initialize_error: virtual cache_error {};
+    struct cache_verify_and_repair_error: virtual cache_error {};
+    struct cache_verify_and_repair_directory_error: virtual cache_error {};
+    struct cache_clean_error: virtual cache_error {};
     struct cache_read_index_error: virtual cache_error {};
     struct cache_read_checksum_error: virtual cache_error {};
     struct cache_read_build_snapshot_error: virtual cache_error {};

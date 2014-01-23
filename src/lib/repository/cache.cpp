@@ -3,7 +3,9 @@
 #include "distributor.hpp"
 #include "local_system.hpp"
 
-#include <boost/filesystem/operations.hpp>
+#include <bunsan/filesystem/fstream.hpp>
+#include <bunsan/filesystem/operations.hpp>
+#include <bunsan/logging/legacy.hpp>
 
 bunsan::pm::repository::cache::cache(repository &self, const cache_config &config):
     m_self(self),
@@ -23,13 +25,66 @@ bunsan::pm::repository::cache::lock_guard bunsan::pm::repository::cache::lock()
     return lock_guard(m_flock);
 }
 
-#if 0
 void bunsan::pm::repository::cache::verify_and_repair()
-{}
+{
+    try
+    {
+        verify_and_repair_directory(m_config.get_source());
+        verify_and_repair_directory(m_config.get_package());
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_verify_and_repair_error() <<
+                              enable_nested_current());
+    }
+}
+
+void bunsan::pm::repository::cache::verify_and_repair_directory(
+    const boost::filesystem::path &path)
+{
+    try
+    {
+        if (!path.is_absolute())
+            BOOST_THROW_EXCEPTION(invalid_configuration_relative_path_error() <<
+                                  invalid_configuration_relative_path_error::path(path));
+        SLOG("checking " << path);
+        if (!boost::filesystem::is_directory(path))
+        {
+            if (!boost::filesystem::exists(path))
+            {
+                SLOG("directory " << path << " was not found");
+            }
+            else
+            {
+                SLOG(path << " is not a directory: starting recursive remove");
+                boost::filesystem::remove_all(path);
+            }
+            if (boost::filesystem::create_directory(path))
+                SLOG("created missing " << path << " directory");
+        }
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_verify_and_repair_directory_error() <<
+                              cache_verify_and_repair_directory_error::path(path) <<
+                              enable_nested_current());
+    }
+}
 
 void bunsan::pm::repository::cache::clean()
-{}
-#endif
+{
+    try
+    {
+        verify_and_repair();
+        filesystem::reset_dir(m_config.get_source());
+        filesystem::reset_dir(m_config.get_package());
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_clean_error() <<
+                              enable_nested_current());
+    }
+}
 
 bunsan::pm::index bunsan::pm::repository::cache::read_index(const entry &package)
 {
