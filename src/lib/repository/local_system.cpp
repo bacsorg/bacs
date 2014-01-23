@@ -14,7 +14,7 @@ const bunsan::utility::resolver &bunsan::pm::repository::local_system::resolver(
 
 bunsan::tempfile bunsan::pm::repository::local_system::tempdir_for_build()
 {
-    return tempfile::directory_from_model(m_config.build_dir);
+    return tempfile::directory_in_directory(m_config.build_dir);
 }
 
 bunsan::tempfile bunsan::pm::repository::local_system::small_tempfile()
