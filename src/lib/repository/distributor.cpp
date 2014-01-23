@@ -69,7 +69,7 @@ void bunsan::pm::repository::distributor::create(
                 BOOST_THROW_EXCEPTION(source_does_not_exist_error() <<
                                       source_does_not_exist_error::source(src_name) <<
                                       source_does_not_exist_error::path(src));
-            m_archiver->pack(dst, src);
+            m_archiver->pack_contents(dst, src);
             checksum[src_name] = bunsan::pm::checksum(source / src_value);
             to_remove.insert(src_name); // we will remove all sources
         }
