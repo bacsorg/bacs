@@ -15,5 +15,23 @@ public:
     void build_installation(const entry &package);
 
 private:
+    utility::builder_ptr get_builder(const std::string &builder_id);
+    utility::builder_ptr get_builder();
+
+    void unpack_source(
+        const entry &package,
+        const boost::filesystem::path &destination,
+        snapshot &snapshot_);
+
+private:
+    cache &cache_();
+    distributor &distributor_();
+    extractor &extractor_();
+    local_system &local_system_();
+
+private:
     repository &m_self;
+    build_config m_config;
+    std::unordered_map<std::string, utility::builder_ptr> m_builders;
+    utility::builder_ptr m_builder;
 };

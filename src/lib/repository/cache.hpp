@@ -22,6 +22,15 @@ public:
 
     index read_index(const entry &package);
     snapshot_entry read_checksum(const entry &package);
+    snapshot read_build_snapshot(const entry &package);
+    snapshot read_installation_snapshot(const entry &package);
+
+    void unpack_source(const entry &package, const boost::filesystem::path &destination);
+    void unpack_build(const entry &package, const boost::filesystem::path &destination);
+    void unpack_installation(const entry &package, const boost::filesystem::path &destination);
+
+    void pack_build(const entry &package, const boost::filesystem::path &path);
+    void pack_installation(const entry &package, const boost::filesystem::path &path);
 
     bool build_outdated(const entry &package, const snapshot &snapshot_);
     bool installation_outdated(const entry &package, const snapshot &snapshot_);

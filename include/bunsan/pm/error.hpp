@@ -110,4 +110,13 @@ namespace bunsan{namespace pm
         typedef boost::error_info<struct tag_filename, boost::filesystem::path> filename;
     };
     struct cache_file_path_invalid_filename_error: virtual cache_file_path_error {};
+
+    // builder
+    struct builder_error: virtual repository_component_error
+    {
+        typedef boost::error_info<struct tag_build_dir, boost::filesystem::path> build_dir;
+    };
+    struct builder_build_empty_error: virtual builder_error {};
+    struct builder_build_error: virtual builder_error {};
+    struct builder_build_installation_error: virtual builder_error {};
 }}

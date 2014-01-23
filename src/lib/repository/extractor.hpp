@@ -27,6 +27,20 @@ public:
         const boost::filesystem::path &destination,
         const std::time_t &lifetime);
 
+    /// \note Will merge directories but will fail on file collisions
+    void extract_source(
+        const entry &package,
+        const std::string &source_id,
+        const boost::filesystem::path &destination);
+
+    void extract_build(
+        const entry &package,
+        const boost::filesystem::path &destination);
+
+    void extract_installation(
+        const entry &package,
+        const boost::filesystem::path &destination);
+
 private:
     void extract(
         const entry &package,
