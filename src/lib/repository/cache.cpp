@@ -24,7 +24,7 @@ bunsan::pm::repository::cache::lock_guard bunsan::pm::repository::cache::lock()
 }
 
 #if 0
-void bunsan::pm::repository::cache::validate_and_repair()
+void bunsan::pm::repository::cache::verify_and_repair()
 {}
 
 void bunsan::pm::repository::cache::clean()

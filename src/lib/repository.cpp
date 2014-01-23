@@ -212,7 +212,7 @@ namespace
 void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 {
     SLOG("updating \"" << package << "\"");
-    cache_().validate_and_repair();
+    cache_().verify_and_repair();
     DLOG(starting build);
     update_meta_tree(package);
     std::map<stage, bool> updated;

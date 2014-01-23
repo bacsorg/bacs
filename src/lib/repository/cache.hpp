@@ -20,7 +20,7 @@ public:
 
     lock_guard lock();
 
-    void validate_and_repair();
+    void verify_and_repair();
 
     void clean();
 
