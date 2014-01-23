@@ -18,10 +18,12 @@ bunsan::pm::repository::cache::cache(repository &self, const cache_config &confi
     }
 }
 
-#if 0
 bunsan::pm::repository::cache::lock_guard bunsan::pm::repository::cache::lock()
-{}
+{
+    return lock_guard(m_flock);
+}
 
+#if 0
 void bunsan::pm::repository::cache::validate_and_repair()
 {}
 

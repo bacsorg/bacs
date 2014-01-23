@@ -8,12 +8,16 @@
 
 #include <boost/noncopyable.hpp>
 
+#include <mutex>
+
 class bunsan::pm::repository::cache: private boost::noncopyable
 {
 public:
+    typedef std::unique_lock<bunsan::interprocess::file_lock> lock_guard;
+
+public:
     cache(repository &self, const cache_config &config);
 
-    typedef bool lock_guard; // FIXME
     lock_guard lock();
 
     void validate_and_repair();
