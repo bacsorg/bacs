@@ -119,4 +119,11 @@ namespace bunsan{namespace pm
     struct builder_build_empty_error: virtual builder_error {};
     struct builder_build_error: virtual builder_error {};
     struct builder_build_installation_error: virtual builder_error {};
+
+    // extractor
+    struct extractor_error: virtual repository_component_error {};
+    struct extractor_extract_error: virtual extractor_error {};
+    struct extractor_install_error: virtual extractor_error {};
+    struct extractor_update_error: virtual extractor_error {};
+    struct extractor_need_update_error: virtual extractor_error {};
 }}

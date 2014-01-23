@@ -25,9 +25,16 @@ public:
     snapshot read_build_snapshot(const entry &package);
     snapshot read_installation_snapshot(const entry &package);
 
-    void unpack_source(const entry &package, const boost::filesystem::path &destination);
-    void unpack_build(const entry &package, const boost::filesystem::path &destination);
-    void unpack_installation(const entry &package, const boost::filesystem::path &destination);
+    void unpack_source(
+        const entry &package,
+        const std::string &source_id,
+        const boost::filesystem::path &destination);
+    void unpack_build(
+        const entry &package,
+        const boost::filesystem::path &destination);
+    void unpack_installation(
+        const entry &package,
+        const boost::filesystem::path &destination);
 
     void pack_build(const entry &package, const boost::filesystem::path &path);
     void pack_installation(const entry &package, const boost::filesystem::path &path);

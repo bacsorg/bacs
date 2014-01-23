@@ -27,7 +27,10 @@ public:
         const boost::filesystem::path &destination,
         const std::time_t &lifetime);
 
-    /// \note Will merge directories but will fail on file collisions
+    /*!
+     * \note Will merge directories but will fail on file collisions
+     * \warning Will work only on the local_system_().tempdir_for_build()'s filesystem
+     */
     void extract_source(
         const entry &package,
         const std::string &source_id,
@@ -42,8 +45,10 @@ public:
         const boost::filesystem::path &destination);
 
 private:
-    void extract(
-        const entry &package,
-        const boost::filesystem::path &destination,
-        bool reset);
+    cache &cache_();
+    local_system &local_system_();
+
+private:
+    repository &m_self;
+    extract_config m_config;
 };

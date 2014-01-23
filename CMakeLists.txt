@@ -20,6 +20,7 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/lib/repository/builder.cpp
     src/lib/repository/cache.cpp
     src/lib/repository/distributor.cpp
+    src/lib/repository/extractor.cpp
     src/lib/repository/local_system.cpp
 
     src/lib/cache.cpp
