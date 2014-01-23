@@ -14,6 +14,8 @@ public:
 
     const format_config &format() const;
 
+    utility::archiver &archiver();
+
     void create(const boost::filesystem::path &source, bool strip);
     void create_recursively(const boost::filesystem::path &root, bool strip);
 

@@ -42,6 +42,11 @@ const bunsan::pm::format_config &bunsan::pm::repository::distributor::format() c
     return m_config.format;
 }
 
+bunsan::utility::archiver &bunsan::pm::repository::distributor::archiver()
+{
+    return *m_archiver;
+}
+
 void bunsan::pm::repository::distributor::create(
     const boost::filesystem::path &source, bool strip)
 {
