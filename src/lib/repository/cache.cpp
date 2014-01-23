@@ -151,7 +151,7 @@ void bunsan::pm::repository::cache::unpack_source(
 {
     try
     {
-        distributor_().archiver().unpack(source_file_path(package, source_id), destination);
+        distributor_().archiver().unpack(source_path(package, source_id), destination);
     }
     catch (std::exception &)
     {
