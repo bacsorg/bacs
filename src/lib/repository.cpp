@@ -434,6 +434,7 @@ void bunsan::pm::repository::clean()
 {
     try
     {
+        const auto cache_guard = cache_().lock();
         cache_().clean();
     }
     catch (std::exception &)
