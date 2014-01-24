@@ -6,7 +6,7 @@
 #include <boost/property_tree/info_parser.hpp>
 
 bunsan::pm::compatibility::repository::repository(
-    const std::string &config)
+    const std::string &config): m_repo(nullptr)
 {
     boost::property_tree::ptree cfg;
     boost::property_tree::read_info(config, cfg);
