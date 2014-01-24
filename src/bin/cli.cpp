@@ -54,11 +54,11 @@ int main(int argc, char **argv)
         bunsan::property_tree::read_info(config_file, config);
         bunsan::pm::repository repo(config);
         if (vm.count("clean"))
-        {
+        { // clean before working with packages
             std::cerr << "Attempt to clean repository" << std::endl;
             repo.clean_cache();
         }
-        else if (vm.count("package"))
+        if (vm.count("package"))
         {
             if (vm.count("extract"))
             { // extracting
