@@ -33,12 +33,13 @@ bunsan::pm::repository::repository(const pm::config &config_):
 {
     // note: repository reference is stored,
     // it must be noncopyable and non-movable or references must be updated
+    // FIXME order of initialization matters
+    if (m_config.local_system)
+        m_local_system.reset(new local_system(*this, *m_config.local_system));
     if (m_config.remote)
         m_distributor.reset(new distributor(*this, *m_config.remote));
     if (m_config.build)
         m_builder.reset(new builder(*this, *m_config.build));
-    if (m_config.local_system)
-        m_local_system.reset(new local_system(*this, *m_config.local_system));
     if (m_config.cache)
         m_cache.reset(new cache(*this, *m_config.cache));
     if (m_config.extract)
