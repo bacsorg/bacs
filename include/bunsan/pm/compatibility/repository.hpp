@@ -21,6 +21,9 @@ namespace bunsan{namespace pm{namespace compatibility
         void clean_cache();
         ~repository();
 
+    public:
+        static void initialize_cache(const std::string &config);
+
     private:
         bunsan::pm::repository *m_repo;
     };

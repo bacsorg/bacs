@@ -35,3 +35,11 @@ bunsan::pm::compatibility::repository::~repository()
 {
     delete m_repo;
 }
+
+void bunsan::pm::compatibility::repository::initialize_cache(
+    const std::string &config)
+{
+    boost::property_tree::ptree cfg;
+    boost::property_tree::read_info(config, cfg);
+    bunsan::pm::repository::initialize_cache(cfg);
+}
