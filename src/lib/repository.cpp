@@ -453,6 +453,22 @@ std::string bunsan::pm::repository::version()
 #endif
 }
 
+void bunsan::pm::repository::initialize_cache(
+    const pm::config &config_)
+{
+    if (!config_.cache)
+        BOOST_THROW_EXCEPTION(
+            null_cache_error() <<
+            null_cache_error::message("\"cache\" was not initialized"));
+    cache::initialize(*config_.cache);
+}
+
+void bunsan::pm::repository::initialize_cache(
+    const boost::property_tree::ptree &config_)
+{
+    initialize_cache(bunsan::config::load<pm::config>(config_));
+}
+
 bunsan::pm::repository::~repository()
 {
     // implicit ptr destructors

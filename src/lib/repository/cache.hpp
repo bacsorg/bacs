@@ -67,6 +67,9 @@ public:
     /// \note Parent directory is created if necessary.
     boost::filesystem::path installation_snapshot_path(const entry &package);
 
+public:
+    static void initialize(const cache_config &config);
+
 private:
     static void verify_and_repair_directory(const boost::filesystem::path &path);
 

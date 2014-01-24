@@ -100,6 +100,9 @@ namespace bunsan{namespace pm
          */
         static std::string version();
 
+        static void initialize_cache(const pm::config &config_);
+        static void initialize_cache(const boost::property_tree::ptree &config_);
+
     private:
         /// update logic
         void update(const entry &package);

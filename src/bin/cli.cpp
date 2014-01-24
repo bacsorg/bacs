@@ -35,6 +35,7 @@ int main(int argc, char **argv)
             ("lifetime,l", boost::program_options::value<std::time_t>(&lifetime), "Only check for update if lifetime has passed since previous attempt")
             ("create,r", boost::program_options::value<std::string>(&create), "Create source package from source")
             ("create-recursively,R", boost::program_options::value<std::string>(&create_recursively), "Create source package from source")
+            ("initialize,I", "Initialize cache")
             ("strip,s", "Strip source package from excess files.");
         boost::program_options::variables_map vm;
         boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
@@ -52,6 +53,11 @@ int main(int argc, char **argv)
         DLOG(config parse);
         boost::property_tree::ptree config;
         bunsan::property_tree::read_info(config_file, config);
+        if (vm.count("initialize"))
+        { // initialize before repository construction
+            std::cerr << "Attempt to initialize repository" << std::endl;
+            bunsan::pm::repository::initialize_cache(config);
+        }
         bunsan::pm::repository repo(config);
         if (vm.count("clean"))
         { // clean before working with packages

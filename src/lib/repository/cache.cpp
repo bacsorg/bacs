@@ -25,6 +25,42 @@ bunsan::pm::repository::cache::lock_guard bunsan::pm::repository::cache::lock()
     return lock_guard(m_flock);
 }
 
+void bunsan::pm::repository::cache::initialize(const cache_config &config)
+{
+    try
+    {
+        if (!config.root.is_absolute())
+            BOOST_THROW_EXCEPTION(
+                invalid_configuration_relative_path_error() <<
+                invalid_configuration_relative_path_error::path(config.root));
+        // ignore if directory exists
+        boost::filesystem::create_directory(config.root);
+        boost::filesystem::create_directory(config.get_source());
+        boost::filesystem::create_directory(config.get_package());
+
+        // lock
+        if (!config.get_lock().is_absolute())
+            BOOST_THROW_EXCEPTION(
+                invalid_configuration_relative_path_error() <<
+                invalid_configuration_relative_path_error::path(config.get_lock()));
+        if (boost::filesystem::exists(config.get_lock()))
+        {
+            if (!boost::filesystem::is_regular_file(config.get_lock()))
+                boost::filesystem::remove(config.get_lock());
+        }
+        if (!boost::filesystem::exists(config.get_lock()))
+        {
+            filesystem::ofstream fout(config.get_lock());
+            fout.close();
+        }
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_initialize_error() <<
+                              enable_nested_current());
+    }
+}
+
 void bunsan::pm::repository::cache::verify_and_repair()
 {
     try
