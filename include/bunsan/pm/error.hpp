@@ -11,6 +11,7 @@ namespace bunsan{namespace pm
     {
         typedef boost::error_info<struct tag_package, entry> package;
         typedef filesystem::error::path path;
+        typedef boost::error_info<struct tag_source_id, std::string> source_id;
         typedef boost::error_info<struct tag_source, boost::filesystem::path> source;
         typedef boost::error_info<struct tag_strip, bool> strip;
         typedef boost::error_info<struct tag_destination, boost::filesystem::path> destination;
@@ -138,4 +139,7 @@ namespace bunsan{namespace pm
     struct extractor_install_error: virtual extractor_error {};
     struct extractor_update_error: virtual extractor_error {};
     struct extractor_need_update_error: virtual extractor_error {};
+    struct extractor_extract_source_error: virtual extractor_error {};
+    struct extractor_extract_build_error: virtual extractor_error {};
+    struct extractor_extract_installation_error: virtual extractor_error {};
 }}

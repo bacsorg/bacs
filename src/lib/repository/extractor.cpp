@@ -28,10 +28,11 @@ void bunsan::pm::repository::extractor::extract(
     }
     catch (std::exception &)
     {
-        BOOST_THROW_EXCEPTION(extractor_extract_error() <<
-                              extractor_extract_error::package(package) <<
-                              extractor_extract_error::destination(destination) <<
-                              enable_nested_current());
+        BOOST_THROW_EXCEPTION(
+            extractor_extract_error() <<
+            extractor_extract_error::package(package) <<
+            extractor_extract_error::destination(destination) <<
+            enable_nested_current());
     }
 }
 
@@ -55,15 +56,20 @@ void bunsan::pm::repository::extractor::install(
             BOOST_THROW_EXCEPTION(installation_meta_exists_error() <<
                                   installation_meta_exists_error::meta(meta));
         }
-        boost::filesystem::copy_file(snp, meta, boost::filesystem::copy_option::fail_if_exists);
+        boost::filesystem::copy_file(
+            snp,
+            meta,
+            boost::filesystem::copy_option::fail_if_exists
+        );
         boost::filesystem::last_write_time(meta, std::time(nullptr));
     }
     catch (std::exception &)
     {
-        BOOST_THROW_EXCEPTION(extractor_install_error() <<
-                              extractor_install_error::package(package) <<
-                              extractor_install_error::destination(destination) <<
-                              enable_nested_current());
+        BOOST_THROW_EXCEPTION(
+            extractor_install_error() <<
+            extractor_install_error::package(package) <<
+            extractor_install_error::destination(destination) <<
+            enable_nested_current());
     }
 }
 
@@ -74,7 +80,8 @@ void bunsan::pm::repository::extractor::update(
     try
     {
         SLOG("starting \"" << package << "\" " << __func__);
-        const boost::filesystem::path meta = destination / m_config.installation.meta;
+        const boost::filesystem::path meta =
+            destination / m_config.installation.meta;
         boost::optional<snapshot> snapshot_;
         if (boost::filesystem::is_regular_file(meta))
         {
@@ -88,7 +95,8 @@ void bunsan::pm::repository::extractor::update(
                      ", falling back to outdated.");
             }
         }
-        if (!snapshot_ || *snapshot_ != cache_().read_installation_snapshot(package))
+        if (!snapshot_ ||
+            *snapshot_ != cache_().read_installation_snapshot(package))
         {
             SLOG("\"" << package << "\" installation at " << destination <<
                  " is outdated, updating...");
@@ -101,10 +109,11 @@ void bunsan::pm::repository::extractor::update(
     }
     catch (std::exception &)
     {
-        BOOST_THROW_EXCEPTION(extractor_update_error() <<
-                              extractor_update_error::package(package) <<
-                              extractor_update_error::destination(destination) <<
-                              enable_nested_current());
+        BOOST_THROW_EXCEPTION(
+            extractor_update_error() <<
+            extractor_update_error::package(package) <<
+            extractor_update_error::destination(destination) <<
+            enable_nested_current());
     }
 }
 
@@ -121,10 +130,11 @@ bool bunsan::pm::repository::extractor::need_update(
     }
     catch (std::exception &)
     {
-        BOOST_THROW_EXCEPTION(extractor_need_update_error() <<
-                              extractor_need_update_error::destination(destination) <<
-                              extractor_need_update_error::lifetime(lifetime) <<
-                              enable_nested_current());
+        BOOST_THROW_EXCEPTION(
+            extractor_need_update_error() <<
+            extractor_need_update_error::destination(destination) <<
+            extractor_need_update_error::lifetime(lifetime) <<
+            enable_nested_current());
     }
 }
 
@@ -134,7 +144,8 @@ namespace
         const boost::filesystem::path &source,
         const boost::filesystem::path &destination)
     {
-        SLOG("merging dirs: source = " << source << ", destination = " << destination);
+        SLOG("merging dirs: source = " << source <<
+             ", destination = " << destination);
         for (boost::filesystem::directory_iterator i(source), end; i != end; ++i)
         {
             const boost::filesystem::path src = i->path();
@@ -157,27 +168,61 @@ void bunsan::pm::repository::extractor::extract_source(
     const std::string &source_id,
     const boost::filesystem::path &destination)
 {
-    const tempfile tmp = local_system_().tempdir_for_build();
-    cache_().unpack_source(package, source_id, tmp.path());
-    merge_dir(tmp.path(), destination);
+    try
+    {
+        const tempfile tmp = local_system_().tempdir_for_build();
+        cache_().unpack_source(package, source_id, tmp.path());
+        merge_dir(tmp.path(), destination);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(
+            extractor_extract_source_error() <<
+            extractor_extract_source_error::package(package) <<
+            extractor_extract_source_error::source_id(source_id) <<
+            extractor_extract_source_error::destination(destination) <<
+            enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::extractor::extract_build(
     const entry &package,
     const boost::filesystem::path &destination)
 {
-    const tempfile tmp = local_system_().tempdir_for_build();
-    cache_().unpack_build(package, tmp.path());
-    merge_dir(tmp.path(), destination);
+    try
+    {
+        const tempfile tmp = local_system_().tempdir_for_build();
+        cache_().unpack_build(package, tmp.path());
+        merge_dir(tmp.path(), destination);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(
+            extractor_extract_build_error() <<
+            extractor_extract_build_error::package(package) <<
+            extractor_extract_build_error::destination(destination) <<
+            enable_nested_current());
+    }
 }
 
 void bunsan::pm::repository::extractor::extract_installation(
     const entry &package,
     const boost::filesystem::path &destination)
 {
-    const tempfile tmp = local_system_().tempdir_for_build();
-    cache_().unpack_installation(package, tmp.path());
-    merge_dir(tmp.path(), destination);
+    try
+    {
+        const tempfile tmp = local_system_().tempdir_for_build();
+        cache_().unpack_installation(package, tmp.path());
+        merge_dir(tmp.path(), destination);
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(
+            extractor_extract_installation_error() <<
+            extractor_extract_installation_error::package(package) <<
+            extractor_extract_installation_error::destination(destination) <<
+            enable_nested_current());
+    }
 }
 
 bunsan::pm::repository::cache &bunsan::pm::repository::extractor::cache_()
