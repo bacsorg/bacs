@@ -138,31 +138,6 @@ bool bunsan::pm::repository::extractor::need_update(
     }
 }
 
-namespace
-{
-    void merge_dir(
-        const boost::filesystem::path &source,
-        const boost::filesystem::path &destination)
-    {
-        SLOG("merging dirs: source = " << source <<
-             ", destination = " << destination);
-        for (boost::filesystem::directory_iterator i(source), end; i != end; ++i)
-        {
-            const boost::filesystem::path src = i->path();
-            const boost::filesystem::path dst = destination / i->path().filename();
-            if (boost::filesystem::is_directory(src) &&
-                boost::filesystem::is_directory(dst))
-            {
-                merge_dir(src, dst);
-            }
-            else
-            {
-                boost::filesystem::rename(src, dst);
-            }
-        }
-    }
-}
-
 void bunsan::pm::repository::extractor::extract_source(
     const entry &package,
     const std::string &source_id,
@@ -172,7 +147,7 @@ void bunsan::pm::repository::extractor::extract_source(
     {
         const tempfile tmp = local_system_().tempdir_for_build();
         cache_().unpack_source(package, source_id, tmp.path());
-        merge_dir(tmp.path(), destination);
+        merge_directories(tmp.path(), destination);
     }
     catch (std::exception &)
     {
@@ -193,7 +168,7 @@ void bunsan::pm::repository::extractor::extract_build(
     {
         const tempfile tmp = local_system_().tempdir_for_build();
         cache_().unpack_build(package, tmp.path());
-        merge_dir(tmp.path(), destination);
+        merge_directories(tmp.path(), destination);
     }
     catch (std::exception &)
     {
@@ -213,7 +188,7 @@ void bunsan::pm::repository::extractor::extract_installation(
     {
         const tempfile tmp = local_system_().tempdir_for_build();
         cache_().unpack_installation(package, tmp.path());
-        merge_dir(tmp.path(), destination);
+        merge_directories(tmp.path(), destination);
     }
     catch (std::exception &)
     {
@@ -223,6 +198,51 @@ void bunsan::pm::repository::extractor::extract_installation(
             extractor_extract_installation_error::destination(destination) <<
             enable_nested_current());
     }
+}
+
+namespace
+{
+    void merge_dir(
+        const boost::filesystem::path &source,
+        const boost::filesystem::path &destination)
+    {
+        using namespace bunsan;
+        using namespace pm;
+
+        try
+        {
+            for (boost::filesystem::directory_iterator i(source), end; i != end; ++i)
+            {
+                const boost::filesystem::path src = i->path();
+                const boost::filesystem::path dst = destination / i->path().filename();
+                if (boost::filesystem::is_directory(src) &&
+                    boost::filesystem::is_directory(dst))
+                {
+                    merge_dir(src, dst);
+                }
+                else
+                {
+                    boost::filesystem::rename(src, dst);
+                }
+            }
+        }
+        catch (std::exception &)
+        {
+            BOOST_THROW_EXCEPTION(
+                extractor_merge_directories_error() <<
+                extractor_merge_directories_error::source(source) <<
+                extractor_merge_directories_error::destination(destination) <<
+                enable_nested_current());
+        }
+    }
+}
+
+void bunsan::pm::repository::extractor::merge_directories(
+    const boost::filesystem::path &source,
+    const boost::filesystem::path &destination)
+{
+    boost::filesystem::create_directories(destination);
+    merge_dir(source, destination);
 }
 
 bunsan::pm::repository::cache &bunsan::pm::repository::extractor::cache_()

@@ -142,4 +142,5 @@ namespace bunsan{namespace pm
     struct extractor_extract_source_error: virtual extractor_error {};
     struct extractor_extract_build_error: virtual extractor_error {};
     struct extractor_extract_installation_error: virtual extractor_error {};
+    struct extractor_merge_directories_error: virtual extractor_error {};
 }}

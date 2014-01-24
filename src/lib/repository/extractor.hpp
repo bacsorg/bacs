@@ -45,6 +45,11 @@ public:
         const boost::filesystem::path &destination);
 
 private:
+    static void merge_directories(
+        const boost::filesystem::path &source,
+        const boost::filesystem::path &destination);
+
+private:
     cache &cache_();
     local_system &local_system_();
 
