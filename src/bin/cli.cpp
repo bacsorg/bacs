@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     std::time_t lifetime;
     try
     {
-        //command line parse
+        // command line parse
         boost::program_options::options_description desc(argv[0]);
         desc.add_options()
             ("help,h", "Print this information")
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
         else if (vm.count("package"))
         {
             if (vm.count("extract"))
-            {//extracting
+            { // extracting
                 std::cerr << "Attempt to extract \"" << package << "\" to \"" << extract_to << "\"" << std::endl;
                 repo.extract(package, extract_to);
             }
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
                     repo.update(package, update_installation);
             }
             else
-            {//package info
+            { // package info
                 std::cerr << "Package \"" << package << "\"" << std::endl;
             }
         }
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
             std::cerr << "Attempt to create source packages recursively from source starting from \"" << create_recursively << "\"" << std::endl;
             repo.create_recursively(create_recursively, vm.count("strip"));
         }
-        //end parse
+        // end parse
     }
     catch (std::exception &e)
     {
