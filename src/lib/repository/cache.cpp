@@ -293,7 +293,7 @@ boost::filesystem::path bunsan::pm::repository::cache::build_snapshot_path(
 boost::filesystem::path bunsan::pm::repository::cache::installation_archive_path(
     const entry &package)
 {
-    return package_file_path(package, m_config.name.get_installation_snapshot());
+    return package_file_path(package, m_config.name.get_installation_archive());
 }
 
 boost::filesystem::path bunsan::pm::repository::cache::installation_snapshot_path(
