@@ -18,7 +18,7 @@ namespace bunsan{namespace pm{namespace compatibility
         explicit repository(const std::string &config);
         void create(const std::string &path, bool strip=false);
         void extract(const std::string &package, const std::string &path);
-        void clean();
+        void clean_cache();
         ~repository();
 
     private:

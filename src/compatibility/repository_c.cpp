@@ -42,9 +42,9 @@ int bunsan_pm_repository_create(cstring config, cstring source, bool strip, stri
     return ::wrap(&repository::create, config, error_msg, error_size, source, strip);
 }
 
-int bunsan_pm_repository_clean(cstring config, string error_msg, size_type error_size)
+int bunsan_pm_repository_clean_cache(cstring config, string error_msg, size_type error_size)
 {
-    return ::wrap(&repository::clean, config, error_msg, error_size);
+    return ::wrap(&repository::clean_cache, config, error_msg, error_size);
 }
 
 int bunsan_pm_repository_extract(cstring config, cstring package, cstring destination, string error_msg, size_type error_size)

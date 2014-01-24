@@ -430,7 +430,7 @@ bool bunsan::pm::repository::update_package_depends(
     return updated[package] = upd;
 }
 
-void bunsan::pm::repository::clean()
+void bunsan::pm::repository::clean_cache()
 {
     try
     {

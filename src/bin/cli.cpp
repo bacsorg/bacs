@@ -27,7 +27,7 @@ int main(int argc, char **argv)
             ("help,h", "Print this information")
             ("version,V", "Program version")
             ("config,c", boost::program_options::value<std::string>(&config_file)->default_value("pm.rc"), "Configuration file")
-            ("clean", "Clean repository")
+            ("clean", "Clean cache")
             ("package,p", boost::program_options::value<std::string>(&package), "Package name")
             ("extract,e", boost::program_options::value<std::string>(&extract_to), "Extract package to location")
             ("install,i", boost::program_options::value<std::string>(&install_to), "Install package to location")
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
         if (vm.count("clean"))
         {
             std::cerr << "Attempt to clean repository" << std::endl;
-            repo.clean();
+            repo.clean_cache();
         }
         else if (vm.count("package"))
         {

@@ -25,7 +25,7 @@ extern "C"
         string error_msg,
         size_type error_size);
 
-    int bunsan_pm_repository_clean(
+    int bunsan_pm_repository_clean_cache(
         cstring config,
         string error_msg,
         size_type error_size);

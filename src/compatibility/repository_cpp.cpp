@@ -26,9 +26,9 @@ void bunsan::pm::compatibility::repository::create(
     m_repo->create(path, strip);
 }
 
-void bunsan::pm::compatibility::repository::clean()
+void bunsan::pm::compatibility::repository::clean_cache()
 {
-    m_repo->clean();
+    m_repo->clean_cache();
 }
 
 bunsan::pm::compatibility::repository::~repository()
