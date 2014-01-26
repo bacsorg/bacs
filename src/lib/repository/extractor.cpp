@@ -117,6 +117,18 @@ void bunsan::pm::repository::extractor::update(
     }
 }
 
+namespace
+{
+    bool out_of_range(
+        const std::time_t now,
+        const std::time_t lifetime,
+        const std::time_t last_write_time)
+    {
+        return now > lifetime + last_write_time ||
+               last_write_time > lifetime + now;
+    }
+}
+
 bool bunsan::pm::repository::extractor::need_update(
     const boost::filesystem::path &destination,
     const std::time_t &lifetime)
@@ -126,7 +138,10 @@ bool bunsan::pm::repository::extractor::need_update(
         SLOG("starting " << destination << " " << __func__);
         const boost::filesystem::path meta = destination / m_config.installation.meta;
         return !boost::filesystem::is_regular_file(meta) ||
-               std::time(nullptr) > lifetime + boost::filesystem::last_write_time(meta);
+               out_of_range(
+                   std::time(nullptr),
+                   lifetime,
+                   boost::filesystem::last_write_time(meta));
     }
     catch (std::exception &)
     {
