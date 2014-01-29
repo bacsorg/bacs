@@ -54,6 +54,8 @@ namespace bacs{namespace statement_provider{namespace web
                 BOOST_ASSERT(filename.find('"') == std::string::npos);
                 response().set_header("Content-Disposition", "filename=\"" + filename + "\"");
                 response().content_length(boost::filesystem::file_size(filepath));
+                // gzip encoding works incorrectly in combination with content length
+                response().io_mode(cppcms::http::response::nogzip);
                 bunsan::filesystem::ifstream fin(filepath);
                 BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin)
                 {
