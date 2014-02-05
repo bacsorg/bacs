@@ -32,7 +32,6 @@ For instance binary executable may be wrapped for functional call.
 \section utility_utilities_list_sec Utilities list
 
 - \ref checker_page
-- \ref validator_page
 
 */
 
