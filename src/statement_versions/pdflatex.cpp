@@ -1,6 +1,5 @@
 #include "pdflatex.hpp"
 
-#include <bunsan/enable_error_info.hpp>
 #include <bunsan/config/cast.hpp>
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
@@ -54,15 +53,15 @@ namespace bacs{namespace problem{namespace statement_versions
             index.source.self.insert(std::make_pair(".", "src"));
             index.package.self.insert(std::make_pair(".", "pkg"));
             boost::filesystem::create_directory(destination / "src");
-            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            bunsan::filesystem::ofstream fout(destination / "src" / "source.cmake");
+            BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout)
             {
-                bunsan::filesystem::ofstream fout(destination / "src" / "source.cmake");
                 fout << "set(root " << m_root << ")\n";
                 fout << "set(source " << m_source << ")\n";
                 fout << "set(target " << m_target << ")\n";
-                fout.close();
             }
-            BUNSAN_EXCEPTIONS_WRAP_END()
+            BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fout)
+            fout.close();
             boost::filesystem::create_directory(destination / "pkg");
             manifest statement_manifest;
             statement_manifest.version.lang = lang();

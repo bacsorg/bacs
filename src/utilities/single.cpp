@@ -3,7 +3,6 @@
 #include <bacs/problem/error.hpp>
 #include <bacs/problem/split.hpp>
 
-#include <bunsan/enable_error_info.hpp>
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
 #include <bunsan/pm/index.hpp>
@@ -65,9 +64,9 @@ namespace bacs{namespace problem{namespace utilities
             // modules: set binary name
             index.source.self.insert(std::make_pair("modules", "modules"));
             boost::filesystem::create_directory(destination / "modules");
-            BUNSAN_EXCEPTIONS_WRAP_BEGIN()
+            bunsan::filesystem::ofstream fout(destination / "modules" / "utility.cmake");
+            BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout)
             {
-                bunsan::filesystem::ofstream fout(destination / "modules" / "utility.cmake");
                 fout << "set(target " << target().string() << ")\n";
                 fout << "set(source " << m_source.string() << ")\n";
                 fout << "set(libraries";
@@ -76,9 +75,9 @@ namespace bacs{namespace problem{namespace utilities
                 fout << ")\n";
                 if (m_std)
                     fout << "set(std " << m_std << ")\n";
-                fout.close();
             }
-            BUNSAN_EXCEPTIONS_WRAP_END()
+            BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fout)
+            fout.close();
             // dependencies
             for (const std::string &lib: m_libs)
                 index.source.import.package.insert(std::make_pair(".", "bacs/lib/" + lang + "/" + lib));
