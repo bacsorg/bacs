@@ -2,9 +2,9 @@
 
 #include <bunsan/utility/error.hpp>
 
-#include <bunsan/config/cast.hpp>
+#include <bunsan/process/path.hpp>
 
-#include <boost/process.hpp>
+#include <bunsan/config/cast.hpp>
 
 bunsan::utility::resolver::resolver() {}
 
@@ -97,12 +97,12 @@ void bunsan::utility::resolver::apply_path(boost::filesystem::path &name) const
     if (m_config)
     {
         if (m_config->path.find(name) != m_config->path.end() && name == name.filename())
-            name = boost::process::find_executable_in_path(name.string());
+            name = bunsan::process::find_executable_in_path(name);
     }
     else
     {
         if (name == name.filename())
-            name = boost::process::find_executable_in_path(name.string());
+            name = bunsan::process::find_executable_in_path(name);
     }
 }
 
