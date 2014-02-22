@@ -43,7 +43,7 @@ void makers::make::exec(
         ctx.executable(m_exe);
         ctx.current_path(cwd);
         ctx.arguments(arguments_(targets));
-        check_sync_execute(ctx);
+        check_sync_execute_with_output(ctx);
     }
     catch (std::exception &)
     {

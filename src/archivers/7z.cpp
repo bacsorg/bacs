@@ -47,7 +47,7 @@ void archivers::_7z::pack_from(
             archive.string() + ".",
             file
         );
-        bunsan::process::check_sync_execute(ctx);
+        bunsan::process::check_sync_execute_with_output(ctx);
     }
     catch (std::exception &)
     {
@@ -75,7 +75,7 @@ void archivers::_7z::unpack(
             "--",
             archive
         );
-        bunsan::process::check_sync_execute(ctx);
+        bunsan::process::check_sync_execute_with_output(ctx);
     }
     catch (std::exception &)
     {

@@ -30,7 +30,7 @@ void fetchers::curl::fetch(const std::string &uri, const boost::filesystem::path
             "--silent",
             uri
         );
-        bunsan::process::check_sync_execute(ctx);
+        bunsan::process::check_sync_execute_with_output(ctx);
         if (!boost::filesystem::exists(dst))
         {
             bunsan::filesystem::ofstream touch(dst);

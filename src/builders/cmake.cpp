@@ -102,7 +102,7 @@ void builders::cmake::configure_(
         ctx.executable(m_cmake_exe);
         ctx.current_path(bin);
         ctx.arguments(arguments_(src));
-        bunsan::process::check_sync_execute(ctx);
+        bunsan::process::check_sync_execute_with_output(ctx);
     }
     catch (std::exception &)
     {

@@ -27,7 +27,7 @@ void fetchers::wget::fetch(const std::string &uri, const boost::filesystem::path
             "--quiet",
             uri
         );
-        bunsan::process::check_sync_execute(ctx);
+        bunsan::process::check_sync_execute_with_output(ctx);
     }
     catch (std::exception &)
     {

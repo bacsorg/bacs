@@ -38,7 +38,7 @@ void archivers::tar::pack_from(
             "--",
             file
         );
-        bunsan::process::check_sync_execute(ctx);
+        bunsan::process::check_sync_execute_with_output(ctx);
     }
     catch (std::exception &)
     {
@@ -68,7 +68,7 @@ void archivers::tar::unpack(
             boost::filesystem::absolute(dir),
             flag_arguments()
         );
-        bunsan::process::check_sync_execute(ctx);
+        bunsan::process::check_sync_execute_with_output(ctx);
     }
     catch (std::exception &)
     {
