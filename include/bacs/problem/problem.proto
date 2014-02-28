@@ -4,7 +4,7 @@ message Problem
 {
     required Info info = 1;
     required Statement statement = 2;
-    repeated Profile profiles = 3;
+    repeated Profile profile = 3;
     required Utilities utilities = 4;
     extensions 1024 to max;
 }
@@ -22,10 +22,10 @@ message Info
         required bytes hash = 2;
         required string package = 3;
     }
-    repeated Name names = 1;
-    repeated string authors = 2;
+    repeated Name name = 1;
+    repeated string author = 2;
     optional string source = 3;
-    repeated string maintainers = 4;
+    repeated string maintainer = 4;
     required System system = 5;
 }
 
@@ -37,7 +37,7 @@ message Statement
         required string format = 2;
         required string package = 3;
     }
-    repeated Version versions = 1;
+    repeated Version version = 1;
 }
 
 message Profile

@@ -125,7 +125,7 @@ namespace bacs{namespace problem
     {
         for (const version_ptr &version: m_versions)
         {
-            Statement::Version &info = *m_info.add_versions() = version->info();
+            Statement::Version &info = *m_info.add_version() = version->info();
             const bunsan::pm::entry package = versions_subpackage / info.package();
             info.set_package(package.name());
         }
