@@ -71,7 +71,15 @@ public:
     static void initialize(const cache_config &config);
 
 private:
+    static void initialize_meta(const cache_config &config);
+
+    void save_meta();
+    cache_config::meta load_meta();
+
     static void verify_and_repair_directory(const boost::filesystem::path &path);
+
+    /// Does not verify directories.
+    void clean_();
 
 private:
     boost::filesystem::path file_path(

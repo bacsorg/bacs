@@ -3,9 +3,13 @@
 #include "distributor.hpp"
 #include "local_system.hpp"
 
+#include <bunsan/config/cast.hpp>
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
 #include <bunsan/logging/legacy.hpp>
+
+#include <boost/property_tree/info_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 bunsan::pm::repository::cache::cache(repository &self, const cache_config &config):
     m_self(self),
@@ -53,6 +57,7 @@ void bunsan::pm::repository::cache::initialize(const cache_config &config)
             filesystem::ofstream fout(config.get_lock());
             fout.close();
         }
+        initialize_meta(config);
     }
     catch (std::exception &)
     {
@@ -61,10 +66,54 @@ void bunsan::pm::repository::cache::initialize(const cache_config &config)
     }
 }
 
+void bunsan::pm::repository::cache::initialize_meta(const cache_config &config)
+{
+    cache_config::meta meta;
+    meta.version = repository::version();
+    boost::property_tree::write_info(
+        config.get_meta().string(),
+        bunsan::config::save<boost::property_tree::ptree>(meta)
+    );
+}
+
+void bunsan::pm::repository::cache::save_meta()
+{
+    initialize_meta(m_config);
+}
+
+bunsan::pm::cache_config::meta bunsan::pm::repository::cache::load_meta()
+{
+    boost::property_tree::ptree pmeta;
+    boost::property_tree::read_info(m_config.get_meta().string(), pmeta);
+    return bunsan::config::load<cache_config::meta>(pmeta);
+}
+
 void bunsan::pm::repository::cache::verify_and_repair()
 {
     try
     {
+        bool outdated = false;
+        try
+        {
+            const auto meta = load_meta();
+            if (meta.version != repository::version())
+            {
+                SLOG("Cache's version \"" << meta.version <<
+                     "\" is not equal to repository's version \"" <<
+                     repository::version() << "\", resetting cache");
+                outdated = true;
+            }
+        }
+        catch (std::exception &)
+        {
+            SLOG("Unable to read cache's meta, resetting cache");
+            outdated = true;
+        }
+        if (outdated)
+        {
+            clean_();
+            save_meta();
+        }
         verify_and_repair_directory(m_config.get_source());
         verify_and_repair_directory(m_config.get_package());
     }
@@ -107,13 +156,30 @@ void bunsan::pm::repository::cache::verify_and_repair_directory(
     }
 }
 
+void bunsan::pm::repository::cache::clean_()
+{
+    try
+    {
+        filesystem::reset_dir(m_config.get_source());
+        filesystem::reset_dir(m_config.get_package());
+    }
+    catch (std::exception &)
+    {
+        BOOST_THROW_EXCEPTION(cache_clean_error() <<
+                              enable_nested_current());
+    }
+}
+
 void bunsan::pm::repository::cache::clean()
 {
     try
     {
         verify_and_repair();
-        filesystem::reset_dir(m_config.get_source());
-        filesystem::reset_dir(m_config.get_package());
+        clean_();
+    }
+    catch (cache_clean_error &)
+    {
+        throw;
     }
     catch (std::exception &)
     {

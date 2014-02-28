@@ -117,6 +117,17 @@ namespace bunsan{namespace pm
 
     struct cache_config
     {
+        struct meta
+        {
+            template <typename Archive>
+            void serialize(Archive &ar, const unsigned int)
+            {
+                ar & BOOST_SERIALIZATION_NVP(version);
+            }
+
+            std::string version;
+        };
+
         template <typename Archive>
         void serialize(Archive &ar, const unsigned int)
         {
@@ -134,6 +145,7 @@ namespace bunsan{namespace pm
                                                         ///< \warning filesystem must support flock(2)
 
         inline boost::filesystem::path get_lock() const { return lock.get_value_or(root / "lock"); }
+        inline boost::filesystem::path get_meta() const { return root / "meta"; }
         inline boost::filesystem::path get_source() const { return root / "source"; }
         inline boost::filesystem::path get_package() const { return root / "package"; }
 
