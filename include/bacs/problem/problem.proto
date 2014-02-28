@@ -6,7 +6,7 @@ message Problem
     required Statement statement = 2;
     repeated Profile profile = 3;
     required Utilities utilities = 4;
-    extensions 1024 to max;
+    extensions 1000 to max;
 }
 
 message Info
@@ -43,16 +43,16 @@ message Statement
 message Profile
 {
     optional string description = 1;
-    extensions 1024 to max;
+    extensions 1000 to max;
 }
 
 message Utilities
 {
-    extensions 1024 to max;
+    extensions 1000 to max;
 }
 
 message Utility
 {
     required string builder = 1;
-    extensions 1024 to max;
+    extensions 1000 to max;
 }
