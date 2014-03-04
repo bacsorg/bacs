@@ -1,0 +1,67 @@
+package bacs.process;
+
+message ResourceLimits
+{
+    optional uint64 time_limit_millis = 1;
+    optional uint64 memory_limit_bytes = 2;
+    optional uint64 output_limit_bytes = 3;
+    optional uint64 number_of_processes = 4;
+    optional uint64 real_time_limit_millis = 5;
+}
+
+message ResourceUsage
+{
+    // TODO: do we need to export Process::ResourceUsage::timeUsage?
+    required uint64 time_usage_millis = 1;
+    required uint64 memory_usage_bytes = 2;
+}
+
+message Buildable
+{
+    required bytes source = 1;
+    required BuildSettings build_settings = 2;
+}
+
+message BuildSettings
+{
+    /// Constraints for build system
+    required Builder builder = 1;
+    optional ResourceLimits resource_limits = 2;
+}
+
+/*!
+ * One of implemented build systems.
+ * For simple cases it may be compiler name with options,
+ * e.g. {type = "gcc", arguments = ["-O2"]}.
+ */
+message Builder
+{
+    required string type = 1;
+    repeated string argument = 2;
+}
+
+message BuildResult
+{
+    required ExecutionResult execution = 1;
+    required bytes output = 2;
+}
+
+message ExecutionResult
+{
+    enum Status
+    {
+        OK = 0;
+        ABNORMAL_EXIT = 1;
+        MEMORY_LIMIT_EXCEEDED = 2;
+        TIME_LIMIT_EXCEEDED = 3;
+        OUTPUT_LIMIT_EXCEEDED = 4;
+        REAL_TIME_LIMIT_EXCEEDED = 5;
+        TERMINATED_BY_SYSTEM = 6;
+        FAILED = 7;
+    }
+    required Status status = 1;
+    optional int32 exit_status = 2;
+    optional int32 term_sig = 3;
+    required ResourceUsage resource_usage = 4;
+    optional bytes full = 5;
+}
