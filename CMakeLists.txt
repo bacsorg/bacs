@@ -16,6 +16,7 @@ bunsan_protobuf_generate_cpp(
     INSTALL include
 
     PROTOS
+    bacs/callback.proto
     bacs/process.proto
 )
 
