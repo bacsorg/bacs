@@ -17,6 +17,7 @@ bunsan_protobuf_generate_cpp(
 
     PROTOS
     bacs/callback.proto
+    bacs/file.proto
     bacs/process.proto
 )
 
