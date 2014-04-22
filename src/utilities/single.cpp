@@ -57,7 +57,9 @@ namespace bacs{namespace problem{namespace utilities
             bunsan::pm::index index;
             const std::string lang = get_lang(m_source.filename().string());
             // builder itself
-            index.source.import.source.insert(std::make_pair(".", "bacs/system/utility/single/" + lang));
+            index.source.import.source.insert(
+                std::make_pair(".", "bacs/system/utility/single/" + lang)
+            );
             // sources, note: only build section is needed from config
             index.source.self.insert(std::make_pair("src", "src"));
             bunsan::filesystem::copy_tree(location(), destination / "src");
@@ -80,17 +82,22 @@ namespace bacs{namespace problem{namespace utilities
             fout.close();
             // dependencies
             for (const std::string &lib: m_libs)
-                index.source.import.package.insert(std::make_pair(".", "bacs/lib/" + lang + "/" + lib));
+            {
+                index.source.import.package.insert(
+                    std::make_pair(".", "bacs/lib/" + lang + "/" + lib)
+                );
+            }
             // save it
             index.save(destination / "index");
             return true;
         }
         catch (std::exception &)
         {
-            BOOST_THROW_EXCEPTION(utility_make_package_error() <<
-                                  utility_make_package_error::destination(destination) <<
-                                  //utility_make_package_error::package(package) <<
-                                  bunsan::enable_nested_current());
+            BOOST_THROW_EXCEPTION(
+                utility_make_package_error() <<
+                utility_make_package_error::destination(destination) <<
+                //utility_make_package_error::package(package) <<
+                bunsan::enable_nested_current());
         }
     }
 }}}
