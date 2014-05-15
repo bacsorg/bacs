@@ -71,8 +71,13 @@ namespace bacs{namespace problem{namespace resource{namespace parse
     {
         time_parser(): time_parser::base_type(start)
         {
-            multiple = (si_multiple_[qi::_val = qi::_1] | si_submultiple_[qi::_val = qi::_1] | qi::eps[qi::_val = 1]) >> qi::lit('s');
-            multiple_unit = multiple[qi::_val = qi::_1] | qi::eps[qi::_val = 1];
+            multiple = (
+                    si_multiple_[qi::_val = qi::_1] |
+                    si_submultiple_[qi::_val = qi::_1] |
+                    qi::eps[qi::_val = 1]
+                ) >> qi::lit('s');
+            multiple_unit = multiple[qi::_val = qi::_1] |
+                            qi::eps[qi::_val = 1];
             start = (qi::double_ >> multiple_unit)[qi::_val = qi::_1 * qi::_2];
         }
 
@@ -86,8 +91,12 @@ namespace bacs{namespace problem{namespace resource{namespace parse
     {
         memory_parser(): memory_parser::base_type(start)
         {
-            multiple = (binary_multiple_[qi::_val = qi::_1] | qi::eps[qi::_val = 1]) >> qi::lit('B');
-            multiple_unit = (multiple[qi::_val = qi::_1] | qi::eps[qi::_val = 1]);
+            multiple = (
+                    binary_multiple_[qi::_val = qi::_1] |
+                    qi::eps[qi::_val = 1]
+                ) >> qi::lit('B');
+            multiple_unit = multiple[qi::_val = qi::_1] |
+                            qi::eps[qi::_val = 1];
             start = (qi::double_ >> multiple_unit)[qi::_val = qi::_1 * qi::_2];
         }
 
@@ -99,7 +108,12 @@ namespace bacs{namespace problem{namespace resource{namespace parse
     {
         std::string::const_iterator begin = time.begin();
         double result;
-        if (!qi::parse(begin, time.end(), time_parser<std::string::const_iterator>(), result) ||
+        if (!qi::parse(
+                begin,
+                time.end(),
+                time_parser<std::string::const_iterator>(),
+                result
+            ) ||
             begin != time.end())
         {
             BOOST_THROW_EXCEPTION(time_error() <<
@@ -113,12 +127,18 @@ namespace bacs{namespace problem{namespace resource{namespace parse
     {
         std::string::const_iterator begin = memory.begin();
         double result;
-        if (!qi::parse(begin, memory.end(), memory_parser<std::string::const_iterator>(), result) ||
+        if (!qi::parse(
+                begin,
+                memory.end(),
+                memory_parser<std::string::const_iterator>(),
+                result
+            ) ||
             begin != memory.end())
         {
-            BOOST_THROW_EXCEPTION(memory_error() <<
-                                  memory_error::value(memory) <<
-                                  memory_error::pos(begin - memory.begin()));
+            BOOST_THROW_EXCEPTION(
+                memory_error() <<
+                memory_error::value(memory) <<
+                memory_error::pos(begin - memory.begin()));
         }
         return boost::numeric_cast<std::uint64_t>(std::round(result));
     }

@@ -12,7 +12,8 @@ namespace bacs{namespace problem{namespace split
 {
     template <typename Ptree>
     std::vector<std::string> get_vector(
-        const Ptree &config, const typename Ptree::path_type &name)
+        const Ptree &config,
+        const typename Ptree::path_type &name)
     {
         const boost::optional<std::string> val =
             config.template get_optional<std::string>(name);
@@ -25,8 +26,9 @@ namespace bacs{namespace problem{namespace split
     }
 
     template <typename Ptree>
-    void parse_repeated(google::protobuf::RepeatedPtrField<std::string> &vec,
-                        const Ptree &config, const typename Ptree::path_type &name)
+    void parse_repeated(
+        google::protobuf::RepeatedPtrField<std::string> &vec,
+        const Ptree &config, const typename Ptree::path_type &name)
     {
         vec.Clear();
         for (const std::string &s: get_vector(config, name))

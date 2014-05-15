@@ -38,17 +38,26 @@ namespace bacs{namespace problem
     struct importer_error: virtual error {};
     struct importer_convert_error: virtual importer_error
     {
-        typedef boost::error_info<struct tag_options, importer_detail::options> options;
+        typedef boost::error_info<
+            struct tag_options,
+            importer_detail::options
+        > options;
     };
     struct problem_format_error: virtual importer_error
     {
-        typedef boost::error_info<struct tag_problem_format, std::string> problem_format;
+        typedef boost::error_info<
+            struct tag_problem_format,
+            std::string
+        > problem_format;
     };
     struct unknown_problem_format_error: virtual problem_format_error {};
     struct empty_problem_format_error: virtual problem_format_error {};
     struct problem_type_error: virtual problem_format_error
     {
-        typedef boost::error_info<struct tag_problem_type, std::string> problem_type;
+        typedef boost::error_info<
+            struct tag_problem_type,
+            std::string
+        > problem_type;
     };
     struct unknown_problem_type_error:
         virtual problem_type_error,
@@ -67,7 +76,7 @@ namespace bacs{namespace problem
 
     public:
         /*!
-         * \return importer that converts problems for registered types.
+         * \return importer that converts problems for registered types
          *
          * \param config per-implementation config, e.g.
          *
@@ -98,12 +107,15 @@ namespace bacs{namespace problem
         virtual ~importer();
 
     protected:
-        static std::string get_problem_format(const boost::filesystem::path &problem_dir);
-        static std::string get_problem_type(const boost::filesystem::path &problem_dir);
+        static std::string get_problem_format(
+            const boost::filesystem::path &problem_dir);
+        static std::string get_problem_type(
+            const boost::filesystem::path &problem_dir);
     BUNSAN_FACTORY_END(importer)
 }}
 
 namespace boost
 {
-    std::string to_string(const bacs::problem::importer_convert_error::options &options);
+    std::string to_string(
+        const bacs::problem::importer_convert_error::options &options);
 }

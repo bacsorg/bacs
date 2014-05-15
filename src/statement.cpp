@@ -12,22 +12,32 @@ namespace bacs{namespace problem
 {
     BUNSAN_FACTORY_DEFINE(statement::version)
 
-    statement::version_ptr statement::version::instance(const boost::filesystem::path &config_location)
+    statement::version_ptr statement::version::instance(
+        const boost::filesystem::path &config_location)
     {
         boost::property_tree::ptree config;
         boost::property_tree::read_ini(config_location.string(), config);
-        return instance(config.get<std::string>("build.builder"), config_location.parent_path(), config);
+        return instance(
+            config.get<std::string>("build.builder"),
+            config_location.parent_path(),
+            config
+        );
     }
 
-    statement::version::version(const std::string &lang_, const std::string &format_):
-        m_lang(lang_), m_format(format_)
+    statement::version::version(
+        const std::string &lang_,
+        const std::string &format_):
+            m_lang(lang_),
+            m_format(format_)
     {
         if (!bunsan::pm::entry::is_allowed_subpath(m_lang))
-            BOOST_THROW_EXCEPTION(invalid_statement_lang_error() <<
-                                  invalid_statement_lang_error::lang(m_lang));
+            BOOST_THROW_EXCEPTION(
+                invalid_statement_lang_error() <<
+                invalid_statement_lang_error::lang(m_lang));
         if (!bunsan::pm::entry::is_allowed_subpath(m_format))
-            BOOST_THROW_EXCEPTION(invalid_statement_format_error() <<
-                                  invalid_statement_format_error::format(m_format));
+            BOOST_THROW_EXCEPTION(
+                invalid_statement_format_error() <<
+                invalid_statement_format_error::format(m_format));
         // TODO format -> mime_type?
     }
 
@@ -57,12 +67,16 @@ namespace bacs{namespace problem
         return v;
     }
 
-    const boost::filesystem::path statement::version::manifest_path = "manifest.ini";
-    const boost::filesystem::path statement::version::data_path = "data"; ///< \warning keep in sync with bacs/system/statement
+    /// \warning keep in sync with bacs/system/statement
+    const boost::filesystem::path
+        statement::version::manifest_path = "manifest.ini";
+    const boost::filesystem::path
+        statement::version::data_path = "data";
 
     namespace
     {
-        statement::version::manifest load_manifest(const boost::filesystem::path &path)
+        statement::version::manifest load_manifest(
+            const boost::filesystem::path &path)
         {
             boost::property_tree::ptree ptree;
             boost::property_tree::read_ini(path.string(), ptree);
@@ -70,9 +84,10 @@ namespace bacs{namespace problem
         }
     }
 
-    statement::version::built::built(const boost::filesystem::path &package_root):
-        m_package_root(package_root),
-        m_manifest(load_manifest(package_root / manifest_path)) {}
+    statement::version::built::built(
+        const boost::filesystem::path &package_root):
+            m_package_root(package_root),
+            m_manifest(load_manifest(package_root / manifest_path)) {}
 
     const boost::filesystem::path &statement::version::built::package_root() const
     {
@@ -99,7 +114,8 @@ namespace bacs{namespace problem
         const bunsan::pm::entry versions_subpackage = "versions";
     }
 
-    statement_ptr statement::instance(const boost::filesystem::path &location)
+    statement_ptr statement::instance(
+        const boost::filesystem::path &location)
     {
         std::vector<version_ptr> versions;
         for (boost::filesystem::directory_iterator i(location), end; i != end; ++i)
@@ -114,9 +130,11 @@ namespace bacs{namespace problem
         return tmp;
     }
 
-    statement::statement(const boost::filesystem::path &location,
-                         const std::vector<version_ptr> &versions):
-        m_location(location), m_versions(versions)
+    statement::statement(
+        const boost::filesystem::path &location,
+        const std::vector<version_ptr> &versions):
+            m_location(location),
+            m_versions(versions)
     {
         update_info();
     }
@@ -125,51 +143,63 @@ namespace bacs{namespace problem
     {
         for (const version_ptr &version: m_versions)
         {
-            Statement::Version &info = *m_info.add_version() = version->info();
-            const bunsan::pm::entry package = versions_subpackage / info.package();
+            Statement::Version &info =
+                *m_info.add_version() = version->info();
+            const bunsan::pm::entry package =
+                versions_subpackage / info.package();
             info.set_package(package.name());
         }
     }
 
-    bool statement::make_package(const boost::filesystem::path &destination,
-                                 const bunsan::pm::entry &package) const
+    bool statement::make_package(
+        const boost::filesystem::path &destination,
+        const bunsan::pm::entry &package) const
     {
         try
         {
             const bunsan::pm::entry &root_package = package;
             bunsan::filesystem::reset_dir(destination);
+
             // resources
-            const bunsan::pm::entry resources_package = root_package / "resources";
+            const bunsan::pm::entry resources_package =
+                root_package / "resources";
             {
-                const boost::filesystem::path package_root = destination / resources_package.location().filename();
+                const boost::filesystem::path package_root =
+                    destination / resources_package.location().filename();
                 boost::filesystem::create_directory(package_root);
                 bunsan::pm::index index;
                 index.source.self.insert(std::make_pair(".", "src"));
                 bunsan::filesystem::copy_tree(m_location, package_root / "src");
                 index.save(package_root / "index");
             }
+
             // versions
             {
-                const boost::filesystem::path versions_path = destination / versions_subpackage.location();
+                const boost::filesystem::path versions_path =
+                    destination / versions_subpackage.location();
                 boost::filesystem::create_directory(versions_path);
                 for (const version_ptr &v: m_versions)
                 {
                     const bunsan::pm::entry package = v->info().package();
-                    const boost::filesystem::path package_path = versions_path / package.location();
+                    const boost::filesystem::path package_path =
+                        versions_path / package.location();
                     boost::filesystem::create_directories(package_path);
-                    v->make_package(package_path,
-                                    root_package / versions_subpackage / package,
-                                    resources_package);
+                    v->make_package(
+                        package_path,
+                        root_package / versions_subpackage / package,
+                        resources_package);
                 }
             }
+
             return true;
         }
         catch (std::exception &)
         {
-            BOOST_THROW_EXCEPTION(buildable_make_package_error() <<
-                                  buildable_make_package_error::destination(destination) <<
-                                  buildable_make_package_error::package(package) <<
-                                  bunsan::enable_nested_current());
+            BOOST_THROW_EXCEPTION(
+                buildable_make_package_error() <<
+                buildable_make_package_error::destination(destination) <<
+                buildable_make_package_error::package(package) <<
+                bunsan::enable_nested_current());
         }
     }
 

@@ -13,21 +13,29 @@ namespace bacs{namespace problem
     struct utility_make_package_error: virtual buildable_make_package_error {};
     struct invalid_target_error: virtual utility_error
     {
-        typedef boost::error_info<struct tag_target, boost::filesystem::path> target;
+        typedef boost::error_info<
+            struct tag_target,
+            boost::filesystem::path
+        > target;
     };
 
     /// \see \ref utility_page
     class utility: public buildable
-    BUNSAN_FACTORY_BEGIN(utility, const boost::filesystem::path &/*location*/,
-                                  const boost::property_tree::ptree &/*config*/)
+    BUNSAN_FACTORY_BEGIN(utility,
+                         const boost::filesystem::path &/*location*/,
+                         const boost::property_tree::ptree &/*config*/)
     public:
-        static utility_ptr instance(const boost::filesystem::path &location);
-        static utility_ptr instance_optional(const boost::filesystem::path &location);
+        static utility_ptr instance(
+            const boost::filesystem::path &location);
+        static utility_ptr instance_optional(
+            const boost::filesystem::path &location);
 
-        static utility_ptr instance(const boost::filesystem::path &location,
-                                    const boost::property_tree::ptree &config);
-        static utility_ptr instance_optional(const boost::filesystem::path &location,
-                                             const boost::property_tree::ptree &config);
+        static utility_ptr instance(
+            const boost::filesystem::path &location,
+            const boost::property_tree::ptree &config);
+        static utility_ptr instance_optional(
+            const boost::filesystem::path &location,
+            const boost::property_tree::ptree &config);
 
     public:
         utility(const boost::filesystem::path &location,
@@ -37,7 +45,8 @@ namespace bacs{namespace problem
         virtual Utility info() const;
 
         /// One of sections in configuration.
-        virtual boost::property_tree::ptree section(const std::string &name) const;
+        virtual boost::property_tree::ptree section(
+            const std::string &name) const;
 
         virtual boost::filesystem::path location() const;
 

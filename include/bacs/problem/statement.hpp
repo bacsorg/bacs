@@ -21,23 +21,37 @@ namespace bacs{namespace problem
         virtual statement_version_error,
         virtual buildable_make_package_error
     {
-        typedef boost::error_info<struct tag_resources_package, bunsan::pm::entry> resources_package;
+        typedef boost::error_info<
+            struct tag_resources_package,
+            bunsan::pm::entry
+        > resources_package;
     };
-    struct invalid_statement_lang_error: virtual invalid_id_error, virtual statement_error
+    struct invalid_statement_lang_error:
+        virtual invalid_id_error,
+        virtual statement_error
     {
-        typedef boost::error_info<struct tag_lang, std::string> lang;
+        typedef boost::error_info<
+            struct tag_lang,
+            std::string
+        > lang;
     };
-    struct invalid_statement_format_error: virtual invalid_id_error, virtual statement_error
+    struct invalid_statement_format_error:
+        virtual invalid_id_error,
+        virtual statement_error
     {
-        typedef boost::error_info<struct tag_format, std::string> format;
+        typedef boost::error_info<
+            struct tag_format,
+            std::string
+        > format;
     };
 
     class statement: public buildable
     {
     public:
         class version: private boost::noncopyable
-        BUNSAN_FACTORY_BEGIN(version, const boost::filesystem::path &/*location*/,
-                                      const boost::property_tree::ptree &/*config*/)
+        BUNSAN_FACTORY_BEGIN(version,
+                             const boost::filesystem::path &/*location*/,
+                             const boost::property_tree::ptree &/*config*/)
         public:
             struct manifest
             {
@@ -94,16 +108,18 @@ namespace bacs{namespace problem
 
         public:
             /// \note config_location.parent_path() is location
-            static version_ptr instance(const boost::filesystem::path &config_location);
+            static version_ptr instance(
+                const boost::filesystem::path &config_location);
 
         public:
             version(const std::string &lang_, const std::string &format_);
 
             virtual ~version();
 
-            virtual void make_package(const boost::filesystem::path &destination,
-                                      const bunsan::pm::entry &package,
-                                      const bunsan::pm::entry &resources_package) const=0;
+            virtual void make_package(
+                const boost::filesystem::path &destination,
+                const bunsan::pm::entry &package,
+                const bunsan::pm::entry &resources_package) const=0;
 
             /// \warning package name is relative to statement version package
             virtual Statement::Version info() const;
@@ -128,7 +144,8 @@ namespace bacs{namespace problem
         typedef std::shared_ptr<statement> statement_ptr;
 
     public:
-        static statement_ptr instance(const boost::filesystem::path &location);
+        static statement_ptr instance(
+            const boost::filesystem::path &location);
 
     protected:
         statement(const boost::filesystem::path &location,
@@ -138,8 +155,9 @@ namespace bacs{namespace problem
         void update_info();
 
     public:
-        bool make_package(const boost::filesystem::path &destination,
-                          const bunsan::pm::entry &package) const override;
+        bool make_package(
+            const boost::filesystem::path &destination,
+            const bunsan::pm::entry &package) const override;
 
         /// \warning package names are relative to statement package
         const Statement &info() const;

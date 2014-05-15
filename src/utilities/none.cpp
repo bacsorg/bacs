@@ -6,10 +6,12 @@ namespace bacs{namespace problem{namespace utilities
     {
     public:
         none(const boost::filesystem::path &location,
-             const boost::property_tree::ptree &config): utility(location, config) {}
+             const boost::property_tree::ptree &config):
+                utility(location, config) {}
 
-        bool make_package(const boost::filesystem::path &/*destination*/,
-                          const bunsan::pm::entry &/*package*/) const override
+        bool make_package(
+            const boost::filesystem::path &/*destination*/,
+            const bunsan::pm::entry &/*package*/) const override
         {
             return false;
         }

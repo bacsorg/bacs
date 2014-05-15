@@ -12,8 +12,15 @@ namespace bacs{namespace problem
     struct buildable_error: virtual error {};
     struct buildable_make_package_error: virtual buildable_error
     {
-        typedef boost::error_info<struct tag_destination, boost::filesystem::path> destination;
-        typedef boost::error_info<struct tag_package, bunsan::pm::entry> package;
+        typedef boost::error_info<
+            struct tag_destination,
+            boost::filesystem::path
+        > destination;
+
+        typedef boost::error_info<
+            struct tag_package,
+            bunsan::pm::entry
+        > package;
     };
 
     /*!
@@ -28,7 +35,8 @@ namespace bacs{namespace problem
 
     public:
         /// \return false if no package is needed
-        virtual bool make_package(const boost::filesystem::path &destination,
-                                  const bunsan::pm::entry &package) const=0;
+        virtual bool make_package(
+            const boost::filesystem::path &destination,
+            const bunsan::pm::entry &package) const=0;
     };
 }}

@@ -13,9 +13,10 @@ namespace bacs{namespace problem{namespace statement_versions
         pdflatex(const boost::filesystem::path &location,
                  const boost::property_tree::ptree &config);
 
-        void make_package(const boost::filesystem::path &destination,
-                          const bunsan::pm::entry &package,
-                          const bunsan::pm::entry &resources_package) const override;
+        void make_package(
+            const boost::filesystem::path &destination,
+            const bunsan::pm::entry &package,
+            const bunsan::pm::entry &resources_package) const override;
 
     private:
         const boost::filesystem::path m_root;

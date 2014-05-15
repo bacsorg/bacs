@@ -66,7 +66,8 @@ namespace bacs{namespace problem{namespace utilities
             // modules: set binary name
             index.source.self.insert(std::make_pair("modules", "modules"));
             boost::filesystem::create_directory(destination / "modules");
-            bunsan::filesystem::ofstream fout(destination / "modules" / "utility.cmake");
+            bunsan::filesystem::ofstream fout(
+                destination / "modules" / "utility.cmake");
             BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout)
             {
                 fout << "set(target " << target().string() << ")\n";
