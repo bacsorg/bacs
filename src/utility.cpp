@@ -15,7 +15,7 @@ namespace bacs{namespace problem
             const boost::property_tree::ptree &config)
         {
             // note: "no" is equivalent to empty section
-            return config.get<std::string>("build.builder", "no");
+            return config.get<std::string>("build.builder", "none");
         }
 
         boost::property_tree::ptree get_config(
