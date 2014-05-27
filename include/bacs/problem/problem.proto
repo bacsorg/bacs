@@ -54,5 +54,6 @@ message Utilities
 message Utility
 {
     required string builder = 1;
+    repeated Utility nested = 100;
     extensions 1000 to max;
 }
