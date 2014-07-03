@@ -16,9 +16,21 @@ message ResourceUsage
     required uint64 memory_usage_bytes = 2;
 }
 
+message Archiver
+{
+    required string type = 1;
+    optional string format = 2;
+}
+
+message Source
+{
+    required bytes data = 1;
+    optional Archiver archiver = 2;
+}
+
 message Buildable
 {
-    required bytes source = 1;
+    required Source source = 1;
     required BuildSettings build_settings = 2;
 }
 
