@@ -19,6 +19,7 @@ bunsan_protobuf_generate_cpp(
     bacs/callback.proto
     bacs/file.proto
     bacs/process.proto
+    bacs/utility.proto
 )
 
 bunsan_add_shared_library(${PROJECT_NAME}
