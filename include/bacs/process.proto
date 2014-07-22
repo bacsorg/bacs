@@ -50,8 +50,14 @@ message Builder
 
 message BuildResult
 {
-    required ExecutionResult execution = 1;
-    required bytes output = 2;
+    enum Status
+    {
+        OK = 0;
+        FAILED = 1;
+    }
+    required Status status = 1;
+    optional ExecutionResult execution = 2;
+    required bytes output = 3;
 }
 
 message ExecutionResult
