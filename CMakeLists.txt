@@ -26,6 +26,7 @@ bunsan_add_shared_library(${PROJECT_NAME}
 
     src/utilities/none.cpp
     src/utilities/single.cpp
+    src/utilities/dot_net_solution.cpp
 
     src/statement_versions/copy.cpp
     src/statement_versions/pdflatex.cpp
