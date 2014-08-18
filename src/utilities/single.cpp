@@ -43,6 +43,8 @@ namespace bacs{namespace problem{namespace utilities
                 return "pas";
             else if (suff == "java")
                 return "java";
+            else if (suff == "py")
+                return "py";
             else
                 return "unknown";
         }
