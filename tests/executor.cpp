@@ -10,13 +10,14 @@
 
 BOOST_AUTO_TEST_SUITE(executor)
 
+using namespace boost::property_tree;
+using bunsan::utility::executor;
+using bunsan::process::context;
+typedef std::stringstream ss;
+typedef std::vector<std::string> vs;
+
 BOOST_AUTO_TEST_CASE(env)
 {
-    using namespace boost::property_tree;
-    using bunsan::utility::executor;
-    using bunsan::process::context;
-    typedef std::stringstream ss;
-    typedef std::vector<std::string> vs;
     ptree pt;
     context ctx;
     ss in_1(R"EOF(
@@ -34,11 +35,6 @@ d
 
 BOOST_AUTO_TEST_CASE(except)
 {
-    using namespace boost::property_tree;
-    using bunsan::utility::executor;
-    using bunsan::process::context;
-    typedef std::stringstream ss;
-    typedef std::vector<std::string> vs;
     ptree pt;
     context ctx;
     ss in_1(R"EOF(
@@ -55,11 +51,6 @@ d
 
 BOOST_AUTO_TEST_CASE(path)
 {
-    using namespace boost::property_tree;
-    using bunsan::utility::executor;
-    using bunsan::process::context;
-    typedef std::stringstream ss;
-    typedef std::vector<std::string> vs;
     ptree pt;
     context ctx;
     ss in_1(R"EOF(
@@ -101,10 +92,6 @@ d
 
 BOOST_AUTO_TEST_CASE(subst)
 {
-    using namespace boost::property_tree;
-    using bunsan::utility::executor;
-    typedef std::stringstream ss;
-    typedef std::vector<std::string> vs;
     ptree pt;
     ss in_1(R"EOF(
 t 1
