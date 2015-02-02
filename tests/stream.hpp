@@ -1,6 +1,6 @@
 #pragma once
 
-#include <bunsan/protobuf/io.hpp>
+#include <bunsan/protobuf/binary.hpp>
 
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
@@ -15,46 +15,45 @@
     template <typename Message> \
     void merge_partial(Message &message) \
     { \
-        bunsan::protobuf::merge_partial(message, __VA_ARGS__); \
+        bunsan::protobuf::binary::merge_partial(message, __VA_ARGS__); \
     } \
     template <typename Message> \
     void merge(Message &message) \
     { \
-        bunsan::protobuf::merge(message, __VA_ARGS__); \
+        bunsan::protobuf::binary::merge(message, __VA_ARGS__); \
     } \
     template <typename Message> \
     void parse_partial(Message &message) \
     { \
-        bunsan::protobuf::parse_partial(message, __VA_ARGS__); \
+        bunsan::protobuf::binary::parse_partial(message, __VA_ARGS__); \
     } \
     template <typename Message> \
     void parse(Message &message) \
     { \
-        bunsan::protobuf::parse(message, __VA_ARGS__); \
+        bunsan::protobuf::binary::parse(message, __VA_ARGS__); \
     } \
     template <typename Message> \
     Message parse_partial_make() \
     { \
-        return bunsan::protobuf::parse_partial_make<Message>(__VA_ARGS__); \
+        return bunsan::protobuf::binary::parse_partial_make<Message>(__VA_ARGS__); \
     } \
     template <typename Message> \
     Message parse_make() \
     { \
-        return bunsan::protobuf::parse_make<Message>(__VA_ARGS__); \
+        return bunsan::protobuf::binary::parse_make<Message>(__VA_ARGS__); \
     }
 
 #define BUNSAN_PROTOBUF_OUTPUT(...) \
     template <typename Message> \
     void serialize_partial(const Message &message) \
     { \
-        bunsan::protobuf::serialize_partial(message, __VA_ARGS__); \
+        bunsan::protobuf::binary::serialize_partial(message, __VA_ARGS__); \
     } \
     template <typename Message> \
     void serialize(const Message &message) \
     { \
-        bunsan::protobuf::serialize(message, __VA_ARGS__); \
+        bunsan::protobuf::binary::serialize(message, __VA_ARGS__); \
     }
-
 
 template <typename Stream>
 struct stream;

@@ -1,8 +1,10 @@
-#include <bunsan/protobuf/serializer.hpp>
+#include <bunsan/protobuf/binary_serializer.hpp>
+
+#include <bunsan/protobuf/error.hpp>
 
 namespace bunsan{namespace protobuf
 {
-    void serializer::serialize_raw(
+    void binary_serializer::serialize_raw(
         const google::protobuf::Message &message,
         google::protobuf::io::ZeroCopyOutputStream &output)
     {

@@ -4,7 +4,7 @@
 
 namespace bunsan{namespace protobuf
 {
-    class parser: public base_parser
+    class binary_parser: public base_parser
     {
     protected:
         void merge_raw(

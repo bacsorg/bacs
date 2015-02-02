@@ -1,4 +1,4 @@
-#include <bunsan/protobuf/parser.hpp>
+#include <bunsan/protobuf/binary_parser.hpp>
 
 #include <bunsan/protobuf/error.hpp>
 
@@ -6,7 +6,7 @@
 
 namespace bunsan{namespace protobuf
 {
-    void parser::merge_raw(
+    void binary_parser::merge_raw(
         google::protobuf::Message &message,
         google::protobuf::io::ZeroCopyInputStream &input)
     {

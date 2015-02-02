@@ -14,9 +14,9 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/base_io.cpp
     src/base_parser.cpp
     src/base_serializer.cpp
+    src/binary_parser.cpp
+    src/binary_serializer.cpp
     src/comparator.cpp
-    src/parser.cpp
-    src/serializer.cpp
 )
 
 bunsan_install_headers()

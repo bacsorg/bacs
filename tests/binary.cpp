@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE io
+#define BOOST_TEST_MODULE binary
 #include <boost/test/unit_test.hpp>
 
 #include "message_fixture.hpp"
@@ -6,7 +6,7 @@
 
 #include <bunsan/protobuf/comparator.hpp>
 #include <bunsan/protobuf/error.hpp>
-#include <bunsan/protobuf/io.hpp>
+#include <bunsan/protobuf/binary.hpp>
 
 #include <google/protobuf/io/coded_stream.h>
 
@@ -14,6 +14,8 @@
 #include <boost/mpl/list.hpp>
 
 BOOST_FIXTURE_TEST_SUITE(io, message_fixture)
+
+using bpb = bp::binary;
 
 using parse_types = boost::mpl::list<
     google::protobuf::io::ZeroCopyInputStream,
@@ -137,7 +139,7 @@ const std::string prefix = "prefix";
 BOOST_AUTO_TEST_CASE(append_partial_empty)
 {
     std::string buffer = prefix;
-    bp::append_partial(empty, buffer);
+    bpb::append_partial(empty, buffer);
     BOOST_CHECK(boost::algorithm::starts_with(buffer, prefix));
     BOOST_CHECK_EQUAL(buffer.substr(prefix.size()), empty_data);
 }
@@ -145,7 +147,7 @@ BOOST_AUTO_TEST_CASE(append_partial_empty)
 BOOST_AUTO_TEST_CASE(append_partial_only_optional)
 {
     std::string buffer = prefix;
-    bp::append_partial(only_optional, buffer);
+    bpb::append_partial(only_optional, buffer);
     BOOST_CHECK(boost::algorithm::starts_with(buffer, prefix));
     BOOST_CHECK_EQUAL(buffer.substr(prefix.size()), only_optional_data);
 }
@@ -153,35 +155,35 @@ BOOST_AUTO_TEST_CASE(append_partial_only_optional)
 BOOST_AUTO_TEST_CASE(append_empty)
 {
     std::string buffer = prefix;
-    BOOST_CHECK_THROW(bp::append(empty, buffer), bp::serialize_error);
+    BOOST_CHECK_THROW(bpb::append(empty, buffer), bp::serialize_error);
 }
 
 BOOST_AUTO_TEST_CASE(append)
 {
     std::string buffer = prefix;
-    bp::append(multiple, buffer);
+    bpb::append(multiple, buffer);
     BOOST_CHECK(boost::algorithm::starts_with(buffer, prefix));
     BOOST_CHECK_EQUAL(buffer.substr(prefix.size()), multiple_data);
 }
 
 BOOST_AUTO_TEST_CASE(to_string_partial)
 {
-    BOOST_CHECK_EQUAL(bp::to_string_partial(empty), empty_data);
-    BOOST_CHECK_EQUAL(bp::to_string_partial(only_required), only_required_data);
-    BOOST_CHECK_EQUAL(bp::to_string_partial(only_optional), only_optional_data);
-    BOOST_CHECK_EQUAL(bp::to_string_partial(optional), optional_data);
-    BOOST_CHECK_EQUAL(bp::to_string_partial(single), single_data);
-    BOOST_CHECK_EQUAL(bp::to_string_partial(multiple), multiple_data);
+    BOOST_CHECK_EQUAL(bpb::to_string_partial(empty), empty_data);
+    BOOST_CHECK_EQUAL(bpb::to_string_partial(only_required), only_required_data);
+    BOOST_CHECK_EQUAL(bpb::to_string_partial(only_optional), only_optional_data);
+    BOOST_CHECK_EQUAL(bpb::to_string_partial(optional), optional_data);
+    BOOST_CHECK_EQUAL(bpb::to_string_partial(single), single_data);
+    BOOST_CHECK_EQUAL(bpb::to_string_partial(multiple), multiple_data);
 }
 
 BOOST_AUTO_TEST_CASE(to_string)
 {
-    BOOST_CHECK_THROW(bp::to_string(empty), bp::serialize_error);
-    BOOST_CHECK_EQUAL(bp::to_string(only_required), only_required_data);
-    BOOST_CHECK_THROW(bp::to_string(only_optional), bp::serialize_error);
-    BOOST_CHECK_EQUAL(bp::to_string(optional), optional_data);
-    BOOST_CHECK_EQUAL(bp::to_string(single), single_data);
-    BOOST_CHECK_EQUAL(bp::to_string(multiple), multiple_data);
+    BOOST_CHECK_THROW(bpb::to_string(empty), bp::serialize_error);
+    BOOST_CHECK_EQUAL(bpb::to_string(only_required), only_required_data);
+    BOOST_CHECK_THROW(bpb::to_string(only_optional), bp::serialize_error);
+    BOOST_CHECK_EQUAL(bpb::to_string(optional), optional_data);
+    BOOST_CHECK_EQUAL(bpb::to_string(single), single_data);
+    BOOST_CHECK_EQUAL(bpb::to_string(multiple), multiple_data);
 }
 
 BOOST_AUTO_TEST_SUITE_END() // string

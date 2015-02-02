@@ -4,7 +4,7 @@
 
 namespace bunsan{namespace protobuf
 {
-    class serializer: public base_serializer
+    class binary_serializer: public base_serializer
     {
     protected:
         void serialize_raw(
