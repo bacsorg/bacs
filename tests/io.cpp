@@ -15,11 +15,24 @@
 
 BOOST_FIXTURE_TEST_SUITE(io, message_fixture)
 
+using parse_types = boost::mpl::list<
+    google::protobuf::io::ZeroCopyInputStream,
+    boost::mpl::list<google::protobuf::io::ZeroCopyInputStream, std::size_t>,
+    std::string,
+    boost::mpl::list<const void *, std::size_t>,
+    std::istream
+>;
+
+using serialize_types = boost::mpl::list<
+    google::protobuf::io::ZeroCopyOutputStream,
+    std::ostream,
+    boost::mpl::list<std::string, append_tag>,
+    boost::mpl::list<std::string, replace_tag>
+>;
+
 BOOST_AUTO_TEST_SUITE(merge)
 
-using merge_types = boost::mpl::list<google::protobuf::io::CodedInputStream>;
-
-BOOST_AUTO_TEST_CASE_TEMPLATE(merge_partial, Stream, merge_types)
+BOOST_AUTO_TEST_CASE_TEMPLATE(merge_partial, Stream, parse_types)
 {
     Message msg;
     stream<Stream> ss(only_optional_data);
@@ -27,14 +40,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(merge_partial, Stream, merge_types)
     BOOST_CHECK(bp::equal(msg, only_optional));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(empty, Stream, merge_types)
+BOOST_AUTO_TEST_CASE_TEMPLATE(empty, Stream, parse_types)
 {
     Message msg;
     stream<Stream> ss(empty_data);
     BOOST_CHECK_THROW(ss.merge(msg), bp::parse_error);
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(merge, Stream, merge_types)
+BOOST_AUTO_TEST_CASE_TEMPLATE(merge, Stream, parse_types)
 {
     Message msg;
     stream<Stream> ss(multiple_data);
@@ -45,16 +58,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(merge, Stream, merge_types)
 BOOST_AUTO_TEST_SUITE_END() // merge
 
 BOOST_AUTO_TEST_SUITE(parse)
-
-using parse_types = boost::mpl::list<
-    google::protobuf::io::CodedInputStream,
-    google::protobuf::io::ZeroCopyInputStream,
-    boost::mpl::list<google::protobuf::io::ZeroCopyInputStream, std::size_t>,
-    std::string,
-    boost::mpl::list<const void *, std::size_t>,
-    // TODO file descriptor: int
-    std::istream
->;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(parse, Stream, parse_types)
 {
@@ -97,14 +100,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(parse_return, Stream, parse_types)
 BOOST_AUTO_TEST_SUITE_END() // parse
 
 BOOST_AUTO_TEST_SUITE(serialize)
-
-using serialize_types = boost::mpl::list<
-    google::protobuf::io::CodedOutputStream,
-    google::protobuf::io::ZeroCopyOutputStream,
-    boost::mpl::list<void *, std::size_t>,
-    // TODO file descriptor: int
-    std::ostream
->;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(serialize_partial, Stream, serialize_types)
 {

@@ -1,31 +1,28 @@
 #pragma once
 
+#include <bunsan/protobuf/serializer.hpp>
+
 #include <google/protobuf/message.h>
+
+#include <utility>
 
 namespace bunsan{namespace protobuf
 {
+    template <typename ... Args>
     void serialize_partial(const google::protobuf::Message &message,
-                           google::protobuf::io::CodedOutputStream &output);
-    void serialize(const google::protobuf::Message &message,
-                   google::protobuf::io::CodedOutputStream &output);
+                           Args &&...args)
+    {
+        serializer s;
+        s.allow_partial(true);
+        s.serialize(message, std::forward<Args>(args)...);
+    }
 
-    void serialize_partial(const google::protobuf::Message &message,
-                           google::protobuf::io::ZeroCopyOutputStream &output);
+    template <typename ... Args>
     void serialize(const google::protobuf::Message &message,
-                   google::protobuf::io::ZeroCopyOutputStream &output);
-
-    void serialize_partial(const google::protobuf::Message &message,
-                           void *data, std::size_t size);
-    void serialize(const google::protobuf::Message &message,
-                   void *data, std::size_t size);
-
-    void serialize_partial(const google::protobuf::Message &message,
-                           int file_descriptor);
-    void serialize(const google::protobuf::Message &message,
-                   int file_descriptor);
-
-    void serialize_partial(const google::protobuf::Message &message,
-                           std::ostream &output);
-    void serialize(const google::protobuf::Message &message,
-                   std::ostream &output);
+                   Args &&...args)
+    {
+        serializer s;
+        s.allow_partial(false);
+        s.serialize(message, std::forward<Args>(args)...);
+    }
 }}

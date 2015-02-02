@@ -11,11 +11,12 @@ bunsan_use_bunsan(common)
 bunsan_use_protobuf()
 
 bunsan_add_shared_library(${PROJECT_NAME}
-    src/serialize.cpp
-    src/parse.cpp
-    src/merge.cpp
+    src/base_io.cpp
+    src/base_parser.cpp
+    src/base_serializer.cpp
     src/comparator.cpp
-    src/string.cpp
+    src/parser.cpp
+    src/serializer.cpp
 )
 
 bunsan_install_headers()

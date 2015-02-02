@@ -60,40 +60,6 @@ template <typename Stream>
 struct stream;
 
 template <>
-struct stream<google::protobuf::io::CodedInputStream>
-{
-    explicit stream(const std::string &data):
-        coded_stream(reinterpret_cast<const unsigned char *>(data.data()),
-                     boost::numeric_cast<int>(data.size())) {}
-
-    BUNSAN_PROTOBUF_INPUT(coded_stream)
-
-    google::protobuf::io::CodedInputStream coded_stream;
-};
-
-template <>
-struct stream<google::protobuf::io::CodedOutputStream>
-{
-    stream():
-        output_stream(&str),
-        coded_stream(
-            new google::protobuf::io::CodedOutputStream(&output_stream)
-        ) {}
-
-    std::string data()
-    {
-        coded_stream.reset(); // flush
-        return str;
-    }
-
-    BUNSAN_PROTOBUF_OUTPUT(*coded_stream)
-
-    std::string str;
-    google::protobuf::io::StringOutputStream output_stream;
-    std::unique_ptr<google::protobuf::io::CodedOutputStream> coded_stream;
-};
-
-template <>
 struct stream<google::protobuf::io::ZeroCopyInputStream>
 {
     explicit stream(const std::string &data):
@@ -142,9 +108,32 @@ struct stream<std::string>
     std::string data() const { return str; }
 
     BUNSAN_PROTOBUF_INPUT(str)
-    BUNSAN_PROTOBUF_OUTPUT(str)
 
     std::string str;
+};
+
+template <>
+struct stream<boost::mpl::list<std::string, struct append_tag>>:
+    stream<std::string>
+{
+    using stream<std::string>::stream;
+
+    BUNSAN_PROTOBUF_OUTPUT(
+        str,
+        bunsan::protobuf::base_serializer::string_mode::append
+    )
+};
+
+template <>
+struct stream<boost::mpl::list<std::string, struct replace_tag>>:
+    stream<std::string>
+{
+    using stream<std::string>::stream;
+
+    BUNSAN_PROTOBUF_OUTPUT(
+        str,
+        bunsan::protobuf::base_serializer::string_mode::replace
+    )
 };
 
 template <>
@@ -158,26 +147,6 @@ struct stream<boost::mpl::list<const void *, std::size_t>>
 
     const void *ptr;
     const std::size_t size;
-};
-
-template <>
-struct stream<boost::mpl::list<void *, std::size_t>>
-{
-    // Size should be enough for any small testing buffer
-    stream(): buffer(1024 * 1024) {}
-
-    std::string data() const
-    {
-        std::size_t last_zero = buffer.size() - 1;
-        while (last_zero < buffer.size() && buffer[last_zero] == '\0')
-            --last_zero;
-        ++last_zero;
-        return std::string(&buffer[0], last_zero);
-    }
-
-    BUNSAN_PROTOBUF_OUTPUT(buffer.data(), buffer.size())
-
-    std::vector<char> buffer;
 };
 
 template <>
