@@ -16,6 +16,15 @@ namespace bunsan{namespace protobuf
         > initialization_error_string;
     };
 
+    struct initialization_error: virtual error {};
+
     struct parse_error: virtual error {};
+    struct parse_initialization_error:
+        virtual parse_error,
+        virtual initialization_error {};
+
     struct serialize_error: virtual error {};
+    struct serialize_initialization_error:
+        virtual serialize_error,
+        virtual initialization_error {};
 }}

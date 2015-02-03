@@ -2,6 +2,7 @@
 
 #include <bunsan/protobuf/base_io.hpp>
 #include <bunsan/protobuf/error.hpp>
+#include <bunsan/protobuf/initialization.hpp>
 
 #include <google/protobuf/message.h>
 
@@ -28,11 +29,11 @@ namespace bunsan{namespace protobuf
             if (!allow_partial() && !message.IsInitialized())
             {
                 BOOST_THROW_EXCEPTION(
-                    parse_error() <<
-                    parse_error::message("Uninitialized") <<
-                    parse_error::type_name(message.GetTypeName()) <<
-                    parse_error::initialization_error_string(
-                        message.InitializationErrorString()));
+                    fill_initialization_error(
+                        parse_initialization_error(),
+                        message
+                    )
+                );
             }
         }
 
