@@ -2,13 +2,9 @@ project(bunsan_protobuf)
 
 include(${CMAKE_SOURCE_DIR}/system-config.cmake OPTIONAL)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
-include(BunsanCommon)
-
-bunsan_use_bunsan(common)
-
-bunsan_use_protobuf()
+find_package(BunsanCMake CONFIG REQUIRED)
 
 bunsan_add_shared_library(${PROJECT_NAME}
     src/base_io.cpp
@@ -20,20 +16,19 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/text_parser.cpp
     src/text_serializer.cpp
 )
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_common bunsan_common)
+bunsan_use_package(${PROJECT_NAME} Protobuf)
 
 bunsan_install_headers()
 bunsan_install_targets(${PROJECT_NAME})
+bunsan_install_project()
 
 if(ENABLE_TESTS)
-    bunsan_protobuf_generate_cpp(SOURCES proto_srcs
-                                 HEADERS proto_hdrs
-                                 INSTALL include
-                                 PROTOS
-        bunsan/protobuf/detail/testing/message.proto
-    )
-    set(test_pb_library ${PROJECT_NAME}_test_pb)
-    bunsan_add_shared_library(${test_pb_library}
-        ${proto_srcs}
+    bunsan_add_protobuf_cxx_library(
+        TARGET ${PROJECT_NAME}_test_pb
+        STATIC
+        PROTOS
+            bunsan/protobuf/detail/testing/message.proto
     )
 endif()
 
