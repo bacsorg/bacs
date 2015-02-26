@@ -2,13 +2,9 @@ project(bunsan_utility)
 
 include(${CMAKE_SOURCE_DIR}/system-config.cmake OPTIONAL)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
-include(BunsanCommon)
-
-bunsan_use_bunsan(common process)
-
-bunsan_use_boost(system filesystem serialization thread)
+find_package(BunsanCMake CONFIG REQUIRED)
 
 bunsan_add_shared_library(${PROJECT_NAME}
     src/error.cpp
@@ -42,8 +38,10 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/makers/make.cpp
     src/makers/make.hpp
 )
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_process bunsan_process)
 
 bunsan_install_headers()
 bunsan_install_targets(${PROJECT_NAME})
+bunsan_install_project()
 
 bunsan_include_tests()
