@@ -2,31 +2,26 @@ project(bunsan_bacs_common)
 
 include(${CMAKE_SOURCE_DIR}/system-config.cmake OPTIONAL)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
-include(BunsanCommon)
+find_package(BunsanCMake CONFIG REQUIRED)
 
-bunsan_use_bunsan(common)
-bunsan_use_boost(system filesystem)
-bunsan_use_protobuf()
+bunsan_find_bunsan_package(bunsan_common bunsan_common)
 
-bunsan_protobuf_generate_cpp(
-    SOURCES proto_srcs
-    HEADERS proto_hdrs
-    INSTALL include
-
+bunsan_add_protobuf_cxx_library(
+    TARGET ${PROJECT_NAME}
+    SHARED
     PROTOS
-    bacs/callback.proto
-    bacs/file.proto
-    bacs/process.proto
-    bacs/utility.proto
-)
-
-bunsan_add_shared_library(${PROJECT_NAME}
-    ${proto_srcs}
+        bacs/callback.proto
+        bacs/file.proto
+        bacs/process.proto
+        bacs/utility.proto
+    LIBRARIES ${bunsan_common_LIBRARIES}
+    INCLUDE_DIRECTORIES ${bunsan_common_INCLUDE_DIRS}
+    INSTALL
 )
 
 bunsan_install_headers()
-bunsan_install_targets(${PROJECT_NAME})
+bunsan_install_project()
 
 bunsan_include_tests()
