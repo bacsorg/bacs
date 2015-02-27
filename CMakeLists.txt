@@ -2,21 +2,22 @@ project(bunsan_bacs_problem)
 
 include(${CMAKE_SOURCE_DIR}/system-config.cmake OPTIONAL)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
-include(BunsanCommon)
+find_package(BunsanCMake CONFIG REQUIRED)
 
-bunsan_use_bunsan(common pm bacs_common)
-bunsan_use_boost(system filesystem serialization thread)
-bunsan_use_protobuf()
-
-bunsan_protobuf_generate_cpp(SOURCES proto_srcs HEADERS proto_hdrs INSTALL include PROTOS
-    bacs/problem/problem.proto
+bunsan_find_bunsan_package(bunsan_bacs_common bunsan_bacs_common)
+bunsan_add_protobuf_cxx_library(
+    TARGET ${PROJECT_NAME}_pb
+    SHARED
+    PROTOS
+        bacs/problem/problem.proto
+    LIBRARIES ${bunsan_bacs_common_LIBRARIES}
+    INCLUDE_DIRECTORIES ${bunsan_bacs_common_INCLUDE_DIRS}
+    INSTALL
 )
 
 bunsan_add_shared_library(${PROJECT_NAME}
-    ${proto_srcs}
-
     src/buildable.cpp
     src/utility.cpp
     src/id.cpp
@@ -31,8 +32,11 @@ bunsan_add_shared_library(${PROJECT_NAME}
     src/statement_versions/copy.cpp
     src/statement_versions/pdflatex.cpp
 )
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_pm bunsan_pm)
+bunsan_use_target(${PROJECT_NAME} ${PROJECT_NAME}_pb)
 
 bunsan_install_headers()
 bunsan_install_targets(${PROJECT_NAME})
+bunsan_install_project()
 
 bunsan_include_tests()
