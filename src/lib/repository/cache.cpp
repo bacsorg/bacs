@@ -6,7 +6,7 @@
 #include <bunsan/config/cast.hpp>
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
-#include <bunsan/logging/legacy.hpp>
+#include <bunsan/logging/trivial.hpp>
 
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -98,15 +98,15 @@ void bunsan::pm::repository::cache::verify_and_repair()
             const auto meta = load_meta();
             if (meta.version != repository::version())
             {
-                SLOG("Cache's version \"" << meta.version <<
-                     "\" is not equal to repository's version \"" <<
-                     repository::version() << "\", resetting cache");
+                BUNSAN_LOG_INFO << "Cache's version \"" << meta.version <<
+                                   "\" is not equal to repository's version \"" <<
+                                   repository::version() << "\", resetting cache";
                 outdated = true;
             }
         }
         catch (std::exception &)
         {
-            SLOG("Unable to read cache's meta, resetting cache");
+            BUNSAN_LOG_ERROR << "Unable to read cache's meta, resetting cache";
             outdated = true;
         }
         if (outdated)
@@ -132,20 +132,20 @@ void bunsan::pm::repository::cache::verify_and_repair_directory(
         if (!path.is_absolute())
             BOOST_THROW_EXCEPTION(invalid_configuration_relative_path_error() <<
                                   invalid_configuration_relative_path_error::path(path));
-        SLOG("checking " << path);
+        BUNSAN_LOG_TRACE << "Checking " << path;
         if (!boost::filesystem::is_directory(path))
         {
             if (!boost::filesystem::exists(path))
             {
-                SLOG("directory " << path << " was not found");
+                BUNSAN_LOG_ERROR << "Directory " << path << " was not found";
             }
             else
             {
-                SLOG(path << " is not a directory: starting recursive remove");
+                BUNSAN_LOG_ERROR << path << " is not a directory: starting recursive remove";
                 boost::filesystem::remove_all(path);
             }
             if (boost::filesystem::create_directory(path))
-                SLOG("created missing " << path << " directory");
+                BUNSAN_LOG_TRACE << "Created missing " << path << " directory";
         }
     }
     catch (std::exception &)

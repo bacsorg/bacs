@@ -8,7 +8,7 @@
 #include "merge_maps.hpp"
 #include "local_system.hpp"
 
-#include <bunsan/logging/legacy.hpp>
+#include <bunsan/logging/trivial.hpp>
 
 #include <boost/filesystem/operations.hpp>
 
@@ -38,7 +38,7 @@ void bunsan::pm::repository::builder::build_empty(const entry &package)
 {
     try
     {
-        SLOG("starting \"" << package << "\" " << __func__);
+        BUNSAN_LOG_DEBUG << "Starting \"" << package << "\" " << __func__;
         const tempfile build_dir = local_system_().tempdir_for_build();
         // create empty archive
         cache_().pack_build(package, build_dir.path());
@@ -59,7 +59,7 @@ void bunsan::pm::repository::builder::build(const entry &package)
 {
     try
     {
-        SLOG("starting \"" << package << "\" " << __func__);
+        BUNSAN_LOG_DEBUG << "Starting \"" << package << "\" " << __func__;
         const tempfile build_dir_ = local_system_().tempdir_for_build();
         const boost::filesystem::path build_dir = build_dir_.path();
         const boost::filesystem::path src =
@@ -95,7 +95,7 @@ void bunsan::pm::repository::builder::unpack_source(
     const boost::filesystem::path &destination,
     snapshot &snapshot_)
 {
-    SLOG("starting " << package << " import unpack");
+    BUNSAN_LOG_DEBUG << "Starting " << package << " import unpack";
     const index deps = cache_().read_index(package);
     // extract sources
     for (const auto &i: deps.source.self)
@@ -124,7 +124,7 @@ void bunsan::pm::repository::builder::build_installation(const entry &package)
 {
     try
     {
-        SLOG("starting \"" << package << "\" " << __func__);
+        BUNSAN_LOG_DEBUG << "Starting \"" << package << "\" " << __func__;
         const tempfile build_dir = local_system_().tempdir_for_build();
         boost::filesystem::path install_dir =
             build_dir.path() / m_config.name.dir.get_installation();

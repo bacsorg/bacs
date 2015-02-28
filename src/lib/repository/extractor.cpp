@@ -6,7 +6,7 @@
 #include "local_system.hpp"
 
 #include <bunsan/filesystem/operations.hpp>
-#include <bunsan/logging/legacy.hpp>
+#include <bunsan/logging/trivial.hpp>
 
 #include <ctime>
 
@@ -22,7 +22,7 @@ void bunsan::pm::repository::extractor::extract(
 {
     try
     {
-        SLOG("starting \"" << package << "\" " << __func__);
+        BUNSAN_LOG_DEBUG << "Starting \"" << package << "\" " << __func__;
         filesystem::reset_dir(destination);
         cache_().unpack_installation(package, destination);
     }
@@ -42,7 +42,7 @@ void bunsan::pm::repository::extractor::install(
 {
     try
     {
-        SLOG("starting \"" << package << "\" " << __func__);
+        BUNSAN_LOG_DEBUG << "Starting \"" << package << "\" " << __func__;
         const boost::filesystem::path meta = destination / m_config.installation.meta;
         const boost::filesystem::path snp = cache_().installation_snapshot_path(package);
         boost::filesystem::path dst = destination;
@@ -79,7 +79,7 @@ void bunsan::pm::repository::extractor::update(
 {
     try
     {
-        SLOG("starting \"" << package << "\" " << __func__);
+        BUNSAN_LOG_DEBUG << "Starting \"" << package << "\" " << __func__;
         const boost::filesystem::path meta =
             destination / m_config.installation.meta;
         boost::optional<snapshot> snapshot_;
@@ -91,15 +91,15 @@ void bunsan::pm::repository::extractor::update(
             }
             catch (std::exception &)
             {
-                SLOG("warning: unable to read snapshot from " << meta <<
-                     ", falling back to outdated.");
+                BUNSAN_LOG_WARNING << "Unable to read snapshot from " << meta <<
+                                      ", falling back to outdated";
             }
         }
         if (!snapshot_ ||
             *snapshot_ != cache_().read_installation_snapshot(package))
         {
-            SLOG("\"" << package << "\" installation at " << destination <<
-                 " is outdated, updating...");
+            BUNSAN_LOG_DEBUG << "\"" << package << "\" installation at " << destination <<
+                                " is outdated, updating...";
             install(package, destination);
         }
         else
@@ -135,7 +135,7 @@ bool bunsan::pm::repository::extractor::need_update(
 {
     try
     {
-        SLOG("starting " << destination << " " << __func__);
+        BUNSAN_LOG_DEBUG << "Starting " << destination << " " << __func__;
         const boost::filesystem::path meta = destination / m_config.installation.meta;
         return !boost::filesystem::is_regular_file(meta) ||
                out_of_range(

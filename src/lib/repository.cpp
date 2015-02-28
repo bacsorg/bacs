@@ -8,7 +8,7 @@
 #include "repository/merge_maps.hpp"
 
 #include <bunsan/config/cast.hpp>
-#include <bunsan/logging/legacy.hpp>
+#include <bunsan/logging/trivial.hpp>
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -58,7 +58,8 @@ void bunsan::pm::repository::create(const boost::filesystem::path &source, bool 
 {
     try
     {
-        SLOG("creating source package from " << source << " with" << (strip ? "" : "out") << " stripping");
+        BUNSAN_LOG_INFO << "Creating source package from " << source <<
+                           " with" << (strip ? "" : "out") << " stripping";
         distributor_().create(source, strip);
     }
     catch (std::exception &)
@@ -75,8 +76,8 @@ void bunsan::pm::repository::create_recursively(
 {
     try
     {
-        SLOG("recursively creating source packages from " <<
-             root << " with" << (strip ? "" : "out") << " stripping");
+        BUNSAN_LOG_INFO << "Recursively creating source packages from " <<
+                           root << " with" << (strip ? "" : "out") << " stripping";
         distributor_().create_recursively(root, strip);
     }
     catch (std::exception &)
@@ -93,11 +94,9 @@ void bunsan::pm::repository::extract(
 {
     try
     {
-        SLOG("Attempt to extract \"" << package << "\" to " << destination);
+        BUNSAN_LOG_INFO << "Attempt to extract \"" << package << "\" to " << destination;
         const auto cache_guard = cache_().lock();
-        DLOG(trying to update);
         update(package);
-        DLOG(trying to extract);
         extractor_().extract(package, destination);
     }
     catch (std::exception &)
@@ -114,11 +113,9 @@ void bunsan::pm::repository::install(
 {
     try
     {
-        SLOG("Attempt to install \"" << package << "\" to " << destination);
+        BUNSAN_LOG_INFO << "Attempt to install \"" << package << "\" to " << destination;
         const auto cache_guard = cache_().lock();
-        DLOG(trying to update);
         update(package);
-        DLOG(trying to install);
         extractor_().install(package, destination);
     }
     catch (std::exception &)
@@ -135,11 +132,10 @@ void bunsan::pm::repository::update(
 {
     try
     {
-        SLOG("Attempt to update \"" << package << "\" installation in " << destination);
+        BUNSAN_LOG_INFO << "Attempt to update \"" << package << "\""
+                           " installation in " << destination;
         const auto cache_guard = cache_().lock();
-        DLOG(trying to update package);
         update(package);
-        DLOG(trying to update installation);
         extractor_().update(package, destination);
     }
     catch (std::exception &)
@@ -160,8 +156,8 @@ void bunsan::pm::repository::update(const entry &package,
         if (need_update(package, destination, lifetime))
             update(package, destination);
         else
-            SLOG("Skipping \"" << package << "\" update since lifetime = " <<
-                 lifetime << " has not passed since previous attempt.");
+            BUNSAN_LOG_INFO << "Skipping \"" << package << "\" update since lifetime = " <<
+                               lifetime << " has not passed since previous attempt";
     }
     catch (std::exception &)
     {
@@ -212,9 +208,9 @@ namespace
 
 void bunsan::pm::repository::update(const bunsan::pm::entry &package)
 {
-    SLOG("updating \"" << package << "\"");
+    BUNSAN_LOG_INFO << "Updating \"" << package << "\"";
     cache_().verify_and_repair();
-    DLOG(starting build);
+    BUNSAN_LOG_DEBUG << "Starting build \"" << package << "\"";
     update_meta_tree(package);
     std::map<stage, bool> updated;
     std::map<stage, snapshot> snapshot_cache;
@@ -254,8 +250,8 @@ bool bunsan::pm::repository::update_package_depends(
     snapshot &current_snapshot,
     std::map<stage, snapshot> &snapshot_cache)
 {
-    SLOG("starting \"" << package.first << "\" (" <<
-         stage_type_name[static_cast<int>(package.second)] << ") " << __func__);
+    BUNSAN_LOG_DEBUG << "Starting \"" << package.first << "\" (" <<
+                        stage_type_name[static_cast<int>(package.second)] << ") " << __func__;
     if (in.find(package) != in.end())
     {
         BOOST_THROW_EXCEPTION(circular_dependencies_error() <<

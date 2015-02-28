@@ -1,7 +1,7 @@
 #include <bunsan/pm/repository.hpp>
 
 #include <bunsan/application.hpp>
-#include <bunsan/logging/legacy.hpp>
+#include <bunsan/logging/trivial.hpp>
 #include <bunsan/property_tree/info_parser.hpp>
 
 #include <boost/property_tree/ptree.hpp>
@@ -75,26 +75,26 @@ namespace
 
         int main(const variables_map &variables) override
         {
-            DLOG(config parse);
+            BUNSAN_LOG_DEBUG << "Parsing configuration at \"" << config_file << "\"";
             boost::property_tree::ptree config;
             bunsan::property_tree::read_info(config_file, config);
             if (variables.count("initialize"))
             { // initialize before repository construction
-                std::cerr << "Attempt to initialize repository" << std::endl;
+                BUNSAN_LOG_INFO << "Attempt to initialize repository";
                 bunsan::pm::repository::initialize_cache(config);
             }
             bunsan::pm::repository repo(config);
             if (variables.count("clean"))
             { // clean before working with packages
-                std::cerr << "Attempt to clean repository" << std::endl;
+                BUNSAN_LOG_INFO << "Attempt to clean repository";
                 repo.clean_cache();
             }
             if (variables.count("package"))
             {
                 if (variables.count("extract"))
                 { // extracting
-                    std::cerr << "Attempt to extract \"" << package << "\""
-                                 " to \"" << extract_to << "\"" << std::endl;
+                    BUNSAN_LOG_INFO << "Attempt to extract \"" << package << "\""
+                                       " to \"" << extract_to << "\"";
                     repo.extract(package, extract_to);
                 }
                 else if (variables.count("install"))
@@ -110,20 +110,20 @@ namespace
                 }
                 else
                 { // package info
-                    std::cerr << "Package \"" << package << "\"" << std::endl;
+                    BUNSAN_LOG_INFO << "Package \"" << package << "\"";
                 }
             }
             else if (variables.count("create"))
             {
-                std::cerr << "Attempt to create source package "
-                             "from source \"" << create << "\"" << std::endl;
+                BUNSAN_LOG_INFO << "Attempt to create source package "
+                                   "from source \"" << create << "\"" << std::endl;
                 repo.create(create, variables.count("strip"));
             }
             else if (variables.count("create-recursively"))
             {
-                std::cerr << "Attempt to create source packages recursively "
-                             "from source starting from \"" <<
-                             create_recursively << "\"" << std::endl;
+                BUNSAN_LOG_INFO << "Attempt to create source packages recursively "
+                                   "from source starting from \"" <<
+                                   create_recursively << "\"";
                 repo.create_recursively(
                     create_recursively,
                     variables.count("strip")

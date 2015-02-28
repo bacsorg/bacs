@@ -10,7 +10,7 @@
 #include <bunsan/pm/index.hpp>
 #include <bunsan/pm/snapshot.hpp>
 
-#include <bunsan/logging/legacy.hpp>
+#include <bunsan/logging/trivial.hpp>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/property_tree/info_parser.hpp>
@@ -85,7 +85,7 @@ void bunsan::pm::repository::distributor::create(
             for (const std::string &i: to_remove)
             {
                 boost::filesystem::path path = source / i;
-                SLOG("Removing excess file from source package: " << path);
+                BUNSAN_LOG_DEBUG << "Removing excess file from source package: " << path;
                 boost::filesystem::remove_all(path);
             }
     }
@@ -107,7 +107,7 @@ void bunsan::pm::repository::distributor::create_recursively(
         const boost::filesystem::path index_path = root / format().name.get_index();
         if (boost::filesystem::is_regular_file(index_path))
         {
-            SLOG("Found index file at " << root << ", trying to create source package...");
+            BUNSAN_LOG_DEBUG << "Found index file at " << root << ", trying to create source package...";
             ignore.insert(format().name.get_index());
             create(root, strip);
             index index_;
@@ -141,7 +141,7 @@ void bunsan::pm::repository::distributor::update_meta(const entry &package)
 {
     try
     {
-        SLOG("starting \"" << package << "\" " << __func__);
+        BUNSAN_LOG_DEBUG << "Starting \"" << package << "\" " << __func__;
         const tempfile checksum_tmp = local_system_().small_tempfile();
         try
         {
@@ -175,7 +175,7 @@ void bunsan::pm::repository::distributor::update_sources(const entry &package)
 {
     try
     {
-        SLOG("starting \"" << package << "\" " << __func__);
+        BUNSAN_LOG_DEBUG << "Starting \"" << package << "\" " << __func__;
         for (const std::string &src_name: cache_().read_index(package).sources())
         {
             update_file(
