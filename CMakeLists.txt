@@ -6,7 +6,7 @@ project(bunsan_pm)
 
 find_package(BunsanCMake CONFIG REQUIRED)
 
-bunsan_add_shared_library(${PROJECT_NAME}
+bunsan_add_library(${PROJECT_NAME}
     src/lib/index.cpp
     src/lib/entry.cpp
     src/lib/checksum.cpp
@@ -24,7 +24,7 @@ bunsan_add_shared_library(${PROJECT_NAME}
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_utility bunsan_utility)
 target_link_libraries(${PROJECT_NAME} PRIVATE cryptopp)
 
-bunsan_add_shared_library(${PROJECT_NAME}_compatibility
+bunsan_add_library(${PROJECT_NAME}_compatibility
     src/compatibility/repository_cpp.cpp
     src/compatibility/repository_c.cpp
 )
