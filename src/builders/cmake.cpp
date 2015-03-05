@@ -3,6 +3,7 @@
 
 #include <bunsan/config/cast.hpp>
 #include <bunsan/process/execute.hpp>
+#include <bunsan/static_initializer.hpp>
 
 #include <boost/filesystem/operations.hpp>
 
@@ -10,12 +11,15 @@
 
 using namespace bunsan::utility;
 
-const bool builders::cmake::factory_reg_hook = builder::register_new("cmake",
-    [](const resolver &resolver_)
-    {
-        builder_ptr ptr(new cmake(resolver_));
-        return ptr;
-    });
+BUNSAN_STATIC_INITIALIZER(bunsan_utility_builders_cmake,
+{
+    BUNSAN_FACTORY_REGISTER_TOKEN(builder, cmake,
+        [](const resolver &resolver_)
+        {
+            builder_ptr ptr(new builders::cmake(resolver_));
+            return ptr;
+        })
+})
 
 void builders::cmake::set_default_generator()
 {

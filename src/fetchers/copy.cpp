@@ -1,6 +1,8 @@
 #include <bunsan/config.hpp>
 #include "copy.hpp"
 
+#include <bunsan/static_initializer.hpp>
+
 #include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;
@@ -9,15 +11,18 @@ using namespace bunsan::utility;
 #   error ASSERTION: BUNSAN_UTILITY_FETCHER_COPY is in use
 #endif
 #define BUNSAN_UTILITY_FETCHER_COPY(NAME) \
-const bool fetchers::copy::factory_reg_hook_##NAME = fetcher::register_new(#NAME, \
-    [](const resolver &) \
-    { \
-        fetcher_ptr ptr(new copy); \
-        return ptr; \
-    });
+    BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, NAME, \
+        [](const resolver &) \
+        { \
+            fetcher_ptr ptr(new fetchers::copy); \
+            return ptr; \
+        })
 
-BUNSAN_UTILITY_FETCHER_COPY(cp)
-BUNSAN_UTILITY_FETCHER_COPY(copy)
+BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_copy,
+{
+    BUNSAN_UTILITY_FETCHER_COPY(cp)
+    BUNSAN_UTILITY_FETCHER_COPY(copy)
+})
 
 void fetchers::copy::fetch(const std::string &uri, const boost::filesystem::path &dst)
 {

@@ -2,17 +2,21 @@
 
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/process/execute.hpp>
+#include <bunsan/static_initializer.hpp>
 
 #include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;
 
-const bool fetchers::curl::factory_reg_hook = fetcher::register_new("curl",
-    [](const resolver &resolver_)
-    {
-        fetcher_ptr ptr(new curl(resolver_.find_executable("curl")));
-        return ptr;
-    });
+BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_curl,
+{
+    BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, curl,
+        [](const resolver &resolver_)
+        {
+            fetcher_ptr ptr(new fetchers::curl(resolver_.find_executable("curl")));
+            return ptr;
+        })
+})
 
 fetchers::curl::curl(const boost::filesystem::path &exe): m_exe(exe) {}
 

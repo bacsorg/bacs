@@ -2,17 +2,21 @@
 
 #include <bunsan/config/cast.hpp>
 #include <bunsan/process/execute.hpp>
+#include <bunsan/static_initializer.hpp>
 
 #include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;
 
-const bool makers::make::factory_reg_hook = maker::register_new("make",
-    [](const resolver &resolver_)
-    {
-        maker_ptr ptr(new make(resolver_.find_executable("make")));
-        return ptr;
-    });
+BUNSAN_STATIC_INITIALIZER(bunsan_utility_makers_make,
+{
+    BUNSAN_FACTORY_REGISTER_TOKEN(maker, make,
+        [](const resolver &resolver_)
+        {
+            maker_ptr ptr(new makers::make(resolver_.find_executable("make")));
+            return ptr;
+        })
+})
 
 makers::make::make(const boost::filesystem::path &exe): m_exe(exe) {}
 

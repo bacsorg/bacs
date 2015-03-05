@@ -2,18 +2,22 @@
 
 #include <bunsan/config/cast.hpp>
 #include <bunsan/process/execute.hpp>
+#include <bunsan/static_initializer.hpp>
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;
 
-const bool archivers::tar::factory_reg_hook = archiver::register_new("tar",
-    [](const resolver &resolver_)
-    {
-        archiver_ptr ptr(new tar(resolver_.find_executable("tar")));
-        return ptr;
-    });
+BUNSAN_STATIC_INITIALIZER(bunsan_utility_archivers_tar,
+{
+    BUNSAN_FACTORY_REGISTER_TOKEN(archiver, tar,
+        [](const resolver &resolver_)
+        {
+            archiver_ptr ptr(new archivers::tar(resolver_.find_executable("tar")));
+            return ptr;
+        })
+})
 
 archivers::tar::tar(const boost::filesystem::path &exe): m_exe(exe) {}
 

@@ -41,11 +41,6 @@ namespace bunsan{namespace utility{namespace archivers
         boost::optional<std::string> format_argument() const;
 
     private:
-        static const bool factory_reg_hook_7z;
-        static const bool factory_reg_hook_7za;
-        static const bool factory_reg_hook_7zr;
-
-    private:
         const boost::filesystem::path m_exe;
         config m_config;
     };

@@ -46,8 +46,5 @@ namespace bunsan{namespace utility{namespace makers
     private:
         const boost::filesystem::path m_exe;
         config m_config;
-
-    private:
-        static const bool factory_reg_hook;
     };
 }}}

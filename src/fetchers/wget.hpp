@@ -13,8 +13,5 @@ namespace bunsan{namespace utility{namespace fetchers
 
     private:
         const boost::filesystem::path m_exe;
-
-    private:
-        static const bool factory_reg_hook;
     };
 }}}

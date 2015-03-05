@@ -93,7 +93,6 @@ namespace bunsan{namespace utility{namespace builders
 
     private:
         static const std::vector<generator> generators;
-        static const bool factory_reg_hook;
     };
 
     struct cmake_error: virtual error {};

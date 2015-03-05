@@ -1,17 +1,21 @@
 #include "wget.hpp"
 
 #include <bunsan/process/execute.hpp>
+#include <bunsan/static_initializer.hpp>
 
 #include <boost/filesystem/operations.hpp>
 
 using namespace bunsan::utility;
 
-const bool fetchers::wget::factory_reg_hook = fetcher::register_new("wget",
-    [](const resolver &resolver_)
-    {
-        fetcher_ptr ptr(new wget(resolver_.find_executable("wget")));
-        return ptr;
-    });
+BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_wget,
+{
+    BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, wget,
+        [](const resolver &resolver_)
+        {
+            fetcher_ptr ptr(new fetchers::wget(resolver_.find_executable("wget")));
+            return ptr;
+        })
+})
 
 fetchers::wget::wget(const boost::filesystem::path &exe): m_exe(exe) {}
 
