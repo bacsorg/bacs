@@ -6,20 +6,23 @@
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
 #include <bunsan/pm/index.hpp>
+#include <bunsan/static_initializer.hpp>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
 namespace bacs{namespace problem{namespace utilities
 {
-    const bool dot_net_solution::factory_reg_hook =
-        utility::register_new("dot_net_solution",
-        [](const boost::filesystem::path &location,
-           const boost::property_tree::ptree &config)
-        {
-            utility_ptr tmp(new dot_net_solution(location, config));
-            return tmp;
-        });
+    BUNSAN_STATIC_INITIALIZER(bacs_problem_utilities_dot_net_solution,
+    {
+        BUNSAN_FACTORY_REGISTER_TOKEN(utility, dot_net_solution,
+            [](const boost::filesystem::path &location,
+               const boost::property_tree::ptree &config)
+            {
+                utility_ptr tmp(new dot_net_solution(location, config));
+                return tmp;
+            })
+    })
 
     dot_net_solution::dot_net_solution(
         const boost::filesystem::path &location,

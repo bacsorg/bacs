@@ -20,8 +20,5 @@ namespace bacs{namespace problem{namespace utilities
         const boost::filesystem::path m_solution;
         const boost::optional<std::string> m_configuration;
         const std::vector<std::string> m_libs;
-
-    private:
-        static const bool factory_reg_hook;
     };
 }}}

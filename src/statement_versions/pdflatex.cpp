@@ -4,13 +4,15 @@
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
 #include <bunsan/pm/index.hpp>
+#include <bunsan/static_initializer.hpp>
 
 #include <boost/property_tree/ini_parser.hpp>
 
 namespace bacs{namespace problem{namespace statement_versions
 {
-    const bool pdflatex::factory_reg_hook =
-        statement::version::register_new("pdflatex",
+    BUNSAN_STATIC_INITIALIZER(bacs_problem_statement_versions_pdflatex,
+    {
+        BUNSAN_FACTORY_REGISTER_TOKEN(statement::version, pdflatex,
             [](const boost::filesystem::path &location,
                const boost::property_tree::ptree &config)
             {
@@ -18,7 +20,8 @@ namespace bacs{namespace problem{namespace statement_versions
                     new pdflatex(location, config)
                 );
                 return tmp;
-            });
+            })
+    })
 
     namespace
     {

@@ -26,8 +26,5 @@ namespace bacs{namespace problem{namespace statement_versions
 
     private:
         const boost::filesystem::path m_source;
-
-    private:
-        static const bool factory_reg_hook;
     };
 }}}

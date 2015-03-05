@@ -6,19 +6,23 @@
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
 #include <bunsan/pm/index.hpp>
+#include <bunsan/static_initializer.hpp>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
 namespace bacs{namespace problem{namespace utilities
 {
-    const bool single::factory_reg_hook = utility::register_new("single",
-        [](const boost::filesystem::path &location,
-           const boost::property_tree::ptree &config)
-        {
-            utility_ptr tmp(new single(location, config));
-            return tmp;
-        });
+    BUNSAN_STATIC_INITIALIZER(bacs_problem_utilities_single,
+    {
+        BUNSAN_FACTORY_REGISTER_TOKEN(utility, single,
+            [](const boost::filesystem::path &location,
+               const boost::property_tree::ptree &config)
+            {
+                utility_ptr tmp(new single(location, config));
+                return tmp;
+            })
+    })
 
     single::single(const boost::filesystem::path &location,
                    const boost::property_tree::ptree &config):

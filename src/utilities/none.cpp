@@ -1,5 +1,7 @@
 #include <bacs/problem/utility.hpp>
 
+#include <bunsan/static_initializer.hpp>
+
 namespace bacs{namespace problem{namespace utilities
 {
     class none: public utility
@@ -15,16 +17,16 @@ namespace bacs{namespace problem{namespace utilities
         {
             return false;
         }
-
-    private:
-        static const bool factory_reg_hook;
     };
 
-    const bool none::factory_reg_hook = utility::register_new("none",
-        [](const boost::filesystem::path &location,
-           const boost::property_tree::ptree &config)
-        {
-            utility_ptr tmp(new none(location, config));
-            return tmp;
-        });
+    BUNSAN_STATIC_INITIALIZER(bacs_problem_utilities_none,
+    {
+        BUNSAN_FACTORY_REGISTER_TOKEN(utility, none,
+            [](const boost::filesystem::path &location,
+               const boost::property_tree::ptree &config)
+            {
+                utility_ptr tmp(new none(location, config));
+                return tmp;
+            })
+    })
 }}}

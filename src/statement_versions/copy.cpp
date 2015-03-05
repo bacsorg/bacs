@@ -3,18 +3,22 @@
 #include <bunsan/config/cast.hpp>
 #include <bunsan/filesystem/operations.hpp>
 #include <bunsan/pm/index.hpp>
+#include <bunsan/static_initializer.hpp>
 
 #include <boost/property_tree/ini_parser.hpp>
 
 namespace bacs{namespace problem{namespace statement_versions
 {
-    const bool copy::factory_reg_hook = statement::version::register_new("copy",
-        [](const boost::filesystem::path &location,
-           const boost::property_tree::ptree &config)
-        {
-            statement::version_ptr tmp(new copy(location, config));
-            return tmp;
-        });
+    BUNSAN_STATIC_INITIALIZER(bacs_problem_statement_versions_copy,
+    {
+        BUNSAN_FACTORY_REGISTER_TOKEN(statement::version, copy,
+            [](const boost::filesystem::path &location,
+               const boost::property_tree::ptree &config)
+            {
+                statement::version_ptr tmp(new copy(location, config));
+                return tmp;
+            })
+    })
 
     namespace
     {
