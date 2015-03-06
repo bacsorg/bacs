@@ -9,7 +9,6 @@ find_package(BunsanCMake CONFIG REQUIRED)
 bunsan_find_bunsan_package(bunsan_bacs_common bunsan_bacs_common)
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
-    SHARED
     PROTOS
         bacs/problem/problem.proto
     LIBRARIES ${bunsan_bacs_common_LIBRARIES}
@@ -17,7 +16,7 @@ bunsan_add_protobuf_cxx_library(
     INSTALL
 )
 
-bunsan_add_shared_library(${PROJECT_NAME}
+bunsan_add_library(${PROJECT_NAME}
     src/buildable.cpp
     src/utility.cpp
     src/id.cpp
