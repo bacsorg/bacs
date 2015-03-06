@@ -10,7 +10,6 @@ bunsan_find_bunsan_package(bunsan_bacs_problems bunsan_bacs_problems)
 
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
-    SHARED
     PROTOS
         bacs/archive/pb/problem.proto
     LIBRARIES ${bunsan_bacs_problems_LIBRARIES} cryptopp
@@ -18,7 +17,7 @@ bunsan_add_protobuf_cxx_library(
     INSTALL
 )
 
-bunsan_add_shared_library(${PROJECT_NAME}
+bunsan_add_library(${PROJECT_NAME}
     src/lib/importer.cpp
     src/lib/repository.cpp
     src/lib/repository_impl.cpp
