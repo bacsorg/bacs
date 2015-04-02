@@ -10,7 +10,6 @@ bunsan_find_bunsan_package(bunsan_common bunsan_common)
 
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}
-    SHARED
     PROTOS
         bacs/callback.proto
         bacs/file.proto
