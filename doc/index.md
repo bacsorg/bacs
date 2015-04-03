@@ -1,5 +1,4 @@
-High-level design
-=================
+# High-level design
 
 Design is split into three main parts
 - [Client](client.md)
@@ -13,8 +12,8 @@ Broker interacts **client** and **worker**.
 **Client** may connect to multiple **brokers** based
 on resource it need to consume.
 
-Task
-----
+# Task
+
 **Task** is a blob with attributes sent by a **client**.
 ```
 message Task {

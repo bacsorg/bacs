@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package bunsan.broker.client;
+
+message Registration {
+    optional bytes id = 1;
+    optional string name = 2;
+}
+
+message Request {
+}
+
+message Reply {
+}
+
+message Confirmation {
+}
+
+message Error {
+    // optional TODO code = 1;
+    optional string reason = 2;
+}
