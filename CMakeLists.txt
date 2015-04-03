@@ -10,7 +10,6 @@ bunsan_find_bunsan_package(bunsan_bacs_problems bunsan_bacs_problems)
 
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}
-    SHARED
     PROTOS
         bacs/statement_provider/request.proto
     LIBRARIES ${bunsan_bacs_problems_LIBRARIES} cryptopp
