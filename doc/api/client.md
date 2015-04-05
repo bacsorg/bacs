@@ -18,7 +18,7 @@ to calling thread and internal threads.
 [optional] Credentials credentials
 ```
 
-See [Credentials](common.md#Credentials).
+See [Credentials](common.md#credentials).
 
 ## Methods
 
@@ -31,6 +31,12 @@ Open(ConnectionOptions options)
 Opens session.
 Identifier must be globally unique and persistent
 across application restarts so that replies can be delivered.
+
+### Close()
+
+Closes all connections and discards any unprocessed events.
+Unprocessed status updates may be lost, unprocessed
+results will be received again.
 
 ### Listen()
 
