@@ -8,12 +8,24 @@ arbitrary number of internal threads and execute
 given callbacks in any thread, including but not limited
 to calling thread and internal threads.
 
+## Related classes
+
+### ConnectionOptions
+
+```
+[required] string identifier
+[optional] string connection
+[optional] Credentials credentials
+```
+
+See [Credentials](common.md#Credentials).
+
 ## Methods
 
 ### Open()
 
 ```
-Open(bytes identifier)
+Open(ConnectionOptions options)
 ```
 
 Opens session.
@@ -36,12 +48,12 @@ once it was processed.
 ### Send()
 
 ```
-Send(string resource, bytes id, bytes task)
+Send(Constraints constraints,
+     bytes id,
+     Task task)
 ```
 
-Send *task* to a **worker** that supports *resource*.
-`id` is not used by distributed system and returned verbatim
-with *task* updates in `Listen()`.
+- `id` copied verbatim to task events, see [Listen()](#listen)
 
 ### Terminate()
 
