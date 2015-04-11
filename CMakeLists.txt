@@ -9,7 +9,9 @@ find_package(BunsanCMake CONFIG REQUIRED)
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
     PROTOS
+        bunsan/broker/common.proto
         bunsan/broker/client.proto
+        bunsan/broker/worker.proto
     INSTALL
 )
 #bunsan_add_library(${PROJECT_NAME}

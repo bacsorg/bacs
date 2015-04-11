@@ -12,19 +12,19 @@
 
 ## Constraints
 
-Empty list means match any.
+Empty list matches any.
 Result matcher is conjunction of specified properties.
 
 ```
-[optional] string resources[]
+[repeated] string resource
 ```
 
 ## Task
 
 ```
-[required] string type,
-[required] string package,
-[required] bytes data
+[required] string type
+[required] string package
+[optional] bytes data
 ```
 
 - `type` type of package, how it should be executed

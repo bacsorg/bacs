@@ -9,7 +9,8 @@ and returns result.
 ### ConnectionOptions
 
 ```
-[required] Constraints constraints
+[optional] string identifier
+[optional] Constraints constraints
 [optional] string connection
 [optional] Credentials credentials
 ```

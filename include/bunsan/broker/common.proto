@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package bunsan.broker;
+
+message Credentials {
+    string method = 1;
+    string login = 2;
+    string password = 3;
+    bytes certificate = 4;
+    bytes key = 5;
+}
+
+message Constraints {
+    repeated string resource = 1;
+}
+
+message Task {
+    /* required */ string type = 1;
+    /* required */ string package = 2;
+    bytes data = 3;
+}
