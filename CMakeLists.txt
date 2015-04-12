@@ -12,6 +12,7 @@ bunsan_add_protobuf_cxx_library(
         bunsan/broker/common.proto
         bunsan/broker/client.proto
         bunsan/broker/worker.proto
+        bunsan/broker/rabbitmq/common.proto
     INSTALL
 )
 #bunsan_add_library(${PROJECT_NAME}

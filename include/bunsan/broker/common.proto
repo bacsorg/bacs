@@ -19,3 +19,24 @@ message Task {
     /* required */ string package = 2;
     bytes data = 3;
 }
+
+message Status {
+    int32 code = 1;
+    string reason = 2;
+    bytes data = 3;
+}
+
+message Result {
+    enum Status {
+        OK = 0;
+        UNKNOWN_TYPE = 1;
+        PACKAGE_NOT_FOUND = 2;
+        PACKAGE_BUILD_ERROR = 3;
+        INVALID_PACKAGE = 4;
+        EXECUTION_ERROR = 5;
+    }
+
+    Status status = 1;
+    string reason = 2;
+    bytes data = 3;
+}
