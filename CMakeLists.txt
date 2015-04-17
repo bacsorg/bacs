@@ -6,8 +6,11 @@ project(bunsan_broker)
 
 find_package(BunsanCMake CONFIG REQUIRED)
 
+bunsan_find_python3()
+
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
+    PYTHON
     PROTOS
         bunsan/broker/common.proto
         bunsan/broker/client.proto
