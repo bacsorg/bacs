@@ -2,9 +2,15 @@ syntax = "proto3";
 
 package bunsan.broker;
 
+message Connection {
+    string host = 1;
+    int32 port = 2;
+    string virtual_host = 3;
+}
+
 message Credentials {
     string method = 1;
-    string login = 2;
+    string username = 2;
     string password = 3;
     bytes certificate = 4;
     bytes key = 5;
@@ -29,11 +35,12 @@ message Status {
 message Result {
     enum Status {
         OK = 0;
-        UNKNOWN_TYPE = 1;
-        PACKAGE_NOT_FOUND = 2;
-        PACKAGE_BUILD_ERROR = 3;
-        INVALID_PACKAGE = 4;
-        EXECUTION_ERROR = 5;
+        INVALID_PROTO = 1;
+        UNKNOWN_TYPE = 2;
+        PACKAGE_NOT_FOUND = 3;
+        PACKAGE_BUILD_ERROR = 4;
+        INVALID_PACKAGE = 5;
+        EXECUTION_ERROR = 6;
     }
 
     Status status = 1;
