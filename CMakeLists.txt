@@ -18,13 +18,9 @@ bunsan_add_protobuf_cxx_library(
         bunsan/broker/rabbitmq/common.proto
     INSTALL
 )
-bunsan_install_python_module_init(
-    MODULE bunsan.broker
-    INIT pysrc/bunsan/broker/__init__.py
-)
-bunsan_install_python_module_init(
-    MODULE bunsan.broker.worker
-    INIT pysrc/bunsan/broker/worker/__init__.py
+bunsan_install_python_package(
+    PACKAGE bunsan.broker
+    DIRECTORY pysrc/bunsan/broker
 )
 #bunsan_add_library(${PROJECT_NAME}
 #)
