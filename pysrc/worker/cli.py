@@ -5,7 +5,7 @@ import pika
 from bunsan.broker import worker_pb2
 from bunsan.broker.worker import sender
 from bunsan.broker.rabbitmq import common_pb2 as rabbitmq_pb2
-
+from google.protobuf import text_format
 
 _logger = logging.getLogger('bunsan.broker.worker.cli')
 
@@ -48,7 +48,7 @@ def main():
     parser.add_argument('connection')
     args = parser.parse_args()
     connection_parameters = worker_pb2.ConnectionParameters()
-    connection_parameters.ParseFromString(args.connection)
+    text_format.Parse(args.connection, connection_parameters)
     credentials = pika.credentials.PlainCredentials(
         username=connection_parameters.credentials.username,
         password=connection_parameters.credentials.password)
