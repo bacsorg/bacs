@@ -20,7 +20,7 @@ bunsan_add_protobuf_cxx_library(
 )
 bunsan_install_python_package(
     PACKAGE bunsan.broker
-    DIRECTORY pysrc/bunsan/broker
+    DIRECTORY pysrc
 )
 #bunsan_add_library(${PROJECT_NAME}
 #)
