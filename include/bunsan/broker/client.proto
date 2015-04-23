@@ -4,7 +4,7 @@ package bunsan.broker.client;
 
 import "bunsan/broker/common.proto";
 
-message ConnectionOptions {
+message ConnectionParameters {
     /* required */ string identifier = 1;
     string connection = 2;
     Credentials credentials = 3;
