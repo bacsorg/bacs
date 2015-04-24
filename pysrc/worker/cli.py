@@ -7,6 +7,7 @@ from bunsan.broker.worker import sender
 from bunsan.broker.rabbitmq import common_pb2 as rabbitmq_pb2
 from google.protobuf import text_format
 
+
 _logger = logging.getLogger('bunsan.broker.worker.cli')
 
 
@@ -34,7 +35,7 @@ def callback(channel, method, properties, body):
         task.ParseFromString(body)
     except Exception as e:
         _logger.exception('ParseFromString', e)
-        context.send_result('INVALID_PROTO', "Unable to parse proto", str(e))
+        context.send_result('INVALID_PROTO', 'Unable to parse proto', str(e))
         channel.basic_ack(delivery_tag=method.delivery_tag)
     runner = Runner(channel, task)
     _logger.info('Running')
@@ -49,21 +50,31 @@ def main():
     args = parser.parse_args()
     connection_parameters = worker_pb2.ConnectionParameters()
     text_format.Parse(args.connection, connection_parameters)
-    credentials = pika.credentials.PlainCredentials(
-        username=connection_parameters.credentials.username,
-        password=connection_parameters.credentials.password)
-    connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host=connection_parameters.connection.host,
-        port=connection_parameters.connection.port,
-        virtual_host=connection_parameters.connection.virtual_host,
-        credentials=credentials))
-    channel = connection.channel()
-    channel.basic_qos(prefetch_count=1)
-    for queue in connection.constraints:
-        channel.queue_declare(queue=queue, durable=True)
-        channel.basic_consume(callback, queue=queue)
-    _logger.info('Start consuming')
-    channel.start_consuming()
+    connect = dict()
+    if connection_parameters.connection.host:
+        connect['host'] = connection_parameters.connection.host
+    if connection_parameters.connection.port:
+        connect['port'] = connection_parameters.connection.port
+    if connection_parameters.connection.virtual_host:
+        connect['virtual_host'] = connection_parameters.connection.virtual_host
+    if connection_parameters.HasField('credentials'):
+        connect['credentials'] = pika.credentials.PlainCredentials(
+            username=connection_parameters.credentials.username,
+            password=connection_parameters.credentials.password)
+    _logger.debug('Opening connection')
+    print(repr(connect))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(**connect))
+    try:
+        channel = connection.channel()
+        channel.basic_qos(prefetch_count=1)
+        for queue in connection_parameters.constraints.resource:
+            channel.queue_declare(queue=queue, durable=True)
+            channel.basic_consume(callback, queue=queue)
+        _logger.info('Start consuming')
+        channel.start_consuming()
+    finally:
+        _logger.info('Closing connection to RabbitMQ')
+        connection.close()
 
 
 if __name__ == '__main__':
