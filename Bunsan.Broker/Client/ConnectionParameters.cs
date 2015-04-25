@@ -14,7 +14,7 @@ namespace Bunsan.Broker.Client
         public string Identifier { get; set; }
 
         [ProtoMember(2, IsRequired = false)]
-        public string Connection { get; set; }
+        public Connection Connection { get; set; }
 
         [ProtoMember(3, IsRequired = false)]
         public Credentials Credentials { get; set; }
