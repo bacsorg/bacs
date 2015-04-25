@@ -6,6 +6,6 @@ import "bunsan/broker/common.proto";
 
 message ConnectionParameters {
     /* required */ string identifier = 1;
-    string connection = 2;
+    Connection connection = 2;
     Credentials credentials = 3;
 }
