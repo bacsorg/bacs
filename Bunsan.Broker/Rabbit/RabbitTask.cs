@@ -12,9 +12,17 @@ namespace Bunsan.Broker.Rabbit
     {
         [ProtoMember(1, IsRequired = false)]
         public string Identifier { get; set; }
+
+        [ProtoMember(2, IsRequired = false)]
         public Task Task { get; set; }
+
+        [ProtoMember(3, IsRequired = false)]
         public Constraints Constraints { get; set; }
+
+        [ProtoMember(4, IsRequired = false)]
         public string StatusQueue { get; set; }
+
+        [ProtoMember(5, IsRequired = false)]
         public string ResultQueue { get; set; }
     }
 }

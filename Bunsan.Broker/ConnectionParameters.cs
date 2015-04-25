@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bunsan.Broker.Client
+namespace Bunsan.Broker
 {
     [ProtoContract]
     class ConnectionParameters
@@ -14,9 +14,15 @@ namespace Bunsan.Broker.Client
         public string Identifier { get; set; }
 
         [ProtoMember(2, IsRequired = false)]
-        public Connection Connection { get; set; }
+        public Credentials Credentials { get; set; }
 
         [ProtoMember(3, IsRequired = false)]
-        public Credentials Credentials { get; set; }
+        public string Host { get; set; }
+
+        [ProtoMember(4, IsRequired = false)]
+        public int Port { get; set; }
+
+        [ProtoMember(5, IsRequired = false)]
+        public string VirtualHost { get; set; }
     }
 }
