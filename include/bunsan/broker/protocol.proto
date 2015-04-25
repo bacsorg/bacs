@@ -2,24 +2,6 @@ syntax = "proto3";
 
 package bunsan.broker;
 
-message Connection {
-    string host = 1;
-    int32 port = 2;
-    string virtual_host = 3;
-}
-
-message Credentials {
-    string method = 1;
-    string username = 2;
-    string password = 3;
-    bytes certificate = 4;
-    bytes key = 5;
-}
-
-message Constraints {
-    repeated string resource = 1;
-}
-
 message Task {
     /* required */ string type = 1;
     /* required */ string package = 2;

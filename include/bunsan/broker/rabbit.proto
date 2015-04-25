@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-package bunsan.broker.rabbitmq;
+package bunsan.broker.rabbit;
 
-import "bunsan/broker/common.proto";
+import "bunsan/broker/connection.proto";
+import "bunsan/broker/protocol.proto";
 
 message RabbitTask {
     string identifier = 1;

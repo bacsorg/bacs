@@ -12,10 +12,9 @@ bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
     PYTHON
     PROTOS
-        bunsan/broker/common.proto
-        bunsan/broker/client.proto
-        bunsan/broker/worker.proto
-        bunsan/broker/rabbitmq/common.proto
+        bunsan/broker/connection.proto
+        bunsan/broker/protocol.proto
+        bunsan/broker/rabbit.proto
     INSTALL
 )
 bunsan_install_python_package(
