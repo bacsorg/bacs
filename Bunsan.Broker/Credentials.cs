@@ -14,7 +14,7 @@ namespace Bunsan.Broker
         public string Method { get; set; }
 
         [ProtoMember(2, IsRequired = false)]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         [ProtoMember(3, IsRequired = false)]
         public string Password { get; set; }
