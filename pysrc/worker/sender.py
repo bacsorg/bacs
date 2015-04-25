@@ -1,7 +1,7 @@
 import logging
 import pika
 
-from bunsan.broker.rabbitmq import common_pb2 as rabbitmq_pb2
+from bunsan.broker import rabbit_pb2
 
 
 _logger = logging.getLogger('bunsan.broker.worker.sender')
@@ -28,7 +28,7 @@ class Sender(object):
 class StatusSender(Sender):
 
     def send_status(self, code, reason=None, data=None):
-        status = rabbitmq_pb2.RabbitStatus()
+        status = rabbit_pb2.RabbitStatus()
         status.identifier = self._identifier
         status.status.code = code
         if reason is not None:
@@ -41,7 +41,7 @@ class StatusSender(Sender):
 class ResultSender(Sender):
 
     def send_result(self, status, reason=None, data=None):
-        result = rabbitmq_pb2.RabbitResult()
+        result = rabbit_pb2.RabbitResult()
         result.identifier = self._identifier
         result.result.status = status
         if reason is not None:
