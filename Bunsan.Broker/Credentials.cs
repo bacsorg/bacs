@@ -11,18 +11,18 @@ namespace Bunsan.Broker
     class Credentials
     {
         [ProtoMember(1, IsRequired = false)]
-        public string method { get; set; }
+        public string Method { get; set; }
 
         [ProtoMember(2, IsRequired = false)]
-        public string username { get; set; }
+        public string Username { get; set; }
 
         [ProtoMember(3, IsRequired = false)]
-        public string password { get; set; }
+        public string Password { get; set; }
 
         [ProtoMember(4, IsRequired = false)]
-        public byte[] certificate { get; set; }
+        public byte[] Certificate { get; set; }
 
         [ProtoMember(5, IsRequired = false)]
-        public byte[] key { get; set; }
+        public byte[] Key { get; set; }
     }
 }

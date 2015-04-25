@@ -11,12 +11,12 @@ namespace Bunsan.Broker.Client
     class ConnectionParameters
     {
         [ProtoMember(1, IsRequired = false)]
-        public string identifier { get; set; }
+        public string Identifier { get; set; }
 
         [ProtoMember(2, IsRequired = false)]
-        public string connection { get; set; }
+        public string Connection { get; set; }
 
         [ProtoMember(3, IsRequired = false)]
-        public Credentials credentials { get; set; }
+        public Credentials Credentials { get; set; }
     }
 }
