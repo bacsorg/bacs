@@ -41,8 +41,8 @@ results will be received again.
 ### Listen()
 
 ```
-Listen(delegate Status(bytes id, bytes status),
-       delegate Result(bytes id, bytes result))
+Listen(delegate Status(string id, Status status),
+       delegate Result(string id, Result result))
 ```
 
 Listen for results. Status will be called
@@ -55,7 +55,7 @@ once it was processed.
 
 ```
 Send(Constraints constraints,
-     bytes id,
+     string id,
      Task task)
 ```
 
