@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Bunsan.Broker
 {
     [ProtoContract]
-    class Status
+    public class Status
     {
         [ProtoMember(1, IsRequired = false)]
         public int Code { get; set; }

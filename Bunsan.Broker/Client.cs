@@ -12,9 +12,9 @@ using System.Threading;
 
 namespace Bunsan.Broker
 {
-    class Client : IDisposable
+    public class Client : IDisposable
     {
-        class Reader
+        private class Reader
         {
             public delegate void Callback(BasicDeliverEventArgs message);
 
@@ -95,7 +95,7 @@ namespace Bunsan.Broker
         private Reader status_reader;
         private Reader result_reader;
 
-        Client(ConnectionParameters parameters)
+        public Client(ConnectionParameters parameters)
         {
             var connection_factory = new ConnectionFactory();
             if (parameters.Host != null) connection_factory.HostName = parameters.Host;

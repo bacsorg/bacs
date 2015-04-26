@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Bunsan.Broker
 {
     [ProtoContract]
-    class ConnectionParameters
+    public class ConnectionParameters
     {
         [ProtoMember(1, IsRequired = false)]
         public string Identifier { get; set; }

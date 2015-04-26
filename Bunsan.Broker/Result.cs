@@ -27,7 +27,7 @@ namespace Bunsan.Broker
     }
 
     [ProtoContract]
-    class Result
+    public class Result
     {
         [ProtoMember(1, IsRequired = false)]
         public ResultStatus Status { get; set; }
