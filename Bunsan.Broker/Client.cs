@@ -85,10 +85,9 @@ namespace Bunsan.Broker
             private Subscription subscription;
             private Callback callback;
             private Thread consumer;
-            private object locker = new object();
+            private readonly object locker = new object();
         }
 
-        private ConnectionFactory connection_factory;
         private IConnection connection;
         private IModel channel;
         private string status_queue;
@@ -98,7 +97,7 @@ namespace Bunsan.Broker
 
         Client(ConnectionParameters parameters)
         {
-            connection_factory = new ConnectionFactory();
+            var connection_factory = new ConnectionFactory();
             if (parameters.Host != null) connection_factory.HostName = parameters.Host;
             if (parameters.Port != 0) connection_factory.Port = parameters.Port;
             if (parameters.VirtualHost != null) connection_factory.VirtualHost = parameters.VirtualHost;
