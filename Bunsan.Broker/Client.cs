@@ -1,25 +1,100 @@
 ﻿using Bunsan.Broker.Rabbit;
 using ProtoBuf;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using RabbitMQ.Client.MessagePatterns;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Bunsan.Broker
 {
     class Client : IDisposable
     {
+        class Reader
+        {
+            public delegate void Callback(BasicDeliverEventArgs message);
+
+            public Reader(Subscription subscription)
+            {
+                this.subscription = subscription;
+                callback = null;
+                consumer = null;
+            }
+
+            public void Start(Callback callback)
+            {
+                if (callback == null) throw new ArgumentException("Callback can't be null");
+                lock (locker)
+                {
+                    if (this.callback != null) throw new ArgumentException("Already started");
+                    if (consumer != null) throw new ArgumentException("Invalid Reader state (probably Terminate() is runnning)");
+                    this.callback = callback;
+                    consumer = new Thread(new ThreadStart(Run));
+                    consumer.Start();
+                }
+            }
+
+            public void Terminate()
+            {
+                lock (locker)
+                {
+                    callback = null;
+                }
+                consumer.Join();
+                lock (locker)
+                {
+                    consumer = null;
+                }
+            }
+
+            private void Run()
+            {
+                for (;;)
+                {
+                    BasicDeliverEventArgs message;
+                    bool result = subscription.Next(100, out message);
+                    Callback callback = null;
+                    // capture callback or terminate
+                    lock (locker)
+                    {
+                        if (this.callback != null)
+                        {
+                            callback = this.callback;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    // safely call delegate
+                    try
+                    {
+                        if (result) callback(message);
+                    }
+                    catch (Exception)
+                    {
+                        // TODO log exception
+                    }
+                }
+            }
+
+            private Subscription subscription;
+            private Callback callback;
+            private Thread consumer;
+            private object locker = new object();
+        }
+
         private ConnectionFactory connection_factory;
         private IConnection connection;
         private IModel channel;
         private string status_queue;
         private string result_queue;
-        private Subscription status_subscription;
-        private Subscription result_subscription;
+        private Reader status_reader;
+        private Reader result_reader;
 
         Client(ConnectionParameters parameters)
         {
@@ -39,8 +114,8 @@ namespace Bunsan.Broker
             result_queue = parameters.Identifier + "_result";
             channel.QueueDeclare(queue: status_queue, durable: true, exclusive: false, autoDelete: false, arguments: null);
             channel.QueueDeclare(queue: result_queue, durable: false, exclusive: false, autoDelete: true, arguments: null);
-            status_subscription = new Subscription(model: channel, queueName: status_queue, noAck: true);
-            result_subscription = new Subscription(model: channel, queueName: result_queue, noAck: false);
+            status_reader = new Reader(new Subscription(model: channel, queueName: status_queue, noAck: true));
+            result_reader = new Reader(new Subscription(model: channel, queueName: result_queue, noAck: false));
         }
 
         public delegate void StatusCallback(string id, Status status);
@@ -48,7 +123,40 @@ namespace Bunsan.Broker
 
         public void Listen(StatusCallback status_callback, ResultCallback result_callback)
         {
-            throw new NotImplementedException();
+            status_reader.Start((message) => {
+                // we don't care about error handling of Status messages
+                using (var stream = new MemoryStream(message.Body))
+                {
+                    var status = Serializer.Deserialize<RabbitStatus>(stream);
+                    status_callback(status.Identifier, status.Status);
+                }
+            });
+            result_reader.Start((message) =>
+            {
+                using (var stream = new MemoryStream(message.Body))
+                {
+                    RabbitResult result = null;
+                    try
+                    {
+                        result = Serializer.Deserialize<RabbitResult>(stream);
+                    }
+                    catch (ProtoBuf.ProtoException)
+                    {
+                        // no reason to keep invalid message
+                        channel.BasicAck(message.DeliveryTag, false);
+                        throw;
+                    }
+                    result_callback(result.Identifier, result.Result);
+                }
+                // commit phase
+                channel.BasicAck(message.DeliveryTag, false);
+            });
+        }
+
+        public void Terminate()
+        {
+            status_reader.Terminate();
+            result_reader.Terminate();
         }
 
         public void Send(Constraints constraints, string id, Task task)
@@ -76,7 +184,7 @@ namespace Bunsan.Broker
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Terminate();
         }
     }
 }
