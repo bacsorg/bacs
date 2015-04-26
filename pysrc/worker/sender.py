@@ -56,4 +56,4 @@ class Context(ResultSender):
     def __init__(self, channel, properties):
         super(Context, self).__init__(channel=channel,
                                       queue=properties.reply_to,
-                                      correlation_id=properties.correlation_id)
+                                      identifier=properties.correlation_id)
