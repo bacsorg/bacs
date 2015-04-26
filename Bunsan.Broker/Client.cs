@@ -111,8 +111,8 @@ namespace Bunsan.Broker
             channel = connection.CreateModel();
             status_queue = parameters.Identifier + "_status";
             result_queue = parameters.Identifier + "_result";
-            channel.QueueDeclare(queue: status_queue, durable: true, exclusive: false, autoDelete: false, arguments: null);
-            channel.QueueDeclare(queue: result_queue, durable: false, exclusive: false, autoDelete: true, arguments: null);
+            channel.QueueDeclare(queue: status_queue, durable: false, exclusive: false, autoDelete: true, arguments: null);
+            channel.QueueDeclare(queue: result_queue, durable: true, exclusive: false, autoDelete: false, arguments: null);
             status_reader = new Reader(new Subscription(model: channel, queueName: status_queue, noAck: true));
             result_reader = new Reader(new Subscription(model: channel, queueName: result_queue, noAck: false));
         }
