@@ -30,7 +30,7 @@ class Consumer(object):
         self._channel.basic_qos(prefetch_count=1)
         for queue in constraints.resource:
             self._channel.queue_declare(queue=queue, durable=True)
-            self._channel.basic_consume(self._callback, queue=queue)
+            self._channel.basic_consume(self._consume, queue=queue)
         self._callback = None
 
     def listen(self, callback):
@@ -44,7 +44,6 @@ class Consumer(object):
         self._thread.start()
 
     def close(self):
-        self.terminate()
         _logger.info('Closing connection to RabbitMQ')
         self._connection.close()
         self._thread.join()
