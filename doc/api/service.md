@@ -1,4 +1,4 @@
-# Worker
+# Service
 
 Worker is a synchronous process that consumes
 one task, issues multiple intermediate updates
@@ -11,7 +11,7 @@ and returns result.
 ```
 [optional] string identifier
 [optional] Constraints constraints
-[optional] string connection
+[optional] Connection connection
 [optional] Credentials credentials
 ```
 
@@ -30,26 +30,18 @@ Open(ConnectionOptions)
 
 ### Close()
 
-### ConsumeTask()
+Terminates `Listen()` execution.
+Closes connection to RabbitMQ.
+
+### Listen(Callback)
 
 ```
-ConsumeTask() -> Task
+delegate delegate void SendStatus(Status)
+delegate Result Callback(Task, SendStatus)
 ```
 
-### Status()
-
-May be called multiple times.
-Delivery is not guaranteed.
-
-```
-Status(bytes status)
-```
-
-### Result()
-
-Must be called exactly once. If not called
-task will be returned to queue.
-
-```
-Result(bytes data)
-```
+User provides Callback. System provides `SendStatus()`,
+which can be used to issue `Status` updates.
+Callback returns single result. If exception
+occurs, `Task` will be received again, possibly
+by different service instance.

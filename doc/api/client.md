@@ -34,6 +34,7 @@ across application restarts so that replies can be delivered.
 
 ### Close()
 
+Terminate `Listen()` call.
 Closes all connections and discards any unprocessed events.
 Unprocessed status updates may be lost, unprocessed
 results will be received again.
@@ -60,8 +61,3 @@ Send(Constraints constraints,
 ```
 
 - `id` copied verbatim to task events, see [Listen()](#listen)
-
-### Terminate()
-
-Terminate `Listen()` call. It is safe to call
-`Listen()` again after it has returned.

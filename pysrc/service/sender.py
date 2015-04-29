@@ -4,7 +4,7 @@ import pika
 from bunsan.broker import rabbit_pb2
 
 
-_logger = logging.getLogger('bunsan.broker.worker.sender')
+_logger = logging.getLogger('bunsan.broker.service.sender')
 
 
 class Sender(object):
@@ -21,11 +21,14 @@ class Sender(object):
                                     body=body,
                                     properties=self._properties)
 
+
+class ProtoSender(Sender):
+
     def send_proto(self, proto):
         self.send(proto.SerializeToString())
 
 
-class StatusSender(Sender):
+class StatusSender(ProtoSender):
 
     def send_status(self, code, reason=None, data=None):
         status = rabbit_pb2.RabbitStatus()
@@ -38,7 +41,7 @@ class StatusSender(Sender):
         self.send_proto(status)
 
 
-class ResultSender(Sender):
+class ResultSender(ProtoSender):
 
     def send_result(self, status, reason=None, data=None):
         result = rabbit_pb2.RabbitResult()
@@ -51,9 +54,9 @@ class ResultSender(Sender):
         self.send_proto(result)
 
 
-class Context(ResultSender):
+class ErrorSender(Sender):
 
     def __init__(self, channel, properties):
-        super(Context, self).__init__(channel=channel,
-                                      queue=properties.reply_to,
-                                      identifier=properties.correlation_id)
+        super(ErrorSender, self).__init__(channel=channel,
+                                          queue=properties.reply_to,
+                                          identifier=properties.correlation_id)
