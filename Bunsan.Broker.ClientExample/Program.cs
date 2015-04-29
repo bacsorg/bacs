@@ -42,17 +42,22 @@ namespace Bunsan.Broker.ClientExample
                 Console.WriteLine("Argument error: ", e.Message);
             }
             var client = new Client(connection_parameters);
-            client.Listen((id, status) => {
+            client.Listen((id, status) =>
+            {
                 Console.WriteLine("Got status: id = ", id, ", status = ", status);
-            }, (id, result) => {
+            }, (id, result) =>
+            {
                 Console.WriteLine("Got result: id = ", id, ", status = ", result);
+            }, (id, error) =>
+            {
+                Console.WriteLine("Got error: id = ", id, ", error = ", error);
             });
             for (int id = 0; id < number_of_messages; ++id)
             {
                 client.Send(constraints, id.ToString(), task);
                 System.Threading.Thread.Sleep(interval);
             }
-            client.Terminate();
+            client.Close();
             return 0;
         }
     }

@@ -24,5 +24,8 @@ namespace Bunsan.Broker.Rabbit
 
         [ProtoMember(5, IsRequired = false)]
         public string ResultQueue { get; set; }
+
+        [ProtoMember(6, IsRequired = false)]
+        public string ErrorQueue { get; set; }
     }
 }

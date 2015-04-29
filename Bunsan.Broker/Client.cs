@@ -92,8 +92,10 @@ namespace Bunsan.Broker
         private IModel channel;
         private string status_queue;
         private string result_queue;
+        private string error_queue;
         private Reader status_reader;
         private Reader result_reader;
+        private Reader error_reader;
 
         public Client(ConnectionParameters parameters)
         {
@@ -109,18 +111,24 @@ namespace Bunsan.Broker
             }
             connection = connection_factory.CreateConnection();
             channel = connection.CreateModel();
-            status_queue = parameters.Identifier + "_status";
-            result_queue = parameters.Identifier + "_result";
+            status_queue = "client." + parameters.Identifier + ".status";
+            result_queue = "client." + parameters.Identifier + ".result";
+            error_queue = "client." + parameters.Identifier + ".error";
             channel.QueueDeclare(queue: status_queue, durable: false, exclusive: false, autoDelete: true, arguments: null);
             channel.QueueDeclare(queue: result_queue, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            channel.QueueDeclare(queue: error_queue, durable: true, exclusive: false, autoDelete: false, arguments: null);
             status_reader = new Reader(new Subscription(model: channel, queueName: status_queue, noAck: true));
             result_reader = new Reader(new Subscription(model: channel, queueName: result_queue, noAck: false));
+            error_reader = new Reader(new Subscription(model: channel, queueName: error_queue, noAck: false));
         }
 
         public delegate void StatusCallback(string id, Status status);
         public delegate void ResultCallback(string id, Result result);
+        public delegate void ErrorCallback(string id, string error);
 
-        public void Listen(StatusCallback status_callback, ResultCallback result_callback)
+        public void Listen(StatusCallback status_callback, 
+                           ResultCallback result_callback, 
+                           ErrorCallback error_callback)
         {
             status_reader.Start((message) => {
                 // we don't care about error handling of Status messages
@@ -150,12 +158,13 @@ namespace Bunsan.Broker
                 // commit phase
                 channel.BasicAck(message.DeliveryTag, false);
             });
-        }
-
-        public void Terminate()
-        {
-            status_reader.Terminate();
-            result_reader.Terminate();
+            error_reader.Start((message) =>
+            {
+                error_callback(message.BasicProperties.CorrelationId,
+                               System.Text.Encoding.UTF8.GetString(message.Body));
+                // commit phase
+                channel.BasicAck(message.DeliveryTag, false);
+            });
         }
 
         public void Send(Constraints constraints, string id, Task task)
@@ -178,12 +187,22 @@ namespace Bunsan.Broker
             }
             if (constraints.Resource.Length != 1)
                 throw new NotImplementedException("Supports only single resource constraint");
-            channel.BasicPublish(exchange: "", routingKey: constraints.Resource[0], basicProperties: null, body: data);
+            var properties = channel.CreateBasicProperties();
+            properties.ReplyTo = error_queue;
+            properties.CorrelationId = id;
+            channel.BasicPublish(exchange: "", routingKey: constraints.Resource[0], basicProperties: properties, body: data);
+        }
+
+        public void Close()
+        {
+            status_reader.Terminate();
+            result_reader.Terminate();
+            connection.Close();
         }
 
         public void Dispose()
         {
-            Terminate();
+            Close();
         }
     }
 }
