@@ -21,8 +21,8 @@ namespace Bunsan.Broker
             public Reader(Subscription subscription)
             {
                 this.subscription = subscription;
-                callback = null;
-                consumer = null;
+                this.callback = null;
+                this.consumer = null;
             }
 
             public void Start(Callback callback)
@@ -197,6 +197,7 @@ namespace Bunsan.Broker
         {
             status_reader.Terminate();
             result_reader.Terminate();
+            error_reader.Terminate();
             connection.Close();
         }
 
