@@ -26,6 +26,7 @@ def main():
                             constraints=constraints)
     try:
         cns.listen(callback)
+        cns.wait()
     finally:
         cns.close()
 

@@ -32,6 +32,7 @@ class Consumer(object):
             self._channel.queue_declare(queue=queue, durable=True)
             self._channel.basic_consume(self._consume, queue=queue)
         self._callback = None
+        self._thread = None
 
     def listen(self, callback):
         """
@@ -42,6 +43,9 @@ class Consumer(object):
         self._callback = callback
         self._thread = threading.Thread(target=self._channel.start_consuming)
         self._thread.start()
+
+    def wait(self):
+        self._thread.join()
 
     def close(self):
         _logger.info('Closing connection to RabbitMQ')
