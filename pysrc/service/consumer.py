@@ -6,12 +6,10 @@ from bunsan.broker.service import sender
 from bunsan.broker import rabbit_pb2
 
 
-_logger = logging.getLogger('bunsan.broker.service.consumer')
-
-
 class Consumer(object):
 
     def __init__(self, connection_parameters, constraints):
+        self._logger = logging.getLogger(__name__)
         connect = dict()
         if connection_parameters.host:
             connect['host'] = connection_parameters.host
@@ -23,7 +21,7 @@ class Consumer(object):
             connect['credentials'] = pika.credentials.PlainCredentials(
                 username=connection_parameters.credentials.username,
                 password=connection_parameters.credentials.password)
-        _logger.debug('Opening connection')
+        self._logger.debug('Opening connection')
         self._connection = pika.BlockingConnection(
             pika.ConnectionParameters(**connect))
         self._channel = self._connection.channel()
@@ -39,7 +37,7 @@ class Consumer(object):
             Args:
                 callback(task, send_status(Status)) -> Result
         """
-        _logger.info('Start consuming')
+        self._logger.info('Start consuming')
         self._callback = callback
         self._thread = threading.Thread(target=self._channel.start_consuming)
         self._thread.start()
@@ -48,18 +46,18 @@ class Consumer(object):
         self._thread.join()
 
     def close(self):
-        _logger.info('Closing connection to RabbitMQ')
+        self._logger.info('Closing connection to RabbitMQ')
         self._connection.close()
         self._thread.join()
 
     def _consume(self, channel, method, properties, body):
-        _logger.info('Received')
+        self._logger.info('Received')
         error_sender = sender.ErrorSender(channel, properties)
         task = rabbit_pb2.RabbitTask()
         try:
             task.ParseFromString(body)
         except Exception as e:
-            _logger.exception('ParseFromString', e)
+            self._logger.exception('ParseFromString', e)
             error_sender.send('Unable to parse proto: {}'.format(e))
             channel.basic_ack(delivery_tag=method.delivery_tag)
         status_sender = sender.StatusSender(channel,
@@ -68,9 +66,9 @@ class Consumer(object):
         result_sender = sender.ResultSender(channel,
                                             task.result_queue,
                                             task.identifier)
-        _logger.info('Running')
+        self._logger.info('Running')
         result = self._callback(task=task.task,
                                 send_status=status_sender.send_proto)
         result_sender.send_proto(result)
-        _logger.info('Completed')
+        self._logger.info('Completed')
         channel.basic_ack(delivery_tag=method.delivery_tag)

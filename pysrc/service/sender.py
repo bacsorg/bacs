@@ -4,18 +4,17 @@ import pika
 from bunsan.broker import rabbit_pb2
 
 
-_logger = logging.getLogger('bunsan.broker.service.sender')
-
-
 class Sender(object):
 
     def __init__(self, channel, queue, identifier):
+        self._logger = logging.getLogger(__name__)
         self._channel = channel
         self._queue = queue
         self._identifier = identifier
         self._properties = pika.BasicProperties(correlation_id=identifier)
 
     def send(self, body):
+        self._logger.debug('Sending message to {}', self._queue)
         self._channel.basic_publish(exchange='',
                                     routing_key=self._queue,
                                     body=body,
