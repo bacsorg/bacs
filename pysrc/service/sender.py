@@ -14,7 +14,7 @@ class Sender(object):
         self._properties = pika.BasicProperties(correlation_id=identifier)
 
     def send(self, body):
-        self._logger.debug('Sending message to {}', self._queue)
+        self._logger.debug('Sending message to %s', self._queue)
         self._channel.basic_publish(exchange='',
                                     routing_key=self._queue,
                                     body=body,
