@@ -8,7 +8,7 @@ from google.protobuf import text_format
 
 
 def callback(task, send_status):
-    print(task)
+    logging.getLogger(__name__).debug('task = %s', task)
 
 
 def main():
@@ -28,8 +28,7 @@ def main():
     cns = consumer.Consumer(connection_parameters=connection_parameters,
                             constraints=constraints)
     try:
-        cns.listen(callback)
-        cns.wait()
+        cns.listen_and_wait(callback)
     finally:
         cns.close()
 

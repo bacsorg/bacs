@@ -26,21 +26,29 @@ class Consumer(object):
             pika.ConnectionParameters(**connect))
         self._channel = self._connection.channel()
         self._channel.basic_qos(prefetch_count=1)
-        for queue in constraints.resource:
-            self._channel.queue_declare(queue=queue, durable=True)
-            self._channel.basic_consume(self._consume, queue=queue)
+        self._constraints = constraints
         self._callback = None
         self._thread = None
+        self._logger.debug('Created consumer')
 
     def listen(self, callback):
         """
             Args:
                 callback(task, send_status(Status)) -> Result
         """
-        self._logger.info('Start consuming')
+        self._logger.info('Start asynchronous consuming')
         self._callback = callback
-        self._thread = threading.Thread(target=self._channel.start_consuming)
+        self._thread = threading.Thread(target=self._start_consuming)
         self._thread.start()
+
+    def listen_and_wait(self, callback):
+        """
+            Args:
+                callback(task, send_status(Status)) -> Result
+        """
+        self._logger.info('Start synchronous consuming')
+        self._callback = callback
+        self._start_consuming()
 
     def wait(self):
         self._thread.join()
@@ -48,27 +56,51 @@ class Consumer(object):
     def close(self):
         self._logger.info('Closing connection to RabbitMQ')
         self._connection.close()
-        self._thread.join()
+        if self._thread is not None:
+            self._thread.join()
+
+    def _start_consuming(self):
+        self._logger.debug('Start consuming')
+        for queue in self._constraints.resource:
+            self._logger.debug('Consuming queue=%s', queue)
+            self._channel.queue_declare(queue=queue, durable=True)
+            self._channel.basic_consume(queue=queue,
+                                        consumer_callback=self._consume)
+        self._channel.start_consuming()
 
     def _consume(self, channel, method, properties, body):
-        self._logger.info('Received')
+        self._logger.info('Received task')
         error_sender = sender.ErrorSender(channel, properties)
         task = rabbit_pb2.RabbitTask()
         try:
             task.ParseFromString(body)
         except Exception as e:
             self._logger.exception('ParseFromString', e)
-            error_sender.send('Unable to parse proto: {}'.format(e))
+            error_sender.sendmsg('Unable to parse task proto: {}', e)
             channel.basic_ack(delivery_tag=method.delivery_tag)
+            return
         status_sender = sender.StatusSender(channel,
                                             task.status_queue,
                                             task.identifier)
         result_sender = sender.ResultSender(channel,
                                             task.result_queue,
                                             task.identifier)
-        self._logger.info('Running')
-        result = self._callback(task=task.task,
-                                send_status=status_sender.send_proto)
-        result_sender.send_proto(result)
-        self._logger.info('Completed')
+        self._logger.debug('Running callback')
+        try:
+            result = rabbit_pb2.RabbitResult()
+            result.identifier = task.identifier
+            result.result = self._callback(task=task.task,
+                                           send_status=status_sender.send_proto)
+            self._logger.debug('Completed callback')
+        except Exception as e:
+            error_sender.sendmsg('Unable to complete callback: %s', e)
+            self._logger.error('Sent error: %s', e)
+            return
+        try:
+            result_sender.send_proto(result)
+            self._logger.info('Sent result')
+        except Exception as e:
+            error_sender.sendmsg('Unable to serialize result proto: %s', e)
+            self._logger.error('Sent error: %s', e)
+            return
         channel.basic_ack(delivery_tag=method.delivery_tag)
