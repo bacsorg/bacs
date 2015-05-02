@@ -44,13 +44,13 @@ namespace Bunsan.Broker.ClientExample
             var client = new Client(connection_parameters);
             client.Listen((id, status) =>
             {
-                Console.WriteLine("Got status: id = ", id, ", status = ", status);
+                Console.WriteLine("Got status: id = {0}, status = {1}", id, status);
             }, (id, result) =>
             {
-                Console.WriteLine("Got result: id = ", id, ", status = ", result);
+                Console.WriteLine("Got result: id = {0}, status = {1}", id, result);
             }, (id, error) =>
             {
-                Console.WriteLine("Got error: id = ", id, ", error = ", error);
+                Console.WriteLine("Got error: id = {0}, error = {1}", id, error);
             });
             for (int id = 0; id < number_of_messages; ++id)
             {
