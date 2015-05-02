@@ -71,26 +71,24 @@ class Consumer(object):
     def _consume(self, channel, method, properties, body):
         self._logger.info('Received task')
         error_sender = sender.ErrorSender(channel, properties)
-        task = rabbit_pb2.RabbitTask()
+        rabbit_task = rabbit_pb2.RabbitTask()
         try:
-            task.ParseFromString(body)
+            rabbit_task.ParseFromString(body)
         except Exception as e:
             self._logger.exception('ParseFromString', e)
             error_sender.sendmsg('Unable to parse task proto: {}', e)
             channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
             return
         status_sender = sender.StatusSender(channel,
-                                            task.status_queue,
-                                            task.identifier)
+                                            rabbit_task.status_queue,
+                                            rabbit_task.identifier)
         result_sender = sender.ResultSender(channel,
-                                            task.result_queue,
-                                            task.identifier)
+                                            rabbit_task.result_queue,
+                                            rabbit_task.identifier)
         self._logger.debug('Running callback')
         try:
-            result = rabbit_pb2.RabbitResult()
-            result.identifier = task.identifier
-            result.result = self._callback(task=task.task,
-                                           send_status=status_sender.send_proto)
+            result = self._callback(task=rabbit_task.task,
+                                    send_status=status_sender.send_proto)
             self._logger.debug('Completed callback')
         except Exception as e:
             error_sender.sendmsg('Unable to complete callback: %s', e)
@@ -98,7 +96,10 @@ class Consumer(object):
             channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
             return
         try:
-            result_sender.send_proto(result)
+            rabbit_result = rabbit_pb2.RabbitResult()
+            rabbit_result.identifier = rabbit_task.identifier
+            rabbit_result.result.CopyFrom(result)
+            result_sender.send_proto(rabbit_result)
             self._logger.info('Sent result')
             channel.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as e:
