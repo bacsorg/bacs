@@ -20,6 +20,9 @@ class Sender(object):
                                     body=body,
                                     properties=self._properties)
 
+    def sendmsg(self, format, *args):
+        self.send((format % args).encode('utf8'))
+
 
 class ProtoSender(Sender):
 
