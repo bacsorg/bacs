@@ -77,7 +77,7 @@ class Consumer(object):
         except Exception as e:
             self._logger.exception('ParseFromString', e)
             error_sender.sendmsg('Unable to parse task proto: {}', e)
-            channel.basic_ack(delivery_tag=method.delivery_tag)
+            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
             return
         status_sender = sender.StatusSender(channel,
                                             task.status_queue,
@@ -95,12 +95,14 @@ class Consumer(object):
         except Exception as e:
             error_sender.sendmsg('Unable to complete callback: %s', e)
             self._logger.error('Sent error: %s', e)
+            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
             return
         try:
             result_sender.send_proto(result)
             self._logger.info('Sent result')
+            channel.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as e:
             error_sender.sendmsg('Unable to serialize result proto: %s', e)
             self._logger.error('Sent error: %s', e)
+            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
             return
-        channel.basic_ack(delivery_tag=method.delivery_tag)
