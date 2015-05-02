@@ -14,11 +14,14 @@ class Sender(object):
         self._properties = pika.BasicProperties(correlation_id=identifier)
 
     def send(self, body):
-        self._logger.debug('Sending message to %s', self._queue)
-        self._channel.basic_publish(exchange='',
-                                    routing_key=self._queue,
-                                    body=body,
-                                    properties=self._properties)
+        if self._queue:
+            self._logger.debug('Sending message to %s', self._queue)
+            self._channel.basic_publish(exchange='',
+                                        routing_key=self._queue,
+                                        body=body,
+                                        properties=self._properties)
+        else:
+            self._logger.debug('No queue to route message')
 
     def sendmsg(self, format, *args):
         self.send((format % args).encode('utf8'))
