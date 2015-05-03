@@ -69,6 +69,16 @@ class Consumer(object):
         self._channel.start_consuming()
 
     def _consume(self, channel, method, properties, body):
+        """Only commit logic, does not throw"""
+        try:
+            self._do_consume(channel, method, properties, body)
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+        except Exception:
+            channel.basic_nack(delivery_tag=method.delivery_tag,
+                               requeue=False)
+
+    def _do_consume(self, channel, method, properties, body):
+        """Actual consume implementation, may throw exceptions"""
         self._logger.info('Received task')
         error_sender = sender.ErrorSender(channel, properties)
         rabbit_task = rabbit_pb2.RabbitTask()
@@ -77,8 +87,7 @@ class Consumer(object):
         except Exception as e:
             self._logger.exception('ParseFromString', e)
             error_sender.sendmsg('Unable to parse task proto: {}', e)
-            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-            return
+            raise
         status_sender = sender.StatusSender(channel,
                                             rabbit_task.status_queue,
                                             rabbit_task.identifier)
@@ -93,17 +102,14 @@ class Consumer(object):
         except Exception as e:
             error_sender.sendmsg('Unable to complete callback: %s', e)
             self._logger.error('Sent error: %s', e)
-            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-            return
+            raise
         try:
             rabbit_result = rabbit_pb2.RabbitResult()
             rabbit_result.identifier = rabbit_task.identifier
             rabbit_result.result.CopyFrom(result)
             result_sender.send_proto(rabbit_result)
             self._logger.info('Sent result')
-            channel.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as e:
             error_sender.sendmsg('Unable to serialize result proto: %s', e)
             self._logger.error('Sent error: %s', e)
-            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-            return
+            raise
