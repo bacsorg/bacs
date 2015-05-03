@@ -15,8 +15,14 @@ def main():
     parser = argparse.ArgumentParser(description='Server')
     parser.add_argument('--logging', required=True,
                         help='Logging configuration file')
-    parser.add_argument('connection', help='Proto-encoded ConnectionParameters')
-    parser.add_argument('constraints', help='Proto-encoded Constraints')
+    parser.add_argument('--connection', required=True,
+                        help='Proto-encoded ConnectionParameters')
+    parser.add_argument('--constraints', required=True,
+                        help='Proto-encoded Constraints')
+    parser.add_argument('--jobs', type=int, default=1,
+                        help='Number of jobs to run in parallel')
+    parser.add_argument('--repository-config', required=True,
+                        help='Configuration for bunsan::pm::repository')
     args = parser.parse_args()
     logging.config.fileConfig(args.logging)
     _logger = logging.getLogger(__name__)
