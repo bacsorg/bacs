@@ -111,6 +111,7 @@ namespace Bunsan.Broker
             }
             connection = connection_factory.CreateConnection();
             channel = connection.CreateModel();
+            if (string.IsNullOrEmpty(parameters.Identifier)) throw new ArgumentException("Expected non-empty Identifier");
             status_queue = "client." + parameters.Identifier + ".status";
             result_queue = "client." + parameters.Identifier + ".result";
             error_queue = "client." + parameters.Identifier + ".error";
