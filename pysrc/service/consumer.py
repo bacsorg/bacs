@@ -1,9 +1,13 @@
 import logging
 import pika
 import threading
+import time
 
 from bunsan.broker.service import sender
 from bunsan.broker import rabbit_pb2
+
+
+_RETRY_TIME = 5
 
 
 class Consumer(object):
@@ -22,10 +26,16 @@ class Consumer(object):
                 username=connection_parameters.credentials.username,
                 password=connection_parameters.credentials.password)
         self._logger.debug('Opening connection')
-        self._connection = pika.BlockingConnection(
-            pika.ConnectionParameters(**connect))
-        self._channel = self._connection.channel()
-        self._channel.basic_qos(prefetch_count=1)
+        self._connection = None
+        while self._connection is None:
+            try:
+                self._connection = pika.BlockingConnection(
+                    pika.ConnectionParameters(**connect))
+                self._logger.info('Connected to RabbitMQ')
+            except pika.exceptions.AMQPConnectionError:
+                self._logger.exception(
+                    'Unable to connect to RabbitMQ, retrying')
+                time.sleep(_RETRY_TIME)
         self._constraints = constraints
         self._callback = None
         self._thread = None
@@ -60,20 +70,36 @@ class Consumer(object):
             self._thread.join()
 
     def _start_consuming(self):
-        self._logger.debug('Start consuming')
-        for queue in self._constraints.resource:
-            self._logger.debug('Consuming queue=%s', queue)
-            self._channel.queue_declare(queue=queue, durable=True)
-            self._channel.basic_consume(queue=queue,
-                                        consumer_callback=self._consume)
-        self._channel.start_consuming()
+        need_connect = False
+        while True:
+            try:
+                if need_connect:
+                    self._logger.info('Reconnecting to RabbitMQ')
+                    self._connection.connect()
+                    self._logger.info('Reconnected to RabbitMQ')
+                channel = self._connection.channel()
+                channel.basic_qos(prefetch_count=1)
+                self._logger.debug('Start consuming')
+                for queue in self._constraints.resource:
+                    self._logger.debug('Consuming queue=%s', queue)
+                    channel.queue_declare(queue=queue, durable=True)
+                    channel.basic_consume(queue=queue,
+                                          consumer_callback=self._consume)
+                channel.start_consuming()
+            except pika.exceptions.AMQPConnectionError:
+                self._logger.exception(
+                    'Broken connection to RabbitMQ, retrying')
+                time.sleep(_RETRY_TIME)
+                need_connect = True
 
     def _consume(self, channel, method, properties, body):
         """Only commit logic, does not throw"""
         try:
             self._do_consume(channel, method, properties, body)
+            self._logger.info('Acknowledging: %s', method.delivery_tag)
             channel.basic_ack(delivery_tag=method.delivery_tag)
         except Exception:
+            self._logger.info('Not acknowledging: %s', method.delivery_tag)
             channel.basic_nack(delivery_tag=method.delivery_tag,
                                requeue=False)
 
@@ -85,8 +111,8 @@ class Consumer(object):
         try:
             rabbit_task.ParseFromString(body)
         except Exception as e:
-            self._logger.exception('ParseFromString', e)
-            error_sender.sendmsg('Unable to parse task proto: {}', e)
+            self._logger.exception('Unable to parse task proto')
+            error_sender.sendmsg('Unable to parse task proto: %s', e)
             raise
         status_sender = sender.StatusSender(channel,
                                             rabbit_task.status_queue,
@@ -100,8 +126,8 @@ class Consumer(object):
                                     send_status=status_sender.send_proto)
             self._logger.debug('Completed callback')
         except Exception as e:
+            self._logger.exception('Unable to complete callback')
             error_sender.sendmsg('Unable to complete callback: %s', e)
-            self._logger.error('Sent error: %s', e)
             raise
         try:
             rabbit_result = rabbit_pb2.RabbitResult()
@@ -110,6 +136,6 @@ class Consumer(object):
             result_sender.send_proto(rabbit_result)
             self._logger.info('Sent result')
         except Exception as e:
+            self._logger.exception('Unable to serialize result proto')
             error_sender.sendmsg('Unable to serialize result proto: %s', e)
-            self._logger.error('Sent error: %s', e)
             raise
