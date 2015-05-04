@@ -2,6 +2,7 @@
 using ProtoBuf;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Exceptions;
 using RabbitMQ.Client.MessagePatterns;
 using System;
 using System.Collections.Generic;
@@ -14,80 +15,61 @@ namespace Bunsan.Broker
 {
     public class Client : IDisposable
     {
-        private class Reader
+        private class Reader : DefaultBasicConsumer
         {
-            public delegate void Callback(BasicDeliverEventArgs message);
+            public delegate void MessageCallback(BasicDeliverEventArgs message);
+            public delegate void ReconnectCallback();
 
-            public Reader(Subscription subscription)
+            private readonly MessageCallback message_callback;
+            private readonly ReconnectCallback reconnect_callback;
+
+            public Reader(IModel model, MessageCallback message_callback, ReconnectCallback reconnect_callback)
+                : base(model)
             {
-                this.subscription = subscription;
-                this.callback = null;
-                this.consumer = null;
+                this.message_callback = message_callback;
+                this.reconnect_callback = reconnect_callback;
             }
 
-            public void Start(Callback callback)
+            private void call_message(object message_object)
             {
-                if (callback == null) throw new ArgumentException("Callback can't be null");
-                lock (locker)
-                {
-                    if (this.callback != null) throw new ArgumentException("Already started");
-                    if (consumer != null) throw new ArgumentException("Invalid Reader state (probably Terminate() is runnning)");
-                    this.callback = callback;
-                    consumer = new Thread(new ThreadStart(Run));
-                    consumer.Start();
-                }
+                var message = (BasicDeliverEventArgs)message_object;
+                message_callback(message);
             }
 
-            public void Terminate()
+            private void call_reconnect(object ignored)
             {
-                lock (locker)
-                {
-                    callback = null;
-                }
-                consumer.Join();
-                lock (locker)
-                {
-                    consumer = null;
-                }
+                reconnect_callback();
             }
 
-            private void Run()
+            public override void HandleBasicDeliver(string consumerTag, 
+                                                    ulong deliveryTag, 
+                                                    bool redelivered, 
+                                                    string exchange, 
+                                                    string routingKey, 
+                                                    IBasicProperties properties, 
+                                                    byte[] body)
             {
-                for (;;)
+                var message = new BasicDeliverEventArgs
                 {
-                    BasicDeliverEventArgs message;
-                    bool result = subscription.Next(100, out message);
-                    Callback callback = null;
-                    // capture callback or terminate
-                    lock (locker)
-                    {
-                        if (this.callback != null)
-                        {
-                            callback = this.callback;
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                    // safely call delegate
-                    try
-                    {
-                        if (result) callback(message);
-                    }
-                    catch (Exception)
-                    {
-                        // TODO log exception
-                    }
-                }
+                    ConsumerTag = consumerTag,
+                    DeliveryTag = deliveryTag,
+                    Redelivered = redelivered,
+                    Exchange = exchange,
+                    RoutingKey = routingKey,
+                    BasicProperties = properties,
+                    Body = body,
+                };
+                ThreadPool.QueueUserWorkItem(new WaitCallback(call_message), message);
             }
 
-            private Subscription subscription;
-            private Callback callback;
-            private Thread consumer;
-            private readonly object locker = new object();
-        }
+            public override void HandleModelShutdown(object model, ShutdownEventArgs reason)
+            {
+                ThreadPool.QueueUserWorkItem(new WaitCallback(call_reconnect));
+            }
+        };
 
+        private readonly ConnectionFactory connection_factory;
+        private bool running = true;
         private IConnection connection;
         private IModel channel;
         private string status_queue;
@@ -99,7 +81,7 @@ namespace Bunsan.Broker
 
         public Client(ConnectionParameters parameters)
         {
-            var connection_factory = new ConnectionFactory();
+            connection_factory = new ConnectionFactory();
             if (parameters.Host != null) connection_factory.HostName = parameters.Host;
             if (parameters.Port != 0) connection_factory.Port = parameters.Port;
             if (parameters.VirtualHost != null) connection_factory.VirtualHost = parameters.VirtualHost;
@@ -109,18 +91,10 @@ namespace Bunsan.Broker
                 if (credentials.UserName != null) connection_factory.UserName = credentials.UserName;
                 if (credentials.Password != null) connection_factory.Password = credentials.Password;
             }
-            connection = connection_factory.CreateConnection();
-            channel = connection.CreateModel();
             if (string.IsNullOrEmpty(parameters.Identifier)) throw new ArgumentException("Expected non-empty Identifier");
             status_queue = "client." + parameters.Identifier + ".status";
             result_queue = "client." + parameters.Identifier + ".result";
             error_queue = "client." + parameters.Identifier + ".error";
-            channel.QueueDeclare(queue: status_queue, durable: false, exclusive: false, autoDelete: true, arguments: null);
-            channel.QueueDeclare(queue: result_queue, durable: true, exclusive: false, autoDelete: false, arguments: null);
-            channel.QueueDeclare(queue: error_queue, durable: true, exclusive: false, autoDelete: false, arguments: null);
-            status_reader = new Reader(new Subscription(model: channel, queueName: status_queue, noAck: true));
-            result_reader = new Reader(new Subscription(model: channel, queueName: result_queue, noAck: false));
-            error_reader = new Reader(new Subscription(model: channel, queueName: error_queue, noAck: false));
         }
 
         public delegate void StatusCallback(string id, Status status);
@@ -131,15 +105,16 @@ namespace Bunsan.Broker
                            ResultCallback result_callback, 
                            ErrorCallback error_callback)
         {
-            status_reader.Start((message) => {
+            status_reader = new Reader(channel, (message) =>
+            {
                 // we don't care about error handling of Status messages
                 using (var stream = new MemoryStream(message.Body))
                 {
                     var status = Serializer.Deserialize<RabbitStatus>(stream);
                     status_callback(status.Identifier, status.Status);
                 }
-            });
-            result_reader.Start((message) =>
+            }, reconnect);
+            result_reader = new Reader(channel, (message) =>
             {
                 using (var stream = new MemoryStream(message.Body))
                 {
@@ -148,24 +123,56 @@ namespace Bunsan.Broker
                     {
                         result = Serializer.Deserialize<RabbitResult>(stream);
                     }
-                    catch (ProtoBuf.ProtoException)
+                    catch (ProtoException)
                     {
                         // no reason to keep invalid message
-                        channel.BasicAck(message.DeliveryTag, false);
+                        channel.BasicNack(message.DeliveryTag, false, false);
                         throw;
                     }
                     result_callback(result.Identifier, result.Result);
                 }
                 // commit phase
                 channel.BasicAck(message.DeliveryTag, false);
-            });
-            error_reader.Start((message) =>
+            }, reconnect);
+            error_reader = new Reader(channel, (message) =>
             {
                 error_callback(message.BasicProperties.CorrelationId,
                                System.Text.Encoding.UTF8.GetString(message.Body));
                 // commit phase
                 channel.BasicAck(message.DeliveryTag, false);
-            });
+            }, reconnect);
+            reconnect();
+        }
+
+        private void reconnect()
+        {
+            lock (connection_factory)
+            {
+                if (!running) return;
+                while (connection == null || !connection.IsOpen)
+                {
+                    try
+                    {
+                        connect();
+                    }
+                    catch (BrokerUnreachableException)
+                    {
+                        Thread.Sleep(5000);
+                    }
+                }
+            }
+        }
+
+        private void connect()
+        {
+            connection = connection_factory.CreateConnection();
+            channel = connection.CreateModel();
+            channel.QueueDeclare(queue: status_queue, durable: false, exclusive: false, autoDelete: true, arguments: null);
+            channel.QueueDeclare(queue: result_queue, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            channel.QueueDeclare(queue: error_queue, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            channel.BasicConsume(queue: status_queue, noAck: true, consumer: status_reader);
+            channel.BasicConsume(queue: result_queue, noAck: false, consumer: result_reader);
+            channel.BasicConsume(queue: error_queue, noAck: false, consumer: error_reader);
         }
 
         public void Send(Constraints constraints, string id, Task task)
@@ -191,15 +198,35 @@ namespace Bunsan.Broker
             var properties = channel.CreateBasicProperties();
             properties.ReplyTo = error_queue;
             properties.CorrelationId = id;
-            channel.BasicPublish(exchange: "", routingKey: constraints.Resource[0], basicProperties: properties, body: data);
+            for (; ; )
+            {
+                try
+                {
+                    lock (connection_factory)
+                    {
+                        if (!running) throw new InvalidOperationException("Already closed");
+                        channel.BasicPublish(exchange: "", 
+                                             routingKey: constraints.Resource[0], 
+                                             basicProperties: properties, 
+                                             body: data);
+                    }
+                    break;
+                }
+                catch (AlreadyClosedException)
+                {
+                    reconnect();
+                }
+            }
         }
 
         public void Close()
         {
-            status_reader.Terminate();
-            result_reader.Terminate();
-            error_reader.Terminate();
-            connection.Close();
+            lock (connection_factory)
+            {
+                running = false;
+                if (connection != null && connection.IsOpen)
+                    connection.Close();
+            }
         }
 
         public void Dispose()
