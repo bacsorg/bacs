@@ -198,6 +198,7 @@ namespace Bunsan.Broker
             var properties = channel.CreateBasicProperties();
             properties.ReplyTo = error_queue;
             properties.CorrelationId = id;
+            properties.DeliveryMode = 2;  // persistent
             for (; ; )
             {
                 try
