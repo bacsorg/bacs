@@ -6,12 +6,15 @@ from bunsan.broker import rabbit_pb2
 
 class Sender(object):
 
-    def __init__(self, channel, queue, identifier):
+    def __init__(self, channel, queue, identifier, durable=False):
         self._logger = logging.getLogger(__name__)
         self._channel = channel
         self._queue = queue
         self._identifier = identifier
-        self._properties = pika.BasicProperties(correlation_id=identifier)
+        self._properties = pika.BasicProperties(
+            correlation_id=identifier,
+            delivery_mode=(2 if durable else 1),
+        )
 
     def send(self, body):
         if self._queue:
@@ -35,6 +38,10 @@ class ProtoSender(Sender):
 
 class StatusSender(ProtoSender):
 
+    def __init__(self, *args, **kwargs):
+        kwargs['durable'] = False
+        super(StatusSender, self).__init__(*args, **kwargs)
+
     def send_status(self, code, reason=None, data=None):
         status = rabbit_pb2.RabbitStatus()
         status.identifier = self._identifier
@@ -47,6 +54,10 @@ class StatusSender(ProtoSender):
 
 
 class ResultSender(ProtoSender):
+
+    def __init__(self, *args, **kwargs):
+        kwargs['durable'] = True
+        super(ResultSender, self).__init__(*args, **kwargs)
 
     def send_result(self, status, reason=None, data=None):
         result = rabbit_pb2.RabbitResult()
@@ -64,4 +75,5 @@ class ErrorSender(Sender):
     def __init__(self, channel, properties):
         super(ErrorSender, self).__init__(channel=channel,
                                           queue=properties.reply_to,
-                                          identifier=properties.correlation_id)
+                                          identifier=properties.correlation_id,
+                                          durable=True)
