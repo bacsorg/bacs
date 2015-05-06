@@ -21,19 +21,35 @@ namespace Bunsan.Broker
             public delegate void ReconnectCallback();
 
             private readonly MessageCallback message_callback;
+            private readonly ErrorCallback error_callback;
             private readonly ReconnectCallback reconnect_callback;
 
-            public Reader(IModel model, MessageCallback message_callback, ReconnectCallback reconnect_callback)
+            public Reader(IModel model, 
+                          MessageCallback message_callback, 
+                          ErrorCallback error_callback,
+                          ReconnectCallback reconnect_callback)
                 : base(model)
             {
                 this.message_callback = message_callback;
+                this.error_callback = error_callback;
                 this.reconnect_callback = reconnect_callback;
             }
 
             private void call_message(object message_object)
             {
                 var message = (BasicDeliverEventArgs)message_object;
-                message_callback(message);
+                try
+                {
+                    message_callback(message);
+                }
+                catch (Exception e)
+                {
+                    try
+                    {
+                        error_callback(message.BasicProperties.CorrelationId, e.ToString());
+                    }
+                    catch (Exception) { /* ignore */ }
+                }
             }
 
             private void call_reconnect(object ignored)
@@ -111,9 +127,10 @@ namespace Bunsan.Broker
                 using (var stream = new MemoryStream(message.Body))
                 {
                     var status = Serializer.Deserialize<RabbitStatus>(stream);
+                    // note: message was already acked, exceptions can be ignored
                     status_callback(status.Identifier, status.Status);
                 }
-            }, reconnect);
+            }, error_callback, reconnect);
             result_reader = new Reader(channel, (message) =>
             {
                 using (var stream = new MemoryStream(message.Body))
@@ -123,7 +140,7 @@ namespace Bunsan.Broker
                     {
                         result = Serializer.Deserialize<RabbitResult>(stream);
                     }
-                    catch (ProtoException)
+                    catch (Exception e)
                     {
                         // no reason to keep invalid message
                         channel.BasicNack(message.DeliveryTag, false, false);
@@ -133,14 +150,14 @@ namespace Bunsan.Broker
                 }
                 // commit phase
                 channel.BasicAck(message.DeliveryTag, false);
-            }, reconnect);
+            }, error_callback, reconnect);
             error_reader = new Reader(channel, (message) =>
             {
                 error_callback(message.BasicProperties.CorrelationId,
                                System.Text.Encoding.UTF8.GetString(message.Body));
                 // commit phase
                 channel.BasicAck(message.DeliveryTag, false);
-            }, reconnect);
+            }, error_callback, reconnect);
             reconnect();
         }
 
