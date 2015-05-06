@@ -121,9 +121,15 @@ class Consumer(object):
                                             rabbit_task.result_queue,
                                             rabbit_task.identifier)
         self._logger.debug('Running callback')
+
+        def send_status(status):
+            rabbit_status = rabbit_pb2.RabbitStatus()
+            rabbit_status.identifier = rabbit_task.identifier
+            rabbit_status.status.CopyFrom(status)
+            status_sender.send_proto(rabbit_status)
         try:
             result = self._callback(task=rabbit_task.task,
-                                    send_status=status_sender.send_proto)
+                                    send_status=send_status)
             self._logger.debug('Completed callback')
         except Exception as e:
             self._logger.exception('Unable to complete callback')
