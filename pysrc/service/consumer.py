@@ -26,16 +26,8 @@ class Consumer(object):
                 username=connection_parameters.credentials.username,
                 password=connection_parameters.credentials.password)
         self._logger.debug('Opening connection')
+        self._connection_parameters = pika.ConnectionParameters(**connect)
         self._connection = None
-        while self._connection is None:
-            try:
-                self._connection = pika.BlockingConnection(
-                    pika.ConnectionParameters(**connect))
-                self._logger.info('Connected to RabbitMQ')
-            except pika.exceptions.AMQPConnectionError:
-                self._logger.exception(
-                    'Unable to connect to RabbitMQ, retrying')
-                time.sleep(_RETRY_TIME)
         self._constraints = constraints
         self._callback = None
         self._thread = None
@@ -70,13 +62,18 @@ class Consumer(object):
             self._thread.join()
 
     def _start_consuming(self):
-        need_connect = False
         while True:
             try:
-                if need_connect:
-                    self._logger.info('Reconnecting to RabbitMQ')
-                    self._connection.connect()
-                    self._logger.info('Reconnected to RabbitMQ')
+                while self._connection is None:
+                    try:
+                        self._logger.info('Connecting to RabbitMQ')
+                        self._connection = pika.BlockingConnection(
+                            self._connection_parameters)
+                        self._logger.info('Connected to RabbitMQ')
+                    except pika.exceptions.AMQPConnectionError:
+                        self._logger.exception(
+                            'Unable to connect to RabbitMQ, retrying')
+                        time.sleep(_RETRY_TIME)
                 channel = self._connection.channel()
                 channel.basic_qos(prefetch_count=1)
                 self._logger.debug('Start consuming')
@@ -89,8 +86,8 @@ class Consumer(object):
             except pika.exceptions.AMQPConnectionError:
                 self._logger.exception(
                     'Broken connection to RabbitMQ, retrying')
+                self._connection = None
                 time.sleep(_RETRY_TIME)
-                need_connect = True
 
     def _consume(self, channel, method, properties, body):
         """Only commit logic, does not throw"""
