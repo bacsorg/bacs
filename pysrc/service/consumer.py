@@ -57,23 +57,27 @@ class Consumer(object):
 
     def close(self):
         self._logger.info('Closing connection to RabbitMQ')
-        self._connection.close()
+        if self._connection is not None:
+            self._connection.close()
         if self._thread is not None:
             self._thread.join()
+
+    def _connect(self):
+        while self._connection is None:
+            try:
+                self._logger.info('Connecting to RabbitMQ')
+                self._connection = pika.BlockingConnection(
+                    self._connection_parameters)
+                self._logger.info('Connected to RabbitMQ')
+            except pika.exceptions.AMQPConnectionError:
+                self._logger.exception(
+                    'Unable to connect to RabbitMQ, retrying')
+                time.sleep(_RETRY_TIME)
 
     def _start_consuming(self):
         while True:
             try:
-                while self._connection is None:
-                    try:
-                        self._logger.info('Connecting to RabbitMQ')
-                        self._connection = pika.BlockingConnection(
-                            self._connection_parameters)
-                        self._logger.info('Connected to RabbitMQ')
-                    except pika.exceptions.AMQPConnectionError:
-                        self._logger.exception(
-                            'Unable to connect to RabbitMQ, retrying')
-                        time.sleep(_RETRY_TIME)
+                self._connect()
                 channel = self._connection.channel()
                 channel.basic_qos(prefetch_count=1)
                 self._logger.debug('Start consuming')
@@ -87,22 +91,23 @@ class Consumer(object):
                 self._logger.exception(
                     'Broken connection to RabbitMQ, retrying')
                 self._connection = None
-                time.sleep(_RETRY_TIME)
 
     def _consume(self, channel, method, properties, body):
         """Only commit logic, does not throw"""
         try:
             self._do_consume(channel, method, properties, body)
-            self._logger.info('Acknowledging: %s', method.delivery_tag)
+            self._logger.info('Acknowledging: %s',
+                              properties.correlation_id)
             channel.basic_ack(delivery_tag=method.delivery_tag)
         except Exception:
-            self._logger.info('Not acknowledging: %s', method.delivery_tag)
+            self._logger.info('Not acknowledging: %s',
+                              properties.correlation_id)
             channel.basic_nack(delivery_tag=method.delivery_tag,
                                requeue=False)
 
     def _do_consume(self, channel, method, properties, body):
         """Actual consume implementation, may throw exceptions"""
-        self._logger.info('Received task')
+        self._logger.info('Received task: %s', properties.correlation_id)
         error_sender = sender.ErrorSender(channel, properties)
         rabbit_task = rabbit_pb2.RabbitTask()
         try:
