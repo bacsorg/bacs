@@ -13,17 +13,27 @@ namespace Bunsan.Broker
         [ProtoEnum]
         OK = 0,
         [ProtoEnum]
-        INVALID_PROTO = 1,
+        ERROR = 1,
+
+        // proto errors
         [ProtoEnum]
-        UNKNOWN_TYPE = 2,
+        PROTO_ERROR = 100,
+
+        // worker errors
         [ProtoEnum]
-        PACKAGE_NOT_FOUND = 3,
+        WORKER_ERROR = 200,
+        
+        // package errors
         [ProtoEnum]
-        PACKAGE_BUILD_ERROR = 4,
+        PACKAGE_ERROR = 300,
         [ProtoEnum]
-        INVALID_PACKAGE = 5,
+        PACKAGE_NOT_FOUND = 301,
         [ProtoEnum]
-        EXECUTION_ERROR = 6,
+        PACKAGE_BUILD_ERROR = 302,
+
+        // execution errors
+        [ProtoEnum]
+        EXECUTION_ERROR = 400,
     }
 
     [ProtoContract]
