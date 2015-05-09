@@ -11,7 +11,7 @@ namespace Bunsan.Broker
     public class Task
     {
         [ProtoMember(1, IsRequired = false)]
-        public string Type { get; set; }
+        public string Worker { get; set; }
 
         [ProtoMember(2, IsRequired = false)]
         public string Package { get; set; }

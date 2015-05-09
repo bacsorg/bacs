@@ -27,7 +27,7 @@ namespace Bunsan.Broker.ClientExample
                 {"username=", "", username => { ensure_credentials(); connection_parameters.Credentials.UserName = username; } },
                 {"password=", "", password => { ensure_credentials(); connection_parameters.Credentials.Password = password; } },
                 {"resource=", "", resource => constraints.Resource[0] = resource},
-                {"type=", "", type => task.Type = type},
+                {"worker=", "", worker => task.Worker = worker},
                 {"package=", "", package => task.Package = package},
                 {"data=", "", data => task.Data = System.Text.Encoding.UTF8.GetBytes(data)},
                 {"interval=", "", interval_str => interval = int.Parse(interval_str)},
