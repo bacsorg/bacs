@@ -147,3 +147,9 @@ class Consumer(object):
             self._logger.exception('Unable to serialize result proto')
             error_sender.sendmsg('Unable to serialize result proto: %s', e)
             raise
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, tb):
+        self.close()
