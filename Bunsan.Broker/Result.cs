@@ -34,6 +34,8 @@ namespace Bunsan.Broker
         // execution errors
         [ProtoEnum]
         EXECUTION_ERROR = 400,
+        [ProtoEnum]
+        EXECUTION_TIMEOUT = 401,
     }
 
     [ProtoContract]
