@@ -5,7 +5,7 @@ import threading
 import traceback
 
 from bunsan.broker import protocol_pb2
-from bunsan.broker.worker import worker
+from bunsan.broker.worker import error
 
 
 _EXECUTABLE = 'bacs/bacs_system_single'
@@ -38,5 +38,5 @@ class Worker(object):
             ret = proc.wait()
             if ret != 0:
                 self._send_status('FAIL', code=1)
-                raise worker.ExecutionError()  # FIXME
+                raise error.ExecutionError()  # FIXME
             status_sender.send('DONE')

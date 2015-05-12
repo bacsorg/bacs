@@ -6,15 +6,12 @@ import traceback
 
 import bunsan.pm
 
+from bunsan.broker.worker import error
 from bunsan.broker.worker import sender
 from bunsan.broker import protocol_pb2
-
+import bunsan.broker.worker.imp
 
 _THREADS_PER_JOB = 3
-
-
-class ExecutionError(RuntimeError):
-    pass
 
 
 class Worker(object):
@@ -32,11 +29,13 @@ class Worker(object):
         self._repository.extract(package, tmpdir)
         status_sender.send('EXTRACTED')
 
-    def _execute(self, status_sender, worker, tmpdir, data):
-        self._logger.debug('Running')
+    def _get_actual_worker(self, worker):
         imp = importlib.import_module(package='bunsan.broker.worker.imp',
                                       name=worker)
-        worker = imp.Worker(executor=self._executor)
+        return imp.Worker(executor=self._executor)
+
+    def _execute(self, status_sender, worker, tmpdir, data):
+        self._logger.debug('Running')
         return worker(status_sender=status_sender,
                       root=tmpdir,
                       data=data)
@@ -50,19 +49,33 @@ class Worker(object):
                 self._extract(status_sender=status_sender,
                               tmpdir=tmpdir,
                               package=task.package)
+                try:
+                    actual_worker = self._get_actual_worker(task.worker)
+                except Exception as e:
+                    raise error.UnknownWorkerError() from e
                 result = self._execute(status_sender=status_sender,
-                                       worker=task.worker,
+                                       worker=actual_worker,
                                        tmpdir=tmpdir,
                                        data=task.data)
             send_status('DONE')
-
-        except ExecutionError:
+        except error.ExecutionError:
+            self._logger.exception('')
             result.status = protocol_pb2.Result.EXECUTION_ERROR
             result.reason = traceback.format_exc()
+        except error.UnknownWorkerError:
+            self._logger.exception('')
+            result.status = protocol_pb2.Result.UNKNOWN_WORKER
+            result.reason = traceback.format_exc()
+        except error.WorkerError:
+            self._logger.exception('')
+            result.status = protocol_pb2.Result.WORKER_ERROR
+            result.reason = traceback.format_exc()
         except bunsan.pm.Error:
+            self._logger.exception('')
             result.status = protocol_pb2.Result.PACKAGE_ERROR
             result.reason = traceback.format_exc()
         except Exception:
+            self._logger.exception('')
             result.status = protocol_pb2.Result.ERROR
             result.reason = traceback.format_exc()
         return result
