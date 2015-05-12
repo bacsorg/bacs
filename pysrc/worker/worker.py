@@ -30,8 +30,9 @@ class Worker(object):
         status_sender.send('EXTRACTED')
 
     def _get_actual_worker(self, worker):
-        imp = importlib.import_module(package='bunsan.broker.worker.imp',
-                                      name=worker)
+        if worker.find('.') != -1:
+            raise error.UnknownWorkerError('Worker name should not contain "."')
+        imp = importlib.import_module('bunsan.broker.worker.imp.' + worker)
         return imp.Worker(executor=self._executor)
 
     def _execute(self, status_sender, worker, tmpdir, data):
@@ -57,7 +58,7 @@ class Worker(object):
                                        worker=actual_worker,
                                        tmpdir=tmpdir,
                                        data=task.data)
-            send_status('DONE')
+            status_sender.send('DONE')
         except error.ExecutionError:
             self._logger.exception('')
             result.status = protocol_pb2.Result.EXECUTION_ERROR
