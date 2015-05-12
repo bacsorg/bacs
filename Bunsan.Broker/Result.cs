@@ -22,6 +22,10 @@ namespace Bunsan.Broker
         // worker errors
         [ProtoEnum]
         WORKER_ERROR = 200,
+        [ProtoEnum]
+        UNKNOWN_WORKER = 201,
+        [ProtoEnum]
+        INCOMPATIBLE_PACKAGE = 202,
         
         // package errors
         [ProtoEnum]
