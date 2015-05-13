@@ -6,12 +6,19 @@ import traceback
 
 import bunsan.pm
 
-from bunsan.broker.worker import error
 from bunsan.broker.worker import sender
 from bunsan.broker import protocol_pb2
 import bunsan.broker.worker.imp
 
 _THREADS_PER_JOB = 3
+
+
+class WorkerError(RuntimeError):
+    pass
+
+
+class UnknownWorkerError(WorkerError):
+    pass
 
 
 class Worker(object):
@@ -31,7 +38,7 @@ class Worker(object):
 
     def _get_actual_worker(self, worker):
         if worker.find('.') != -1:
-            raise error.UnknownWorkerError('Worker name should not contain "."')
+            raise UnknownWorkerError('Worker name should not contain "."')
         imp = importlib.import_module('bunsan.broker.worker.imp.' + worker)
         return imp.Worker(executor=self._executor)
 
@@ -53,21 +60,17 @@ class Worker(object):
                 try:
                     actual_worker = self._get_actual_worker(task.worker)
                 except Exception as e:
-                    raise error.UnknownWorkerError() from e
+                    raise UnknownWorkerError() from e
                 result = self._execute(status_sender=status_sender,
                                        worker=actual_worker,
                                        tmpdir=tmpdir,
                                        data=task.data)
             status_sender.send('DONE')
-        except error.ExecutionError:
-            self._logger.exception('')
-            result.status = protocol_pb2.Result.EXECUTION_ERROR
-            result.reason = traceback.format_exc()
-        except error.UnknownWorkerError:
+        except UnknownWorkerError:
             self._logger.exception('')
             result.status = protocol_pb2.Result.UNKNOWN_WORKER
             result.reason = traceback.format_exc()
-        except error.WorkerError:
+        except WorkerError:
             self._logger.exception('')
             result.status = protocol_pb2.Result.WORKER_ERROR
             result.reason = traceback.format_exc()

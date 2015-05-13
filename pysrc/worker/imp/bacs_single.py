@@ -1,11 +1,8 @@
 import base64
 import logging
 import subprocess
-import threading
-import traceback
 
 from bunsan.broker import protocol_pb2
-from bunsan.broker.worker import error
 
 
 _EXECUTABLE = 'bacs/bacs_system_single'
@@ -16,6 +13,50 @@ _MiB = 1024 * _KiB
 _MAX_LINE_SIZE = 50 * _MiB
 
 
+class SolutionRunner(object):
+
+    def __init__(self, status_sender, data):
+        self._logger = logging.getLogger(__name__)
+        self._status_sender = status_sender
+        self._data = data
+        self._status = protocol_pb2.Status()
+        self._result = protocol_pb2.Result()
+        self._log = None
+
+    def write_data(self, stdin):
+        stdin.write(self._data)
+
+    def read_data(self, stdout):
+        for line in stdout:
+            tokens = line.split()
+            if len(tokens) != 2:
+                self._logger.warning(
+                    'Invalid number of token: expected 2, found %d',
+                    len(tokens)
+                )
+            else:
+                command, data = tuple(tokens)
+                data = base64.decode(data)
+                if command == 'status':
+                    self._status.ParseFromString(data)
+                    self._status_sender.send_proto(self._status)
+                elif command == 'result':
+                    self._result.ParseFromString(data)
+                else:
+                    self._logger.warning('Invalid command: %s', command)
+
+    def read_log(self, stderr):
+        self._log = stderr.read()
+
+    @property
+    def log(self):
+        return self._log
+
+    @property
+    def result(self):
+        return self._result
+
+
 class Worker(object):
 
     def __init__(self, executor):
@@ -23,20 +64,23 @@ class Worker(object):
         self._executor = executor
 
     def __call__(self, status_sender, root, data):
-        result = protocol_pb2.Result()
-        result.status = protocol_pb2.Result.OK
-        result.reason = 'OK'
-        result.data = b'data'
-        return result  # FIXME stub
+        runner = SolutionRunner(status_sender, data)
         with subprocess.Popen(args=[_EXECUTABLE],
                               cwd=root,
                               stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE) as proc:
             status_sender.send('EXECUTING')
-            # TODO
+            self._executor.submit(runner.write_data, proc.stdin)
+            self._executor.submit(runner.read_data, proc.stdout)
+            self._executor.submit(runner.read_log, proc.stderr)
             ret = proc.wait()
             if ret != 0:
+                result = protocol_pb2.Result()
+                result.status = protocol_pb2.Result.EXECUTION_ERROR
+                result.data = runner.log.encode('utf8')
                 self._send_status('FAIL', code=1)
-                raise error.ExecutionError()  # FIXME
-            status_sender.send('DONE')
+            else:
+                result = runner.result
+                status_sender.send('DONE')
+            return result
