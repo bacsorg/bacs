@@ -78,8 +78,8 @@ class Worker(object):
             if ret != 0:
                 result = protocol_pb2.Result()
                 result.status = protocol_pb2.Result.EXECUTION_ERROR
-                result.data = runner.log.encode('utf8')
-                self._send_status('FAIL', code=1)
+                result.data = runner.log
+                status_sender.send('FAIL', code=1)
             else:
                 result = runner.result
                 status_sender.send('DONE')
