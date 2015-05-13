@@ -5,7 +5,7 @@ import subprocess
 from bunsan.broker import protocol_pb2
 
 
-_EXECUTABLE = 'bacs/bacs_system_single'
+_EXECUTABLE = 'bin/bacs_system_single'
 _MINUTE = 60
 _TIMEOUT = 10 * _MINUTE
 _KiB = 1024
