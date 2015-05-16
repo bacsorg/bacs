@@ -21,20 +21,16 @@ bunsan_install_python_package(
     PACKAGE bunsan.broker
     DIRECTORY pysrc
 )
-#bunsan_add_library(${PROJECT_NAME}
-#)
-#bunsan_use_target(${PROJECT_NAME} ${PROJECT_NAME}_pb)
-#bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_protobuf bunsan_protobuf)
-
-#bunsan_add_executable(${PROJECT_NAME}_cli
-#    src/bin/cli.cpp
-#)
-#bunsan_use_target(${PROJECT_NAME}_cli ${PROJECT_NAME})
+bunsan_add_library(${PROJECT_NAME}
+    src/task/stream_channel.cpp
+)
+bunsan_use_target(${PROJECT_NAME} ${PROJECT_NAME}_pb)
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_crypto bunsan_crypto)
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_protobuf bunsan_protobuf)
 
 bunsan_install_headers()
 bunsan_install_targets(
-    #${PROJECT_NAME}
-    #${PROJECT_NAME}_cli
+    ${PROJECT_NAME}
 )
 bunsan_install_project()
 
