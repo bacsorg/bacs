@@ -484,7 +484,8 @@ namespace bacs{namespace archive
 
     problem::import_info repository::repack_(const problem::id &id, const problem::hash &hash)
     {
-        const bunsan::tempfile tmpdir = bunsan::tempfile::in_dir(m_location.tmpdir);
+        const bunsan::tempfile tmpdir =
+            bunsan::tempfile::directory_in_directory(m_location.tmpdir);
         extract_(id, tmpdir.path());
         return repack_(id, hash, tmpdir.path());
     }

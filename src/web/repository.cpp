@@ -227,7 +227,8 @@ namespace bacs{namespace archive{namespace web
 
     DEFINE_CONVERTIBLE_HANDLER(insert, problem::import_map, pb::problem::ImportMap)
     {
-        const bunsan::tempfile tmpfile = bunsan::tempfile::in_dir(m_upload_directory);
+        const bunsan::tempfile tmpfile =
+            bunsan::tempfile::regular_file_in_directory(m_upload_directory);
         data.form.archive.value()->save_to(tmpfile.string());
         return m_repository->insert_all(data.form.config.value(), tmpfile.path());
     }

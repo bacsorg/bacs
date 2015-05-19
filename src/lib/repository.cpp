@@ -74,8 +74,8 @@ namespace bacs{namespace archive
     problem::import_map repository::insert_all(const archiver_options &archiver_options_,
                                                const boost::filesystem::path &archive)
     {
-        const bunsan::tempfile unpacked = bunsan::tempfile::in_dir(m_location.tmpdir);
-        BOOST_VERIFY(boost::filesystem::create_directory(unpacked.path()));
+        const bunsan::tempfile unpacked =
+            bunsan::tempfile::directory_in_directory(m_location.tmpdir);
         const bunsan::utility::archiver_ptr archiver = archiver_options_.instance(m_resolver);
         archiver->unpack(archive, unpacked.path());
         return insert_all(unpacked.path());
@@ -97,7 +97,8 @@ namespace bacs{namespace archive
                                  const archiver_options &archiver_options_,
                                  const boost::filesystem::path &archive)
     {
-        const bunsan::tempfile unpacked = bunsan::tempfile::in_dir(m_location.tmpdir);
+        const bunsan::tempfile unpacked =
+            bunsan::tempfile::directory_in_directory(m_location.tmpdir);
         extract_all(id_set, unpacked.path());
         archiver_options_.instance(m_resolver)->pack_contents(archive, unpacked.path());
     }
@@ -105,7 +106,8 @@ namespace bacs{namespace archive
     bunsan::tempfile repository::extract_all(const problem::id_set &id_set,
                                              const archiver_options &archiver_options_)
     {
-        bunsan::tempfile packed = bunsan::tempfile::in_dir(m_location.tmpdir);
+        bunsan::tempfile packed =
+            bunsan::tempfile::directory_in_directory(m_location.tmpdir);
         extract_all(id_set, archiver_options_, packed.path());
         return packed;
     }
