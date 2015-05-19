@@ -11,14 +11,12 @@ void bunsan::utility::builder::pack(
     const boost::filesystem::path &archive,
     const archiver_ptr &archiver_)
 {
-    // tmp initialization
+    // prepare empty directories
     filesystem::reset_dir(bin);
-    tempfile root_ = tempfile::in_dir(bin);
-    tempfile bin_ = tempfile::in_dir(bin);
+    tempfile root_ = tempfile::directory_in_directory(bin);
+    tempfile bin_ = tempfile::directory_in_directory(bin);
     root_.auto_remove(false);
     bin_.auto_remove(false);
-    filesystem::reset_dir(root_.path());
-    filesystem::reset_dir(bin_.path());
     // installation
     install(src, bin_.path(), root_.path());
     // packing
