@@ -13,8 +13,9 @@ BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_curl,
     BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, curl,
         [](const resolver &resolver_)
         {
-            fetcher_ptr ptr(new fetchers::curl(resolver_.find_executable("curl")));
-            return ptr;
+            return fetcher::make_shared<fetchers::curl>(
+                resolver_.find_executable("curl")
+            );
         })
 })
 

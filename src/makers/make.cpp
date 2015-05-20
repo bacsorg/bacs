@@ -13,8 +13,9 @@ BUNSAN_STATIC_INITIALIZER(bunsan_utility_makers_make,
     BUNSAN_FACTORY_REGISTER_TOKEN(maker, make,
         [](const resolver &resolver_)
         {
-            maker_ptr ptr(new makers::make(resolver_.find_executable("make")));
-            return ptr;
+            return maker::make_shared<makers::make>(
+                resolver_.find_executable("make")
+            );
         })
 })
 

@@ -14,8 +14,9 @@ BUNSAN_STATIC_INITIALIZER(bunsan_utility_archivers_tar,
     BUNSAN_FACTORY_REGISTER_TOKEN(archiver, tar,
         [](const resolver &resolver_)
         {
-            archiver_ptr ptr(new archivers::tar(resolver_.find_executable("tar")));
-            return ptr;
+            return archiver::make_shared<archivers::tar>(
+                resolver_.find_executable("tar")
+            );
         })
 })
 

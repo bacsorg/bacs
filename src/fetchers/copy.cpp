@@ -14,8 +14,7 @@ using namespace bunsan::utility;
     BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, NAME, \
         [](const resolver &) \
         { \
-            fetcher_ptr ptr(new fetchers::copy); \
-            return ptr; \
+            return fetcher::make_shared<fetchers::copy>(); \
         })
 
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_copy,

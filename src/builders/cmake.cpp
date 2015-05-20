@@ -16,8 +16,7 @@ BUNSAN_STATIC_INITIALIZER(bunsan_utility_builders_cmake,
     BUNSAN_FACTORY_REGISTER_TOKEN(builder, cmake,
         [](const resolver &resolver_)
         {
-            builder_ptr ptr(new builders::cmake(resolver_));
-            return ptr;
+            return builder::make_shared<builders::cmake>(resolver_);
         })
 })
 

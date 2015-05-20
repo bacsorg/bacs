@@ -13,8 +13,9 @@ using namespace bunsan::utility;
     BUNSAN_FACTORY_REGISTER_TOKEN(archiver, EXE, \
         [](const resolver &resolver_) \
         { \
-            archiver_ptr ptr(new archivers::_7z(resolver_.find_executable(#EXE))); \
-            return ptr; \
+            return archiver::make_shared<archivers::_7z>( \
+                resolver_.find_executable(#EXE) \
+            ); \
         })
 
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_archivers_7z,
