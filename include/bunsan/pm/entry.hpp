@@ -46,12 +46,12 @@ namespace bunsan{namespace pm
         const std::vector<std::string> &decomposition() const;
         boost::property_tree::ptree::path_type ptree_path() const;
 
-        /// \returns repository/name('/')/name_
+        /// \returns repository / name('/') / name_
         std::string remote_resource(
             const std::string &repository,
             const boost::filesystem::path &name_=boost::filesystem::path()) const;
 
-        /// \returns dir/name('/')/name_
+        /// \returns dir / name('/') / name_
         boost::filesystem::path local_resource(
             const boost::filesystem::path &dir,
             const boost::filesystem::path &name_=boost::filesystem::path()) const;
