@@ -41,7 +41,13 @@ namespace bunsan{namespace utility
             boost::unordered_set<boost::filesystem::path> path;
         };
 
-        static void swap(config &a, config &b) noexcept;
+        inline static void swap(config &a, config &b) noexcept
+        {
+            using std::swap;
+            swap(a.alias, b.alias);
+            swap(a.absolute, b.absolute);
+            swap(a.path, b.path);
+        }
 
     public:
         /// Object will use os-specified algorithms for path resolving.
@@ -58,7 +64,11 @@ namespace bunsan{namespace utility
         resolver &operator=(const resolver &);
         resolver &operator=(resolver &&) noexcept;
 
-        void swap(resolver &) noexcept;
+        inline void swap(resolver &r) noexcept
+        {
+            using std::swap;
+            swap(m_config, r.m_config);
+        }
 
         // interface
         boost::filesystem::path find_executable(
