@@ -4,7 +4,11 @@ include(${CMAKE_SOURCE_DIR}/system-config.cmake OPTIONAL)
 
 project(bunsan_bacs_problem)
 
-find_package(BunsanCMake CONFIG REQUIRED)
+if(BunsanCMakeBuiltin)
+    BunsanCMakeLoad()
+else()
+    find_package(BunsanCMake CONFIG REQUIRED)
+endif()
 
 bunsan_find_bunsan_package(bunsan_bacs_common bunsan_bacs_common)
 bunsan_add_protobuf_cxx_library(
