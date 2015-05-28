@@ -107,7 +107,7 @@ namespace bacs{namespace archive
                                              const archiver_options &archiver_options_)
     {
         bunsan::tempfile packed =
-            bunsan::tempfile::directory_in_directory(m_location.tmpdir);
+            bunsan::tempfile::regular_file_in_directory(m_location.tmpdir);
         extract_all(id_set, archiver_options_, packed.path());
         return packed;
     }
