@@ -16,13 +16,20 @@ namespace bunsan{namespace utility
     struct resolver_find_error: virtual resolver_error {};
     struct resolver_find_executable_error: virtual resolver_find_error
     {
-        typedef boost::error_info<struct tag_executable, boost::filesystem::path> executable;
+        typedef boost::error_info<
+            struct tag_executable,
+            boost::filesystem::path
+        > executable;
     };
     struct resolver_find_library_error: virtual resolver_find_error
     {
-        typedef boost::error_info<struct tag_library, boost::filesystem::path> library;
+        typedef boost::error_info<
+            struct tag_library,
+            boost::filesystem::path
+        > library;
     };
-    struct resolver_circular_alias_dependencies_error: virtual resolver_error {};
+    struct resolver_circular_alias_dependencies_error:
+        virtual resolver_error {};
 
     class resolver
     {
@@ -37,7 +44,8 @@ namespace bunsan{namespace utility
                 ar & BOOST_SERIALIZATION_NVP(path);
             }
 
-            boost::unordered_map<boost::filesystem::path, boost::filesystem::path> alias, absolute;
+            boost::unordered_map<boost::filesystem::path,
+                                 boost::filesystem::path> alias, absolute;
             boost::unordered_set<boost::filesystem::path> path;
         };
 
