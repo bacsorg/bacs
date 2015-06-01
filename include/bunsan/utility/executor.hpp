@@ -55,12 +55,12 @@ namespace bunsan{namespace utility
          */
         executor &add_argument(const std::string &arg);
 
-        inline executor &add_argument(const boost::filesystem::path &arg)
+        executor &add_argument(const boost::filesystem::path &arg)
         {
             return add_argument(arg.string());
         }
 
-        inline executor &add_argument(const char *arg)
+        executor &add_argument(const char *arg)
         {
             return add_argument(std::string(arg));
         }
@@ -70,12 +70,12 @@ namespace bunsan{namespace utility
          */
         executor &set_argument(const std::string &key, const std::string &arg);
 
-        inline executor &set_argument(const std::string &key, const boost::filesystem::path &arg)
+        executor &set_argument(const std::string &key, const boost::filesystem::path &arg)
         {
             return set_argument(key, arg.string());
         }
 
-        inline executor &set_argument(const std::string &key, const char *arg)
+        executor &set_argument(const std::string &key, const char *arg)
         {
             return set_argument(key, std::string(arg));
         }

@@ -49,7 +49,7 @@ namespace bunsan{namespace utility
             boost::unordered_set<boost::filesystem::path> path;
         };
 
-        inline static void swap(config &a, config &b) noexcept
+        static void swap(config &a, config &b) noexcept
         {
             using std::swap;
             swap(a.alias, b.alias);
@@ -72,7 +72,7 @@ namespace bunsan{namespace utility
         resolver &operator=(const resolver &);
         resolver &operator=(resolver &&) noexcept;
 
-        inline void swap(resolver &r) noexcept
+        void swap(resolver &r) noexcept
         {
             using std::swap;
             swap(m_config, r.m_config);
