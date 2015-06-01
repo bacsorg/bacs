@@ -46,8 +46,8 @@ namespace bunsan{namespace pm
             boost::optional<std::string> index;
             boost::optional<std::string> checksum;
 
-            inline std::string get_index() const { return index.get_value_or("index"); }
-            inline std::string get_checksum() const { return index.get_value_or("checksum"); }
+            std::string get_index() const { return index.get_value_or("index"); }
+            std::string get_checksum() const { return index.get_value_or("checksum"); }
         } name;
     };
 
@@ -90,9 +90,9 @@ namespace bunsan{namespace pm
 
             struct
             {
-                inline boost::filesystem::path get_source() const { return "source"; }
-                inline boost::filesystem::path get_build() const { return "build"; }
-                inline boost::filesystem::path get_installation() const { return "installation"; }
+                boost::filesystem::path get_source() const { return "source"; }
+                boost::filesystem::path get_build() const { return "build"; }
+                boost::filesystem::path get_installation() const { return "installation"; }
             } dir;
         } name;
     };
@@ -144,10 +144,10 @@ namespace bunsan{namespace pm
                                                         ///< if not specified
                                                         ///< \warning filesystem must support flock(2)
 
-        inline boost::filesystem::path get_lock() const { return lock.get_value_or(root / "lock"); }
-        inline boost::filesystem::path get_meta() const { return root / "meta"; }
-        inline boost::filesystem::path get_source() const { return root / "source"; }
-        inline boost::filesystem::path get_package() const { return root / "package"; }
+        boost::filesystem::path get_lock() const { return lock.get_value_or(root / "lock"); }
+        boost::filesystem::path get_meta() const { return root / "meta"; }
+        boost::filesystem::path get_source() const { return root / "source"; }
+        boost::filesystem::path get_package() const { return root / "package"; }
 
         utility::factory_options<utility::archiver> archiver;
 
@@ -164,11 +164,11 @@ namespace bunsan{namespace pm
                 std::string archive;
             } suffix;
 
-            inline boost::filesystem::path get_build_archive() const { return "build" + suffix.archive; }
-            inline boost::filesystem::path get_build_snapshot() const { return "build_snapshot"; }
+            boost::filesystem::path get_build_archive() const { return "build" + suffix.archive; }
+            boost::filesystem::path get_build_snapshot() const { return "build_snapshot"; }
 
-            inline boost::filesystem::path get_installation_archive() const { return "installation" + suffix.archive; }
-            inline boost::filesystem::path get_installation_snapshot() const { return "installation_snapshot"; }
+            boost::filesystem::path get_installation_archive() const { return "installation" + suffix.archive; }
+            boost::filesystem::path get_installation_snapshot() const { return "installation_snapshot"; }
         } name;
     };
 

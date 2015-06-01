@@ -57,38 +57,38 @@ namespace bunsan{namespace pm
     public:
         entry()=default;
 
-        inline entry(const entry &e): m_lock(e.m_lock), m_root(e.m_root)
+        entry(const entry &e): m_lock(e.m_lock), m_root(e.m_root)
         {
             lock();
         }
 
-        inline entry &operator=(const entry &e)
+        entry &operator=(const entry &e)
         {
             entry tmp(e);
             swap(tmp);
             return *this;
         }
 
-        inline entry(entry &&e)
+        entry(entry &&e)
         {
             swap(e);
             e.unlock();
         }
 
-        inline entry &operator=(entry &&e)
+        entry &operator=(entry &&e)
         {
             swap(e);
             e.unlock();
             return *this;
         }
 
-        inline ~entry() { unlock(); }
+        ~entry() { unlock(); }
 
-        inline explicit operator bool() const noexcept { return m_lock; }
+        explicit operator bool() const noexcept { return m_lock; }
 
         const boost::filesystem::path &root() const;
 
-        inline void swap(entry &e) noexcept
+        void swap(entry &e) noexcept
         {
             using std::swap;
 
