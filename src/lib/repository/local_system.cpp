@@ -9,7 +9,7 @@ bunsan::pm::repository::local_system::local_system(
         m_resolver(m_config.resolver)
 {}
 
-const bunsan::utility::resolver &bunsan::pm::repository::local_system::resolver()
+bunsan::utility::resolver &bunsan::pm::repository::local_system::resolver()
 {
     return m_resolver;
 }
