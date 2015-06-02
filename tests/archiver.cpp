@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE archiver
 #include <boost/test/unit_test.hpp>
 
+#include <bunsan/testing/filesystem/tempfile.hpp>
 #include <bunsan/testing/test_tools.hpp>
 
 #include "utility_fixture.hpp"
@@ -15,44 +16,48 @@ BOOST_AUTO_TEST_SUITE(_7z)
 
 BOOST_AUTO_TEST_CASE(pack)
 {
+    bunsan::testing::filesystem::tempfile tmp;
     MOCK_EXPECT(resolver.find_executable).once().with("7z").returns("exe");
     const auto ar = bu::archiver::instance("7z", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
-        [](const bunsan::process::context &ctx) {
+        [&tmp](const bunsan::process::context &ctx) {
             BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 5)
             {
+                BOOST_CHECK(!boost::filesystem::exists(tmp.path));
                 BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
                 BOOST_CHECK_EQUAL(ctx.arguments()[1], "a");
                 BOOST_CHECK_EQUAL(ctx.arguments()[2], "--");
-                BOOST_CHECK_EQUAL(ctx.arguments()[3],
-                                  boost::filesystem::current_path() / "archive.");
+                BOOST_CHECK_EQUAL(ctx.arguments()[3], tmp.path.string() + ".");
                 BOOST_CHECK_EQUAL(ctx.arguments()[4], "file");
             }
             return 0;
         });
-    ar->pack("archive", "file");
+    BOOST_CHECK(boost::filesystem::exists(tmp.path));
+    ar->pack(tmp.path, "file");
 }
 
 BOOST_AUTO_TEST_CASE(pack_contents)
 {
+    bunsan::testing::filesystem::tempfile tmp;
     MOCK_EXPECT(resolver.find_executable).once().with("7z").returns("exe");
     const auto ar = bu::archiver::instance("7z", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
-        [](const bunsan::process::context &ctx) {
+        [&tmp](const bunsan::process::context &ctx) {
             BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 5)
             {
+                BOOST_CHECK(!boost::filesystem::exists(tmp.path));
                 BOOST_CHECK_EQUAL(ctx.current_path(),
                                   boost::filesystem::current_path() / "dir");
                 BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
                 BOOST_CHECK_EQUAL(ctx.arguments()[1], "a");
                 BOOST_CHECK_EQUAL(ctx.arguments()[2], "--");
-                BOOST_CHECK_EQUAL(ctx.arguments()[3],
-                                  boost::filesystem::current_path() / "archive.");
+                BOOST_CHECK_EQUAL(ctx.arguments()[3], tmp.path.string() + ".");
                 BOOST_CHECK_EQUAL(ctx.arguments()[4], ".");
             }
             return 0;
         });
-    ar->pack_contents("archive", "dir");
+    BOOST_CHECK(boost::filesystem::exists(tmp.path));
+    ar->pack_contents(tmp.path, "dir");
 }
 
 BOOST_AUTO_TEST_CASE(unpack)

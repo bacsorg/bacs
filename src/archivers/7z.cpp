@@ -4,6 +4,8 @@
 #include <bunsan/process/execute.hpp>
 #include <bunsan/static_initializer.hpp>
 
+#include <boost/filesystem/operations.hpp>
+
 using namespace bunsan::utility;
 
 #ifdef BUNSAN_UTILITY_ARCHIVER_7Z
@@ -52,6 +54,7 @@ void archivers::_7z::pack_from(
             archive.string() + ".",
             file
         );
+        boost::filesystem::remove(archive); // 7z does not support overwrite
         bunsan::process::check_sync_execute_with_output(ctx);
     }
     catch (std::exception &)
