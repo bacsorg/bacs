@@ -12,7 +12,7 @@ using namespace bunsan::utility;
 #endif
 #define BUNSAN_UTILITY_FETCHER_COPY(NAME) \
     BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, NAME, \
-        [](const resolver &) \
+        [](resolver &) \
         { \
             return fetcher::make_shared<fetchers::copy>(); \
         })
@@ -23,7 +23,8 @@ BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_copy,
     BUNSAN_UTILITY_FETCHER_COPY(copy)
 })
 
-void fetchers::copy::fetch(const std::string &uri, const boost::filesystem::path &dst)
+void fetchers::copy::fetch(const std::string &uri,
+                           const boost::filesystem::path &dst)
 {
     try
     {

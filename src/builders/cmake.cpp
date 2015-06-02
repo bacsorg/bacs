@@ -14,7 +14,7 @@ using namespace bunsan::utility;
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_builders_cmake,
 {
     BUNSAN_FACTORY_REGISTER_TOKEN(builder, cmake,
-        [](const resolver &resolver_)
+        [](resolver &resolver_)
         {
             return builder::make_shared<builders::cmake>(resolver_);
         })
@@ -28,9 +28,10 @@ void builders::cmake::set_default_generator()
     set_generator("NMake Makefiles");
 #else
 #warning unknown platform, unknown default generator
-    BOOST_THROW_EXCEPTION(cmake_unknown_platform_generator_error() <<
-                          cmake_unknown_platform_generator_error::message(
-                              "Unknown platform, you have to specify generator"));
+    BOOST_THROW_EXCEPTION(
+        cmake_unknown_platform_generator_error() <<
+        cmake_unknown_platform_generator_error::message(
+            "Unknown platform, you have to specify generator"));
 #endif
 }
 
@@ -71,13 +72,15 @@ const std::vector<builders::cmake::generator> builders::cmake::generators = {
     {"Visual Studio 9 2008 Win64", generator_type::VISUAL_STUDIO}
 };
 
-builders::cmake::cmake(const resolver &resolver_):
-    m_resolver(resolver_), m_cmake_exe(m_resolver.find_executable("cmake"))
+builders::cmake::cmake(resolver &resolver_):
+    m_resolver(resolver_.clone()),
+    m_cmake_exe(resolver_.find_executable("cmake"))
 {
     set_default_generator();
 }
 
-std::vector<std::string> builders::cmake::arguments_(const boost::filesystem::path &src) const
+std::vector<std::string> builders::cmake::arguments_(
+    const boost::filesystem::path &src) const
 {
     std::vector<std::string> arguments;
     arguments.push_back(m_cmake_exe.filename().string());
@@ -109,10 +112,11 @@ void builders::cmake::configure_(
     }
     catch (std::exception &)
     {
-        BOOST_THROW_EXCEPTION(conf_make_install_configure_error() <<
-                              conf_make_install_configure_error::src(src) <<
-                              conf_make_install_configure_error::bin(bin) <<
-                              enable_nested_current());
+        BOOST_THROW_EXCEPTION(
+            conf_make_install_configure_error() <<
+            conf_make_install_configure_error::src(src) <<
+            conf_make_install_configure_error::bin(bin) <<
+            enable_nested_current());
     }
 }
 
@@ -128,7 +132,7 @@ void builders::cmake::make_(
         {
         case generator_type::MAKEFILE:
             {
-                const maker_ptr ptr = maker::instance("make", m_resolver);
+                const maker_ptr ptr = maker::instance("make", *m_resolver);
                 ptr->setup(m_config.make_maker);
                 ptr->exec(bin, {});
             }
@@ -136,16 +140,18 @@ void builders::cmake::make_(
         case generator_type::NMAKEFILE:
         case generator_type::VISUAL_STUDIO:
         default:
-            BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error() <<
-                                  cmake_unknown_generator_type_error::generator_type(type));
+            BOOST_THROW_EXCEPTION(
+                cmake_unknown_generator_type_error() <<
+                cmake_unknown_generator_type_error::generator_type(type));
         }
     }
     catch (std::exception &)
     {
-        BOOST_THROW_EXCEPTION(conf_make_install_make_error() <<
-                              // conf_make_install_make_error::src(src) <<
-                              conf_make_install_make_error::bin(bin) <<
-                              enable_nested_current());
+        BOOST_THROW_EXCEPTION(
+            conf_make_install_make_error() <<
+            // conf_make_install_make_error::src(src) <<
+            conf_make_install_make_error::bin(bin) <<
+            enable_nested_current());
     }
 }
 
@@ -162,8 +168,9 @@ void builders::cmake::install_(
         {
         case generator_type::MAKEFILE:
             {
-                maker_ptr ptr = maker::instance("make", m_resolver);
-                makers::make::config make_config = bunsan::config::load<makers::make::config>(m_config.install_maker);
+                maker_ptr ptr = maker::instance("make", *m_resolver);
+                makers::make::config make_config =
+                    bunsan::config::load<makers::make::config>(m_config.install_maker);
                 make_config.defines["DESTDIR"] = boost::filesystem::absolute(root).string();
                 ptr->setup(bunsan::config::save<boost::property_tree::ptree>(make_config));
                 ptr->exec(bin, {"install"});
@@ -172,17 +179,19 @@ void builders::cmake::install_(
         case generator_type::NMAKEFILE:
         case generator_type::VISUAL_STUDIO:
         default:
-            BOOST_THROW_EXCEPTION(cmake_unknown_generator_type_error() <<
-                                  cmake_unknown_generator_type_error::generator_type(type));
+            BOOST_THROW_EXCEPTION(
+                cmake_unknown_generator_type_error() <<
+                cmake_unknown_generator_type_error::generator_type(type));
         }
     }
     catch (std::exception &)
     {
-        BOOST_THROW_EXCEPTION(conf_make_install_install_error() <<
-                              // conf_make_install_install_error::src(src) <<
-                              conf_make_install_install_error::bin(bin) <<
-                              conf_make_install_install_error::root(root) <<
-                              enable_nested_current());
+        BOOST_THROW_EXCEPTION(
+            conf_make_install_install_error() <<
+            // conf_make_install_install_error::src(src) <<
+            conf_make_install_install_error::bin(bin) <<
+            conf_make_install_install_error::root(root) <<
+            enable_nested_current());
     }
 }
 
@@ -195,8 +204,9 @@ void builders::cmake::set_generator(const std::string &generator_name)
                 return gen.name == generator_name;
             }) - generators.begin();
     if (gen >= generators.size())
-        BOOST_THROW_EXCEPTION(cmake_unknown_generator_name_error() <<
-                              cmake_unknown_generator_name_error::generator_name(generator_name));
+        BOOST_THROW_EXCEPTION(
+            cmake_unknown_generator_name_error() <<
+            cmake_unknown_generator_name_error::generator_name(generator_name));
     m_generator = gen;
 }
 

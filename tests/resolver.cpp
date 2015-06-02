@@ -2,7 +2,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <bunsan/utility/error.hpp>
-#include <bunsan/utility/resolver.hpp>
+#include <bunsan/utility/custom_resolver.hpp>
 
 #include <boost/property_tree/info_parser.hpp>
 
@@ -120,14 +120,16 @@ namespace cfg
 
 struct fixture
 {
-    bunsan::utility::resolver res;
+    std::unique_ptr<bunsan::utility::resolver> res{
+        std::make_unique<bunsan::utility::custom_resolver>()
+    };
 
     void init(const char *cfg)
     {
         std::istringstream scfg(cfg);
         boost::property_tree::ptree cfg_;
         boost::property_tree::read_info(scfg, cfg_);
-        res = bunsan::utility::resolver(cfg_);
+        res = std::make_unique<bunsan::utility::custom_resolver>(cfg_);
     }
 };
 
@@ -135,27 +137,30 @@ BOOST_FIXTURE_TEST_SUITE(resolver, fixture)
 
 BOOST_AUTO_TEST_CASE(find_executable)
 {
-    BOOST_CHECK_EQUAL(res.find_executable(cfg::shell).filename(), cfg::shell_filename);
+    BOOST_CHECK_EQUAL(res->find_executable(cfg::shell).filename(),
+                      cfg::shell_filename);
     init(cfg::absolute);
-    BOOST_CHECK_EQUAL(res.find_executable("foobar"), "/usr/some/foobar");
-    BOOST_CHECK_EQUAL(res.find_executable("/some/abs"), "/some/abs");
+    BOOST_CHECK_EQUAL(res->find_executable("foobar"), "/usr/some/foobar");
+    BOOST_CHECK_EQUAL(res->find_executable("/some/abs"), "/some/abs");
     init(cfg::alias);
-    BOOST_CHECK_EQUAL(res.find_executable("foo"), "foo2");
+    BOOST_CHECK_EQUAL(res->find_executable("foo"), "foo2");
     init(cfg::long_alias);
-    BOOST_CHECK_EQUAL(res.find_executable("foo"), "foo3");
+    BOOST_CHECK_EQUAL(res->find_executable("foo"), "foo3");
     init(cfg::ambigous);
-    BOOST_CHECK_EQUAL(res.find_executable("foo"), "/usr/some/foo2");
+    BOOST_CHECK_EQUAL(res->find_executable("foo"), "/usr/some/foo2");
     init(cfg::alias_absolute);
-    BOOST_CHECK_EQUAL(res.find_executable("foo"), "/usr/some/foo2");
-    BOOST_CHECK_EQUAL(res.find_executable("foo2"), "/usr/some/foo2");
+    BOOST_CHECK_EQUAL(res->find_executable("foo"), "/usr/some/foo2");
+    BOOST_CHECK_EQUAL(res->find_executable("foo2"), "/usr/some/foo2");
     init(cfg::circular_alias);
-    BOOST_CHECK_THROW(res.find_executable("foo"), bunsan::utility::error);
+    BOOST_CHECK_THROW(res->find_executable("foo"), bunsan::utility::error);
     init(cfg::path);
-    BOOST_CHECK_EQUAL(res.find_executable(cfg::shell).filename(), cfg::shell_filename);
+    BOOST_CHECK_EQUAL(res->find_executable(cfg::shell).filename(),
+                      cfg::shell_filename);
     init(cfg::alias_path);
-    BOOST_CHECK_EQUAL(res.find_executable("shell").filename(), cfg::shell_filename);
+    BOOST_CHECK_EQUAL(res->find_executable("shell").filename(),
+                      cfg::shell_filename);
     init(cfg::alias_absolute_path);
-    BOOST_CHECK_EQUAL(res.find_executable("foo"), "/usr/some/bar");
+    BOOST_CHECK_EQUAL(res->find_executable("foo"), "/usr/some/bar");
 }
 
 BOOST_AUTO_TEST_CASE(find_library)

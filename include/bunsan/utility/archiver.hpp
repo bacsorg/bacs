@@ -18,7 +18,7 @@ namespace bunsan{namespace utility
     struct archiver_unpack_error: virtual archiver_error {};
 
     class archiver: public utility
-    BUNSAN_FACTORY_BEGIN(archiver, const resolver &)
+    BUNSAN_FACTORY_BEGIN(archiver, resolver &)
     public:
         virtual void pack(
             const boost::filesystem::path &archive,

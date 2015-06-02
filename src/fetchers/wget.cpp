@@ -10,7 +10,7 @@ using namespace bunsan::utility;
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_wget,
 {
     BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, wget,
-        [](const resolver &resolver_)
+        [](resolver &resolver_)
         {
             return fetcher::make_shared<fetchers::wget>(
                 resolver_.find_executable("wget")

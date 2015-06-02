@@ -15,12 +15,13 @@ BOOST_AUTO_TEST_SUITE(_7z)
 
 BOOST_AUTO_TEST_CASE(pack)
 {
+    MOCK_EXPECT(resolver.find_executable).once().with("7z").returns("exe");
     const auto ar = bu::archiver::instance("7z", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
         [](const bunsan::process::context &ctx) {
             BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 5)
             {
-                BOOST_CHECK_EQUAL(ctx.arguments()[0], "7z");
+                BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
                 BOOST_CHECK_EQUAL(ctx.arguments()[1], "a");
                 BOOST_CHECK_EQUAL(ctx.arguments()[2], "--");
                 BOOST_CHECK_EQUAL(ctx.arguments()[3],
@@ -34,13 +35,15 @@ BOOST_AUTO_TEST_CASE(pack)
 
 BOOST_AUTO_TEST_CASE(pack_contents)
 {
+    MOCK_EXPECT(resolver.find_executable).once().with("7z").returns("exe");
     const auto ar = bu::archiver::instance("7z", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
         [](const bunsan::process::context &ctx) {
             BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 5)
             {
-                BOOST_CHECK_EQUAL(ctx.current_path(), boost::filesystem::current_path() / "dir");
-                BOOST_CHECK_EQUAL(ctx.arguments()[0], "7z");
+                BOOST_CHECK_EQUAL(ctx.current_path(),
+                                  boost::filesystem::current_path() / "dir");
+                BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
                 BOOST_CHECK_EQUAL(ctx.arguments()[1], "a");
                 BOOST_CHECK_EQUAL(ctx.arguments()[2], "--");
                 BOOST_CHECK_EQUAL(ctx.arguments()[3],
@@ -54,12 +57,13 @@ BOOST_AUTO_TEST_CASE(pack_contents)
 
 BOOST_AUTO_TEST_CASE(unpack)
 {
+    MOCK_EXPECT(resolver.find_executable).once().with("7z").returns("exe");
     const auto ar = bu::archiver::instance("7z", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
         [](const bunsan::process::context &ctx) {
             BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 5)
             {
-                BOOST_CHECK_EQUAL(ctx.arguments()[0], "7z");
+                BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
                 BOOST_CHECK_EQUAL(ctx.arguments()[1], "x");
                 BOOST_CHECK_EQUAL(ctx.arguments()[2], "-odir");
                 BOOST_CHECK_EQUAL(ctx.arguments()[3], "--");
@@ -76,12 +80,13 @@ BOOST_AUTO_TEST_SUITE(tar)
 
 BOOST_AUTO_TEST_CASE(pack)
 {
+    MOCK_EXPECT(resolver.find_executable).once().with("tar").returns("exe");
     const auto ar = bu::archiver::instance("tar", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
         [](const bunsan::process::context &ctx) {
             BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 8)
             {
-                BOOST_CHECK_EQUAL(ctx.arguments()[0], "tar");
+                BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
                 BOOST_CHECK_EQUAL(ctx.arguments()[1], "--create");
                 BOOST_CHECK_EQUAL(ctx.arguments()[2], "--file");
                 BOOST_CHECK_EQUAL(ctx.arguments()[3],
@@ -98,12 +103,13 @@ BOOST_AUTO_TEST_CASE(pack)
 
 BOOST_AUTO_TEST_CASE(pack_contents)
 {
+    MOCK_EXPECT(resolver.find_executable).once().with("tar").returns("exe");
     const auto ar = bu::archiver::instance("tar", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
         [](const bunsan::process::context &ctx) {
             BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 8)
             {
-                BOOST_CHECK_EQUAL(ctx.arguments()[0], "tar");
+                BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
                 BOOST_CHECK_EQUAL(ctx.arguments()[1], "--create");
                 BOOST_CHECK_EQUAL(ctx.arguments()[2], "--file");
                 BOOST_CHECK_EQUAL(ctx.arguments()[3],
@@ -121,12 +127,13 @@ BOOST_AUTO_TEST_CASE(pack_contents)
 
 BOOST_AUTO_TEST_CASE(unpack)
 {
+    MOCK_EXPECT(resolver.find_executable).once().with("tar").returns("exe");
     const auto ar = bu::archiver::instance("tar", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
         [](const bunsan::process::context &ctx) {
             BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 6)
             {
-                BOOST_CHECK_EQUAL(ctx.arguments()[0], "tar");
+                BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
                 BOOST_CHECK_EQUAL(ctx.arguments()[1], "--extract");
                 BOOST_CHECK_EQUAL(ctx.arguments()[2], "--file");
                 BOOST_CHECK_EQUAL(ctx.arguments()[3],

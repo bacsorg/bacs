@@ -12,11 +12,14 @@ namespace bunsan{namespace utility
     struct fetcher_fetch_error: virtual fetcher_error
     {
         typedef boost::error_info<struct tag_uri, std::string> uri;
-        typedef boost::error_info<struct tag_destination, boost::filesystem::path> destination;
+        typedef boost::error_info<
+            struct tag_destination,
+            boost::filesystem::path
+        > destination;
     };
 
     class fetcher: public utility
-    BUNSAN_FACTORY_BEGIN(fetcher, const resolver &)
+    BUNSAN_FACTORY_BEGIN(fetcher, resolver &)
     public:
         virtual void fetch(const std::string &uri, const boost::filesystem::path &dst)=0;
     BUNSAN_FACTORY_END(fetcher)

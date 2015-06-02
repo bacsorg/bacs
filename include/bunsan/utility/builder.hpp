@@ -24,7 +24,7 @@ namespace bunsan{namespace utility
     };
 
     class builder: public utility
-    BUNSAN_FACTORY_BEGIN(builder, const resolver &)
+    BUNSAN_FACTORY_BEGIN(builder, resolver &)
     public:
         /*!
          * \brief Build and install package

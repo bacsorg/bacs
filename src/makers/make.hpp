@@ -25,7 +25,8 @@ namespace bunsan{namespace utility{namespace makers
                 ar & BOOST_SERIALIZATION_NVP(jobs);
             }
 
-            std::unordered_map<std::string, std::string> defines; ///< for example {"DESTDIR": "/some/path"}
+            /// for example {"DESTDIR": "/some/path"}
+            std::unordered_map<std::string, std::string> defines;
             std::vector<std::string> targets; ///< for example ["install"]
             boost::optional<std::size_t> jobs;
         };

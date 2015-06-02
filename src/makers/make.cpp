@@ -11,7 +11,7 @@ using namespace bunsan::utility;
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_makers_make,
 {
     BUNSAN_FACTORY_REGISTER_TOKEN(maker, make,
-        [](const resolver &resolver_)
+        [](resolver &resolver_)
         {
             return maker::make_shared<makers::make>(
                 resolver_.find_executable("make")

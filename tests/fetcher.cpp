@@ -27,12 +27,13 @@ BOOST_AUTO_TEST_CASE(copy)
 
 BOOST_AUTO_TEST_CASE(curl)
 {
+    MOCK_EXPECT(resolver.find_executable).once().with("curl").returns("exe");
     const auto ft = bu::fetcher::instance("curl", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
         [](const bunsan::process::context &ctx) {
             BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 6)
             {
-                BOOST_CHECK_EQUAL(ctx.arguments()[0], "curl");
+                BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
                 BOOST_CHECK_EQUAL(ctx.arguments()[1], "--fail");
                 BOOST_CHECK_EQUAL(ctx.arguments()[2], "--output");
                 BOOST_CHECK_EQUAL(ctx.arguments()[3],
@@ -47,12 +48,13 @@ BOOST_AUTO_TEST_CASE(curl)
 
 BOOST_AUTO_TEST_CASE(wget)
 {
+    MOCK_EXPECT(resolver.find_executable).once().with("wget").returns("exe");
     const auto ft = bu::fetcher::instance("wget", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
         [](const bunsan::process::context &ctx) {
             BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 4)
             {
-                BOOST_CHECK_EQUAL(ctx.arguments()[0], "wget");
+                BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
                 BOOST_CHECK_EQUAL(ctx.arguments()[1],
                                   "--output-document=" +
                                   (boost::filesystem::current_path() / "dst").string());

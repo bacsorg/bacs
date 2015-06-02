@@ -11,7 +11,7 @@ using namespace bunsan::utility;
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_curl,
 {
     BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, curl,
-        [](const resolver &resolver_)
+        [](resolver &resolver_)
         {
             return fetcher::make_shared<fetchers::curl>(
                 resolver_.find_executable("curl")

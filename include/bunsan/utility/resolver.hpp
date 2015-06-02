@@ -3,12 +3,9 @@
 #include <bunsan/utility/error.hpp>
 
 #include <boost/filesystem/path.hpp>
-#include <boost/optional.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <boost/noncopyable.hpp>
+
+#include <memory>
 
 namespace bunsan{namespace utility
 {
@@ -31,70 +28,17 @@ namespace bunsan{namespace utility
     struct resolver_circular_alias_dependencies_error:
         virtual resolver_error {};
 
-    class resolver
+    class resolver: private boost::noncopyable
     {
     public:
-        struct config
-        {
-            template <typename Archive>
-            void serialize(Archive &ar, const unsigned int)
-            {
-                ar & BOOST_SERIALIZATION_NVP(alias);
-                ar & BOOST_SERIALIZATION_NVP(absolute);
-                ar & BOOST_SERIALIZATION_NVP(path);
-            }
+        virtual ~resolver();
 
-            boost::unordered_map<boost::filesystem::path,
-                                 boost::filesystem::path> alias, absolute;
-            boost::unordered_set<boost::filesystem::path> path;
-        };
+        virtual boost::filesystem::path find_executable(
+            const boost::filesystem::path &exe)=0;
 
-        static void swap(config &a, config &b) noexcept
-        {
-            using std::swap;
-            swap(a.alias, b.alias);
-            swap(a.absolute, b.absolute);
-            swap(a.path, b.path);
-        }
+        virtual boost::filesystem::path find_library(
+            const boost::filesystem::path &lib)=0;
 
-    public:
-        /// Object will use os-specified algorithms for path resolving.
-        resolver();
-
-        /// Object will use config-specified algorithms for path resolving.
-        explicit resolver(const config &config_);
-
-        /// \copy_doc resolver::resolver()
-        explicit resolver(const boost::property_tree::ptree &ptree);
-
-        resolver(const resolver &)=default;
-        resolver(resolver &&) noexcept;
-        resolver &operator=(const resolver &);
-        resolver &operator=(resolver &&) noexcept;
-
-        void swap(resolver &r) noexcept
-        {
-            using std::swap;
-            swap(m_config, r.m_config);
-        }
-
-        // interface
-        boost::filesystem::path find_executable(
-            const boost::filesystem::path &exe) const;
-
-        boost::filesystem::path find_library(
-            const boost::filesystem::path &lib) const;
-
-    private:
-        void apply_alias(boost::filesystem::path &name) const;
-        void apply_absolute(boost::filesystem::path &name) const;
-        void apply_path(boost::filesystem::path &name) const;
-
-    private:
-        boost::optional<config> m_config;
+        virtual std::unique_ptr<resolver> clone() const=0;
     };
-    inline void swap(resolver &a, resolver &b) noexcept
-    {
-        a.swap(b);
-    }
 }}

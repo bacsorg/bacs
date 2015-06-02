@@ -14,7 +14,10 @@ bunsan_add_library(${PROJECT_NAME}
     src/error.cpp
     src/utility.cpp
     src/executor.cpp
+
     src/resolver.cpp
+    src/custom_resolver.cpp
+    src/system_resolver.cpp
 
     src/builder.cpp
     src/builders/cmake.hpp

@@ -37,15 +37,17 @@ namespace bunsan{namespace utility{namespace builders
                     ar & BOOST_SERIALIZATION_NVP(generator);
                 }
 
-                std::unordered_map<std::string, std::string> defines; ///< for example {"CMAKE_INSTALL_PREFIX": "/usr"}
-                boost::optional<std::string> generator; ///< for example "Unix Makefiles"
+                /// for example {"CMAKE_INSTALL_PREFIX": "/usr"}
+                std::unordered_map<std::string, std::string> defines;
+                /// for example "Unix Makefiles"
+                boost::optional<std::string> generator;
             } cmake;
 
             boost::property_tree::ptree make_maker, install_maker;
         };
 
     public:
-        explicit cmake(const resolver &resolver_);
+        explicit cmake(resolver &resolver_);
         void setup(const boost::property_tree::ptree &ptree) override;
 
     protected:
@@ -86,7 +88,7 @@ namespace bunsan{namespace utility{namespace builders
             const boost::filesystem::path &src) const;
 
     private:
-        const resolver m_resolver;
+        const std::unique_ptr<resolver> m_resolver;
         const boost::filesystem::path m_cmake_exe;
         boost::optional<std::size_t> m_generator;
         config m_config;
@@ -98,15 +100,24 @@ namespace bunsan{namespace utility{namespace builders
     struct cmake_error: virtual error {};
     struct cmake_unknown_generator_error: virtual cmake_error {};
 
-    struct cmake_unknown_generator_type_error: virtual cmake_unknown_generator_error
+    struct cmake_unknown_generator_type_error:
+        virtual cmake_unknown_generator_error
     {
-        typedef boost::error_info<struct tag_generator_type, cmake::generator_type> generator_type;
+        typedef boost::error_info<
+            struct tag_generator_type,
+            cmake::generator_type
+        > generator_type;
     };
 
-    struct cmake_unknown_generator_name_error: virtual cmake_unknown_generator_error
+    struct cmake_unknown_generator_name_error:
+        virtual cmake_unknown_generator_error
     {
-        typedef boost::error_info<struct tag_generator_name, std::string> generator_name;
+        typedef boost::error_info<
+            struct tag_generator_name,
+            std::string
+        > generator_name;
     };
 
-    struct cmake_unknown_platform_generator_error: virtual cmake_unknown_generator_error {};
+    struct cmake_unknown_platform_generator_error:
+        virtual cmake_unknown_generator_error {};
 }}}

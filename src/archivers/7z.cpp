@@ -11,7 +11,7 @@ using namespace bunsan::utility;
 #endif
 #define BUNSAN_UTILITY_ARCHIVER_7Z(EXE) \
     BUNSAN_FACTORY_REGISTER_TOKEN(archiver, EXE, \
-        [](const resolver &resolver_) \
+        [](resolver &resolver_) \
         { \
             return archiver::make_shared<archivers::_7z>( \
                 resolver_.find_executable(#EXE) \

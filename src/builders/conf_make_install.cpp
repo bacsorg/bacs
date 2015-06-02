@@ -13,10 +13,11 @@ void bunsan::utility::builders::conf_make_install::install(
     }
     catch (std::exception &)
     {
-        BOOST_THROW_EXCEPTION(builder_install_error() <<
-                              builder_install_error::src(src) <<
-                              builder_install_error::bin(bin) <<
-                              builder_install_error::root(root) <<
-                              enable_nested_current());
+        BOOST_THROW_EXCEPTION(
+            builder_install_error() <<
+            builder_install_error::src(src) <<
+            builder_install_error::bin(bin) <<
+            builder_install_error::root(root) <<
+            enable_nested_current());
     }
 }

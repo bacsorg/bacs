@@ -16,7 +16,7 @@ namespace bunsan{namespace utility
     struct maker_exec_error: virtual maker_error {};
 
     class maker: public utility
-    BUNSAN_FACTORY_BEGIN(maker, const resolver &)
+    BUNSAN_FACTORY_BEGIN(maker, resolver &)
     public:
         virtual void exec(
             const boost::filesystem::path &cwd,

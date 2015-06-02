@@ -8,6 +8,7 @@ namespace bunsan{namespace utility{namespace fetchers
     {
     public:
         copy()=default;
-        void fetch(const std::string &uri, const boost::filesystem::path &dst) override;
+        void fetch(const std::string &uri,
+                   const boost::filesystem::path &dst) override;
     };
 }}}
