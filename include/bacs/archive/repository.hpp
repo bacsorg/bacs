@@ -8,7 +8,7 @@
 #include <bunsan/pm/repository.hpp>
 #include <bunsan/tempfile.hpp>
 #include <bunsan/utility/archiver.hpp>
-#include <bunsan/utility/resolver.hpp>
+#include <bunsan/utility/custom_resolver.hpp>
 
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
@@ -496,7 +496,7 @@ namespace bacs{namespace archive
     private:
         boost::shared_mutex m_lock;
         const bunsan::interprocess::file_guard m_flock;
-        const bunsan::utility::resolver m_resolver;
+        bunsan::utility::custom_resolver m_resolver;
         const location_config m_location;
         /// internal problem storage packing
         const bunsan::utility::archiver::factory_type m_problem_archiver_factory;
