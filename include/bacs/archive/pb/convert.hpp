@@ -11,7 +11,7 @@ namespace bacs{namespace archive{namespace pb
     struct detail
     {
         template <typename Entry, typename Sequence>
-        static inline void convert(const Sequence &sequence, google::protobuf::RepeatedPtrField<Entry> &repeated)
+        static void convert(const Sequence &sequence, google::protobuf::RepeatedPtrField<Entry> &repeated)
         {
             repeated.Clear();
             repeated.Reserve(sequence.size());
@@ -20,64 +20,64 @@ namespace bacs{namespace archive{namespace pb
         }
 
         template <typename T>
-        static inline void convert(const T &src, T &dst)
+        static void convert(const T &src, T &dst)
         {
             dst = src;
         }
 
-        static inline void convert(const archive::problem::id_set &ids, problem::IdSet &proto)
+        static void convert(const archive::problem::id_set &ids, problem::IdSet &proto)
         {
             convert(ids, *proto.mutable_ids());
         }
 
-        static inline void convert(const archive::problem::info_map::value_type &id_info, problem::InfoMap::Entry &proto)
+        static void convert(const archive::problem::info_map::value_type &id_info, problem::InfoMap::Entry &proto)
         {
             proto.set_id(id_info.first);
             if (id_info.second)
                 convert(id_info.second.get(), *proto.mutable_info());
         }
 
-        static inline void convert(const archive::problem::info_map &info_map, problem::InfoMap &proto)
+        static void convert(const archive::problem::info_map &info_map, problem::InfoMap &proto)
         {
             convert(info_map, *proto.mutable_items());
         }
 
-        static inline void convert(const archive::problem::hash_map::value_type &id_hash, problem::HashMap::Entry &proto)
+        static void convert(const archive::problem::hash_map::value_type &id_hash, problem::HashMap::Entry &proto)
         {
             proto.set_id(id_hash.first);
             if (id_hash.second)
                 proto.set_hash(id_hash.second->data(), id_hash.second->size());
         }
 
-        static inline void convert(const archive::problem::hash_map &hash_map, problem::HashMap &proto)
+        static void convert(const archive::problem::hash_map &hash_map, problem::HashMap &proto)
         {
             convert(hash_map, *proto.mutable_items());
         }
 
-        static inline void convert(const archive::problem::flag_set &flags, problem::FlagSet &proto)
+        static void convert(const archive::problem::flag_set &flags, problem::FlagSet &proto)
         {
             convert(flags, *proto.mutable_flags());
         }
 
-        static inline void convert(const archive::problem::status &status, problem::Status &proto)
+        static void convert(const archive::problem::status &status, problem::Status &proto)
         {
             convert(status.flags, *proto.mutable_flags());
             proto.set_hash(status.hash.data(), status.hash.size());
         }
 
-        static inline void convert(const archive::problem::status_map::value_type &id_status, problem::StatusMap::Entry &proto)
+        static void convert(const archive::problem::status_map::value_type &id_status, problem::StatusMap::Entry &proto)
         {
             proto.set_id(id_status.first);
             if (id_status.second)
                 convert(id_status.second.get(), *proto.mutable_status());
         }
 
-        static inline void convert(const archive::problem::status_map &status_map, problem::StatusMap &proto)
+        static void convert(const archive::problem::status_map &status_map, problem::StatusMap &proto)
         {
             convert(status_map, *proto.mutable_items());
         }
 
-        static inline void convert(const archive::problem::import_info &import_info, problem::ImportInfo &proto)
+        static void convert(const archive::problem::import_info &import_info, problem::ImportInfo &proto)
         {
             if (import_info.error)
                 proto.set_error(import_info.error.get());
@@ -85,13 +85,13 @@ namespace bacs{namespace archive{namespace pb
                 convert(import_info.status.get(), *proto.mutable_status());
         }
 
-        static inline void convert(const archive::problem::import_map::value_type &id_import, problem::ImportMap::Entry &proto)
+        static void convert(const archive::problem::import_map::value_type &id_import, problem::ImportMap::Entry &proto)
         {
             proto.set_id(id_import.first);
             convert(id_import.second, *proto.mutable_import_info());
         }
 
-        static inline void convert(const archive::problem::import_map &import_map, problem::ImportMap &proto)
+        static void convert(const archive::problem::import_map &import_map, problem::ImportMap &proto)
         {
             convert(import_map, *proto.mutable_items());
         }
