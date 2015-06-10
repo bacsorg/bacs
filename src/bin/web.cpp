@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         const std::string cfg = srv.settings().get<std::string>("repository.config");
         boost::property_tree::ptree config;
         boost::property_tree::read_info(cfg, config);
-        const std::shared_ptr<bacs::archive::repository> repository(new bacs::archive::repository(config));
+        const auto repository = std::make_shared<bacs::archive::repository>(config);
         srv.applications_pool().mount(
             cppcms::applications_factory<bacs::archive::web::repository>(repository)
         );
