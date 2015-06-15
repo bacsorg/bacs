@@ -10,6 +10,12 @@ else()
     find_package(BunsanCMake CONFIG REQUIRED)
 endif()
 
+if(BunsanWebBuiltin)
+    BunsanWebLoad()
+else()
+    find_package(BunsanWeb CONFIG REQUIRED)
+endif()
+
 bunsan_find_bunsan_package(bunsan_bacs_problems bunsan_bacs_problems)
 
 bunsan_add_protobuf_cxx_library(
@@ -60,8 +66,7 @@ bunsan_use_bunsan_package(${PROJECT_NAME}_web bunsan_crypto bunsan_crypto)
 bunsan_use_bunsan_package(${PROJECT_NAME}_web bunsan_web bunsan_web)
 target_link_libraries(${PROJECT_NAME}_web PUBLIC cppcms booster)
 
-find_package(BunsanWeb CONFIG REQUIRED)
-bunsan_web_add_skin(plain
+bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/base.tmpl
     view/plain/error.tmpl
     view/plain/base_form.tmpl
@@ -80,12 +85,12 @@ bunsan_web_add_skin(plain
     view/plain/hash.tmpl
     view/plain/repack.tmpl
 )
-bunsan_use_target(plain ${PROJECT_NAME})
+bunsan_use_target(${PROJECT_NAME}_skin_plain ${PROJECT_NAME})
 
 bunsan_install_headers()
 bunsan_install_targets(${PROJECT_NAME} ${PROJECT_NAME}_cli ${PROJECT_NAME}_web)
-install(TARGETS plain DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/skins)
-install(DIRECTORY static DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
+bunsan_web_install_skins(${PROJECT_NAME}_skin_plain)
+bunsan_web_install_static()
 bunsan_install_project()
 
 bunsan_include_tests()
