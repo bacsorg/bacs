@@ -64,7 +64,7 @@ bunsan_add_executable(${PROJECT_NAME}_web
 bunsan_use_target(${PROJECT_NAME}_web ${PROJECT_NAME})
 bunsan_use_bunsan_package(${PROJECT_NAME}_web bunsan_crypto bunsan_crypto)
 bunsan_use_bunsan_package(${PROJECT_NAME}_web bunsan_web bunsan_web)
-target_link_libraries(${PROJECT_NAME}_web PUBLIC cppcms booster)
+target_link_libraries(${PROJECT_NAME}_web PUBLIC cppcms)
 
 bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/base.tmpl

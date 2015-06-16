@@ -134,7 +134,7 @@ namespace
     };
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
     archive_application app(argc, argv);
     app.name("bacs::archive::cli");
