@@ -2,6 +2,10 @@
 
 #include IO_HEADER
 
+#include <bunsan/testing/filesystem/read_data.hpp>
+#include <bunsan/testing/filesystem/tempfile.hpp>
+#include <bunsan/testing/filesystem/write_data.hpp>
+
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 
@@ -168,4 +172,24 @@ struct stream<std::ostream>
     BUNSAN_PROTOBUF_OUTPUT(ss)
 
     std::ostringstream ss;
+};
+
+template <>
+struct stream<boost::filesystem::path>
+{
+    stream()=default;
+    explicit stream(const std::string &data)
+    {
+        bunsan::testing::filesystem::write_data(tmp.path, data);
+    }
+
+    std::string data() const
+    {
+        return bunsan::testing::filesystem::read_data(tmp.path);
+    }
+
+    BUNSAN_PROTOBUF_INPUT(tmp.path)
+    BUNSAN_PROTOBUF_OUTPUT(tmp.path)
+
+    bunsan::testing::filesystem::tempfile tmp;
 };

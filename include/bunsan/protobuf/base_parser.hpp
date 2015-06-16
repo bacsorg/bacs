@@ -6,6 +6,8 @@
 
 #include <google/protobuf/message.h>
 
+#include <boost/filesystem/path.hpp>
+
 #include <utility>
 
 namespace bunsan{namespace protobuf
@@ -74,5 +76,9 @@ namespace bunsan{namespace protobuf
         virtual void merge_raw(
             google::protobuf::Message &message,
             std::istream &input);
+
+        virtual void merge_raw(
+            google::protobuf::Message &message,
+            const boost::filesystem::path &path);
     };
 }}

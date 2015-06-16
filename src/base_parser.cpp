@@ -1,5 +1,7 @@
 #include <bunsan/protobuf/base_parser.hpp>
 
+#include <bunsan/filesystem/fstream.hpp>
+
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 
@@ -44,5 +46,18 @@ namespace bunsan{namespace protobuf
     {
         google::protobuf::io::IstreamInputStream stream(&input);
         merge_raw(message, stream);
+    }
+
+    void base_parser::merge_raw(
+        google::protobuf::Message &message,
+        const boost::filesystem::path &path)
+    {
+        bunsan::filesystem::ifstream fin(path);
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin)
+        {
+            merge_raw(message, fin);
+        }
+        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
+        fin.close();
     }
 }}

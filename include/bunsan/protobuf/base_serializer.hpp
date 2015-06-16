@@ -6,6 +6,7 @@
 
 #include <google/protobuf/message.h>
 
+#include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 
 #include <utility>
@@ -78,5 +79,8 @@ namespace bunsan{namespace protobuf
             const google::protobuf::Message &message,
             std::string &output,
             string_mode mode);
+        virtual void serialize_raw(
+            const google::protobuf::Message &message,
+            const boost::filesystem::path &path);
     };
 }}

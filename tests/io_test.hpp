@@ -22,14 +22,16 @@ using parse_types = boost::mpl::list<
     boost::mpl::list<google::protobuf::io::ZeroCopyInputStream, std::size_t>,
     std::string,
     boost::mpl::list<const void *, std::size_t>,
-    std::istream
+    std::istream,
+    boost::filesystem::path
 >;
 
 using serialize_types = boost::mpl::list<
     google::protobuf::io::ZeroCopyOutputStream,
     std::ostream,
     boost::mpl::list<std::string, append_tag>,
-    boost::mpl::list<std::string, replace_tag>
+    boost::mpl::list<std::string, replace_tag>,
+    boost::filesystem::path
 >;
 
 BOOST_AUTO_TEST_SUITE(merge)
