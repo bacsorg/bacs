@@ -1,0 +1,45 @@
+syntax = "proto2";
+
+package bacs.archive.problem;
+
+import "bacs/problem/problem.proto";
+
+message IdSet {
+    repeated string id = 1;
+}
+
+message Info {
+    oneof result {
+        string error = 1;
+        bacs.problem.Problem problem = 2;
+    }
+}
+
+message InfoMap {
+    map<string, Info> entry = 1;
+}
+
+message HashMap {
+    // hash is empty iff problem does not exist
+    map<string, bytes> entry = 1;
+}
+
+message FlagSet {
+    repeated string flag = 1;
+}
+
+message Status {
+    required FlagSet flags = 1;
+    required bytes hash = 2;
+}
+
+message ImportInfo {
+    oneof result {
+        string error = 1;
+        Status status = 2;
+    }
+}
+
+message ImportMap {
+    map<string, ImportInfo> entry = 1;
+}

@@ -41,42 +41,42 @@ namespace bacs{namespace archive{namespace web{namespace content
         Form form;
     };
 
-    typedef basic_form<form::insert, problem::import_map> insert;
-    typedef basic_form<form::extract, void> extract;
-    typedef basic_form<form::rename, problem::import_info> rename;
-    typedef basic_form<form::existing, problem::id_set> existing;
-    typedef basic_form<form::available, problem::id_set> available;
+    using insert = basic_form<form::insert, problem::ImportMap>;
+    using extract = basic_form<form::extract, void>;
+    using rename = basic_form<form::rename, problem::ImportInfo>;
+    using existing = basic_form<form::existing, problem::IdSet>;
+    using available = basic_form<form::available, problem::IdSet>;
 
-    struct status: basic_form<form::list_query, problem::status_map>
+    struct status: basic_form<form::list_query, problem::ImportMap>
     {
         status();
     };
 
-    typedef basic_form<form::with_flag, problem::id_set> with_flag;
-    typedef basic_form<form::set_flags, problem::id_set> set_flags;
-    typedef basic_form<form::unset_flags, problem::id_set> unset_flags;
+    using with_flag = basic_form<form::with_flag, problem::IdSet>;
+    using set_flags = basic_form<form::set_flags, problem::IdSet>;
+    using unset_flags = basic_form<form::unset_flags, problem::IdSet>;
 
-    struct clear_flags: basic_form<form::list_query, problem::id_set>
+    struct clear_flags: basic_form<form::list_query, problem::IdSet>
     {
         clear_flags();
     };
 
-    struct ignore: basic_form<form::list_query, problem::id_set>
+    struct ignore: basic_form<form::list_query, problem::IdSet>
     {
         ignore();
     };
 
-    struct info: basic_form<form::list_query, problem::info_map>
+    struct info: basic_form<form::list_query, problem::InfoMap>
     {
         info();
     };
 
-    struct hash: basic_form<form::list_query, problem::hash_map>
+    struct hash: basic_form<form::list_query, problem::HashMap>
     {
         hash();
     };
 
-    struct repack: basic_form<form::list_query, problem::import_map>
+    struct repack: basic_form<form::list_query, problem::ImportMap>
     {
         repack();
     };

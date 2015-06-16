@@ -13,7 +13,7 @@
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id_hash in result.get() %>
+                <% foreach id_hash in result->entry() %>
                     <table border="1" cellspacing="0" cellpadding="10">
                         <caption><% gt "Problem hashes" %></caption>
                         <tr>
@@ -24,8 +24,8 @@
                             <tr>
                                 <td><%= id_hash.first %></td>
                                 <td>
-                                    <% if id_hash.second %>
-                                        <%= id_hash.second.get() | base64_binary %>
+                                    <% if not id_hash.second.empty() %>
+                                        <%= id_hash.second | base64_binary %>
                                     <% else %>
                                         <% gt "Not found" %>
                                     <% end %>

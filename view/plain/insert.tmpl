@@ -13,7 +13,7 @@
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id_import in result.get() %>
+                <% foreach id_import in result->entry() %>
                     <table border="1" cellspacing="0" cellpadding="10">
                         <caption><% gt "Insertion results" %></caption>
                         <tr>
@@ -26,15 +26,15 @@
                             <tr>
                                 <td><%= id_import.first %></td>
                                 <td>
-                                    <% if id_import.second.error %>
-                                        <pre class="error"><%= id_import.second.error.get() %></pre>
+                                    <% if id_import.second.has_error() %>
+                                        <pre class="error"><%= id_import.second.error() %></pre>
                                     <% else %>
                                         <% gt "OK" %>
                                     <% end %>
                                 </td>
-                                <% if id_import.second.status %>
+                                <% if id_import.second.has_status() %>
                                     <td>
-                                        <% foreach flag in id_import.second.status->flags %>
+                                        <% foreach flag in id_import.second.status().flags().flag() %>
                                             <ul class="problem_flags">
                                                 <% item %>
                                                     <li><%= flag %></li>
@@ -42,7 +42,7 @@
                                             </ul>
                                         <% end %>
                                     </td>
-                                    <td><%= id_import.second.status->hash | base64_binary %></td>
+                                    <td><%= id_import.second.status().hash() | base64_binary %></td>
                                 <% else %>
                                     <!-- Nothing here... -->
                                 <% end %>

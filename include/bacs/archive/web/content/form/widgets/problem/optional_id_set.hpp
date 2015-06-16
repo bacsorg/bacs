@@ -19,8 +19,8 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
         optional_id_set(const std::string &flag_,
                         const flag_type_enum flag_type_);
 
-        boost::optional<archive::problem::id_set> value();
-        void value(const boost::optional<archive::problem::id_set> &id_set_);
+        boost::optional<archive::problem::IdSet> value();
+        void value(const boost::optional<archive::problem::IdSet> &id_set_);
 
         bool validate() override;
 

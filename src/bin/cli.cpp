@@ -1,5 +1,3 @@
-#include <bacs/archive/pb/convert.hpp>
-#include <bacs/archive/pb/problem.pb.h>
 #include <bacs/archive/repository.hpp>
 
 #include <bunsan/application.hpp>
@@ -73,24 +71,20 @@ namespace
             if (variables.count("insert_all"))
             {
                 BUNSAN_LOG_INFO << "Inserting all problems";
-                const bacs::archive::problem::import_map map =
+                const bacs::archive::problem::ImportMap map =
                     archiver_options ?
                         repo.insert_all(archiver_options.get(), insert_all) :
                         repo.insert_all(insert_all);
-                bacs::archive::pb::problem::ImportMap pb_map;
-                bacs::archive::pb::convert(map, pb_map);
-                BUNSAN_LOG_TRACE << pb_map.DebugString();
+                BUNSAN_LOG_TRACE << map.DebugString();
             }
             else if (variables.count("insert"))
             {
                 const boost::filesystem::path path =
                     boost::filesystem::absolute(insert);
                 BUNSAN_LOG_INFO << "Inserting " << path;
-                const bacs::archive::problem::import_info info =
+                const bacs::archive::problem::ImportInfo info =
                     repo.insert(path.filename().string(), path);
-                bacs::archive::pb::problem::ImportInfo pb_info;
-                bacs::archive::pb::convert(info, pb_info);
-                BUNSAN_LOG_TRACE << pb_info.DebugString();
+                BUNSAN_LOG_TRACE << info.DebugString();
             }
             else if (variables.count("extract"))
             {
@@ -113,15 +107,14 @@ namespace
             else if (variables.count("repack"))
             {
                 BUNSAN_LOG_INFO << "Repacking";
-                const bacs::archive::problem::id_set ids(
+                bacs::archive::problem::IdSet ids;
+                *ids.mutable_id() = {
                     arguments.begin(),
                     arguments.end()
-                );
-                const bacs::archive::problem::import_map map =
+                };
+                const bacs::archive::problem::ImportMap map =
                     repo.repack_all(ids);
-                bacs::archive::pb::problem::ImportMap pb_map;
-                bacs::archive::pb::convert(map, pb_map);
-                BUNSAN_LOG_TRACE << pb_map.DebugString();
+                BUNSAN_LOG_TRACE << map.DebugString();
             }
             return exit_success;
         }

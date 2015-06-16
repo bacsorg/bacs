@@ -18,20 +18,10 @@ namespace bacs{namespace archive{namespace web
         void main(std::string url) override;
 
     private:
-        template <typename Model>
-        class void_result;
-
-        template <typename Model, typename Result, typename ProtoResult>
-        class convertible_result;
-
-        template <typename Model>
-        friend class repository::void_result;
-
-        template <typename Model, typename Result, typename ProtoResult>
-        friend class repository::convertible_result;
-
-        template <typename Model, typename Result>
-        void handler_wrapper(const std::string &name, Result &result);
+        template <typename Model, typename Handler, typename Sender>
+        void handler_wrapper(const std::string &name,
+                             const Handler &handler,
+                             const Sender &sender);
 
         void insert();
         void extract();
@@ -56,20 +46,20 @@ namespace bacs{namespace archive{namespace web
         void send_tempfile(bunsan::tempfile &&tmpfile, const std::string &filename);
 
     private:
-        problem::import_map insert_(content::insert &data);
+        problem::ImportMap insert_(content::insert &data);
         //void extract_(content::extract &data);
-        problem::import_info rename_(content::rename &data);
-        problem::id_set existing_(content::existing &data);
-        problem::id_set available_(content::available &data);
-        problem::status_map status_(content::status &data);
-        problem::id_set with_flag_(content::with_flag &data);
-        problem::id_set set_flags_(content::set_flags &data);
-        problem::id_set unset_flags_(content::unset_flags &data);
-        problem::id_set clear_flags_(content::clear_flags &data);
-        problem::id_set ignore_(content::ignore &data);
-        problem::info_map info_(content::info &data);
-        problem::hash_map hash_(content::hash &data);
-        problem::import_map repack_(content::repack &data);
+        problem::ImportInfo rename_(content::rename &data);
+        problem::IdSet existing_(content::existing &data);
+        problem::IdSet available_(content::available &data);
+        problem::ImportMap status_(content::status &data);
+        problem::IdSet with_flag_(content::with_flag &data);
+        problem::IdSet set_flags_(content::set_flags &data);
+        problem::IdSet unset_flags_(content::unset_flags &data);
+        problem::IdSet clear_flags_(content::clear_flags &data);
+        problem::IdSet ignore_(content::ignore &data);
+        problem::InfoMap info_(content::info &data);
+        problem::HashMap hash_(content::hash &data);
+        problem::ImportMap repack_(content::repack &data);
 
     private:
         const std::shared_ptr<archive::repository> m_repository;

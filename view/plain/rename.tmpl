@@ -15,14 +15,14 @@
                 <!-- FIXME -->
                 <p>
                     <% gt "Import status:" %>
-                    <% if result->error %>
-                        <pre class="error"><%= result->error.get() %></pre>
+                    <% if result->has_error() %>
+                        <pre class="error"><%= result->error() %></pre>
                     <% else %>
                         <% gt "OK" %>
                     <% end %>
                 </p>
-                <% if result->status %>
-                    <% foreach flag in result->status->flags %>
+                <% if result->has_status() %>
+                    <% foreach flag in result->status().flags().flag() %>
                         <% gt "Problem flags:" %>
                         <ul class="problem_flags">
                             <% item %>
@@ -30,7 +30,7 @@
                             <% end %>
                         </ul>
                     <% end %>
-                    <p><% gt "Problem hash:" %> <%= result->status->hash | base64_binary %></p>
+                    <p><% gt "Problem hash:" %> <%= result->status().hash() | base64_binary %></p>
                 <% else %>
                     <% gt "N/A" %>
                 <% end %>

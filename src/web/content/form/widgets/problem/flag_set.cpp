@@ -7,24 +7,30 @@
 
 #include <algorithm>
 #include <vector>
+#include <unordered_set>
 
 namespace bacs{namespace archive{namespace web{namespace content{namespace form{namespace widgets{namespace problem
 {
-    archive::problem::flag_set flag_set::value()
+    archive::problem::FlagSet flag_set::value()
     {
-        archive::problem::flag_set set;
+        archive::problem::FlagSet set;
         archive::problem::flag value_(text::value());
         boost::algorithm::trim(value_);
+        std::unordered_set<std::string> uset;
         if (!value_.empty())
-            boost::algorithm::split(set, value_,
+            boost::algorithm::split(uset, value_,
                                     boost::algorithm::is_space(),
                                     boost::algorithm::token_compress_on);
+        *set.mutable_flag() = {uset.begin(), uset.end()};
         return set;
     }
 
-    void flag_set::value(const archive::problem::flag_set &flag_set_)
+    void flag_set::value(const archive::problem::FlagSet &flag_set_)
     {
-        std::vector<archive::problem::flag> flags(flag_set_.begin(), flag_set_.end());
+        std::vector<archive::problem::flag> flags(
+            flag_set_.flag().begin(),
+            flag_set_.flag().end()
+        );
         std::sort(flags.begin(), flags.end());
         text::value(boost::algorithm::join(flags, " "));
     }
@@ -33,8 +39,10 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
     {
         if (!text::validate())
             return false;
-        const archive::problem::flag_set set = value();
-        valid(std::all_of(set.begin(), set.end(), archive::problem::is_allowed_flag));
+        const archive::problem::FlagSet set = value();
+        valid(std::all_of(set.flag().begin(),
+                          set.flag().end(),
+                          archive::problem::is_allowed_flag));
         return valid();
     }
 }}}}}}}

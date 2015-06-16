@@ -1,12 +1,11 @@
 #include <bacs/archive/repository.hpp>
 
 #include <bacs/archive/error.hpp>
-#include <bacs/archive/pb/convert.hpp>
-#include <bacs/archive/pb/problem.pb.h>
 #include <bacs/archive/problem/flags.hpp>
 
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
+#include <bunsan/protobuf/binary.hpp>
 
 #include <boost/assert.hpp>
 #include <boost/crc.hpp>
@@ -15,8 +14,8 @@
 
 namespace bacs{namespace archive
 {
-    typedef boost::lock_guard<boost::shared_mutex> lock_guard;
-    typedef boost::shared_lock_guard<boost::shared_mutex> shared_lock_guard;
+    using lock_guard = boost::lock_guard<boost::shared_mutex>;
+    using shared_lock_guard = boost::shared_lock_guard<boost::shared_mutex>;
 
     namespace
     {
@@ -79,6 +78,49 @@ namespace bacs{namespace archive
                 hash[i] = value & 0xFF;
             return hash;
         }
+
+        problem::ImportInfo import_error(const std::string &error)
+        {
+            problem::ImportInfo import_info;
+            import_info.set_error(error);
+            return import_info;
+        }
+
+        problem::ImportInfo import_does_not_exist()
+        {
+            return import_error("Problem does not exist");
+        }
+
+        problem::ImportInfo import_not_implemented()
+        {
+            return import_error("Not implemented");
+        }
+
+        problem::ImportInfo import_status(problem::Status status)
+        {
+            problem::ImportInfo import_info;
+            *import_info.mutable_status() = std::move(status);
+            return import_info;
+        }
+
+        problem::Info info_error(const std::string &error)
+        {
+            problem::Info info;
+            info.set_error(error);
+            return info;
+        }
+
+        problem::Info info_does_not_exist()
+        {
+            return info_error("Problem does not exist");
+        }
+
+        problem::Info info_problem(bacs::problem::Problem problem)
+        {
+            problem::Info info;
+            *info.mutable_problem() = std::move(problem);
+            return info;
+        }
     }
 
     /// entry names
@@ -89,7 +131,8 @@ namespace bacs{namespace archive
         const boost::filesystem::path flags = "flags";
     }
 
-    problem::import_info repository::insert(const problem::id &id, const boost::filesystem::path &location)
+    problem::ImportInfo repository::insert(const problem::id &id,
+                                           const boost::filesystem::path &location)
     {
         enum error_type
         {
@@ -97,7 +140,7 @@ namespace bacs{namespace archive
             problem_is_locked
         } error = ok;
         problem::validate_id(id);
-        problem::import_info import_info;
+        problem::ImportInfo import_info;
         if (!is_locked(id))
         {
             const lock_guard lk(m_lock);
@@ -105,19 +148,31 @@ namespace bacs{namespace archive
             {
                 if (boost::filesystem::exists(m_location.repository_root / id))
                 {
-                    boost::filesystem::remove(m_location.repository_root / id / m_problem.data.filename);
+                    boost::filesystem::remove(m_location.repository_root /
+                                              id /
+                                              m_problem.data.filename);
                     boost::filesystem::remove(m_location.repository_root / id / ename::hash);
                     boost::filesystem::remove(m_location.repository_root / id / ename::info);
                 }
                 else
                 {
-                    BOOST_VERIFY(boost::filesystem::create_directory(m_location.repository_root / id));
-                    BOOST_VERIFY(boost::filesystem::create_directory(m_location.repository_root / id / ename::flags));
+                    BOOST_VERIFY(
+                        boost::filesystem::create_directory(m_location.repository_root / id)
+                    );
+                    BOOST_VERIFY(
+                        boost::filesystem::create_directory(
+                            m_location.repository_root / id / ename::flags)
+                    );
                 }
-                const bunsan::utility::archiver_ptr archiver = m_problem_archiver_factory(m_resolver);
+                const bunsan::utility::archiver_ptr archiver =
+                    m_problem_archiver_factory(m_resolver);
                 BOOST_ASSERT(archiver);
-                archiver->pack_contents(m_location.repository_root / id / m_problem.data.filename, location);
-                const problem::hash hash = compute_hash(m_location.repository_root / id / m_problem.data.filename);
+                archiver->pack_contents(
+                    m_location.repository_root / id / m_problem.data.filename,
+                    location
+                );
+                const problem::hash hash =
+                    compute_hash(m_location.repository_root / id / m_problem.data.filename);
                 write_hash_(id, hash);
                 import_info = repack_(id, hash, location);
             }
@@ -136,7 +191,7 @@ namespace bacs{namespace archive
             /* nothing to do */
             break;
         case problem_is_locked:
-            import_info.error = "problem is locked";
+            import_info.set_error("problem is locked");
             break;
         }
         return import_info;
@@ -165,29 +220,31 @@ namespace bacs{namespace archive
         archiver->unpack(m_location.repository_root / id / m_problem.data.filename, location);
     }
 
-    problem::id_set repository::existing()
+    problem::IdSet repository::existing()
     {
         const shared_lock_guard lk(m_lock);
-        problem::id_set set;
-        for (boost::filesystem::directory_iterator i(m_location.repository_root), end; i != end; ++i)
+        problem::IdSet set;
+        for (boost::filesystem::directory_iterator i(m_location.repository_root),
+                                                   end; i != end; ++i)
         {
             const problem::id id = i->path().filename().string();
             problem::validate_id(id);
-            set.insert(id);
+            set.add_id(id);
         }
         return set;
     }
 
-    problem::id_set repository::available()
+    problem::IdSet repository::available()
     {
         const shared_lock_guard lk(m_lock);
-        problem::id_set set;
-        for (boost::filesystem::directory_iterator i(m_location.repository_root), end; i != end; ++i)
+        problem::IdSet set;
+        for (boost::filesystem::directory_iterator i(m_location.repository_root),
+                                                   end; i != end; ++i)
         {
             const problem::id id = i->path().filename().string();
             problem::validate_id(id);
             if (is_available_(id))
-                set.insert(id);
+                set.add_id(id);
         }
         return set;
     }
@@ -214,34 +271,40 @@ namespace bacs{namespace archive
         return exists(id) && !has_flag(id, problem::flags::ignore);
     }
 
-    boost::optional<problem::status> repository::status(const problem::id &id)
+    problem::ImportInfo repository::status(const problem::id &id)
     {
         problem::validate_id(id);
         if (exists(id))
         {
             const shared_lock_guard lk(m_lock);
             if (exists(id))
-                return status_(id);
+                return import_status(status_(id));
         }
-        return boost::optional<problem::status>();
+        return import_does_not_exist();
     }
 
-    problem::status repository::status_(const problem::id &id)
+    problem::Status repository::status_(const problem::id &id)
     {
-        problem::status status;
-        status.hash = read_hash_(id);
-        status.flags = flags_(id);
+        problem::Status status;
+        const auto hash = read_hash_(id);
+        status.mutable_hash()->assign(
+            reinterpret_cast<const char *>(hash.data()),
+            hash.size()
+        );
+        *status.mutable_flags() = flags_(id);
         return status;
     }
 
-    problem::flag_set repository::flags_(const problem::id &id)
+    problem::FlagSet repository::flags_(const problem::id &id)
     {
-        problem::flag_set flags;
-        for (boost::filesystem::directory_iterator i(m_location.repository_root / id / ename::flags), end; i != end; ++i)
+        problem::FlagSet flags;
+        const boost::filesystem::path flags_dir = m_location.repository_root / id / ename::flags;
+        for (boost::filesystem::directory_iterator i(flags_dir),
+                                                   end; i != end; ++i)
         {
             const problem::flag flag = i->path().filename().string();
             problem::validate_flag(flag);
-            flags.insert(flag);
+            flags.add_flag(flag);
         }
         return flags;
     }
@@ -267,16 +330,16 @@ namespace bacs{namespace archive
         touch(m_location.repository_root / id / ename::flags / flag);
     }
 
-    bool repository::set_flags(const problem::id &id, const problem::flag_set &flags)
+    bool repository::set_flags(const problem::id &id, const problem::FlagSet &flags)
     {
         problem::validate_id(id);
-        std::for_each(flags.begin(), flags.end(), problem::validate_flag);
+        std::for_each(flags.flag().begin(), flags.flag().end(), problem::validate_flag);
         if (exists(id))
         {
             const lock_guard lk(m_lock);
             if (exists(id) && !is_read_only(id))
             {
-                for (const problem::flag &flag: flags)
+                for (const problem::flag &flag: flags.flag())
                     set_flag_(id, flag);
                 return true;
             }
@@ -306,16 +369,16 @@ namespace bacs{namespace archive
         boost::filesystem::remove(m_location.repository_root / id / ename::flags / flag);
     }
 
-    bool repository::unset_flags(const problem::id &id, const problem::flag_set &flags)
+    bool repository::unset_flags(const problem::id &id, const problem::FlagSet &flags)
     {
         problem::validate_id(id);
-        std::for_each(flags.begin(), flags.end(), problem::validate_flag);
+        std::for_each(flags.flag().begin(), flags.flag().end(), problem::validate_flag);
         if (exists(id))
         {
             const lock_guard lk(m_lock);
             if (exists(id) && !is_read_only(id))
             {
-                for (const problem::flag &flag: flags)
+                for (const problem::flag &flag: flags.flag())
                     if (flag != problem::flags::ignore) // it is not possible to remove ignore flag
                         unset_flag_(id, flag);
                 return true;
@@ -332,7 +395,9 @@ namespace bacs{namespace archive
             const lock_guard lk(m_lock);
             if (exists(id) && !is_read_only(id))
             {
-                for (boost::filesystem::directory_iterator i(m_location.repository_root / id / ename::flags), end; i != end; ++i)
+                const boost::filesystem::path flags_dir =
+                    m_location.repository_root / id / ename::flags;
+                for (boost::filesystem::directory_iterator i(flags_dir), end; i != end; ++i)
                 {
                     const problem::flag flag = i->path().filename().string();
                     if (flag != problem::flags::ignore) // it is not possible to clear ignore flag
@@ -344,7 +409,7 @@ namespace bacs{namespace archive
         return false;
     }
 
-    boost::optional<problem::info> repository::info(const problem::id &id)
+    problem::Info repository::info(const problem::id &id)
     {
         problem::validate_id(id);
         if (exists(id))
@@ -353,33 +418,22 @@ namespace bacs{namespace archive
             if (is_available_(id))
                 return read_info_(id);
         }
-        return boost::optional<problem::info>();
+        return info_does_not_exist();
     }
 
-    problem::info repository::read_info_(const problem::id &id)
+    problem::Info repository::read_info_(const problem::id &id)
     {
-        problem::info info;
-        bunsan::filesystem::ifstream fin(m_location.repository_root / id / ename::info);
-        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin)
-        {
-            if (!info.ParseFromIstream(&fin))
-                BOOST_THROW_EXCEPTION(protobuf_parsing_error());
-        }
-        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
-        fin.close();
-        return info;
+        return bunsan::protobuf::binary::parse_make<problem::Info>(
+            m_location.repository_root / id / ename::info
+        );
     }
 
-    void repository::write_info_(const problem::id &id, const problem::info &info)
+    void repository::write_info_(const problem::id &id, const problem::Info &info)
     {
-        bunsan::filesystem::ofstream fout(m_location.repository_root / id / ename::info);
-        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout)
-        {
-            if (!info.SerializeToOstream(&fout))
-                BOOST_THROW_EXCEPTION(protobuf_serialization_error());
-        }
-        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fout)
-        fout.close();
+        bunsan::protobuf::binary::serialize(
+            info,
+            m_location.repository_root / id / ename::info
+        );
     }
 
     bool repository::has_flag(const problem::id &id, const problem::flag &flag)
@@ -389,7 +443,7 @@ namespace bacs{namespace archive
         return boost::filesystem::exists(m_location.repository_root / id / ename::flags / flag);
     }
 
-    boost::optional<problem::hash> repository::hash(const problem::id &id)
+    problem::hash repository::hash(const problem::id &id)
     {
         problem::validate_id(id);
         if (exists(id))
@@ -398,7 +452,7 @@ namespace bacs{namespace archive
             if (is_available_(id))
                 return read_hash_(id);
         }
-        return boost::optional<problem::hash>();
+        return problem::hash();
     }
 
     problem::hash repository::read_hash_(const problem::id &id)
@@ -411,7 +465,8 @@ namespace bacs{namespace archive
         write_binary(m_location.repository_root / id / ename::hash, hash);
     }
 
-    problem::import_info repository::rename(const problem::id &current, const problem::id &future)
+    problem::ImportInfo repository::rename(const problem::id &current,
+                                           const problem::id &future)
     {
         problem::validate_id(current);
         problem::validate_id(future);
@@ -433,7 +488,6 @@ namespace bacs{namespace archive
                     return future_exists;
                 return ok;
             };
-        problem::import_info import_info;
         error = rename_status();
         if (error == ok)
         {
@@ -441,28 +495,27 @@ namespace bacs{namespace archive
             error = rename_status();
             if (error == ok)
             {
-                import_info.error = "Not implemented";
+                // TODO
+                return import_not_implemented();
             }
         }
         switch (error)
         {
         case ok:
-            /* nothing to do */
-            break;
+            BOOST_ASSERT_MSG(false, "Impossible");
+            return import_not_implemented();
         case current_does_not_exist:
-            import_info.error = "$current problem does not exist";
-            break;
+            return import_error("$current problem does not exist");
         case current_is_locked:
-            import_info.error = "$current problem is locked";
-            break;
+            return import_error("$current problem is locked");
         case future_exists:
-            import_info.error = "$future problem exists";
-            break;
+            return import_error("$future problem exists");
         }
-        return import_info;
+        BOOST_ASSERT_MSG(false, "Impossible to get here");
+        return import_not_implemented();
     }
 
-    problem::import_info repository::repack(const problem::id &id)
+    problem::ImportInfo repository::repack(const problem::id &id)
     {
         problem::validate_id(id);
         if (exists(id))
@@ -471,22 +524,54 @@ namespace bacs{namespace archive
             if (exists(id))
                 return repack_(id);
         }
-        problem::import_info import_info;
-        import_info.error = "Problem does not exist";
-        return import_info;
+        return import_does_not_exist();
     }
 
-    problem::import_info repository::repack_(const problem::id &id)
+    problem::ImportInfo repository::repack_(const problem::id &id)
     {
         BOOST_ASSERT(exists(id));
         return repack_(id, read_hash_(id));
     }
 
-    problem::import_info repository::repack_(const problem::id &id, const problem::hash &hash)
+    problem::ImportInfo repository::repack_(const problem::id &id,
+                                             const problem::hash &hash)
     {
         const bunsan::tempfile tmpdir =
             bunsan::tempfile::directory_in_directory(m_location.tmpdir);
         extract_(id, tmpdir.path());
         return repack_(id, hash, tmpdir.path());
+    }
+
+    problem::ImportInfo repository::repack_(const problem::id &id,
+                                            const problem::hash &hash,
+                                            const boost::filesystem::path &problem_location)
+    {
+        problem::ImportInfo import_info;
+        try
+        {
+            bacs::problem::importer::options options;
+            options.problem_dir = problem_location;
+            options.destination = m_location.pm_repository_root /
+                                  m_problem.root_package.location() /
+                                  id;
+            options.root_package = m_problem.root_package / id;
+            options.id = id;
+            options.hash = hash;
+            write_info_(id, info_problem(m_importer.convert(options)));
+            m_repository.create_recursively(options.destination, m_problem.strip);
+            unset_flag_(id, problem::flags::ignore);
+            problem::Status &status = *import_info.mutable_status();
+            status.mutable_hash()->assign(
+                reinterpret_cast<const char *>(hash.data()),
+                hash.size()
+            );
+            *status.mutable_flags() = flags_(id);
+        }
+        catch (std::exception &e)
+        {
+            set_flag_(id, problem::flags::ignore);
+            import_info.set_error(e.what());
+        }
+        return import_info;
     }
 }}

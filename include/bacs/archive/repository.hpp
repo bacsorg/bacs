@@ -54,13 +54,13 @@ namespace bacs{namespace archive
          *
          * \see repository::insert
          */
-        problem::import_map insert_all(const boost::filesystem::path &location);
+        problem::ImportMap insert_all(const boost::filesystem::path &location);
 
         /*!
          * \copydoc insert_all()
          */
-        problem::import_map insert_all(const archiver_options &archiver_options_,
-                                       const boost::filesystem::path &archive);
+        problem::ImportMap insert_all(const archiver_options &archiver_options_,
+                                      const boost::filesystem::path &archive);
 
         /*!
          * \brief Insert particular problem into repository.
@@ -74,10 +74,11 @@ namespace bacs{namespace archive
          *
          * \see repository::reset_flags
          */
-        problem::import_info insert(const problem::id &id, const boost::filesystem::path &location);
+        problem::ImportInfo insert(const problem::id &id,
+                                   const boost::filesystem::path &location);
 
         /// repository::insert(location.filename().string(), location)
-        problem::import_info insert(const boost::filesystem::path &location);
+        problem::ImportInfo insert(const boost::filesystem::path &location);
 
         /*!
          * \brief Extract problems from repository.
@@ -89,21 +90,22 @@ namespace bacs{namespace archive
          * \see repository::exists
          * \see repository::extract
          */
-        void extract_all(const problem::id_set &id_set, const boost::filesystem::path &location);
+        void extract_all(const problem::IdSet &id_set,
+                         const boost::filesystem::path &location);
 
         /*!
          * \copydoc extract_all()
          *
          * \return archive with problems
          */
-        void extract_all(const problem::id_set &id_set,
+        void extract_all(const problem::IdSet &id_set,
                          const archiver_options &archiver_options_,
                          const boost::filesystem::path &archive);
 
         /*!
          * \copydoc extract_all()
          */
-        bunsan::tempfile extract_all(const problem::id_set &id_set,
+        bunsan::tempfile extract_all(const problem::IdSet &id_set,
                                      const archiver_options &archiver_options_);
 
         /*!
@@ -128,7 +130,8 @@ namespace bacs{namespace archive
          *
          * \see repository::repack
          */
-        problem::import_info rename(const problem::id &current, const problem::id &future);
+        problem::ImportInfo rename(const problem::id &current,
+                                   const problem::id &future);
 
         /*!
          * \brief Set of existing problems.
@@ -137,14 +140,14 @@ namespace bacs{namespace archive
          *
          * \see repository::exists
          */
-        problem::id_set existing();
+        problem::IdSet existing();
 
         /*!
          * \brief Set of available problems.
          *
          * \see repository::is_available
          */
-        problem::id_set available();
+        problem::IdSet available();
 
         /*!
          * \brief Check problem for existence.
@@ -165,7 +168,7 @@ namespace bacs{namespace archive
          *
          * \see repository::is_available
          */
-        problem::id_set existing(const problem::id_set &id_set);
+        problem::IdSet existing(const problem::IdSet &id_set);
 
         /*!
          * \brief Check problem for availability.
@@ -187,7 +190,7 @@ namespace bacs{namespace archive
          *
          * \see repository::is_available
          */
-        problem::id_set available(const problem::id_set &id_set);
+        problem::IdSet available(const problem::IdSet &id_set);
 
         /*!
          * \brief Check if problem is locked or read only.
@@ -207,11 +210,11 @@ namespace bacs{namespace archive
         /*!
          * \brief Get problem status.
          *
-         * \return null if problem does not exist
+         * \return error if problem does not exist
          *
          * Atomic, lock-free.
          */
-        boost::optional<problem::status> status(const problem::id &id);
+        problem::ImportInfo status(const problem::id &id);
 
         /*!
          * \brief Get problems status.
@@ -220,7 +223,7 @@ namespace bacs{namespace archive
          *
          * \see repository::status
          */
-        problem::status_map status_all(const problem::id_set &id_set);
+        problem::ImportMap status_all(const problem::IdSet &id_set);
 
         /*!
          * \brief Check problem for flag.
@@ -239,7 +242,8 @@ namespace bacs{namespace archive
          *
          * \see repository::has_flag
          */
-        problem::id_set with_flag(const problem::id_set &id_set, const problem::flag &flag);
+        problem::IdSet with_flag(const problem::IdSet &id_set,
+                                 const problem::flag &flag);
 
         /*!
          * \brief Set of problems with flag.
@@ -248,7 +252,7 @@ namespace bacs{namespace archive
          *
          * \see repository::with_flag
          */
-        problem::id_set with_flag(const problem::flag &flag);
+        problem::IdSet with_flag(const problem::flag &flag);
 
         /*!
          * \brief Set problem flag.
@@ -270,7 +274,7 @@ namespace bacs{namespace archive
          * \see repository::exists
          * \see repository::is_read_only
          */
-        bool set_flags(const problem::id &id, const problem::flag_set &flags);
+        bool set_flags(const problem::id &id, const problem::FlagSet &flags);
 
         /*!
          * \brief Set problems flags.
@@ -279,7 +283,8 @@ namespace bacs{namespace archive
          *
          * \see repository::set_flags
          */
-        problem::id_set set_flags_all(const problem::id_set &id_set, const problem::flag_set &flags);
+        problem::IdSet set_flags_all(const problem::IdSet &id_set,
+                                      const problem::FlagSet &flags);
 
         /*!
          * \brief Unset problem flag.
@@ -307,7 +312,7 @@ namespace bacs{namespace archive
          * \see repository::exists
          * \see repository::is_read_only
          */
-        bool unset_flags(const problem::id &id, const problem::flag_set &flags);
+        bool unset_flags(const problem::id &id, const problem::FlagSet &flags);
 
         /*!
          * \brief Unset problems flags.
@@ -316,7 +321,8 @@ namespace bacs{namespace archive
          *
          * \see repository::unset_flags
          */
-        problem::id_set unset_flags_all(const problem::id_set &id_set, const problem::flag_set &flags);
+        problem::IdSet unset_flags_all(const problem::IdSet &id_set,
+                                       const problem::FlagSet &flags);
 
         /*!
          * \brief Clear problem flags.
@@ -339,7 +345,7 @@ namespace bacs{namespace archive
          *
          * \see repository::clear_flags
          */
-        problem::id_set clear_flags_all(const problem::id_set &id_set);
+        problem::IdSet clear_flags_all(const problem::IdSet &id_set);
 
         /*!
          * \brief Mark problems with problem::flag::ignore.
@@ -352,7 +358,7 @@ namespace bacs{namespace archive
          *
          * \see repository::ignore
          */
-        problem::id_set ignore_all(const problem::id_set &id_set);
+        problem::IdSet ignore_all(const problem::IdSet &id_set);
 
         /*!
          * \brief Alias for repository::set_flag(id, #problem::flag::ignore).
@@ -371,30 +377,28 @@ namespace bacs{namespace archive
         /*!
          * \brief Get problem info.
          *
-         * \return uninitialized optional if problem is not available
+         * \return error if problem is not available
          *
          * \see repository::is_available
          */
-        boost::optional<problem::info> info(const problem::id &id);
+        problem::Info info(const problem::id &id);
 
         /*!
          * \brief Get info map for given problems.
          *
-         * If problem is not available, id is ignored.
-         *
          * \see repository::is_available
          * \see repository::info
          */
-        problem::info_map info_all(const problem::id_set &id_set);
+        problem::InfoMap info_all(const problem::IdSet &id_set);
 
         /*!
          * \brief Get problem hash.
          *
-         * \return uninitialized optional if problem is not available
+         * \return empty hash iff problem is not available
          *
          * \see repository::is_available
          */
-        boost::optional<problem::hash> hash(const problem::id &id);
+        problem::hash hash(const problem::id &id);
 
         /*!
          * \brief Get hash map for given problems.
@@ -404,7 +408,7 @@ namespace bacs{namespace archive
          * \see repository::is_available
          * \see repository::hash
          */
-        problem::hash_map hash_all(const problem::id_set &id_set);
+        problem::HashMap hash_all(const problem::IdSet &id_set);
 
         /* repack */
         /*!
@@ -424,7 +428,7 @@ namespace bacs{namespace archive
          * \see repository::exists
          * \see repository::set_flag
          */
-        problem::import_info repack(const problem::id &id);
+        problem::ImportInfo repack(const problem::id &id);
 
         /*!
          * \brief Repack all given problems.
@@ -433,7 +437,7 @@ namespace bacs{namespace archive
          *
          * \see repository::repack
          */
-        problem::import_map repack_all(const problem::id_set &id_set);
+        problem::ImportMap repack_all(const problem::IdSet &id_set);
 
     private:
         /*!
@@ -459,10 +463,10 @@ namespace bacs{namespace archive
         bool is_available_(const problem::id &id);
 
         /// \warning requires at least shared lock and problem existence
-        problem::status status_(const problem::id &id);
+        problem::Status status_(const problem::id &id);
 
         /// \warning requires at least shared lock and problem existence
-        problem::flag_set flags_(const problem::id &id);
+        problem::FlagSet flags_(const problem::id &id);
 
         /// \warning requires unique lock and problem existence
         void set_flag_(const problem::id &id, const problem::flag &flag);
@@ -477,21 +481,22 @@ namespace bacs{namespace archive
         void write_hash_(const problem::id &id, const problem::hash &hash);
 
         /// \warning requires at least shared lock and problem existence
-        problem::info read_info_(const problem::id &id);
+        problem::Info read_info_(const problem::id &id);
 
         /// \warning requires unique lock and problem existence
-        void write_info_(const problem::id &id, const problem::info &info);
+        void write_info_(const problem::id &id, const problem::Info &info);
 
         /// \warning requires unique lock and problem existence
-        problem::import_info repack_(const problem::id &id);
+        problem::ImportInfo repack_(const problem::id &id);
 
         /// \warning requires unique lock and problem existence
-        problem::import_info repack_(const problem::id &id, const problem::hash &hash);
+        problem::ImportInfo repack_(const problem::id &id,
+                                    const problem::hash &hash);
 
         /// \warning requires unique lock and problem existence
-        problem::import_info repack_(const problem::id &id,
-                                     const problem::hash &hash,
-                                     const boost::filesystem::path &problem_location);
+        problem::ImportInfo repack_(const problem::id &id,
+                                    const problem::hash &hash,
+                                    const boost::filesystem::path &problem_location);
 
     private:
         boost::shared_mutex m_lock;

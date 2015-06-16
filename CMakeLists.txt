@@ -21,7 +21,7 @@ bunsan_find_bunsan_package(bunsan_bacs_problems bunsan_bacs_problems)
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
     PROTOS
-        bacs/archive/pb/problem.proto
+        bacs/archive/problem.proto
     LIBRARIES ${bunsan_bacs_problems_LIBRARIES} cryptopp
     INCLUDE_DIRECTORIES ${bunsan_bacs_problems_INCLUDE_DIRS}
     INSTALL
@@ -31,10 +31,11 @@ bunsan_add_library(${PROJECT_NAME}
     src/lib/importer.cpp
     src/lib/repository.cpp
     src/lib/repository_impl.cpp
-    src/lib/repository_repack.cpp
     src/lib/problem.cpp
 )
 bunsan_use_target(${PROJECT_NAME} ${PROJECT_NAME}_pb)
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_crypto bunsan_crypto)
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_protobuf bunsan_protobuf)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_pm bunsan_pm)
 
 bunsan_add_executable(${PROJECT_NAME}_cli src/bin/cli.cpp)
@@ -62,7 +63,6 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/bin/web.cpp
 )
 bunsan_use_target(${PROJECT_NAME}_web ${PROJECT_NAME})
-bunsan_use_bunsan_package(${PROJECT_NAME}_web bunsan_crypto bunsan_crypto)
 bunsan_use_bunsan_package(${PROJECT_NAME}_web bunsan_web bunsan_web)
 target_link_libraries(${PROJECT_NAME}_web PUBLIC cppcms)
 

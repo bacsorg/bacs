@@ -17,7 +17,7 @@
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id_info in result.get() %>
+                <% foreach id_info in result->entry() %>
                     <table border="1" cellspacing="0" cellpadding="10">
                         <caption><% gt "Problem info" %></caption>
                         <tr>
@@ -28,20 +28,20 @@
                             <tr>
                                 <td><%= id_info.first %></td>
                                 <td>
-                                    <% if id_info.second %>
+                                    <% if id_info.second.has_error() %>
+                                        <pre class="error"><%= id_info.second.error() %></pre>
+                                    <% else %>
                                         <div class="protobuf">
                                             <div class="spoiler">
                                                 <span class="action">
-                                                    <% gt "Show" %>&nbsp;"<%= id_info.second->info().system().problem_type() %>"&nbsp;<% gt "info" %>
+                                                    <% gt "Show" %>&nbsp;"<%= id_info.second.problem().info().system().problem_type() %>"&nbsp;<% gt "info" %>
                                                 </span>
                                                 <span class="action" style="display: none">
-                                                    <% gt "Hide" %>&nbsp;"<%= id_info.second->info().system().problem_type() %>"&nbsp;<% gt "info" %>
+                                                    <% gt "Hide" %>&nbsp;"<%= id_info.second.problem().info().system().problem_type() %>"&nbsp;<% gt "info" %>
                                                 </span>
                                             </div>
-                                            <pre style="display: none"><%= id_info.second->DebugString() %></pre>
+                                            <pre style="display: none"><%= id_info.second.problem().DebugString() %></pre>
                                         </div>
-                                    <% else %>
-                                        <% gt "Not found" %>
                                     <% end %>
                                 </td>
                             </tr>

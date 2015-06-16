@@ -64,7 +64,7 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
         return valid;
     }
 
-    boost::optional<archive::problem::id_set> optional_id_set::value()
+    boost::optional<archive::problem::IdSet> optional_id_set::value()
     {
         switch (flag_type)
         {
@@ -77,10 +77,10 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
                 return ids.value();
             break;
         }
-        return boost::optional<archive::problem::id_set>();
+        return boost::optional<archive::problem::IdSet>();
     }
 
-    void optional_id_set::value(const boost::optional<archive::problem::id_set> &id_set_)
+    void optional_id_set::value(const boost::optional<archive::problem::IdSet> &id_set_)
     {
         ids.disabled(!id_set_);
         if (id_set_)

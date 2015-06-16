@@ -12,7 +12,7 @@
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id in result.get() %>
+                <% foreach id in result->id() %>
                     <% gt "The following problems are ignored:" %>
                     <ul class="problem_ids">
                         <% item %>

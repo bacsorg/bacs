@@ -1,7 +1,6 @@
 #include <bacs/archive/web/repository.hpp>
 
 #include <bacs/archive/error.hpp>
-#include <bacs/archive/pb/convert.hpp>
 #include <bacs/archive/web/content/error.hpp>
 #include <bacs/archive/web/content/form.hpp>
 
@@ -70,75 +69,10 @@ namespace bacs{namespace archive{namespace web
         mapper().root("/repository");
     }
 
-    template <typename Model>
-    class repository::void_result
-    {
-    public:
-        void_result(const std::function<void (Model &)> &handler,
-                    const std::function<void ()> &sender):
-            m_handler(handler), m_sender(sender) {}
-
-        void fill(Model &data)
-        {
-            m_handler(data);
-        }
-
-        void send()
-        {
-            m_sender();
-        }
-
-    private:
-        const std::function<void (Model &)> m_handler;
-        const std::function<void ()> m_sender;
-    };
-
-    template <typename Model, typename Result, typename ProtoResult>
-    class repository::convertible_result
-    {
-    public:
-        convertible_result(repository *repository_,
-                           const std::string &name,
-                           const std::function<Result (Model &)> &handler):
-            m_repository(repository_), m_name(name), m_handler(handler) {}
-
-        void fill(Model &data)
-        {
-            m_data = &data;
-            switch (data.form.response())
-            {
-            case content::form::base::response_type::html:
-                data.result = m_handler(data);
-                break;
-            case content::form::base::response_type::protobuf:
-                pb::convert(m_handler(data), m_proto_result);
-                break;
-            }
-        }
-
-        void send()
-        {
-            switch (m_data->form.response())
-            {
-            case content::form::base::response_type::html:
-                m_repository->render(m_name, *m_data);
-                break;
-            case content::form::base::response_type::protobuf:
-                m_repository->send_protobuf(m_proto_result, m_name + ".pb.data");
-                break;
-            }
-        }
-
-    private:
-        repository *const m_repository;
-        const std::string m_name;
-        const std::function<Result (Model &)> m_handler;
-        Model *m_data = nullptr;
-        ProtoResult m_proto_result;
-    };
-
-    template <typename Model, typename Result>
-    void repository::handler_wrapper(const std::string &name, Result &result)
+    template <typename Model, typename Handler, typename Sender>
+    void repository::handler_wrapper(const std::string &name,
+                                     const Handler &handler,
+                                     const Sender &sender)
     {
         Model data;
         if (request().request_method() == "POST")
@@ -149,7 +83,7 @@ namespace bacs{namespace archive{namespace web
                 bool ok = false;
                 try
                 {
-                    result.fill(data);
+                    handler(data);
                     ok = true;
                 }
                 catch (std::exception &e)
@@ -158,23 +92,19 @@ namespace bacs{namespace archive{namespace web
                     switch (data.form.response())
                     {
                     case content::form::base::response_type::html:
-                        {
-                            error.brief = translate("Oops! Exception occurred.");
-                            error.message = e.what();
-                            render("error", error);
-                        }
+                        error.brief = translate("Oops! Exception occurred.");
+                        error.message = e.what();
+                        render("error", error);
                         break;
                     case content::form::base::response_type::protobuf:
-                        response().status(cppcms::http::response::internal_server_error, "Exception occurred");
+                        response().status(cppcms::http::response::internal_server_error,
+                                          "Exception occurred");
                         response().set_plain_text_header();
                         response().out() << e.what();
                         break;
                     }
                 }
-                if (ok)
-                {
-                    result.send();
-                }
+                if (ok) sender(data);
             }
             else
             {
@@ -187,7 +117,8 @@ namespace bacs{namespace archive{namespace web
                 case content::form::base::response_type::protobuf:
                     {
                         // FIXME Is it correct to use html here?
-                        response().status(cppcms::http::response::internal_server_error, "Invalid request");
+                        response().status(cppcms::http::response::internal_server_error,
+                                          "Invalid request");
                         content::error error;
                         error.brief = translate("Invalid request.");
                         error.message = translate("Form was not filled correctly.");
@@ -216,16 +147,32 @@ namespace bacs{namespace archive{namespace web
         }
     }
 
-#define DEFINE_CONVERTIBLE_HANDLER(NAME, RESULT, PROTO_RESULT) \
+#define DEFINE_HANDLER(NAME, RESULT) \
     void repository::NAME() \
     { \
-        convertible_result<content::NAME, RESULT, PROTO_RESULT> result( \
-            this, #NAME, std::bind(&repository::NAME##_, this, std::placeholders::_1)); \
-        handler_wrapper<content::NAME>(#NAME, result); \
+        handler_wrapper<content::NAME>( \
+            #NAME, \
+            [this](content::NAME &data) \
+            { \
+                data.result = repository::NAME##_(data); \
+            }, \
+            [this](content::NAME &data) \
+            { \
+                switch (data.form.response()) \
+                { \
+                case content::form::base::response_type::html: \
+                    render(#NAME, data); \
+                    break; \
+                case content::form::base::response_type::protobuf: \
+                    send_protobuf(*data.result, #NAME ".pb.data"); \
+                    break; \
+                } \
+            } \
+        ); \
     } \
     RESULT repository::NAME##_(content::NAME &data)
 
-    DEFINE_CONVERTIBLE_HANDLER(insert, problem::import_map, pb::problem::ImportMap)
+    DEFINE_HANDLER(insert, problem::ImportMap)
     {
         const bunsan::tempfile tmpfile =
             bunsan::tempfile::regular_file_in_directory(m_upload_directory);
@@ -241,7 +188,8 @@ namespace bacs{namespace archive{namespace web
             data.form.load(context());
             if (data.form.validate())
             {
-                bunsan::tempfile tmpfile = m_repository->extract_all(data.form.ids.value(), data.form.config.value());
+                bunsan::tempfile tmpfile = m_repository->extract_all(data.form.ids.value(),
+                                                                     data.form.config.value());
                 const std::string filename = "archive." + data.form.config.type.value() +
                                              "." + data.form.config.format.value();
                 send_tempfile(std::move(tmpfile), filename);
@@ -255,96 +203,100 @@ namespace bacs{namespace archive{namespace web
         bunsan::tempfile tmpfile;
         std::string filename;
         const auto handler =
-            [this, &tmpfile, &filename](content::extract &data) -> void
+            [this, &tmpfile, &filename](content::extract &data)
             {
-                tmpfile = m_repository->extract_all(data.form.ids.value(), data.form.config.value());
+                tmpfile = m_repository->extract_all(data.form.ids.value(),
+                                                    data.form.config.value());
                 filename = "archive." + data.form.config.type.value();
                 if (!data.form.config.format.value().empty())
                     filename.append("." + data.form.config.format.value());
             };
         const auto sender =
-            [this, &tmpfile, &filename]() -> void
+            [this, &tmpfile, &filename](content::extract &/*data*/)
             {
                 send_tempfile(std::move(tmpfile), filename);
             };
-        void_result<content::extract> result(handler, sender);
-        handler_wrapper<content::extract>(__func__, result);
+        handler_wrapper<content::extract>(__func__, handler, sender);
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(rename, problem::import_info, pb::problem::ImportInfo)
+    DEFINE_HANDLER(rename, problem::ImportInfo)
     {
-        return m_repository->rename(data.form.current.value(), data.form.future.value());
+        return m_repository->rename(data.form.current.value(),
+                                    data.form.future.value());
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(existing, problem::id_set, pb::problem::IdSet)
+    DEFINE_HANDLER(existing, problem::IdSet)
     {
-        const boost::optional<problem::id_set> ids = data.form.ids.value();
+        const boost::optional<problem::IdSet> ids = data.form.ids.value();
         if (ids)
             return m_repository->existing(ids.get());
         else
             return m_repository->existing();
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(available, problem::id_set, pb::problem::IdSet)
+    DEFINE_HANDLER(available, problem::IdSet)
     {
-        const boost::optional<problem::id_set> ids = data.form.ids.value();
+        const boost::optional<problem::IdSet> ids = data.form.ids.value();
         if (ids)
             return m_repository->available(ids.get());
         else
             return m_repository->available();
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(status, problem::status_map, pb::problem::StatusMap)
+    DEFINE_HANDLER(status, problem::ImportMap)
     {
         return m_repository->status_all(data.form.ids.value());
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(with_flag, problem::id_set, pb::problem::IdSet)
+    DEFINE_HANDLER(with_flag, problem::IdSet)
     {
-        const boost::optional<problem::id_set> ids = data.form.ids.value();
+        const boost::optional<problem::IdSet> ids = data.form.ids.value();
         if (ids)
             return m_repository->with_flag(ids.get(), data.form.flag.value());
         else
             return m_repository->with_flag(data.form.flag.value());
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(set_flags, problem::id_set, pb::problem::IdSet)
+    DEFINE_HANDLER(set_flags, problem::IdSet)
     {
-        return m_repository->set_flags_all(data.form.ids.value(), data.form.flags.value());
+        return m_repository->set_flags_all(data.form.ids.value(),
+                                           data.form.flags.value());
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(unset_flags, problem::id_set, pb::problem::IdSet)
+    DEFINE_HANDLER(unset_flags, problem::IdSet)
     {
-        return m_repository->unset_flags_all(data.form.ids.value(), data.form.flags.value());
+        return m_repository->unset_flags_all(data.form.ids.value(),
+                                             data.form.flags.value());
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(clear_flags, problem::id_set, pb::problem::IdSet)
+    DEFINE_HANDLER(clear_flags, problem::IdSet)
     {
         return m_repository->clear_flags_all(data.form.ids.value());
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(ignore, problem::id_set, pb::problem::IdSet)
+    DEFINE_HANDLER(ignore, problem::IdSet)
     {
         return m_repository->ignore_all(data.form.ids.value());
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(info, problem::info_map, pb::problem::InfoMap)
+    DEFINE_HANDLER(info, problem::InfoMap)
     {
         return m_repository->info_all(data.form.ids.value());
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(hash, problem::hash_map, pb::problem::HashMap)
+    DEFINE_HANDLER(hash, problem::HashMap)
     {
         return m_repository->hash_all(data.form.ids.value());
     }
 
-    DEFINE_CONVERTIBLE_HANDLER(repack, problem::import_map, pb::problem::ImportMap)
+    DEFINE_HANDLER(repack, problem::ImportMap)
     {
         return m_repository->repack_all(data.form.ids.value());
     }
 
     template <typename ProtoBuf>
-    void repository::send_protobuf(const ProtoBuf &protobuf, const std::string &filename)
+    void repository::send_protobuf(const ProtoBuf &protobuf,
+                                   const std::string &filename)
     {
         response().content_type("application/octet-stream");
         BOOST_ASSERT(filename.find('"') == std::string::npos);
@@ -354,8 +306,10 @@ namespace bacs{namespace archive{namespace web
             BOOST_THROW_EXCEPTION(protobuf_serialization_error());
     }
 
-    // FIXME note: these implementations are workarounds, use xsendfile and xsendtempfile instead
-    void repository::send_file(const boost::filesystem::path &path, const std::string &filename)
+    // FIXME note: these implementations are workarounds,
+    // use xsendfile and xsendtempfile instead
+    void repository::send_file(const boost::filesystem::path &path,
+                               const std::string &filename)
     {
         response().content_type("application/octet-stream");
         BOOST_ASSERT(filename.find('"') == std::string::npos);
@@ -371,7 +325,8 @@ namespace bacs{namespace archive{namespace web
         fin.close();
     }
 
-    void repository::send_tempfile(bunsan::tempfile &&tmpfile, const std::string &filename)
+    void repository::send_tempfile(bunsan::tempfile &&tmpfile,
+                                   const std::string &filename)
     {
         // FIXME be careful about large files
         send_file(tmpfile.path(), filename);

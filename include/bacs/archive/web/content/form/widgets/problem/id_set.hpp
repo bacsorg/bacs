@@ -9,8 +9,8 @@ namespace bacs{namespace archive{namespace web{namespace content{namespace form{
     class id_set: public cppcms::widgets::text
     {
     public:
-        archive::problem::id_set value();
-        void value(const archive::problem::id_set &id_set_);
+        archive::problem::IdSet value();
+        void value(const archive::problem::IdSet &id_set_);
 
         bool validate() override;
     };
