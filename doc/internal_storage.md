@@ -1,9 +1,8 @@
-/*!
-\page internal_storage_page Internal storage
+# Internal storage
 
-\section repository_sec Repository storage
+## Repository storage
 
-\verbatim
+```
 repository/
            ${problem_id}/
                          flags/${flag_i}
@@ -20,8 +19,4 @@ pm/
         problem/
                 ${problem_id}/
                               {...unspecified...}
-\endverbatim
-
-*/
-
-// vim:syntax=doxygen
+```
