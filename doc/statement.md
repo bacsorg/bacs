@@ -1,25 +1,25 @@
-/*!
-\page statement_page Statement
+# Statement
 
-\section statement_introduction_sec Introduction
+## Introduction
 
 Statement contains problem definition. It is essential part of the problem.
 Moreover, without it problem does not exists. For different languages
-and formats support \ref statement_version_sec entity is introduced.
+and formats support [Statement version](#statement-version) entity is introduced.
 Statement consists of statement versions.
 
-Statement version implementations are placed in bacs::problem::statement_versions.
+Statement version implementations are placed in
+[bacs::problem::statement_versions](../src/statement_versions).
 
-\section statement_version_sec Statement version
+## Statement version
 
-Statement version is \ref buildable_page.
+Statement version is [Buildable](buildable.md).
 Each statement version is defined in configuration file.
 Configuration file ends with ".ini" suffix and located in the root folder
 of the statement directory.
 
 Consider the following directory tree
 
-\code{none}
+```
 /en_html.ini
 /en_pdf.ini
 /en.tex
@@ -27,24 +27,22 @@ Consider the following directory tree
           schema.png
           graph.png
           file.ini
-\endcode
+```
 
 In example above we can see three ini files: "en_html.ini", "en_pdf.ini" and "file.ini".
 Only "en_html.ini" and "en_pdf.ini" define statement versions.
 
-\section statement_configuration_file_sec Configuration file
+## Configuration file
 
 Configuration file defines the following sections:
 
-1. <b>[info]</b> defines the following options:
+1. `[info]` defines the following options:
+..a. *lang* defines statement version [Language](#language)
+2. `[build]` section is described in particular builder specifications.
 
-   a. *lang* defines statement version \ref statement_language_ssec
+See [bacs::problem::statement_versions](../src/statement_versions).
 
-2. <b>[build]</b> section is described in particular builder specifications.
-
-\see bacs::problem::statement_versions
-
-\subsection statement_language_ssec Language
+### Language
 
 Statement version is written in a particular language.
 Language should be defined by the string.
@@ -54,7 +52,3 @@ In the future empty string should not be used and all
 statement version should have language specified.
 
 Other values are specified by *BACS.WEB* project.
-
-*/
-
-// vim:syntax=doxygen

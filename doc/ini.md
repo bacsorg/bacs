@@ -1,7 +1,6 @@
-/*!
-\page ini_page INI format
+# INI format
 
-\section ini_introduction_sec Introduction
+## Introduction
 
 This format is useful for simple configuration files,
 albeit it is deprecated.
@@ -13,7 +12,7 @@ only by it's name.
 
 To make things convenient specifications are provided.
 
-\section ini_definition_sec Definition
+## Definition
 
 INI file is *plain text* file encoded in *utf8*.
 
@@ -25,7 +24,7 @@ Each section contains several options.
 Each option has unique name in the section scope.
 Options order is not preserved.
 
-\code{.ebnf}
+```ebnf
 INI file = {section} ;
 section = section header, section contents ;
 section header = {space symbol}, "[", section header name, "]", {space symbol}, eoln ;
@@ -40,26 +39,22 @@ option line = option name, {space symbol}, "=", {space symbol}, option value, {s
 option name = identifier ;
 identifier = id symbol, {id symbol};
 id symbol = "_" | "a" | ... | "z" | "A" | ... | "Z" | "0" | ... | "9" ;
-\endcode
+```
 
-\section ini_examples_sec Examples
+## Examples
 
-\subsection ini_example_1_ssec Example 1
+### Example 1
 
-\code{.ini}
+```ini
 [section1]
 ; comment
 option1 = value1
-\endcode
+```
 
-\subsection ini_example_2_ssec Example 2
+### Example 2
 
-\code{.ini}
+```ini
 [section2]
 x = 3
 y = some string
-\endcode
-
-*/
-
-// vim:syntax=doxygen
+```
