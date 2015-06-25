@@ -44,10 +44,14 @@ namespace Bunsan.Broker.ClientExample
             var client = new Client(connection_parameters);
             client.Listen((id, status) =>
             {
-                Console.WriteLine("Got status: id = {0}, status = [{1}, {2}]", id, status.Code, status.Reason);
+                Console.WriteLine("Got status: id = {0}, status = [{1}, {2}] {3}", 
+                                  id, status.Code, status.Reason,
+                                  status.Data != null ? Encoding.ASCII.GetString(status.Data) : "null");
             }, (id, result) =>
             {
-                Console.WriteLine("Got result: id = {0}, result = [{1}, {2}]", id, result.Status, result.Reason);
+                Console.WriteLine("Got result: id = {0}, result = [{1}, {2}] {3}", 
+                                  id, result.Status, result.Reason,
+                                  result.Data != null ? Encoding.ASCII.GetString(result.Data) : "null");
             }, (id, error) =>
             {
                 Console.WriteLine("Got error: id = {0}, error = {1}", id, error);
