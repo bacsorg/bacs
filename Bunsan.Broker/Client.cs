@@ -140,7 +140,7 @@ namespace Bunsan.Broker
                     {
                         result = Serializer.Deserialize<RabbitResult>(stream);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // no reason to keep invalid message
                         channel.BasicNack(message.DeliveryTag, false, false);
