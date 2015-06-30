@@ -41,8 +41,9 @@ namespace Bunsan.Broker.ClientExample
             {
                 Console.WriteLine("Argument error: ", e.Message);
             }
-            var client = new Client(connection_parameters);
-            client.Listen((id, status) =>
+            var listener = new ClientListener(connection_parameters);
+            var sender = new ClientSender(connection_parameters);
+            listener.Listen((id, status) =>
             {
                 Console.WriteLine("Got status: id = {0}, status = [{1}, {2}] {3}", 
                                   id, status.Code, status.Reason,
@@ -58,10 +59,11 @@ namespace Bunsan.Broker.ClientExample
             });
             for (int id = 0; id < number_of_messages; ++id)
             {
-                client.Send(constraints, id.ToString(), task);
+                sender.Send(constraints, id.ToString(), task);
                 System.Threading.Thread.Sleep(interval);
             }
-            client.Close();
+            listener.Close();
+            sender.Close();
             return 0;
         }
     }
