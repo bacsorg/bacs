@@ -17,11 +17,8 @@ namespace Bunsan.Broker
     {
         public ClientSender(ConnectionParameters parameters) : base(parameters) { }
 
-        protected override void bind() { }
-
         public void Send(Constraints constraints, string id, Task task)
         {
-            reconnect();
             RabbitTask rabbit_task = new RabbitTask()
             {
                 Identifier = id,
@@ -40,27 +37,24 @@ namespace Bunsan.Broker
             }
             if (constraints.Resource.Length != 1)
                 throw new NotImplementedException("Supports only single resource constraint");
-            var properties = channel.CreateBasicProperties();
-            properties.ReplyTo = ErrorQueue;
-            properties.CorrelationId = id;
-            properties.DeliveryMode = 2;  // persistent
             for (; ; )
             {
                 try
                 {
-                    lock (Lock)
-                    {
-                        if (!running) throw new InvalidOperationException("Already closed");
-                        channel.BasicPublish(exchange: "",
-                                             routingKey: constraints.Resource[0],
-                                             basicProperties: properties,
-                                             body: data);
-                    }
+                    var properties = connection.Channel.CreateBasicProperties();
+                    properties.ReplyTo = ErrorQueue;
+                    properties.CorrelationId = id;
+                    properties.DeliveryMode = 2;  // persistent
+                    if (connection.IsClosed) throw new InvalidOperationException("Already closed");
+                    connection.Channel.BasicPublish(exchange: "",
+                                                    routingKey: constraints.Resource[0],
+                                                    basicProperties: properties,
+                                                    body: data);
                     break;
                 }
                 catch (AlreadyClosedException)
                 {
-                    reconnect();
+                    // retry
                 }
             }
         }

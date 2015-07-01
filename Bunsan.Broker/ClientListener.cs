@@ -16,19 +16,19 @@ namespace Bunsan.Broker
 {
     public class ClientListener : ClientBase
     {
-        private class Reader : DefaultBasicConsumer
-        {
-            public delegate void MessageCallback(BasicDeliverEventArgs message);
-            public delegate void ReconnectCallback();
+        private delegate void MessageCallback(BasicDeliverEventArgs message);
+        private delegate void ReconnectCallback();
 
+        private class Listener : DefaultBasicConsumer
+        {
             private readonly MessageCallback message_callback;
             private readonly ErrorCallback error_callback;
             private readonly ReconnectCallback reconnect_callback;
 
-            public Reader(IModel model,
-                          MessageCallback message_callback,
-                          ErrorCallback error_callback,
-                          ReconnectCallback reconnect_callback)
+            public Listener(IModel model,
+                            MessageCallback message_callback,
+                            ErrorCallback error_callback,
+                            ReconnectCallback reconnect_callback)
                 : base(model)
             {
                 this.message_callback = message_callback;
@@ -85,64 +85,103 @@ namespace Bunsan.Broker
             }
         };
 
-        private Reader status_reader;
-        private Reader result_reader;
-        private Reader error_reader;
-
-        public ClientListener(ConnectionParameters parameters) : base(parameters) { }
-
-        protected override void bind()
+        private class ListenerFactory
         {
+            private readonly StatusCallback status_callback;
+            private readonly ResultCallback result_callback;
+            private readonly ErrorCallback error_callback;
+            private readonly ReconnectCallback reconnect_callback;
+
+            public ListenerFactory(StatusCallback status_callback,
+                                   ResultCallback result_callback,
+                                   ErrorCallback error_callback,
+                                   ReconnectCallback reconnect_callback)
+            {
+                this.status_callback = status_callback;
+                this.result_callback = result_callback;
+                this.error_callback = error_callback;
+                this.reconnect_callback = reconnect_callback;
+            }
+
+            public Listener MakeStatusListener(IModel channel)
+            {
+                return new Listener(channel, (message) =>
+                {
+                    // we don't care about error handling of Status messages
+                    using (var stream = new MemoryStream(message.Body))
+                    {
+                        var status = Serializer.Deserialize<RabbitStatus>(stream);
+                        // note: message was already acked, exceptions can be ignored
+                        status_callback(status.Identifier, status.Status);
+                    }
+                }, error_callback, reconnect_callback);
+            }
+
+            public Listener MakeResultListener(IModel channel)
+            {
+                return new Listener(channel, (message) =>
+                {
+                    using (var stream = new MemoryStream(message.Body))
+                    {
+                        RabbitResult result = null;
+                        try
+                        {
+                            result = Serializer.Deserialize<RabbitResult>(stream);
+                        }
+                        catch (Exception)
+                        {
+                            // no reason to keep invalid message
+                            channel.BasicNack(message.DeliveryTag, false, false);
+                            throw;
+                        }
+                        result_callback(result.Identifier, result.Result);
+                    }
+                    // commit phase
+                    channel.BasicAck(message.DeliveryTag, false);
+                }, error_callback, reconnect_callback);
+            }
+
+            public Listener MakeErrorListener(IModel channel)
+            {
+                return new Listener(channel, (message) =>
+                {
+                    error_callback(message.BasicProperties.CorrelationId,
+                                   System.Text.Encoding.UTF8.GetString(message.Body));
+                    // commit phase
+                    channel.BasicAck(message.DeliveryTag, false);
+                }, error_callback, reconnect_callback);
+            }
+        }
+
+        private ListenerFactory listener_factory;
+
+        public ClientListener(ConnectionParameters parameters) 
+            : base(parameters) 
+        {
+            connection.OnConnect += rebind;
+        }
+
+        private void rebind(IModel channel)
+        {
+            if (listener_factory == null) return;
+            var status_listener = listener_factory.MakeStatusListener(channel);
+            var result_listener = listener_factory.MakeResultListener(channel);
+            var error_listener = listener_factory.MakeErrorListener(channel);
             channel.QueueDeclare(queue: StatusQueue, durable: false, exclusive: false, autoDelete: true, arguments: null);
             channel.QueueDeclare(queue: ResultQueue, durable: true, exclusive: false, autoDelete: false, arguments: null);
             channel.QueueDeclare(queue: ErrorQueue, durable: true, exclusive: false, autoDelete: false, arguments: null);
-            channel.BasicConsume(queue: StatusQueue, noAck: true, consumer: status_reader);
-            channel.BasicConsume(queue: ResultQueue, noAck: false, consumer: result_reader);
-            channel.BasicConsume(queue: ErrorQueue, noAck: false, consumer: error_reader);
+            channel.BasicConsume(queue: StatusQueue, noAck: true, consumer: status_listener);
+            channel.BasicConsume(queue: ResultQueue, noAck: false, consumer: result_listener);
+            channel.BasicConsume(queue: ErrorQueue, noAck: false, consumer: error_listener);
         }
 
         public void Listen(StatusCallback status_callback,
                            ResultCallback result_callback,
                            ErrorCallback error_callback)
         {
-            status_reader = new Reader(channel, (message) =>
-            {
-                // we don't care about error handling of Status messages
-                using (var stream = new MemoryStream(message.Body))
-                {
-                    var status = Serializer.Deserialize<RabbitStatus>(stream);
-                    // note: message was already acked, exceptions can be ignored
-                    status_callback(status.Identifier, status.Status);
-                }
-            }, error_callback, reconnect);
-            result_reader = new Reader(channel, (message) =>
-            {
-                using (var stream = new MemoryStream(message.Body))
-                {
-                    RabbitResult result = null;
-                    try
-                    {
-                        result = Serializer.Deserialize<RabbitResult>(stream);
-                    }
-                    catch (Exception)
-                    {
-                        // no reason to keep invalid message
-                        channel.BasicNack(message.DeliveryTag, false, false);
-                        throw;
-                    }
-                    result_callback(result.Identifier, result.Result);
-                }
-                // commit phase
-                channel.BasicAck(message.DeliveryTag, false);
-            }, error_callback, reconnect);
-            error_reader = new Reader(channel, (message) =>
-            {
-                error_callback(message.BasicProperties.CorrelationId,
-                               System.Text.Encoding.UTF8.GetString(message.Body));
-                // commit phase
-                channel.BasicAck(message.DeliveryTag, false);
-            }, error_callback, reconnect);
-            reconnect();
+            listener_factory = new ListenerFactory(status_callback, result_callback, error_callback, connection.Reconnect);
+            // force rebind for existing connection
+            rebind(connection.Channel);
         }
     }
 }

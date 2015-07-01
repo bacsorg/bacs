@@ -50,6 +50,7 @@
     <Compile Include="ClientBase.cs" />
     <Compile Include="ClientListener.cs" />
     <Compile Include="ClientSender.cs" />
+    <Compile Include="Connection.cs" />
     <Compile Include="ConnectionParameters.cs" />
     <Compile Include="Constraints.cs" />
     <Compile Include="Credentials.cs" />
