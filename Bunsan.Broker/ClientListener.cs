@@ -161,6 +161,11 @@ namespace Bunsan.Broker
             connection.OnConnect += rebind;
         }
 
+        ~ClientListener()
+        {
+            connection.OnConnect -= rebind;
+        }
+
         private void rebind(IModel channel)
         {
             if (listener_factory == null) return;
