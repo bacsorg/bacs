@@ -1,7 +1,7 @@
 #include <bunsan/pm/repository.hpp>
 
 #include <bunsan/application.hpp>
-#include <bunsan/logging/trivial.hpp>
+#include <bunsan/log/trivial.hpp>
 #include <bunsan/property_tree/info_parser.hpp>
 
 #include <boost/property_tree/ptree.hpp>

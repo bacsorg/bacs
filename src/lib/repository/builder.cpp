@@ -8,7 +8,7 @@
 #include "merge_maps.hpp"
 #include "local_system.hpp"
 
-#include <bunsan/logging/trivial.hpp>
+#include <bunsan/log/trivial.hpp>
 
 #include <boost/filesystem/operations.hpp>
 

@@ -6,7 +6,7 @@
 #include "local_system.hpp"
 
 #include <bunsan/filesystem/operations.hpp>
-#include <bunsan/logging/trivial.hpp>
+#include <bunsan/log/trivial.hpp>
 
 #include <ctime>
 

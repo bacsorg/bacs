@@ -8,7 +8,7 @@
 #include "repository/merge_maps.hpp"
 
 #include <bunsan/config/cast.hpp>
-#include <bunsan/logging/trivial.hpp>
+#include <bunsan/log/trivial.hpp>
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>

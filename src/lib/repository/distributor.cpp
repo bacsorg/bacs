@@ -10,7 +10,7 @@
 #include <bunsan/pm/index.hpp>
 #include <bunsan/pm/snapshot.hpp>
 
-#include <bunsan/logging/trivial.hpp>
+#include <bunsan/log/trivial.hpp>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/property_tree/info_parser.hpp>
