@@ -1,6 +1,6 @@
 #include <bunsan/utility/executor.hpp>
 
-#include <bunsan/logging/trivial.hpp>
+#include <bunsan/log/trivial.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
