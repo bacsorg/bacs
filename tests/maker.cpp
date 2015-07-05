@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE maker
 #include <boost/test/unit_test.hpp>
 
-#include <bunsan/testing/test_tools.hpp>
+#include <bunsan/test/test_tools.hpp>
 
 #include "utility_fixture.hpp"
 

@@ -1,8 +1,8 @@
 #define BOOST_TEST_MODULE archiver
 #include <boost/test/unit_test.hpp>
 
-#include <bunsan/testing/filesystem/tempfile.hpp>
-#include <bunsan/testing/test_tools.hpp>
+#include <bunsan/test/filesystem/tempfile.hpp>
+#include <bunsan/test/test_tools.hpp>
 
 #include "utility_fixture.hpp"
 
@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_SUITE(_7z)
 
 BOOST_AUTO_TEST_CASE(pack)
 {
-    bunsan::testing::filesystem::tempfile tmp;
+    bunsan::test::filesystem::tempfile tmp;
     MOCK_EXPECT(resolver.find_executable).once().with("7z").returns("exe");
     const auto ar = bu::archiver::instance("7z", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(pack)
 
 BOOST_AUTO_TEST_CASE(pack_contents)
 {
-    bunsan::testing::filesystem::tempfile tmp;
+    bunsan::test::filesystem::tempfile tmp;
     MOCK_EXPECT(resolver.find_executable).once().with("7z").returns("exe");
     const auto ar = bu::archiver::instance("7z", resolver);
     MOCK_EXPECT(executor->sync_execute).calls(

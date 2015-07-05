@@ -1,10 +1,10 @@
 #define BOOST_TEST_MODULE fetcher
 #include <boost/test/unit_test.hpp>
 
-#include <bunsan/testing/filesystem/read_data.hpp>
-#include <bunsan/testing/filesystem/tempfiles.hpp>
-#include <bunsan/testing/filesystem/write_data.hpp>
-#include <bunsan/testing/test_tools.hpp>
+#include <bunsan/test/filesystem/read_data.hpp>
+#include <bunsan/test/filesystem/tempfiles.hpp>
+#include <bunsan/test/filesystem/write_data.hpp>
+#include <bunsan/test/test_tools.hpp>
 
 #include "utility_fixture.hpp"
 
@@ -17,12 +17,12 @@ BOOST_FIXTURE_TEST_SUITE(fetcher, utility_fixture)
 BOOST_AUTO_TEST_CASE(copy)
 {
     const auto ft = bu::fetcher::instance("copy", resolver);
-    bunsan::testing::filesystem::tempfiles tmp;
+    bunsan::test::filesystem::tempfiles tmp;
     const auto src = tmp.allocate();
     const auto dst = tmp.allocate();
-    bunsan::testing::filesystem::write_data(src, "some data");
+    bunsan::test::filesystem::write_data(src, "some data");
     ft->fetch(src.string(), dst);
-    BOOST_CHECK_EQUAL(bunsan::testing::filesystem::read_data(dst), "some data");
+    BOOST_CHECK_EQUAL(bunsan::test::filesystem::read_data(dst), "some data");
 }
 
 BOOST_AUTO_TEST_CASE(curl)
