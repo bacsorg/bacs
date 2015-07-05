@@ -1,7 +1,7 @@
 #include <bacs/statement_provider/web/server.hpp>
 
 #include <bunsan/application.hpp>
-#include <bunsan/logging/trivial.hpp>
+#include <bunsan/log/trivial.hpp>
 #include <bunsan/web/json.hpp>
 
 #include <cppcms/applications_pool.h>
