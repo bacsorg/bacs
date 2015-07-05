@@ -4,7 +4,7 @@
 
 #include <bunsan/application.hpp>
 #include <bunsan/filesystem/fstream.hpp>
-#include <bunsan/logging/trivial.hpp>
+#include <bunsan/log/trivial.hpp>
 #include <bunsan/property_tree/info_parser.hpp>
 
 #include <boost/program_options.hpp>
