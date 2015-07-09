@@ -35,7 +35,7 @@ message Buildable
 message BuildSettings
 {
     /// Constraints for build system
-    required Builder builder = 1;
+    required BuilderConfig builder = 1;
     optional ResourceLimits resource_limits = 2;
 }
 
@@ -44,7 +44,7 @@ message BuildSettings
  * For simple cases it may be compiler name with options,
  * e.g. {type = "gcc", arguments = ["-O2"]}.
  */
-message Builder
+message BuilderConfig
 {
     required string type = 1;
     repeated string argument = 2;
