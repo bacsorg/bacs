@@ -67,7 +67,7 @@ namespace bacs{namespace problem
     Utility utility::info() const
     {
         Utility info_;
-        info_.set_builder(get_builder(m_config));
+        info_.set_builder_name(get_builder(m_config));
         return info_;
     }
 

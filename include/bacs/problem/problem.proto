@@ -52,7 +52,7 @@ message Profile
 
 message Utility
 {
-    required string builder = 1;
+    required string builder_name = 1;
     repeated Utility nested = 100;
     optional google.protobuf.Any extension = 1000;
 }
