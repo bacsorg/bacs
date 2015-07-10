@@ -2,8 +2,7 @@ syntax = "proto2";
 
 package bacs.utility;
 
-message Archiver
-{
+message Archiver {
     required string type = 1;
     optional string format = 2;
 }

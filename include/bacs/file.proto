@@ -2,10 +2,8 @@ syntax = "proto2";
 
 package bacs.file;
 
-message Range
-{
-    enum Whence
-    {
+message Range {
+    enum Whence {
         BEGIN = 0;
         END = 1;
     };

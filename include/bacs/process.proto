@@ -4,8 +4,7 @@ package bacs.process;
 
 import "bacs/utility.proto";
 
-message ResourceLimits
-{
+message ResourceLimits {
     optional uint64 time_limit_millis = 1;
     optional uint64 memory_limit_bytes = 2;
     optional uint64 output_limit_bytes = 3;
@@ -13,27 +12,23 @@ message ResourceLimits
     optional uint64 real_time_limit_millis = 5;
 }
 
-message ResourceUsage
-{
+message ResourceUsage {
     // TODO: do we need to export Process::ResourceUsage::timeUsage?
     required uint64 time_usage_millis = 1;
     required uint64 memory_usage_bytes = 2;
 }
 
-message Source
-{
+message Source {
     required bytes data = 1;
     optional utility.Archiver archiver = 2;
 }
 
-message Buildable
-{
+message Buildable {
     required Source source = 1;
     required BuildSettings build_settings = 2;
 }
 
-message BuildSettings
-{
+message BuildSettings {
     required BuilderConfig config = 1;
     /// Constraints for build system
     optional ResourceLimits resource_limits = 2;
@@ -44,16 +39,13 @@ message BuildSettings
  * For simple cases it may be compiler name with options,
  * e.g. {type = "gcc", arguments = ["-O2"]}.
  */
-message BuilderConfig
-{
+message BuilderConfig {
     required string type = 1;
     repeated string argument = 2;
 }
 
-message BuildResult
-{
-    enum Status
-    {
+message BuildResult {
+    enum Status {
         OK = 0;
         FAILED = 1;
     }
@@ -62,10 +54,8 @@ message BuildResult
     required bytes output = 3;
 }
 
-message ExecutionResult
-{
-    enum Status
-    {
+message ExecutionResult {
+    enum Status {
         OK = 0;
         ABNORMAL_EXIT = 1;
         MEMORY_LIMIT_EXCEEDED = 2;
