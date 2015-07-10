@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE io
+#define BOOST_TEST_MODULE comparator
 #include <boost/test/unit_test.hpp>
 
 #include "message_fixture.hpp"
