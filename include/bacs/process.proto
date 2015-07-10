@@ -34,8 +34,8 @@ message Buildable
 
 message BuildSettings
 {
+    required BuilderConfig config = 1;
     /// Constraints for build system
-    required BuilderConfig builder = 1;
     optional ResourceLimits resource_limits = 2;
 }
 
