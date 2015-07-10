@@ -4,8 +4,7 @@ package bacs.problem;
 
 import "google/protobuf/any.proto";
 
-message Problem
-{
+message Problem {
     required Info info = 1;
     required Statement statement = 2;
     repeated Profile profile = 3;
@@ -13,15 +12,12 @@ message Problem
     optional google.protobuf.Any extension = 5;
 }
 
-message Info
-{
-    message Name
-    {
+message Info {
+    message Name {
         required string lang = 1;
         required string value = 2;
     }
-    message System
-    {
+    message System {
         required string problem_type = 1;
         required bytes hash = 2;
         required string package = 3;
@@ -33,10 +29,8 @@ message Info
     required System system = 5;
 }
 
-message Statement
-{
-    message Version
-    {
+message Statement {
+    message Version {
         required string lang = 1;
         required string format = 2;
         required string package = 3;
@@ -44,14 +38,12 @@ message Statement
     repeated Version version = 1;
 }
 
-message Profile
-{
+message Profile {
     optional string description = 1;
     optional google.protobuf.Any extension = 2;
 }
 
-message Utility
-{
+message Utility {
     required string builder_name = 1;
     repeated Utility nested = 100;
     optional google.protobuf.Any extension = 1000;
