@@ -2,13 +2,15 @@ syntax = "proto2";
 
 package bacs.problem;
 
+import "google/protobuf/any.proto";
+
 message Problem
 {
     required Info info = 1;
     required Statement statement = 2;
     repeated Profile profile = 3;
-    required Utilities utilities = 4;
-    extensions 1000 to max;
+    map<string, Utility> utility = 4;
+    optional google.protobuf.Any extension = 5;
 }
 
 message Info
@@ -45,17 +47,12 @@ message Statement
 message Profile
 {
     optional string description = 1;
-    extensions 1000 to max;
-}
-
-message Utilities
-{
-    extensions 1000 to max;
+    optional google.protobuf.Any extension = 2;
 }
 
 message Utility
 {
     required string builder = 1;
     repeated Utility nested = 100;
-    extensions 1000 to max;
+    optional google.protobuf.Any extension = 1000;
 }
