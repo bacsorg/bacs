@@ -2,8 +2,7 @@ syntax = "proto2";
 
 package bacs.statement_provider;
 
-message Request
-{
+message Request {
     required string package = 1;
     required bytes hash = 2;
 }
