@@ -7,37 +7,30 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-namespace bunsan{namespace protobuf
-{
-    void base_serializer::serialize_raw(
-        const google::protobuf::Message &message,
-        std::ostream &output)
-    {
-        google::protobuf::io::OstreamOutputStream stream(&output);
-        serialize_raw(message, stream);
-    }
+namespace bunsan {
+namespace protobuf {
 
-    void base_serializer::serialize_raw(
-        const google::protobuf::Message &message,
-        std::string &output,
-        string_mode mode)
-    {
-        if (mode == string_mode::replace)
-            output.clear();
-        google::protobuf::io::StringOutputStream stream(&output);
-        serialize_raw(message, stream);
-    }
+void base_serializer::serialize_raw(const google::protobuf::Message &message,
+                                    std::ostream &output) {
+  google::protobuf::io::OstreamOutputStream stream(&output);
+  serialize_raw(message, stream);
+}
 
-    void base_serializer::serialize_raw(
-        const google::protobuf::Message &message,
-        const boost::filesystem::path &path)
-    {
-        bunsan::filesystem::ofstream fout(path);
-        BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout)
-        {
-            serialize_raw(message, fout);
-        }
-        BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fout)
-        fout.close();
-    }
-}}
+void base_serializer::serialize_raw(const google::protobuf::Message &message,
+                                    std::string &output, string_mode mode) {
+  if (mode == string_mode::replace) output.clear();
+  google::protobuf::io::StringOutputStream stream(&output);
+  serialize_raw(message, stream);
+}
+
+void base_serializer::serialize_raw(const google::protobuf::Message &message,
+                                    const boost::filesystem::path &path) {
+  bunsan::filesystem::ofstream fout(path);
+  BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout) {
+    serialize_raw(message, fout);
+  } BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fout)
+  fout.close();
+}
+
+}  // namespace protobuf
+}  // namespace bunsan

@@ -4,16 +4,17 @@
 
 #include <google/protobuf/text_format.h>
 
-namespace bunsan{namespace protobuf
-{
-    void text_serializer::serialize_raw(
-        const google::protobuf::Message &message,
-        google::protobuf::io::ZeroCopyOutputStream &output)
-    {
-        google::protobuf::TextFormat::Printer printer;
-        if (!printer.Print(message, &output))
-            BOOST_THROW_EXCEPTION(
-                serialize_error() <<
-                serialize_error::type_name(message.GetTypeName()));
-    }
-}}
+namespace bunsan {
+namespace protobuf {
+
+void text_serializer::serialize_raw(
+    const google::protobuf::Message &message,
+    google::protobuf::io::ZeroCopyOutputStream &output) {
+  google::protobuf::TextFormat::Printer printer;
+  if (!printer.Print(message, &output))
+    BOOST_THROW_EXCEPTION(serialize_error()
+                          << serialize_error::type_name(message.GetTypeName()));
+}
+
+}  // namespace protobuf
+}  // namespace bunsan

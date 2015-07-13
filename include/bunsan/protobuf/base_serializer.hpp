@@ -11,76 +11,56 @@
 
 #include <utility>
 
-namespace bunsan{namespace protobuf
-{
-    class base_serializer: public base_io
-    {
-    public:
-        enum class string_mode
-        {
-            append,
-            replace
-        };
+namespace bunsan {
+namespace protobuf {
 
-        template <typename ... Args>
-        void serialize(const google::protobuf::Message &message, Args &&...args)
-        {
-            if (!allow_partial() && !message.IsInitialized())
-            {
-                BOOST_THROW_EXCEPTION(
-                    fill_initialization_error(
-                        serialize_initialization_error(),
-                        message
-                    )
-                );
-            }
-            try
-            {
-                serialize_raw(message, std::forward<Args>(args)...);
-            }
-            catch (std::exception &)
-            {
-                BOOST_THROW_EXCEPTION(
-                    serialize_error() <<
-                    serialize_error::type_name(message.GetTypeName()) <<
-                    enable_nested_current());
-            }
-        }
+class base_serializer : public base_io {
+ public:
+  enum class string_mode { append, replace };
 
-        void to_string(const google::protobuf::Message &message,
-                       std::string &output)
-        {
-            serialize(message, output, string_mode::replace);
-        }
+  template <typename... Args>
+  void serialize(const google::protobuf::Message &message, Args &&... args) {
+    if (!allow_partial() && !message.IsInitialized()) {
+      BOOST_THROW_EXCEPTION(
+          fill_initialization_error(serialize_initialization_error(), message));
+    }
+    try {
+      serialize_raw(message, std::forward<Args>(args)...);
+    } catch (std::exception &) {
+      BOOST_THROW_EXCEPTION(serialize_error()
+                            << serialize_error::type_name(message.GetTypeName())
+                            << enable_nested_current());
+    }
+  }
 
-        std::string to_string(const google::protobuf::Message &message)
-        {
-            std::string string;
-            to_string(message, string);
-            return string;
-        }
+  void to_string(const google::protobuf::Message &message,
+                 std::string &output) {
+    serialize(message, output, string_mode::replace);
+  }
 
-        void append(const google::protobuf::Message &message,
-                    std::string &output)
-        {
-            serialize(message, output, string_mode::append);
-        }
+  std::string to_string(const google::protobuf::Message &message) {
+    std::string string;
+    to_string(message, string);
+    return string;
+  }
 
-    protected:
-        virtual void serialize_raw(
-            const google::protobuf::Message &message,
-            google::protobuf::io::ZeroCopyOutputStream &output)=0;
+  void append(const google::protobuf::Message &message, std::string &output) {
+    serialize(message, output, string_mode::append);
+  }
 
-        virtual void serialize_raw(
-            const google::protobuf::Message &message,
-            std::ostream &output);
+ protected:
+  virtual void serialize_raw(
+      const google::protobuf::Message &message,
+      google::protobuf::io::ZeroCopyOutputStream &output) = 0;
 
-        virtual void serialize_raw(
-            const google::protobuf::Message &message,
-            std::string &output,
-            string_mode mode);
-        virtual void serialize_raw(
-            const google::protobuf::Message &message,
-            const boost::filesystem::path &path);
-    };
-}}
+  virtual void serialize_raw(const google::protobuf::Message &message,
+                             std::ostream &output);
+
+  virtual void serialize_raw(const google::protobuf::Message &message,
+                             std::string &output, string_mode mode);
+  virtual void serialize_raw(const google::protobuf::Message &message,
+                             const boost::filesystem::path &path);
+};
+
+}  // namespace protobuf
+}  // namespace bunsan
