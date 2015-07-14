@@ -6,30 +6,29 @@
 
 #include <bunsan/factory_helper.hpp>
 
-namespace bunsan{namespace utility
-{
-    struct archiver_error: virtual error
-    {
-        typedef boost::error_info<struct tag_archive, boost::filesystem::path> archive;
-        typedef boost::error_info<struct tag_file, boost::filesystem::path> file;
-    };
-    struct archiver_pack_error: virtual archiver_error {};
-    struct archiver_pack_contents_error: virtual archiver_error {};
-    struct archiver_unpack_error: virtual archiver_error {};
+namespace bunsan {
+namespace utility {
 
-    class archiver: public utility
-    BUNSAN_FACTORY_BEGIN(archiver, resolver &)
-    public:
-        virtual void pack(
-            const boost::filesystem::path &archive,
-            const boost::filesystem::path &file)=0;
+struct archiver_error : virtual error {
+  typedef boost::error_info<struct tag_archive, boost::filesystem::path>
+      archive;
+  typedef boost::error_info<struct tag_file, boost::filesystem::path> file;
+};
+struct archiver_pack_error : virtual archiver_error {};
+struct archiver_pack_contents_error : virtual archiver_error {};
+struct archiver_unpack_error : virtual archiver_error {};
 
-        virtual void pack_contents(
-            const boost::filesystem::path &archive,
-            const boost::filesystem::path &dir)=0;
+class archiver : public utility BUNSAN_FACTORY_BEGIN(archiver,
+                                                     resolver &) public
+                 : virtual void pack(const boost::filesystem::path &archive,
+                                     const boost::filesystem::path &file) = 0;
 
-        virtual void unpack(
-            const boost::filesystem::path &archive,
-            const boost::filesystem::path &dir)=0;
-    BUNSAN_FACTORY_END(archiver)
-}}
+virtual void pack_contents(const boost::filesystem::path &archive,
+                           const boost::filesystem::path &dir) = 0;
+
+virtual void unpack(const boost::filesystem::path &archive,
+                    const boost::filesystem::path &dir) = 0;
+BUNSAN_FACTORY_END(archiver)
+
+}  // namespace utility
+}  // namespace bunsan

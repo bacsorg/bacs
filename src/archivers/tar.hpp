@@ -10,50 +10,48 @@
 
 #include <set>
 
-namespace bunsan{namespace utility{namespace archivers
-{
-    class tar: public cwd_split
-    {
-    public:
-        struct config
-        {
-            template <typename Archive>
-            void serialize(Archive &ar, const unsigned int)
-            {
-                ar & BOOST_SERIALIZATION_NVP(format);
-                ar & BOOST_SERIALIZATION_NVP(flags);
-            }
+namespace bunsan {
+namespace utility {
+namespace archivers {
 
-            BUNSAN_INCLASS_STREAM_ENUM_CLASS(flag,
-            (
-                exclude_vcs
-            ))
+class tar : public cwd_split {
+ public:
+  struct config {
+    template <typename Archive>
+    void serialize(Archive &ar, const unsigned int) {
+      ar & BOOST_SERIALIZATION_NVP(format);
+      ar & BOOST_SERIALIZATION_NVP(flags);
+    }
 
-            boost::optional<std::string> format;
-            std::set<flag> flags; ///< \note: std::hash is not specialized for this type
-        };
+    BUNSAN_INCLASS_STREAM_ENUM_CLASS(flag, (exclude_vcs))
 
-    public:
-        explicit tar(const boost::filesystem::path &exe);
+    boost::optional<std::string> format;
+    std::set<flag>
+        flags;  ///< \note: std::hash is not specialized for this type
+  };
 
-        void unpack(
-            const boost::filesystem::path &archive,
-            const boost::filesystem::path &dir) override;
+ public:
+  explicit tar(const boost::filesystem::path &exe);
 
-        void setup(const boost::property_tree::ptree &ptree) override;
+  void unpack(const boost::filesystem::path &archive,
+              const boost::filesystem::path &dir) override;
 
-    protected:
-        void pack_from(
-            const boost::filesystem::path &cwd,
-            const boost::filesystem::path &archive,
-            const boost::filesystem::path &file) override;
+  void setup(const boost::property_tree::ptree &ptree) override;
 
-    private:
-        boost::optional<std::string> format_argument() const;
-        std::vector<std::string> flag_arguments() const;
+ protected:
+  void pack_from(const boost::filesystem::path &cwd,
+                 const boost::filesystem::path &archive,
+                 const boost::filesystem::path &file) override;
 
-    private:
-        const boost::filesystem::path m_exe;
-        config m_config;
-    };
-}}}
+ private:
+  boost::optional<std::string> format_argument() const;
+  std::vector<std::string> flag_arguments() const;
+
+ private:
+  const boost::filesystem::path m_exe;
+  config m_config;
+};
+
+}  // namespace archivers
+}  // namespace utility
+}  // namespace bunsan

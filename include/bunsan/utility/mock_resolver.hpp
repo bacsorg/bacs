@@ -4,18 +4,16 @@
 
 #include <turtle/mock.hpp>
 
-namespace bunsan{namespace utility
-{
-    MOCK_BASE_CLASS(mock_resolver, resolver)
-    {
-        MOCK_METHOD(find_executable, 1,
-                    boost::filesystem::path (
-                        const boost::filesystem::path &exe))
-        MOCK_METHOD(find_library, 1,
-                    boost::filesystem::path (
-                        const boost::filesystem::path &lib))
+namespace bunsan {
+namespace utility {
 
-        MOCK_METHOD(clone, 0,
-                    std::unique_ptr<resolver> ())
-    };
-}}
+MOCK_BASE_CLASS(mock_resolver, resolver) {
+  MOCK_METHOD(find_executable, 1,
+              boost::filesystem::path(const boost::filesystem::path &exe))
+  MOCK_METHOD(find_library, 1,
+              boost::filesystem::path(const boost::filesystem::path &lib))
+  MOCK_METHOD(clone, 0, std::unique_ptr<resolver>())
+};
+
+}  // namespace utility
+}  // namespace bunsan

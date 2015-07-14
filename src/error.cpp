@@ -1,3 +1,9 @@
 #include <bunsan/utility/error.hpp>
 
-bunsan::utility::error::error(const std::string &message_): bunsan::error(message_) {}
+namespace bunsan {
+namespace utility {
+
+error::error(const std::string &message_) : bunsan::error(message_) {}
+
+}  // namespace utility
+}  // namespace bunsan

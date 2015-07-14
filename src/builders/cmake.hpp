@@ -13,111 +13,95 @@
 #include <unordered_map>
 #include <vector>
 
-namespace bunsan{namespace utility{namespace builders
-{
-    class cmake: public conf_make_install
-    {
-    public:
-        struct config
-        {
-            template <typename Archive>
-            void serialize(Archive &ar, const unsigned int)
-            {
-                ar & BOOST_SERIALIZATION_NVP(cmake);
-                ar & BOOST_SERIALIZATION_NVP(make_maker);
-                ar & BOOST_SERIALIZATION_NVP(install_maker);
-            }
+namespace bunsan {
+namespace utility {
+namespace builders {
 
-            struct
-            {
-                template <typename Archive>
-                void serialize(Archive &ar, const unsigned int)
-                {
-                    ar & BOOST_SERIALIZATION_NVP(defines);
-                    ar & BOOST_SERIALIZATION_NVP(generator);
-                }
+class cmake : public conf_make_install {
+ public:
+  struct config {
+    template <typename Archive>
+    void serialize(Archive &ar, const unsigned int) {
+      ar & BOOST_SERIALIZATION_NVP(cmake);
+      ar & BOOST_SERIALIZATION_NVP(make_maker);
+      ar & BOOST_SERIALIZATION_NVP(install_maker);
+    }
 
-                /// for example {"CMAKE_INSTALL_PREFIX": "/usr"}
-                std::unordered_map<std::string, std::string> defines;
-                /// for example "Unix Makefiles"
-                boost::optional<std::string> generator;
-            } cmake;
+    struct {
+      template <typename Archive>
+      void serialize(Archive &ar, const unsigned int) {
+        ar & BOOST_SERIALIZATION_NVP(defines);
+        ar & BOOST_SERIALIZATION_NVP(generator);
+      }
 
-            boost::property_tree::ptree make_maker, install_maker;
-        };
+      /// for example {"CMAKE_INSTALL_PREFIX": "/usr"}
+      std::unordered_map<std::string, std::string> defines;
+      /// for example "Unix Makefiles"
+      boost::optional<std::string> generator;
+    } cmake;
 
-    public:
-        explicit cmake(resolver &resolver_);
-        void setup(const boost::property_tree::ptree &ptree) override;
+    boost::property_tree::ptree make_maker, install_maker;
+  };
 
-    protected:
-        void configure_(
-            const boost::filesystem::path &src,
-            const boost::filesystem::path &bin) override;
+ public:
+  explicit cmake(resolver &resolver_);
+  void setup(const boost::property_tree::ptree &ptree) override;
 
-        void make_(
-            const boost::filesystem::path &src,
-            const boost::filesystem::path &bin) override;
+ protected:
+  void configure_(const boost::filesystem::path &src,
+                  const boost::filesystem::path &bin) override;
 
-        void install_(
-            const boost::filesystem::path &src,
-            const boost::filesystem::path &bin,
-            const boost::filesystem::path &root) override;
+  void make_(const boost::filesystem::path &src,
+             const boost::filesystem::path &bin) override;
 
-    public:
-        BUNSAN_INCLASS_STREAM_ENUM_CLASS(generator_type,
-        (
-            MAKEFILE,
-            NMAKEFILE,
-            VISUAL_STUDIO,
-            UNKNOWN
-        ))
+  void install_(const boost::filesystem::path &src,
+                const boost::filesystem::path &bin,
+                const boost::filesystem::path &root) override;
 
-    private:
-        struct generator
-        {
-            const std::string name;
-            const generator_type type;
-        };
+ public:
+  BUNSAN_INCLASS_STREAM_ENUM_CLASS(generator_type, (MAKEFILE, NMAKEFILE,
+                                                    VISUAL_STUDIO, UNKNOWN))
 
-    private:
-        void set_default_generator();
-        void set_generator(const std::string &generator_name);
-        const generator &get_generator() const;
-        std::vector<std::string> arguments_(
-            const boost::filesystem::path &src) const;
+ private:
+  struct generator {
+    const std::string name;
+    const generator_type type;
+  };
 
-    private:
-        const std::unique_ptr<resolver> m_resolver;
-        const boost::filesystem::path m_cmake_exe;
-        boost::optional<std::size_t> m_generator;
-        config m_config;
+ private:
+  void set_default_generator();
+  void set_generator(const std::string &generator_name);
+  const generator &get_generator() const;
+  std::vector<std::string> arguments_(const boost::filesystem::path &src) const;
 
-    private:
-        static const std::vector<generator> generators;
-    };
+ private:
+  const std::unique_ptr<resolver> m_resolver;
+  const boost::filesystem::path m_cmake_exe;
+  boost::optional<std::size_t> m_generator;
+  config m_config;
 
-    struct cmake_error: virtual error {};
-    struct cmake_unknown_generator_error: virtual cmake_error {};
+ private:
+  static const std::vector<generator> generators;
+};
 
-    struct cmake_unknown_generator_type_error:
-        virtual cmake_unknown_generator_error
-    {
-        typedef boost::error_info<
-            struct tag_generator_type,
-            cmake::generator_type
-        > generator_type;
-    };
+struct cmake_error : virtual error {};
+struct cmake_unknown_generator_error : virtual cmake_error {};
 
-    struct cmake_unknown_generator_name_error:
-        virtual cmake_unknown_generator_error
-    {
-        typedef boost::error_info<
-            struct tag_generator_name,
-            std::string
-        > generator_name;
-    };
+struct cmake_unknown_generator_type_error
+    : virtual cmake_unknown_generator_error {
+  typedef boost::error_info<struct tag_generator_type, cmake::generator_type>
+      generator_type;
+};
 
-    struct cmake_unknown_platform_generator_error:
-        virtual cmake_unknown_generator_error {};
-}}}
+struct cmake_unknown_generator_name_error
+    : virtual cmake_unknown_generator_error {
+  typedef boost::error_info<struct tag_generator_name, std::string>
+      generator_name;
+};
+
+struct cmake_unknown_platform_generator_error
+    : virtual cmake_unknown_generator_error {};
+
+}  // namespace builders
+}  // namespace utility
+}  // namespace bunsan

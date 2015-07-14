@@ -5,7 +5,6 @@
 
 namespace bu = bunsan::utility;
 
-struct utility_fixture: bunsan::process::mock_executor_fixture
-{
-    bu::mock_resolver resolver;
+struct utility_fixture : bunsan::process::mock_executor_fixture {
+  bu::mock_resolver resolver;
 };
