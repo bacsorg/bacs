@@ -4,17 +4,21 @@
 
 #include <ostream>
 
-namespace bunsan{namespace broker{namespace task
-{
-    class stream_channel: public channel
-    {
-    public:
-        explicit stream_channel(std::ostream &out);
+namespace bunsan {
+namespace broker {
+namespace task {
 
-        void send_status(const Status &status) override;
-        void send_result(const Result &result) override;
+class stream_channel : public channel {
+ public:
+  explicit stream_channel(std::ostream &out);
 
-    private:
-        std::ostream &m_out;
-    };
-}}}
+  void send_status(const Status &status) override;
+  void send_result(const Result &result) override;
+
+ private:
+  std::ostream &m_out;
+};
+
+}  // namespace task
+}  // namespace broker
+}  // namespace bunsan

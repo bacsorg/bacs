@@ -3,21 +3,21 @@ syntax = "proto3";
 package bunsan.broker;
 
 message Credentials {
-    string method = 1;
-    string username = 2;
-    string password = 3;
-    bytes certificate = 4;
-    bytes key = 5;
+  string method = 1;
+  string username = 2;
+  string password = 3;
+  bytes certificate = 4;
+  bytes key = 5;
 }
 
 message ConnectionParameters {
-    /* required */ string identifier = 1;
-    Credentials credentials = 2;
-    string host = 3;
-    int32 port = 4;
-    string virtual_host = 5;
+  /* required */ string identifier = 1;
+  Credentials credentials = 2;
+  string host = 3;
+  int32 port = 4;
+  string virtual_host = 5;
 }
 
 message Constraints {
-    repeated string resource = 1;
+  repeated string resource = 1;
 }

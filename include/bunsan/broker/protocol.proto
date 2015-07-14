@@ -3,42 +3,42 @@ syntax = "proto3";
 package bunsan.broker;
 
 message Task {
-    /* required */ string worker = 1;
-    /* required */ string package = 2;
-    bytes data = 3;
+  /* required */ string worker = 1;
+  /* required */ string package = 2;
+  bytes data = 3;
 }
 
 message Status {
-    int32 code = 1;
-    string reason = 2;
-    bytes data = 3;
+  int32 code = 1;
+  string reason = 2;
+  bytes data = 3;
 }
 
 message Result {
-    enum Status {
-        OK = 0;
-        ERROR = 1;
+  enum Status {
+    OK = 0;
+    ERROR = 1;
 
-        // proto errors
-        PROTO_ERROR = 100;
+    // proto errors
+    PROTO_ERROR = 100;
 
-        // worker errors
-        WORKER_ERROR= 200;
-        UNKNOWN_WORKER = 201;
-        INCOMPATIBLE_PACKAGE = 202;
+    // worker errors
+    WORKER_ERROR = 200;
+    UNKNOWN_WORKER = 201;
+    INCOMPATIBLE_PACKAGE = 202;
 
-        // package errors
-        PACKAGE_ERROR = 300;
-        PACKAGE_NOT_FOUND = 301;
-        PACKAGE_BUILD_ERROR = 302;
+    // package errors
+    PACKAGE_ERROR = 300;
+    PACKAGE_NOT_FOUND = 301;
+    PACKAGE_BUILD_ERROR = 302;
 
-        // execution errors
-        EXECUTION_ERROR = 400;
-        EXECUTION_TIMEOUT = 401;
-    }
+    // execution errors
+    EXECUTION_ERROR = 400;
+    EXECUTION_TIMEOUT = 401;
+  }
 
-    Status status = 1;
-    string reason = 2;
-    // result if status == OK, debug output otherwise
-    bytes data = 3;
+  Status status = 1;
+  string reason = 2;
+  // result if status == OK, debug output otherwise
+  bytes data = 3;
 }
