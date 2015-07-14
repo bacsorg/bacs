@@ -112,7 +112,7 @@ namespace bunsan{namespace pm
 
         /// dfs topological-sort order update algorithm
         enum class stage_type: int;
-        typedef std::pair<entry, stage_type> stage;
+        using stage = std::pair<entry, stage_type>;
 
         // FIXME maps should be unordered
         bool update_package_depends(

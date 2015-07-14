@@ -9,14 +9,14 @@ namespace bunsan{namespace pm
 {
     struct error: virtual bunsan::error
     {
-        typedef boost::error_info<struct tag_package, entry> package;
-        typedef filesystem::error::path path;
-        typedef boost::error_info<struct tag_source_id, std::string> source_id;
-        typedef boost::error_info<struct tag_source, boost::filesystem::path> source;
-        typedef boost::error_info<struct tag_strip, bool> strip;
-        typedef boost::error_info<struct tag_destination, boost::filesystem::path> destination;
-        typedef boost::error_info<struct tag_root, boost::filesystem::path> root;
-        typedef boost::error_info<struct tag_lifetime, std::time_t> lifetime;
+        using package = boost::error_info<struct tag_package, entry>;
+        using path = filesystem::error::path;
+        using source_id = boost::error_info<struct tag_source_id, std::string>;
+        using source = boost::error_info<struct tag_source, boost::filesystem::path>;
+        using strip = boost::error_info<struct tag_strip, bool>;
+        using destination = boost::error_info<struct tag_destination, boost::filesystem::path>;
+        using root = boost::error_info<struct tag_root, boost::filesystem::path>;
+        using lifetime = boost::error_info<struct tag_lifetime, std::time_t>;
     };
 
     struct metadata_error: virtual error {};
@@ -32,7 +32,7 @@ namespace bunsan{namespace pm
     struct invalid_installation_error: virtual error {};
     struct installation_meta_exists_error: virtual invalid_installation_error
     {
-        typedef boost::error_info<struct tag_meta, boost::filesystem::path> meta;
+        using meta = boost::error_info<struct tag_meta, boost::filesystem::path>;
     };
 
     struct repository_error: virtual error {};
@@ -53,24 +53,24 @@ namespace bunsan{namespace pm
     /// \todo consider rename
     struct invalid_entry_name_error: virtual error
     {
-        typedef boost::error_info<struct tag_entry_name, std::string> entry_name;
+        using entry_name = boost::error_info<struct tag_entry_name, std::string>;
     };
 
     struct invalid_configuration_error: virtual error {};
     struct invalid_configuration_key_error: virtual invalid_configuration_error
     {
-        typedef boost::error_info<struct tag_configuration_key, std::string> configuration_key;
+        using configuration_key = boost::error_info<struct tag_configuration_key, std::string> ;
     };
     struct invalid_configuration_utility_error: virtual invalid_configuration_error
     {
-        typedef boost::error_info<struct tag_utility_type, std::string> utility_type;
+        using utility_type = boost::error_info<struct tag_utility_type, std::string>;
     };
     struct invalid_configuration_archiver_error: virtual invalid_configuration_utility_error {};
     struct invalid_configuration_remote_archiver_error: virtual invalid_configuration_archiver_error {};
     struct invalid_configuration_cache_archiver_error: virtual invalid_configuration_archiver_error {};
     struct invalid_configuration_builder_error: virtual invalid_configuration_utility_error
     {
-        typedef boost::error_info<struct tag_builder, std::string> builder;
+        using builder = boost::error_info<struct tag_builder, std::string>;
     };
     struct invalid_configuration_duplicate_builder_error: virtual invalid_configuration_builder_error {};
     struct invalid_configuration_builder_not_found_error: virtual invalid_configuration_builder_error {};
@@ -90,7 +90,7 @@ namespace bunsan{namespace pm
     // distributor
     struct distributor_error: virtual repository_component_error
     {
-        typedef boost::error_info<struct tag_url, std::string> url;
+        using url = boost::error_info<struct tag_url, std::string>;
     };
     struct distributor_create_error: virtual distributor_error {};
     struct distributor_create_recursively_error: virtual distributor_error {};
@@ -119,15 +119,15 @@ namespace bunsan{namespace pm
     struct cache_installation_outdated_error: virtual cache_error {};
     struct cache_file_path_error: virtual cache_error
     {
-        typedef boost::error_info<struct tag_root, boost::filesystem::path> root;
-        typedef boost::error_info<struct tag_filename, boost::filesystem::path> filename;
+        using root = boost::error_info<struct tag_root, boost::filesystem::path>;
+        using filename = boost::error_info<struct tag_filename, boost::filesystem::path>;
     };
     struct cache_file_path_invalid_filename_error: virtual cache_file_path_error {};
 
     // builder
     struct builder_error: virtual repository_component_error
     {
-        typedef boost::error_info<struct tag_build_dir, boost::filesystem::path> build_dir;
+        using build_dir = boost::error_info<struct tag_build_dir, boost::filesystem::path>;
     };
     struct builder_build_empty_error: virtual builder_error {};
     struct builder_build_error: virtual builder_error {};

@@ -10,10 +10,10 @@
 
 namespace bunsan{namespace pm
 {
-    typedef std::string source_name_type;
-    typedef std::string checksum_type;
-    typedef std::map<source_name_type, checksum_type> snapshot_entry;
-    typedef std::map<entry, snapshot_entry> snapshot;
+    using source_name_type = std::string;
+    using checksum_type = std::string;
+    using snapshot_entry = std::map<source_name_type, checksum_type>;
+    using snapshot = std::map<entry, snapshot_entry>;
 
     snapshot_entry read_checksum(const boost::filesystem::path &path);
     void write_checksum(const boost::filesystem::path &path, const snapshot_entry &checksum);

@@ -13,7 +13,7 @@
 class bunsan::pm::repository::cache: private boost::noncopyable
 {
 public:
-    typedef std::unique_lock<bunsan::interprocess::file_lock> lock_guard;
+    using lock_guard = std::unique_lock<bunsan::interprocess::file_lock>;
 
 public:
     cache(repository &self, const cache_config &config);
