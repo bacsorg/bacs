@@ -10,98 +10,100 @@
 
 #include <mutex>
 
-class bunsan::pm::repository::cache: private boost::noncopyable
-{
-public:
-    using lock_guard = std::unique_lock<bunsan::interprocess::file_lock>;
+namespace bunsan {
+namespace pm {
 
-public:
-    cache(repository &self, const cache_config &config);
+class repository::cache : private boost::noncopyable {
+ public:
+  using lock_guard = std::unique_lock<bunsan::interprocess::file_lock>;
 
-    lock_guard lock();
+ public:
+  cache(repository &self, const cache_config &config);
 
-    void verify_and_repair();
+  lock_guard lock();
 
-    void clean();
+  void verify_and_repair();
 
-    index read_index(const entry &package);
-    snapshot_entry read_checksum(const entry &package);
-    snapshot read_build_snapshot(const entry &package);
-    snapshot read_installation_snapshot(const entry &package);
+  void clean();
 
-    void unpack_source(
-        const entry &package,
-        const std::string &source_id,
-        const boost::filesystem::path &destination);
-    void unpack_build(
-        const entry &package,
-        const boost::filesystem::path &destination);
-    void unpack_installation(
-        const entry &package,
-        const boost::filesystem::path &destination);
+  index read_index(const entry &package);
+  snapshot_entry read_checksum(const entry &package);
+  snapshot read_build_snapshot(const entry &package);
+  snapshot read_installation_snapshot(const entry &package);
 
-    void pack_build(const entry &package, const boost::filesystem::path &path);
-    void pack_installation(const entry &package, const boost::filesystem::path &path);
+  void unpack_source(const entry &package, const std::string &source_id,
+                     const boost::filesystem::path &destination);
+  void unpack_build(const entry &package,
+                    const boost::filesystem::path &destination);
+  void unpack_installation(const entry &package,
+                           const boost::filesystem::path &destination);
 
-    bool build_outdated(const entry &package, const snapshot &snapshot_);
-    bool installation_outdated(const entry &package, const snapshot &snapshot_);
+  void pack_build(const entry &package, const boost::filesystem::path &path);
+  void pack_installation(const entry &package,
+                         const boost::filesystem::path &path);
 
-    /// \note Parent directory is created if necessary.
-    boost::filesystem::path checksum_path(const entry &package);
+  bool build_outdated(const entry &package, const snapshot &snapshot_);
+  bool installation_outdated(const entry &package, const snapshot &snapshot_);
 
-    /// \note Parent directory is created if necessary.
-    boost::filesystem::path index_path(const entry &package);
+  /// \note Parent directory is created if necessary.
+  boost::filesystem::path checksum_path(const entry &package);
 
-    /// \note Parent directory is created if necessary.
-    boost::filesystem::path source_path(const entry &package, const std::string &source_id);
+  /// \note Parent directory is created if necessary.
+  boost::filesystem::path index_path(const entry &package);
 
-    /// \note Parent directory is created if necessary.
-    boost::filesystem::path build_archive_path(const entry &package);
+  /// \note Parent directory is created if necessary.
+  boost::filesystem::path source_path(const entry &package,
+                                      const std::string &source_id);
 
-    /// \note Parent directory is created if necessary.
-    boost::filesystem::path build_snapshot_path(const entry &package);
+  /// \note Parent directory is created if necessary.
+  boost::filesystem::path build_archive_path(const entry &package);
 
-    /// \note Parent directory is created if necessary.
-    boost::filesystem::path installation_archive_path(const entry &package);
+  /// \note Parent directory is created if necessary.
+  boost::filesystem::path build_snapshot_path(const entry &package);
 
-    /// \note Parent directory is created if necessary.
-    boost::filesystem::path installation_snapshot_path(const entry &package);
+  /// \note Parent directory is created if necessary.
+  boost::filesystem::path installation_archive_path(const entry &package);
 
-public:
-    static void initialize(const cache_config &config);
+  /// \note Parent directory is created if necessary.
+  boost::filesystem::path installation_snapshot_path(const entry &package);
 
-private:
-    static void initialize_meta(const cache_config &config);
+ public:
+  static void initialize(const cache_config &config);
 
-    void save_meta();
-    cache_config::meta load_meta();
+ private:
+  static void initialize_meta(const cache_config &config);
 
-    static void verify_and_repair_directory(const boost::filesystem::path &path);
+  void save_meta();
+  cache_config::meta load_meta();
 
-    /// Does not verify directories.
-    void clean_();
+  static void verify_and_repair_directory(const boost::filesystem::path &path);
 
-private:
-    boost::filesystem::path file_path(
-        const boost::filesystem::path &root,
-        const entry &package,
-        const boost::filesystem::path &filename);
+  /// Does not verify directories.
+  void clean_();
 
-    boost::filesystem::path source_file_path(
-        const entry &package, const boost::filesystem::path &filename);
+ private:
+  boost::filesystem::path file_path(const boost::filesystem::path &root,
+                                    const entry &package,
+                                    const boost::filesystem::path &filename);
 
-    boost::filesystem::path package_file_path(
-        const entry &package, const boost::filesystem::path &filename);
+  boost::filesystem::path source_file_path(
+      const entry &package, const boost::filesystem::path &filename);
 
-    const format_config &format(); ///< \todo consider constness
+  boost::filesystem::path package_file_path(
+      const entry &package, const boost::filesystem::path &filename);
 
-private:
-    local_system &local_system_();
-    distributor &distributor_();
+  const format_config &format();  ///< \todo consider constness
 
-private:
-    repository &m_self;
-    const cache_config m_config;
-    bunsan::interprocess::file_lock m_flock;
-    utility::archiver_ptr m_archiver;
+ private:
+  local_system &local_system_();
+  distributor &distributor_();
+
+ private:
+  repository &m_self;
+  const cache_config m_config;
+  bunsan::interprocess::file_lock m_flock;
+  utility::archiver_ptr m_archiver;
 };
+
+}  // namespace pm
+}  // namespace bunsan

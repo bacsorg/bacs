@@ -5,41 +5,35 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
-bunsan::pm::compatibility::repository::repository(
-    const std::string &config): m_repo(nullptr)
-{
-    boost::property_tree::ptree cfg;
-    boost::property_tree::read_info(config, cfg);
-    m_repo = new bunsan::pm::repository(cfg);
+namespace bunsan {
+namespace pm {
+namespace compatibility {
+
+repository::repository(const std::string &config) : m_repo(nullptr) {
+  boost::property_tree::ptree cfg;
+  boost::property_tree::read_info(config, cfg);
+  m_repo = new bunsan::pm::repository(cfg);
 }
 
-void bunsan::pm::compatibility::repository::extract(
-    const std::string &package,
-    const std::string &destination)
-{
-    m_repo->extract(package, destination);
+void repository::extract(const std::string &package,
+                         const std::string &destination) {
+  m_repo->extract(package, destination);
 }
 
-void bunsan::pm::compatibility::repository::create(
-    const std::string &path, bool strip)
-{
-    m_repo->create(path, strip);
+void repository::create(const std::string &path, bool strip) {
+  m_repo->create(path, strip);
 }
 
-void bunsan::pm::compatibility::repository::clean_cache()
-{
-    m_repo->clean_cache();
+void repository::clean_cache() { m_repo->clean_cache(); }
+
+repository::~repository() { delete m_repo; }
+
+void repository::initialize_cache(const std::string &config) {
+  boost::property_tree::ptree cfg;
+  boost::property_tree::read_info(config, cfg);
+  bunsan::pm::repository::initialize_cache(cfg);
 }
 
-bunsan::pm::compatibility::repository::~repository()
-{
-    delete m_repo;
-}
-
-void bunsan::pm::compatibility::repository::initialize_cache(
-    const std::string &config)
-{
-    boost::property_tree::ptree cfg;
-    boost::property_tree::read_info(config, cfg);
-    bunsan::pm::repository::initialize_cache(cfg);
-}
+}  // namespace compatibility
+}  // namespace pm
+}  // namespace bunsan

@@ -10,59 +10,56 @@
 #include <set>
 #include <unordered_set>
 
-namespace bunsan{namespace pm
-{
-    struct index
-    {
-        template <typename Archive>
-        void serialize(Archive &ar, const unsigned int)
-        {
-            ar & BOOST_SERIALIZATION_NVP(source);
-            ar & BOOST_SERIALIZATION_NVP(package);
-        }
+namespace bunsan {
+namespace pm {
 
-        index()=default;
-        index(const index &)=default;
-        index(index &&)=default;
-        index &operator=(const index &)=default;
-        index &operator=(index &&)=default;
+struct index {
+  template <typename Archive>
+  void serialize(Archive &ar, const unsigned int) {
+    ar & BOOST_SERIALIZATION_NVP(source);
+    ar & BOOST_SERIALIZATION_NVP(package);
+  }
 
-        template <typename T>
-        explicit index(const T &obj)
-        {
-            load(obj);
-        }
+  index() = default;
+  index(const index &) = default;
+  index(index &&) = default;
+  index &operator=(const index &) = default;
+  index &operator=(index &&) = default;
 
-        explicit operator boost::property_tree::ptree() const;
+  template <typename T>
+  explicit index(const T &obj) {
+    load(obj);
+  }
 
-        void load(const boost::property_tree::ptree &ptree);
-        void load(const boost::filesystem::path &path);
-        void save(const boost::filesystem::path &path) const;
+  explicit operator boost::property_tree::ptree() const;
 
-        // TODO make it unordered
-        std::set<entry> all() const;
+  void load(const boost::property_tree::ptree &ptree);
+  void load(const boost::filesystem::path &path);
+  void save(const boost::filesystem::path &path) const;
 
-        std::unordered_set<std::string> sources() const;
+  // TODO make it unordered
+  std::set<entry> all() const;
 
-        struct stage
-        {
-            template <typename Archive>
-            void serialize(Archive &ar, const unsigned int)
-            {
-                ar & BOOST_SERIALIZATION_NVP(self);
-                ar & BOOST_SERIALIZATION_NVP(import.source);
-                ar & BOOST_SERIALIZATION_NVP(import.package);
-            }
+  std::unordered_set<std::string> sources() const;
 
-            struct
-            {
-                std::multimap<boost::filesystem::path, entry> source, package;
-            } import;
-            std::multimap<boost::filesystem::path, std::string> self;
+  struct stage {
+    template <typename Archive>
+    void serialize(Archive &ar, const unsigned int) {
+      ar & BOOST_SERIALIZATION_NVP(self);
+      ar & BOOST_SERIALIZATION_NVP(import.source);
+      ar & BOOST_SERIALIZATION_NVP(import.package);
+    }
 
-            bool empty() const;
+    struct {
+      std::multimap<boost::filesystem::path, entry> source, package;
+    } import;
+    std::multimap<boost::filesystem::path, std::string> self;
 
-            std::set<entry> all() const;
-        } source, package;
-    };
-}}
+    bool empty() const;
+
+    std::set<entry> all() const;
+  } source, package;
+};
+
+}  // namespace pm
+}  // namespace bunsan

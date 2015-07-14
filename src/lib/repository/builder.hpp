@@ -4,34 +4,38 @@
 
 #include <boost/noncopyable.hpp>
 
-class bunsan::pm::repository::builder: private boost::noncopyable
-{
-public:
-    builder(repository &self, const build_config &config);
+namespace bunsan {
+namespace pm {
 
-    /// create empty build (for packages without sources)
-    void build_empty(const entry &package);
-    void build(const entry &package);
-    void build_installation(const entry &package);
+class repository::builder : private boost::noncopyable {
+ public:
+  builder(repository &self, const build_config &config);
 
-private:
-    utility::builder_ptr get_builder(const std::string &builder_id);
-    utility::builder_ptr get_builder();
+  /// create empty build (for packages without sources)
+  void build_empty(const entry &package);
+  void build(const entry &package);
+  void build_installation(const entry &package);
 
-    void unpack_source(
-        const entry &package,
-        const boost::filesystem::path &destination,
-        snapshot &snapshot_);
+ private:
+  utility::builder_ptr get_builder(const std::string &builder_id);
+  utility::builder_ptr get_builder();
 
-private:
-    cache &cache_();
-    distributor &distributor_();
-    extractor &extractor_();
-    local_system &local_system_();
+  void unpack_source(const entry &package,
+                     const boost::filesystem::path &destination,
+                     snapshot &snapshot_);
 
-private:
-    repository &m_self;
-    build_config m_config;
-    std::unordered_map<std::string, utility::builder_ptr> m_builders;
-    utility::builder_ptr m_builder;
+ private:
+  cache &cache_();
+  distributor &distributor_();
+  extractor &extractor_();
+  local_system &local_system_();
+
+ private:
+  repository &m_self;
+  build_config m_config;
+  std::unordered_map<std::string, utility::builder_ptr> m_builders;
+  utility::builder_ptr m_builder;
 };
+
+}  // namespace pm
+}  // namespace bunsan

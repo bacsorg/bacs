@@ -17,139 +17,139 @@
 
 #include <ctime>
 
-namespace bunsan{namespace pm
-{
-    /*!
-     * \brief Class represents bunsan repository
-     *
-     * \todo Creation of two different instances of this class
-     * linked to one physical repository
-     * will cause undefined behavior.
-     * Objects of this class are thread-safe.
-     */
-    class repository: private boost::noncopyable
-    {
-    public:
-        explicit repository(const pm::config &config_);
-        explicit repository(const boost::property_tree::ptree &config_);
+namespace bunsan {
+namespace pm {
 
-        /*!
-         * \brief Create source package from source
-         *
-         * \param source path to source
-         * \param strip remove unnecessary sources from packed source
-         */
-        void create(const boost::filesystem::path &source, bool strip=false);
+/*!
+ * \brief Class represents bunsan repository
+ *
+ * \todo Creation of two different instances of this class
+ * linked to one physical repository
+ * will cause undefined behavior.
+ * Objects of this class are thread-safe.
+ */
+class repository : private boost::noncopyable {
+ public:
+  explicit repository(const pm::config &config_);
+  explicit repository(const boost::property_tree::ptree &config_);
 
-        /*!
-         * \brief Create source packages from sources recursively starting from root.
-         *
-         * \see repository::create()
-         */
-        void create_recursively(const boost::filesystem::path &root, bool strip=false);
+  /*!
+   * \brief Create source package from source
+   *
+   * \param source path to source
+   * \param strip remove unnecessary sources from packed source
+   */
+  void create(const boost::filesystem::path &source, bool strip = false);
 
-        /*!
-         * \brief Extract package data to destination.
-         *
-         * \todo We can do explicit update.
-         */
-        void extract(const entry &package, const boost::filesystem::path &destination);
+  /*!
+   * \brief Create source packages from sources recursively starting from root.
+   *
+   * \see repository::create()
+   */
+  void create_recursively(const boost::filesystem::path &root,
+                          bool strip = false);
 
-        /*!
-         * \brief Install package to destination.
-         */
-        void install(const entry &package, const boost::filesystem::path &destination);
+  /*!
+   * \brief Extract package data to destination.
+   *
+   * \todo We can do explicit update.
+   */
+  void extract(const entry &package,
+               const boost::filesystem::path &destination);
 
-        /*!
-         * \brief Update previously installed package.
-         */
-        void update(const entry &package, const boost::filesystem::path &destination);
+  /*!
+   * \brief Install package to destination.
+   */
+  void install(const entry &package,
+               const boost::filesystem::path &destination);
 
-        /*!
-         * \brief Update previously installed package.
-         *
-         * Will not update package index tree
-         * if lifetime has not passed since previous update.
-         */
-        void update(
-            const entry &package,
-            const boost::filesystem::path &destination,
-            const std::time_t &lifetime);
+  /*!
+   * \brief Update previously installed package.
+   */
+  void update(const entry &package, const boost::filesystem::path &destination);
 
-        /*!
-         * \brief Check if actual update is needed.
-         *
-         * \note Does not block.
-         */
-        bool need_update(
-            const entry &package,
-            const boost::filesystem::path &destination,
-            const std::time_t &lifetime);
+  /*!
+   * \brief Update previously installed package.
+   *
+   * Will not update package index tree
+   * if lifetime has not passed since previous update.
+   */
+  void update(const entry &package, const boost::filesystem::path &destination,
+              const std::time_t &lifetime);
 
-        void clean_cache();
+  /*!
+   * \brief Check if actual update is needed.
+   *
+   * \note Does not block.
+   */
+  bool need_update(const entry &package,
+                   const boost::filesystem::path &destination,
+                   const std::time_t &lifetime);
 
-        const pm::config &config() const;
+  void clean_cache();
 
-        ~repository();
+  const pm::config &config() const;
 
-    public:
-        /*!
-         * \brief Library build version. Unspecified string.
-         *
-         * \note May be overridden by BUNSAN_PM_VERSION
-         */
-        static std::string version();
+  ~repository();
 
-        static void initialize_cache(const pm::config &config_);
-        static void initialize_cache(const boost::property_tree::ptree &config_);
+ public:
+  /*!
+   * \brief Library build version. Unspecified string.
+   *
+   * \note May be overridden by BUNSAN_PM_VERSION
+   */
+  static std::string version();
 
-    private:
-        /// update logic
-        void update(const entry &package);
+  static void initialize_cache(const pm::config &config_);
+  static void initialize_cache(const boost::property_tree::ptree &config_);
 
-        /// updates meta-data of package and recursive dependencies
-        void update_meta_tree(const entry &package);
+ private:
+  /// update logic
+  void update(const entry &package);
 
-        /// dfs topological-sort order update algorithm
-        enum class stage_type: int;
-        using stage = std::pair<entry, stage_type>;
+  /// updates meta-data of package and recursive dependencies
+  void update_meta_tree(const entry &package);
 
-        // FIXME maps should be unordered
-        bool update_package_depends(
-            const stage &stage_,
-            std::map<stage, bool> &updated,
-            std::set<stage> &in,
-            snapshot &current_snapshot,
-            std::map<stage, snapshot> &snapshot_cache);
+  /// DFS topological-sort order update algorithm
+  enum class stage_type : int;
+  using stage = std::pair<entry, stage_type>;
 
-    private:
-        class local_system;
-        friend class local_system;
+  // FIXME maps should be unordered
+  bool update_package_depends(const stage &stage_,
+                              std::map<stage, bool> &updated,
+                              std::set<stage> &in, snapshot &current_snapshot,
+                              std::map<stage, snapshot> &snapshot_cache);
 
-        class cache;
-        friend class cache;
+ private:
+  class local_system;
+  friend class local_system;
 
-        class distributor;
-        friend class distributor;
+  class cache;
+  friend class cache;
 
-        class builder;
-        friend class builder;
+  class distributor;
+  friend class distributor;
 
-        class extractor;
-        friend class extractor;
+  class builder;
+  friend class builder;
 
-        local_system &local_system_();
-        cache &cache_();
-        distributor &distributor_();
-        builder &builder_();
-        extractor &extractor_();
+  class extractor;
+  friend class extractor;
 
-        pm::config m_config;
+  local_system &local_system_();
+  cache &cache_();
+  distributor &distributor_();
+  builder &builder_();
+  extractor &extractor_();
 
-        std::unique_ptr<local_system> m_local_system;
-        std::unique_ptr<cache> m_cache;
-        std::unique_ptr<distributor> m_distributor;
-        std::unique_ptr<builder> m_builder;
-        std::unique_ptr<extractor> m_extractor;
-    };
-}}
+  pm::config m_config;
+
+  std::unique_ptr<local_system> m_local_system;
+  std::unique_ptr<cache> m_cache;
+  std::unique_ptr<distributor> m_distributor;
+  std::unique_ptr<builder> m_builder;
+  std::unique_ptr<extractor> m_extractor;
+};
+
+}  // namespace pm
+}  // namespace bunsan

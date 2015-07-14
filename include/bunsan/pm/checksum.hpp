@@ -4,7 +4,10 @@
 
 #include <string>
 
-namespace bunsan{namespace pm
-{
-    std::string checksum(const boost::filesystem::path &file);
-}}
+namespace bunsan {
+namespace pm {
+
+std::string checksum(const boost::filesystem::path &file);
+
+}  // namespace pm
+}  // namespace bunsan

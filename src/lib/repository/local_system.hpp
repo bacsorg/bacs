@@ -7,21 +7,26 @@
 
 #include <boost/noncopyable.hpp>
 
-class bunsan::pm::repository::local_system: private boost::noncopyable
-{
-public:
-    local_system(repository &self, const local_system_config &config);
+namespace bunsan {
+namespace pm {
 
-    utility::resolver &resolver();
+class repository::local_system : private boost::noncopyable {
+ public:
+  local_system(repository &self, const local_system_config &config);
 
-    /// Empty dir for possibly large files.
-    tempfile tempdir_for_build();
+  utility::resolver &resolver();
 
-    /// Empty file.
-    tempfile small_tempfile();
+  /// Empty dir for possibly large files.
+  tempfile tempdir_for_build();
 
-private:
-    repository &m_self;
-    local_system_config m_config;
-    utility::custom_resolver m_resolver;
+  /// Empty file.
+  tempfile small_tempfile();
+
+ private:
+  repository &m_self;
+  local_system_config m_config;
+  utility::custom_resolver m_resolver;
 };
+
+}  // namespace pm
+}  // namespace bunsan
