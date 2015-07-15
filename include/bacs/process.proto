@@ -5,33 +5,33 @@ package bacs.process;
 import "bacs/utility.proto";
 
 message ResourceLimits {
-    optional uint64 time_limit_millis = 1;
-    optional uint64 memory_limit_bytes = 2;
-    optional uint64 output_limit_bytes = 3;
-    optional uint64 number_of_processes = 4;
-    optional uint64 real_time_limit_millis = 5;
+  optional uint64 time_limit_millis = 1;
+  optional uint64 memory_limit_bytes = 2;
+  optional uint64 output_limit_bytes = 3;
+  optional uint64 number_of_processes = 4;
+  optional uint64 real_time_limit_millis = 5;
 }
 
 message ResourceUsage {
-    // TODO: do we need to export Process::ResourceUsage::timeUsage?
-    required uint64 time_usage_millis = 1;
-    required uint64 memory_usage_bytes = 2;
+  // TODO: do we need to export Process::ResourceUsage::timeUsage?
+  required uint64 time_usage_millis = 1;
+  required uint64 memory_usage_bytes = 2;
 }
 
 message Source {
-    required bytes data = 1;
-    optional utility.Archiver archiver = 2;
+  required bytes data = 1;
+  optional utility.Archiver archiver = 2;
 }
 
 message Buildable {
-    required Source source = 1;
-    required BuildSettings build_settings = 2;
+  required Source source = 1;
+  required BuildSettings build_settings = 2;
 }
 
 message BuildSettings {
-    required BuilderConfig config = 1;
-    /// Constraints for build system
-    optional ResourceLimits resource_limits = 2;
+  required BuilderConfig config = 1;
+  /// Constraints for build system
+  optional ResourceLimits resource_limits = 2;
 }
 
 /*!
@@ -40,34 +40,34 @@ message BuildSettings {
  * e.g. {type = "gcc", arguments = ["-O2"]}.
  */
 message BuilderConfig {
-    required string type = 1;
-    repeated string argument = 2;
+  required string type = 1;
+  repeated string argument = 2;
 }
 
 message BuildResult {
-    enum Status {
-        OK = 0;
-        FAILED = 1;
-    }
-    required Status status = 1;
-    optional ExecutionResult execution = 2;
-    required bytes output = 3;
+  enum Status {
+    OK = 0;
+    FAILED = 1;
+  }
+  required Status status = 1;
+  optional ExecutionResult execution = 2;
+  required bytes output = 3;
 }
 
 message ExecutionResult {
-    enum Status {
-        OK = 0;
-        ABNORMAL_EXIT = 1;
-        MEMORY_LIMIT_EXCEEDED = 2;
-        TIME_LIMIT_EXCEEDED = 3;
-        OUTPUT_LIMIT_EXCEEDED = 4;
-        REAL_TIME_LIMIT_EXCEEDED = 5;
-        TERMINATED_BY_SYSTEM = 6;
-        FAILED = 7;
-    }
-    required Status status = 1;
-    optional int32 exit_status = 2;
-    optional int32 term_sig = 3;
-    required ResourceUsage resource_usage = 4;
-    optional bytes full = 5;
+  enum Status {
+    OK = 0;
+    ABNORMAL_EXIT = 1;
+    MEMORY_LIMIT_EXCEEDED = 2;
+    TIME_LIMIT_EXCEEDED = 3;
+    OUTPUT_LIMIT_EXCEEDED = 4;
+    REAL_TIME_LIMIT_EXCEEDED = 5;
+    TERMINATED_BY_SYSTEM = 6;
+    FAILED = 7;
+  }
+  required Status status = 1;
+  optional int32 exit_status = 2;
+  optional int32 term_sig = 3;
+  required ResourceUsage resource_usage = 4;
+  optional bytes full = 5;
 }

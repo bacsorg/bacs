@@ -3,24 +3,24 @@ syntax = "proto2";
 package bacs.file;
 
 message Range {
-    enum Whence {
-        BEGIN = 0;
-        END = 1;
-    };
+  enum Whence {
+    BEGIN = 0;
+    END = 1;
+  };
 
-    /// Position from which offset will be calculated.
-    required Whence whence = 1;
+  /// Position from which offset will be calculated.
+  required Whence whence = 1;
 
-    /*!
-     * Negative or positive offset
-     * from position specified by whence field.
-     */
-    required int64 offset = 2;
+  /*!
+   * Negative or positive offset
+   * from position specified by whence field.
+   */
+  required int64 offset = 2;
 
-    /*!
-     * Size of chunk will be transmitted.
-     *
-     * \note If EOF reached size of chunk may be smaller.
-     */
-    required uint64 size = 3;
+  /*!
+   * Size of chunk will be transmitted.
+   *
+   * \note If EOF reached size of chunk may be smaller.
+   */
+  required uint64 size = 3;
 }

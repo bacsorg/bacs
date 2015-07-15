@@ -3,6 +3,6 @@ syntax = "proto2";
 package bacs;
 
 message Callback {
-    required string type = 1;
-    repeated string argument = 2;
+  required string type = 1;
+  repeated string argument = 2;
 }
