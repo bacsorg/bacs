@@ -13,10 +13,10 @@ namespace detail {
 template <typename Factory>
 class configured_factory {
  public:
-  typedef Factory factory;
-  typedef typename factory::factory_type factory_type;
-  typedef typename factory::bunsan_factory::result_type result_type;
-  typedef typename factory::bunsan_factory::arguments_size arguments_size;
+  using factory = Factory;
+  using factory_type = typename factory::factory_type;
+  using result_type = typename factory::bunsan_factory::result_type;
+  using arguments_size = typename factory::bunsan_factory::arguments_size;
 
  public:
   configured_factory(const factory_type &factory_,
@@ -40,10 +40,10 @@ class configured_factory {
 
 template <typename Factory>
 struct factory_options {
-  typedef Factory factory;
-  typedef typename factory::factory_type factory_type;
-  typedef typename factory::bunsan_factory::result_type result_type;
-  typedef typename factory::bunsan_factory::arguments_size arguments_size;
+  using factory = Factory;
+  using factory_type = typename factory::factory_type;
+  using result_type = typename factory::bunsan_factory::result_type;
+  using arguments_size = typename factory::bunsan_factory::arguments_size;
 
   template <typename Archive>
   void serialize(Archive &ar, const unsigned int) {

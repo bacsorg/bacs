@@ -11,15 +11,15 @@ namespace bunsan {
 namespace utility {
 
 struct builder_error : virtual error {
-  typedef boost::error_info<struct tag_src, boost::filesystem::path> src;
-  typedef boost::error_info<struct tag_bin, boost::filesystem::path> bin;
+  using src = boost::error_info<struct tag_src, boost::filesystem::path>;
+  using bin = boost::error_info<struct tag_bin, boost::filesystem::path>;
 };
 struct builder_install_error : virtual builder_error {
-  typedef boost::error_info<struct tag_root, boost::filesystem::path> root;
+  using root = boost::error_info<struct tag_root, boost::filesystem::path>;
 };
 struct builder_pack_error : virtual builder_error {
-  typedef boost::error_info<struct tag_archive, boost::filesystem::path>
-      archive;
+  using archive =
+      boost::error_info<struct tag_archive, boost::filesystem::path>;
 };
 
 class builder : public utility {

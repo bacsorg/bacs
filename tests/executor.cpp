@@ -13,8 +13,8 @@ BOOST_AUTO_TEST_SUITE(executor)
 using namespace boost::property_tree;
 using bunsan::utility::executor;
 using bunsan::process::context;
-typedef std::stringstream ss;
-typedef std::vector<std::string> vs;
+using ss = std::stringstream;
+using vs = std::vector<std::string>;
 
 BOOST_AUTO_TEST_CASE(env) {
   ptree pt;

@@ -17,7 +17,7 @@ namespace utility {
 struct executor_error : virtual error {};
 
 struct executor_unknown_placeholder_type_error : virtual executor_error {
-  typedef boost::error_info<struct tag_type, std::string> type;
+  using type = boost::error_info<struct tag_type, std::string>;
 };
 
 class executor {
@@ -134,11 +134,11 @@ class executor {
   static constexpr const char *current_path_key = "current_path";
   static constexpr const char *executable_key = "executable";
   static constexpr const char *use_path_key = "use_path";
-  typedef boost::variant<size_t, std::string> reference;
-  typedef boost::variant<reference, std::string> token;
-  typedef std::vector<token> string;
-  typedef boost::optional<std::string> string_opt;
-  typedef std::unordered_map<std::string, std::string> dict;
+  using reference = boost::variant<size_t, std::string>;
+  using token = boost::variant<reference, std::string>;
+  using string = std::vector<token>;
+  using string_opt = boost::optional<std::string>;
+  using dict = std::unordered_map<std::string, std::string>;
 
  private:
   std::vector<string> arguments;

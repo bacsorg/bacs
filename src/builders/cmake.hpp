@@ -89,14 +89,14 @@ struct cmake_unknown_generator_error : virtual cmake_error {};
 
 struct cmake_unknown_generator_type_error
     : virtual cmake_unknown_generator_error {
-  typedef boost::error_info<struct tag_generator_type, cmake::generator_type>
-      generator_type;
+  using generator_type =
+      boost::error_info<struct tag_generator_type, cmake::generator_type>;
 };
 
 struct cmake_unknown_generator_name_error
     : virtual cmake_unknown_generator_error {
-  typedef boost::error_info<struct tag_generator_name, std::string>
-      generator_name;
+  using generator_name =
+      boost::error_info<struct tag_generator_name, std::string>;
 };
 
 struct cmake_unknown_platform_generator_error

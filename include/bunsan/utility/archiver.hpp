@@ -10,9 +10,9 @@ namespace bunsan {
 namespace utility {
 
 struct archiver_error : virtual error {
-  typedef boost::error_info<struct tag_archive, boost::filesystem::path>
-      archive;
-  typedef boost::error_info<struct tag_file, boost::filesystem::path> file;
+  using archive =
+      boost::error_info<struct tag_archive, boost::filesystem::path>;
+  using file = boost::error_info<struct tag_file, boost::filesystem::path>;
 };
 struct archiver_pack_error : virtual archiver_error {};
 struct archiver_pack_contents_error : virtual archiver_error {};
