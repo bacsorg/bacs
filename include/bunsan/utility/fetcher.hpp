@@ -16,10 +16,13 @@ struct fetcher_fetch_error : virtual fetcher_error {
       boost::error_info<struct tag_destination, boost::filesystem::path>;
 };
 
-class fetcher : public utility BUNSAN_FACTORY_BEGIN(fetcher, resolver &) public
-                : virtual void fetch(const std::string &uri,
-                                     const boost::filesystem::path &dst) = 0;
-BUNSAN_FACTORY_END(fetcher)
+class fetcher : public utility {
+  BUNSAN_FACTORY_BODY(fetcher, resolver &)
+ public:
+  virtual void fetch(const std::string &uri,
+                     const boost::filesystem::path &dst) = 0;
+};
+BUNSAN_FACTORY_TYPES(fetcher)
 
 }  // namespace utility
 }  // namespace bunsan

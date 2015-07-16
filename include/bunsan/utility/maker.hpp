@@ -15,10 +15,13 @@ struct maker_error : virtual error {
 };
 struct maker_exec_error : virtual maker_error {};
 
-class maker : public utility BUNSAN_FACTORY_BEGIN(maker, resolver &) public
-              : virtual void exec(const boost::filesystem::path &cwd,
-                                  const std::vector<std::string> &targets) = 0;
-BUNSAN_FACTORY_END(maker)
+class maker : public utility {
+  BUNSAN_FACTORY_BODY(maker, resolver &)
+ public:
+  virtual void exec(const boost::filesystem::path &cwd,
+                    const std::vector<std::string> &targets) = 0;
+};
+BUNSAN_FACTORY_TYPES(maker)
 
 }  // namespace utility
 }  // namespace bunsan

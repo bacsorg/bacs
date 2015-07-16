@@ -22,31 +22,33 @@ struct builder_pack_error : virtual builder_error {
       archive;
 };
 
-class builder : public utility BUNSAN_FACTORY_BEGIN(builder, resolver &) public
-                :
-                /*!
-                 * \brief Build and install package
-                 *
-                 * \param src source files
-                 * \param bin temporary directory for package building
-                 * \param root package will be installed into root directory
-                 */
-                virtual void install(const boost::filesystem::path &src,
-                                     const boost::filesystem::path &bin,
-                                     const boost::filesystem::path &root) = 0;
+class builder : public utility {
+  BUNSAN_FACTORY_BODY(builder, resolver &)
+ public:
+  /*!
+   * \brief Build and install package
+   *
+   * \param src source files
+   * \param bin temporary directory for package building
+   * \param root package will be installed into root directory
+   */
+  virtual void install(const boost::filesystem::path &src,
+                       const boost::filesystem::path &bin,
+                       const boost::filesystem::path &root) = 0;
 
-/*!
- * \brief Build and pack package
- *
- * Default implementation will call install
- * with root set to temporary directory inside bin
- * and pack it contents using archiver::pack_contents
- */
-virtual void pack(const boost::filesystem::path &src,
-                  const boost::filesystem::path &bin,
-                  const boost::filesystem::path &archive,
-                  const archiver_ptr &archiver_);
-BUNSAN_FACTORY_END(builder)
+  /*!
+   * \brief Build and pack package
+   *
+   * Default implementation will call install
+   * with root set to temporary directory inside bin
+   * and pack it contents using archiver::pack_contents
+   */
+  virtual void pack(const boost::filesystem::path &src,
+                    const boost::filesystem::path &bin,
+                    const boost::filesystem::path &archive,
+                    const archiver_ptr &archiver_);
+};
+BUNSAN_FACTORY_TYPES(builder)
 
 }  // namespace utility
 }  // namespace bunsan
