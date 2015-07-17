@@ -5,10 +5,12 @@
 
 #include <boost/filesystem/path.hpp>
 
-namespace bacs{namespace problem
-{
-    struct error: virtual bunsan::error
-    {
-        typedef bunsan::filesystem::error::path path;
-    };
-}}
+namespace bacs {
+namespace problem {
+
+struct error : virtual bunsan::error {
+  using path = bunsan::filesystem::error::path;
+};
+
+}  // namespace problem
+}  // namespace bacs

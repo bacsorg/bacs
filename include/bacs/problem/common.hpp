@@ -4,10 +4,13 @@
 
 #include <vector>
 
-namespace bacs{namespace problem
-{
-    typedef std::vector<unsigned char> binary;
+namespace bacs {
+namespace problem {
 
-    /// hash string
-    typedef binary hash;
-}}
+using binary = std::vector<unsigned char>;
+
+/// hash string
+using hash = binary;
+
+}  // namespace problem
+}  // namespace bacs

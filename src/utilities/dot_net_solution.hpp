@@ -5,20 +5,24 @@
 #include <string>
 #include <vector>
 
-namespace bacs{namespace problem{namespace utilities
-{
-    class dot_net_solution: public utility
-    {
-    public:
-        dot_net_solution(const boost::filesystem::path &location,
-                         const boost::property_tree::ptree &config);
+namespace bacs {
+namespace problem {
+namespace utilities {
 
-        bool make_package(const boost::filesystem::path &destination,
-                          const bunsan::pm::entry &package) const override;
+class dot_net_solution : public utility {
+ public:
+  dot_net_solution(const boost::filesystem::path &location,
+                   const boost::property_tree::ptree &config);
 
-    private:
-        const boost::filesystem::path m_solution;
-        const boost::optional<std::string> m_configuration;
-        const std::vector<std::string> m_libs;
-    };
-}}}
+  bool make_package(const boost::filesystem::path &destination,
+                    const bunsan::pm::entry &package) const override;
+
+ private:
+  const boost::filesystem::path m_solution;
+  const boost::optional<std::string> m_configuration;
+  const std::vector<std::string> m_libs;
+};
+
+}  // namespace utilities
+}  // namespace problem
+}  // namespace bacs
