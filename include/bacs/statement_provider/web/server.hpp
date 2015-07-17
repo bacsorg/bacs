@@ -11,27 +11,29 @@
 
 #include <ctime>
 
-namespace bacs{namespace statement_provider{namespace web
-{
-    class server: public cppcms::application
-    {
-    public:
-        server(cppcms::service &srv,
-               const std::shared_ptr<bunsan::pm::cache> &cache);
+namespace bacs {
+namespace statement_provider {
+namespace web {
 
-    private:
-        void get_index(std::string referrer, std::string request);
-        void get(std::string referrer, std::string request, std::string path);
+class server : public cppcms::application {
+ public:
+  server(cppcms::service &srv, const std::shared_ptr<bunsan::pm::cache> &cache);
 
-        /// \return false if instant return is required (response() was initialized)
-        bool get_(const std::string &referrer,
-                  const std::string &request,
-                  bunsan::pm::cache::entry *cache_entry=nullptr,
-                  boost::filesystem::path *const index=nullptr,
-                  boost::filesystem::path *const data_root=nullptr);
+ private:
+  void get_index(std::string referrer, std::string request);
+  void get(std::string referrer, std::string request, std::string path);
 
-    private:
-        const std::shared_ptr<bunsan::pm::cache> m_cache;
-        const bunsan::web::mime_file m_mime_file;
-    };
-}}}
+  /// \return false if instant return is required (response() was initialized)
+  bool get_(const std::string &referrer, const std::string &request,
+            bunsan::pm::cache::entry *cache_entry = nullptr,
+            boost::filesystem::path *index = nullptr,
+            boost::filesystem::path *data_root = nullptr);
+
+ private:
+  const std::shared_ptr<bunsan::pm::cache> m_cache;
+  const bunsan::web::mime_file m_mime_file;
+};
+
+}  // namespace web
+}  // namespace statement_provider
+}  // namespace bacs
