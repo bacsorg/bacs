@@ -3,13 +3,21 @@
 #include <bacs/archive/web/content/form/base.hpp>
 #include <bacs/archive/web/content/form/widgets/problem/id.hpp>
 
-namespace bacs{namespace archive{namespace web{namespace content{namespace form
-{
-    struct rename: base
-    {
-        rename();
+namespace bacs {
+namespace archive {
+namespace web {
+namespace content {
+namespace form {
 
-        widgets::problem::id current, future;
-        cppcms::widgets::submit submit;
-    };
-}}}}}
+struct rename : base {
+  rename();
+
+  widgets::problem::id current, future;
+  cppcms::widgets::submit submit;
+};
+
+}  // namespace form
+}  // namespace content
+}  // namespace web
+}  // namespace archive
+}  // namespace bacs

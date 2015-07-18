@@ -9,37 +9,45 @@
 #include <vector>
 #include <unordered_set>
 
-namespace bacs{namespace archive{namespace web{namespace content{namespace form{namespace widgets{namespace problem
-{
-    archive::problem::IdSet id_set::value()
-    {
-        archive::problem::IdSet set;
-        archive::problem::id value_(text::value());
-        boost::algorithm::trim(value_);
-        std::unordered_set<std::string> uset;
-        if (!value_.empty())
-            boost::algorithm::split(uset, value_,
-                                    boost::algorithm::is_space(),
-                                    boost::algorithm::token_compress_on);
-        *set.mutable_id() = {uset.begin(), uset.end()};
-        return set;
-    }
+namespace bacs {
+namespace archive {
+namespace web {
+namespace content {
+namespace form {
+namespace widgets {
+namespace problem {
 
-    void id_set::value(const archive::problem::IdSet &id_set_)
-    {
-        std::vector<archive::problem::id> ids(id_set_.id().begin(), id_set_.id().end());
-        std::sort(ids.begin(), ids.end());
-        text::value(boost::algorithm::join(ids, " "));
-    }
+archive::problem::IdSet id_set::value() {
+  archive::problem::IdSet set;
+  archive::problem::id value_(text::value());
+  boost::algorithm::trim(value_);
+  std::unordered_set<std::string> uset;
+  if (!value_.empty())
+    boost::algorithm::split(uset, value_, boost::algorithm::is_space(),
+                            boost::algorithm::token_compress_on);
+  *set.mutable_id() = {uset.begin(), uset.end()};
+  return set;
+}
 
-    bool id_set::validate()
-    {
-        if (!text::validate())
-            return false;
-        const archive::problem::IdSet set = value();
-        valid(!set.id().empty() && std::all_of(set.id().begin(),
-                                               set.id().end(),
-                                               archive::problem::is_allowed_id));
-        return valid();
-    }
-}}}}}}}
+void id_set::value(const archive::problem::IdSet &id_set_) {
+  std::vector<archive::problem::id> ids(id_set_.id().begin(),
+                                        id_set_.id().end());
+  std::sort(ids.begin(), ids.end());
+  text::value(boost::algorithm::join(ids, " "));
+}
+
+bool id_set::validate() {
+  if (!text::validate()) return false;
+  const archive::problem::IdSet set = value();
+  valid(!set.id().empty() && std::all_of(set.id().begin(), set.id().end(),
+                                         archive::problem::is_allowed_id));
+  return valid();
+}
+
+}  // namespace problem
+}  // namespace widgets
+}  // namespace form
+}  // namespace content
+}  // namespace web
+}  // namespace archive
+}  // namespace bacs

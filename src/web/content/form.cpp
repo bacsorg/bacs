@@ -1,16 +1,24 @@
 #include <bacs/archive/web/content/form.hpp>
 
-namespace bacs{namespace archive{namespace web{namespace content
-{
-    status::status(): basic_form(cppcms::locale::translate("Get status")) {}
+namespace bacs {
+namespace archive {
+namespace web {
+namespace content {
 
-    clear_flags::clear_flags(): basic_form(cppcms::locale::translate("Clear flags")) {}
+status::status() : basic_form(cppcms::locale::translate("Get status")) {}
 
-    ignore::ignore(): basic_form(cppcms::locale::translate("Ignore")) {}
+clear_flags::clear_flags()
+    : basic_form(cppcms::locale::translate("Clear flags")) {}
 
-    info::info(): basic_form(cppcms::locale::translate("Get info")) {}
+ignore::ignore() : basic_form(cppcms::locale::translate("Ignore")) {}
 
-    hash::hash(): basic_form(cppcms::locale::translate("Get hash")) {}
+info::info() : basic_form(cppcms::locale::translate("Get info")) {}
 
-    repack::repack(): basic_form(cppcms::locale::translate("Repack")) {}
-}}}}
+hash::hash() : basic_form(cppcms::locale::translate("Get hash")) {}
+
+repack::repack() : basic_form(cppcms::locale::translate("Repack")) {}
+
+}  // namespace content
+}  // namespace web
+}  // namespace archive
+}  // namespace bacs

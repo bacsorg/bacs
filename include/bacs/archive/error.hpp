@@ -4,33 +4,33 @@
 
 #include <bunsan/error.hpp>
 
-namespace bacs{namespace archive
-{
-    struct error: virtual bunsan::error {};
+namespace bacs {
+namespace archive {
 
-    struct protobuf_error: virtual error {};
-    struct protobuf_parsing_error: virtual protobuf_error {};
-    struct protobuf_serialization_error: virtual protobuf_error {};
+struct error : virtual bunsan::error {};
 
-    struct problem_error: virtual error
-    {
-        typedef boost::error_info<struct tag_problem_id, problem::id> problem_id;
-    };
+struct protobuf_error : virtual error {};
+struct protobuf_parsing_error : virtual protobuf_error {};
+struct protobuf_serialization_error : virtual protobuf_error {};
 
-    struct format_error: virtual error {};
+struct problem_error : virtual error {
+  using problem_id = boost::error_info<struct tag_problem_id, problem::id>;
+};
 
-    struct unknown_archiver_error: virtual error
-    {
-        typedef boost::error_info<struct tag_archiver_type, std::string> archiver_type;
-    };
+struct format_error : virtual error {};
 
-    namespace problem
-    {
-        struct error: virtual archive::error {};
+struct unknown_archiver_error : virtual error {
+  using archiver_type =
+      boost::error_info<struct tag_archiver_type, std::string>;
+};
 
-        struct invalid_flag_error: virtual error
-        {
-            typedef boost::error_info<struct tag_flag, problem::flag> flag;
-        };
-    }
-}}
+namespace problem {
+struct error : virtual archive::error {};
+
+struct invalid_flag_error : virtual error {
+  using flag = boost::error_info<struct tag_flag, problem::flag>;
+};
+}  // namespace problem
+
+}  // namespace archive
+}  // namespace bacs

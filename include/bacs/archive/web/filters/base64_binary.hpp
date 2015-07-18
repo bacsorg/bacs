@@ -6,32 +6,33 @@
 
 #include <cppcms/filters.h>
 
-namespace cppcms{namespace filters
-{
-    class base64_binary
-    {
-    public:
-        BUNSAN_FORWARD_EXPLICIT_CONSTRUCTOR(base64_binary, m_binary)
+namespace cppcms {
+namespace filters {
+class base64_binary {
+ public:
+  BUNSAN_FORWARD_EXPLICIT_CONSTRUCTOR(base64_binary, m_binary)
 
-        explicit base64_binary(const std::string &str):
-            m_binary(reinterpret_cast<const unsigned char *>(str.data()),
-                     reinterpret_cast<const unsigned char *>(str.data()) + str.size()) {}
+  explicit base64_binary(const std::string &str)
+      : m_binary(
+            reinterpret_cast<const unsigned char *>(str.data()),
+            reinterpret_cast<const unsigned char *>(str.data()) + str.size()) {}
 
-        base64_binary()=default;
-        base64_binary(const base64_binary &)=default;
-        base64_binary &operator=(const base64_binary &)=default;
-        base64_binary(base64_binary &&)=default;
-        base64_binary &operator=(base64_binary &&)=default;
+  base64_binary() = default;
+  base64_binary(const base64_binary &) = default;
+  base64_binary &operator=(const base64_binary &) = default;
+  base64_binary(base64_binary &&) = default;
+  base64_binary &operator=(base64_binary &&) = default;
 
-        void operator()(std::ostream &out) const;
+  void operator()(std::ostream &out) const;
 
-    private:
-        bacs::archive::problem::binary m_binary;
-    };
+ private:
+  bacs::archive::problem::binary m_binary;
+};
 
-    inline std::ostream &operator<<(std::ostream &out, const base64_binary &obj)
-    {
-        obj(out);
-        return out;
-    }
-}}
+inline std::ostream &operator<<(std::ostream &out, const base64_binary &obj) {
+  obj(out);
+  return out;
+}
+
+}  // namespace filters
+}  // namespace cppcms

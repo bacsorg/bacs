@@ -5,31 +5,38 @@
 
 #include <cppcms/form.h>
 
-namespace bacs{namespace archive{namespace web{namespace content{namespace form{namespace widgets{namespace problem
-{
-    class optional_id_set: public cppcms::form
-    {
-    public:
-        enum flag_type_enum
-        {
-            flag_enables,
-            flag_disables
-        };
+namespace bacs {
+namespace archive {
+namespace web {
+namespace content {
+namespace form {
+namespace widgets {
+namespace problem {
 
-        optional_id_set(const std::string &flag_,
-                        const flag_type_enum flag_type_);
+class optional_id_set : public cppcms::form {
+ public:
+  enum flag_type_enum { flag_enables, flag_disables };
 
-        boost::optional<archive::problem::IdSet> value();
-        void value(const boost::optional<archive::problem::IdSet> &id_set_);
+  optional_id_set(const std::string &flag_, const flag_type_enum flag_type_);
 
-        bool validate() override;
+  boost::optional<archive::problem::IdSet> value();
+  void value(const boost::optional<archive::problem::IdSet> &id_set_);
 
-        void render(cppcms::form_context &context) override;
+  bool validate() override;
 
-    private:
-        flag_type_enum flag_type;
+  void render(cppcms::form_context &context) override;
 
-        cppcms::widgets::checkbox flag;
-        widgets::problem::id_set ids;
-    };
-}}}}}}}
+ private:
+  flag_type_enum flag_type;
+
+  cppcms::widgets::checkbox flag;
+  widgets::problem::id_set ids;
+};
+
+}  // namespace problem
+}  // namespace widgets
+}  // namespace form
+}  // namespace content
+}  // namespace web
+}  // namespace archive
+}  // namespace bacs

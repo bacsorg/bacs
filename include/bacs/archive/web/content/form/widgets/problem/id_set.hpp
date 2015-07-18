@@ -4,14 +4,26 @@
 
 #include <cppcms/form.h>
 
-namespace bacs{namespace archive{namespace web{namespace content{namespace form{namespace widgets{namespace problem
-{
-    class id_set: public cppcms::widgets::text
-    {
-    public:
-        archive::problem::IdSet value();
-        void value(const archive::problem::IdSet &id_set_);
+namespace bacs {
+namespace archive {
+namespace web {
+namespace content {
+namespace form {
+namespace widgets {
+namespace problem {
 
-        bool validate() override;
-    };
-}}}}}}}
+class id_set : public cppcms::widgets::text {
+ public:
+  archive::problem::IdSet value();
+  void value(const archive::problem::IdSet &id_set_);
+
+  bool validate() override;
+};
+
+}  // namespace problem
+}  // namespace widgets
+}  // namespace form
+}  // namespace content
+}  // namespace web
+}  // namespace archive
+}  // namespace bacs

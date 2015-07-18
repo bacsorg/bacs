@@ -3,14 +3,21 @@
 #include <bacs/archive/web/content/form/base.hpp>
 #include <bacs/archive/web/content/form/widgets/problem/optional_id_set.hpp>
 
-namespace bacs{namespace archive{namespace web{namespace content{namespace form
-{
-    struct available: base
-    {
-        available();
+namespace bacs {
+namespace archive {
+namespace web {
+namespace content {
+namespace form {
 
-        widgets::problem::optional_id_set ids;
-        cppcms::widgets::submit submit;
-    };
-}}}}}
+struct available : base {
+  available();
 
+  widgets::problem::optional_id_set ids;
+  cppcms::widgets::submit submit;
+};
+
+}  // namespace form
+}  // namespace content
+}  // namespace web
+}  // namespace archive
+}  // namespace bacs

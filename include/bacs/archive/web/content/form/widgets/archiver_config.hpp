@@ -4,15 +4,25 @@
 
 #include <cppcms/form.h>
 
-namespace bacs{namespace archive{namespace web{namespace content{namespace form{namespace widgets
-{
-    struct archiver_config: cppcms::form
-    {
-        archiver_config();
+namespace bacs {
+namespace archive {
+namespace web {
+namespace content {
+namespace form {
+namespace widgets {
 
-        archiver_options value();
+struct archiver_config : cppcms::form {
+  archiver_config();
 
-        cppcms::widgets::text type;
-        cppcms::widgets::text format;
-    };
-}}}}}}
+  archiver_options value();
+
+  cppcms::widgets::text type;
+  cppcms::widgets::text format;
+};
+
+}  // namespace widgets
+}  // namespace form
+}  // namespace content
+}  // namespace web
+}  // namespace archive
+}  // namespace bacs

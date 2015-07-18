@@ -4,20 +4,24 @@
 
 #include <cppcms/form.h>
 
-namespace bacs{namespace archive{namespace web{namespace content{namespace form
-{
-    struct base: cppcms::form
-    {
-        BUNSAN_INCLASS_STREAM_ENUM_CLASS(response_type,
-        (
-            html,
-            protobuf
-        ))
+namespace bacs {
+namespace archive {
+namespace web {
+namespace content {
+namespace form {
 
-        base();
+struct base : cppcms::form {
+  BUNSAN_INCLASS_STREAM_ENUM_CLASS(response_type, (html, protobuf))
 
-        response_type response();
+  base();
 
-        cppcms::widgets::select response_;
-    };
-}}}}}
+  response_type response();
+
+  cppcms::widgets::select response_;
+};
+
+}  // namespace form
+}  // namespace content
+}  // namespace web
+}  // namespace archive
+}  // namespace bacs

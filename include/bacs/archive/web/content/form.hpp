@@ -22,62 +22,61 @@
 
 #include <bunsan/forward_constructor.hpp>
 
-namespace bacs{namespace archive{namespace web{namespace content
-{
-    template <typename Form, typename Result>
-    struct basic_form: base_form
-    {
-        BUNSAN_FORWARD_EXPLICIT_CONSTRUCTOR(basic_form, form)
+namespace bacs {
+namespace archive {
+namespace web {
+namespace content {
 
-        Form form;
-        boost::optional<Result> result;
-    };
+template <typename Form, typename Result>
+struct basic_form : base_form {
+  BUNSAN_FORWARD_EXPLICIT_CONSTRUCTOR(basic_form, form)
 
-    template <typename Form>
-    struct basic_form<Form, void>: base_form
-    {
-        BUNSAN_FORWARD_EXPLICIT_CONSTRUCTOR(basic_form, form)
+  Form form;
+  boost::optional<Result> result;
+};
 
-        Form form;
-    };
+template <typename Form>
+struct basic_form<Form, void> : base_form {
+  BUNSAN_FORWARD_EXPLICIT_CONSTRUCTOR(basic_form, form)
 
-    using insert = basic_form<form::insert, problem::ImportMap>;
-    using extract = basic_form<form::extract, void>;
-    using rename = basic_form<form::rename, problem::ImportInfo>;
-    using existing = basic_form<form::existing, problem::IdSet>;
-    using available = basic_form<form::available, problem::IdSet>;
+  Form form;
+};
 
-    struct status: basic_form<form::list_query, problem::ImportMap>
-    {
-        status();
-    };
+using insert = basic_form<form::insert, problem::ImportMap>;
+using extract = basic_form<form::extract, void>;
+using rename = basic_form<form::rename, problem::ImportInfo>;
+using existing = basic_form<form::existing, problem::IdSet>;
+using available = basic_form<form::available, problem::IdSet>;
 
-    using with_flag = basic_form<form::with_flag, problem::IdSet>;
-    using set_flags = basic_form<form::set_flags, problem::IdSet>;
-    using unset_flags = basic_form<form::unset_flags, problem::IdSet>;
+struct status : basic_form<form::list_query, problem::ImportMap> {
+  status();
+};
 
-    struct clear_flags: basic_form<form::list_query, problem::IdSet>
-    {
-        clear_flags();
-    };
+using with_flag = basic_form<form::with_flag, problem::IdSet>;
+using set_flags = basic_form<form::set_flags, problem::IdSet>;
+using unset_flags = basic_form<form::unset_flags, problem::IdSet>;
 
-    struct ignore: basic_form<form::list_query, problem::IdSet>
-    {
-        ignore();
-    };
+struct clear_flags : basic_form<form::list_query, problem::IdSet> {
+  clear_flags();
+};
 
-    struct info: basic_form<form::list_query, problem::InfoMap>
-    {
-        info();
-    };
+struct ignore : basic_form<form::list_query, problem::IdSet> {
+  ignore();
+};
 
-    struct hash: basic_form<form::list_query, problem::HashMap>
-    {
-        hash();
-    };
+struct info : basic_form<form::list_query, problem::InfoMap> {
+  info();
+};
 
-    struct repack: basic_form<form::list_query, problem::ImportMap>
-    {
-        repack();
-    };
-}}}}
+struct hash : basic_form<form::list_query, problem::HashMap> {
+  hash();
+};
+
+struct repack : basic_form<form::list_query, problem::ImportMap> {
+  repack();
+};
+
+}  // namespace content
+}  // namespace web
+}  // namespace archive
+}  // namespace bacs

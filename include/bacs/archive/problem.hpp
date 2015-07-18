@@ -11,17 +11,22 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace bacs{namespace archive{namespace problem
-{
-    using bacs::problem::id;
-    using bacs::problem::is_allowed_id;
-    using bacs::problem::validate_id;
-    using bacs::problem::binary;
-    using bacs::problem::hash;
-    using flag = std::string;
+namespace bacs {
+namespace archive {
+namespace problem {
 
-    bool is_allowed_flag(const flag &flag_);
+using bacs::problem::id;
+using bacs::problem::is_allowed_id;
+using bacs::problem::validate_id;
+using bacs::problem::binary;
+using bacs::problem::hash;
+using flag = std::string;
 
-    /// \throws invalid_flag_error if !is_allowed_flag(flag_)
-    void validate_flag(const flag &flag_);
-}}}
+bool is_allowed_flag(const flag &flag_);
+
+/// \throws invalid_flag_error if !is_allowed_flag(flag_)
+void validate_flag(const flag &flag_);
+
+}  // namespace problem
+}  // namespace archive
+}  // namespace bacs
