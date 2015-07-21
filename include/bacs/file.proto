@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "proto3";
 
 package bacs.file;
 
@@ -9,18 +9,26 @@ message Range {
   };
 
   /// Position from which offset will be calculated.
-  required Whence whence = 1;
+  Whence whence = 1;
 
   /*!
    * Negative or positive offset
    * from position specified by whence field.
    */
-  required int64 offset = 2;
+  int64 offset = 2;
 
   /*!
    * Size of chunk will be transmitted.
    *
    * \note If EOF reached size of chunk may be smaller.
    */
-  required uint64 size = 3;
+  uint64 size = 3;
+}
+
+/// Filesystem path.
+message Path {
+  /// If specified, path is absolute, otherwise -- relative.
+  string root = 1;
+  /// Path elements, will be concatenated using OS-specific delimiter.
+  repeated string element = 2;
 }

@@ -10,21 +10,24 @@ else()
     find_package(BunsanCMake CONFIG REQUIRED)
 endif()
 
-bunsan_find_bunsan_package(bunsan_common bunsan_common)
-
 bunsan_add_protobuf_cxx_library(
-    TARGET ${PROJECT_NAME}
+    TARGET ${PROJECT_NAME}_pb
     PROTOS
         bacs/callback.proto
         bacs/file.proto
         bacs/process.proto
         bacs/utility.proto
-    LIBRARIES ${bunsan_common_LIBRARIES}
-    INCLUDE_DIRECTORIES ${bunsan_common_INCLUDE_DIRS}
     INSTALL
 )
 
+bunsan_add_library(${PROJECT_NAME}
+    src/file.cpp
+)
+bunsan_use_target(${PROJECT_NAME} ${PROJECT_NAME}_pb)
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_common bunsan_common)
+
 bunsan_install_headers()
+bunsan_install_targets(${PROJECT_NAME})
 bunsan_install_project()
 
 bunsan_include_tests()
