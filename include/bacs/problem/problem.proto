@@ -40,7 +40,7 @@ message Statement {
 
 message Profile {
   optional string description = 1;
-  optional google.protobuf.Any extension = 2;
+  optional google.protobuf.Any extension = 1000;
 }
 
 message Utility {
