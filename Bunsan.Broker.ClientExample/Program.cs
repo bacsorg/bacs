@@ -36,7 +36,7 @@ namespace Bunsan.Broker.ClientExample
             }
             catch (OptionException e)
             {
-                Console.WriteLine("Argument error: ", e.Message);
+                Console.WriteLine("Argument error: {0}", e.Message);
             }
             var listener = new ClientListener(connection_parameters);
             var sender = new ClientSender(connection_parameters);
