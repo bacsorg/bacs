@@ -36,7 +36,6 @@ message Result {
     EXECUTION_ERROR = 400;
     EXECUTION_TIMEOUT = 401;
   }
-
   Status status = 1;
   string reason = 2;
   // result if status == OK, debug output otherwise
