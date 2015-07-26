@@ -13,7 +13,6 @@ endif()
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
     PROTOS
-        bacs/callback.proto
         bacs/file.proto
         bacs/process.proto
         bacs/utility.proto
