@@ -1,10 +1,7 @@
-﻿using Bunsan.Broker;
-using NDesk.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
+using NDesk.Options;
 
 namespace Bunsan.Broker.ClientExample
 {
@@ -29,7 +26,7 @@ namespace Bunsan.Broker.ClientExample
                 {"resource=", "", resource => constraints.Resource[0] = resource},
                 {"worker=", "", worker => task.Worker = worker},
                 {"package=", "", package => task.Package = package},
-                {"data=", "", data => task.Data = System.Text.Encoding.UTF8.GetBytes(data)},
+                {"data=", "", data => task.Data = Encoding.UTF8.GetBytes(data)},
                 {"interval=", "", interval_str => interval = int.Parse(interval_str)},
                 {"number=", "", number => number_of_messages = int.Parse(number)},
             };
@@ -60,7 +57,7 @@ namespace Bunsan.Broker.ClientExample
             for (int id = 0; id < number_of_messages; ++id)
             {
                 sender.Send(constraints, id.ToString(), task);
-                System.Threading.Thread.Sleep(interval);
+                Thread.Sleep(interval);
             }
             listener.Close();
             sender.Close();

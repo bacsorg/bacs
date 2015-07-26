@@ -1,16 +1,11 @@
-﻿using Bunsan.Broker.Rabbit;
+﻿using System;
+using System.IO;
+using System.Text;
+using System.Threading;
+using Bunsan.Broker.Rabbit;
 using ProtoBuf;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using RabbitMQ.Client.Exceptions;
-using RabbitMQ.Client.MessagePatterns;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Bunsan.Broker
 {
@@ -146,7 +141,7 @@ namespace Bunsan.Broker
                 return new Listener(channel, (message) =>
                 {
                     error_callback(message.BasicProperties.CorrelationId,
-                                   System.Text.Encoding.UTF8.GetString(message.Body));
+                                   Encoding.UTF8.GetString(message.Body));
                     // commit phase
                     channel.BasicAck(message.DeliveryTag, false);
                 }, error_callback, reconnect_callback);
