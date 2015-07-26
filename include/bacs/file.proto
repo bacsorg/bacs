@@ -7,16 +7,13 @@ message Range {
     BEGIN = 0;
     END = 1;
   };
-
   /// Position from which offset will be calculated.
   Whence whence = 1;
-
   /*!
    * Negative or positive offset
    * from position specified by whence field.
    */
   int64 offset = 2;
-
   /*!
    * Size of chunk will be transmitted.
    *
