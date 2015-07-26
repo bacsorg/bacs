@@ -10,12 +10,12 @@ namespace Bunsan.Broker.ClientExample
         static int Main(string[] args)
         {
             var connection_parameters = new ConnectionParameters();
-            var constraints = new Constraints() { Resource = new string[] { "resource" } };
+            var constraints = new Constraints { Resource = new[] { "resource" } };
             var task = new Task();
             int interval = 5000;
             int number_of_messages = 10;
             Action ensure_credentials = () => { if (connection_parameters.Credentials == null) connection_parameters.Credentials = new Credentials(); };
-            var options = new OptionSet()
+            var options = new OptionSet
             {
                 {"identifier=", "", identifier => connection_parameters.Identifier = identifier},
                 {"host=", "", host => connection_parameters.Host = host},

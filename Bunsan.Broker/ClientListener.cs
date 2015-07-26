@@ -71,12 +71,12 @@ namespace Bunsan.Broker
                     BasicProperties = properties,
                     Body = body,
                 };
-                ThreadPool.QueueUserWorkItem(new WaitCallback(call_message), message);
+                ThreadPool.QueueUserWorkItem(call_message, message);
             }
 
             public override void HandleModelShutdown(object model, ShutdownEventArgs reason)
             {
-                ThreadPool.QueueUserWorkItem(new WaitCallback(call_reconnect));
+                ThreadPool.QueueUserWorkItem(call_reconnect);
             }
         };
 
@@ -100,7 +100,7 @@ namespace Bunsan.Broker
 
             public Listener MakeStatusListener(IModel channel)
             {
-                return new Listener(channel, (message) =>
+                return new Listener(channel, message =>
                 {
                     // we don't care about error handling of Status messages
                     using (var stream = new MemoryStream(message.Body))
@@ -114,11 +114,11 @@ namespace Bunsan.Broker
 
             public Listener MakeResultListener(IModel channel)
             {
-                return new Listener(channel, (message) =>
+                return new Listener(channel, message =>
                 {
                     using (var stream = new MemoryStream(message.Body))
                     {
-                        RabbitResult result = null;
+                        RabbitResult result;
                         try
                         {
                             result = Serializer.Deserialize<RabbitResult>(stream);
@@ -138,7 +138,7 @@ namespace Bunsan.Broker
 
             public Listener MakeErrorListener(IModel channel)
             {
-                return new Listener(channel, (message) =>
+                return new Listener(channel, message =>
                 {
                     error_callback(message.BasicProperties.CorrelationId,
                                    Encoding.UTF8.GetString(message.Body));

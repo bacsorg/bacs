@@ -12,7 +12,7 @@ namespace Bunsan.Broker
 
         public void Send(Constraints constraints, string id, Task task)
         {
-            RabbitTask rabbit_task = new RabbitTask()
+            var rabbit_task = new RabbitTask
             {
                 Identifier = id,
                 Task = task,
@@ -20,7 +20,7 @@ namespace Bunsan.Broker
                 ResultQueue = ResultQueue,
                 StatusQueue = StatusQueue,
             };
-            byte[] data = null;
+            byte[] data;
             using (var stream = new MemoryStream())
             {
                 Serializer.Serialize(stream, rabbit_task);
