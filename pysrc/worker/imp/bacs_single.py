@@ -36,11 +36,11 @@ class SolutionRunner(object):
                 )
             else:
                 command, data = tuple(tokens)
-                data = base64.decode(data)
-                if command == 'status':
+                data = base64.decodebytes(data)
+                if command == b'status':
                     status.ParseFromString(data)
-                    self._status_sender.send_proto(self._status)
-                elif command == 'result':
+                    self._status_sender.send_proto(status)
+                elif command == b'result':
                     result.ParseFromString(data)
                 else:
                     self._logger.warning('Invalid command: %s', command)
