@@ -22,6 +22,7 @@ class SolutionRunner(object):
 
     def write_data(self, stdin):
         stdin.write(self._data)
+        stdin.close()
 
     def read_data(self, stdout):
         status = protocol_pb2.Status()
