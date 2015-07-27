@@ -21,7 +21,7 @@ namespace Bunsan.Broker
         UNKNOWN_WORKER = 201,
         [ProtoEnum]
         INCOMPATIBLE_PACKAGE = 202,
-        
+
         // package errors
         [ProtoEnum]
         PACKAGE_ERROR = 300,
@@ -46,6 +46,7 @@ namespace Bunsan.Broker
         [ProtoMember(2, IsRequired = false)]
         public string Reason { get; set; }
 
+        // result if status == OK, debug output otherwise
         [ProtoMember(3, IsRequired = false)]
         public byte[] Data { get; set; }
     }
