@@ -46,8 +46,11 @@ namespace Bunsan.Broker
         [ProtoMember(2, IsRequired = false)]
         public string Reason { get; set; }
 
-        // result if status == OK, debug output otherwise
+        // if status == OK
         [ProtoMember(3, IsRequired = false)]
         public byte[] Data { get; set; }
+
+        [ProtoMember(4, IsRequired = false)]
+        public byte[] Log { get; set; }
     }
 }
