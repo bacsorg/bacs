@@ -38,6 +38,6 @@ message Result {
   }
   Status status = 1;
   string reason = 2;
-  // result if status == OK, debug output otherwise
-  bytes data = 3;
+  bytes data = 3;  // if status == OK
+  bytes log = 4;
 }

@@ -71,9 +71,9 @@ class Worker(object):
             if ret != 0:
                 result = protocol_pb2.Result()
                 result.status = protocol_pb2.Result.EXECUTION_ERROR
-                result.data = log_future.result()
                 status_sender.send('FAIL', code=1)
             else:
                 result = result_future.result()
                 status_sender.send('DONE')
+            result.log = log_future.result()
             return result
