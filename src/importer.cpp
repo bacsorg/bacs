@@ -52,8 +52,7 @@ class universal_importer : public importer {
     try {
       const std::string type = get_problem_type(options_.problem_dir);
       const Problem problem = get_implementation(type)->convert(options_);
-      BOOST_ASSERT(problem.info().system().has_problem_type());
-      BOOST_ASSERT(problem.info().system().problem_type() == type);
+      BOOST_ASSERT(problem.system().problem_type() == type);
       return problem;
     } catch (importer_convert_error &) {
       throw;

@@ -22,14 +22,14 @@ struct options {
     ar & BOOST_SERIALIZATION_NVP(destination);
     ar & BOOST_SERIALIZATION_NVP(root_package);
     ar & BOOST_SERIALIZATION_NVP(id);
-    ar & BOOST_SERIALIZATION_NVP(hash);
+    ar & BOOST_SERIALIZATION_NVP(version);
   }
 
   boost::filesystem::path problem_dir;
   boost::filesystem::path destination;
   bunsan::pm::entry root_package;
   problem::id id;
-  problem::hash hash;
+  problem::version version;
 };
 }  // namespace importer_detail
 

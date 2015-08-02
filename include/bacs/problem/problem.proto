@@ -1,50 +1,51 @@
-syntax = "proto2";
+syntax = "proto3";
 
 package bacs.problem;
 
 import "google/protobuf/any.proto";
 
 message Problem {
-  required Info info = 1;
-  required Statement statement = 2;
-  repeated Profile profile = 3;
-  map<string, Utility> utility = 4;
-  optional google.protobuf.Any extension = 1000;
+  System system = 1;
+  Info info = 2;
+  Statement statement = 3;
+  repeated Profile profile = 4;
+  map<string, Utility> utility = 5;
+  google.protobuf.Any extension = 1000;
+}
+
+message System {
+  string problem_type = 1;
+  bytes version = 2;
+  string package = 3;
 }
 
 message Info {
   message Name {
-    required string lang = 1;
-    required string value = 2;
-  }
-  message System {
-    required string problem_type = 1;
-    required bytes hash = 2;
-    required string package = 3;
+    string lang = 1;
+    string value = 2;
   }
   repeated Name name = 1;
   repeated string author = 2;
-  optional string source = 3;
+  string source = 3;
   repeated string maintainer = 4;
-  required System system = 5;
 }
 
 message Statement {
   message Version {
-    required string lang = 1;
-    required string format = 2;
-    required string package = 3;
+    string lang = 1;
+    string format = 2;
+    string package = 3;
   }
   repeated Version version = 1;
 }
 
 message Profile {
-  optional string description = 1;
-  optional google.protobuf.Any extension = 1000;
+  string description = 1;
+  google.protobuf.Any extension = 1000;
 }
 
 message Utility {
-  required string builder_name = 1;
+  string builder_name = 1;
   repeated Utility nested = 100;
-  optional google.protobuf.Any extension = 1000;
+  google.protobuf.Any extension = 1000;
 }

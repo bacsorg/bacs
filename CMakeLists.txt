@@ -15,6 +15,7 @@ bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
     PROTOS
         bacs/problem/problem.proto
+        bacs/problem/result.proto
     LIBRARIES ${bunsan_bacs_common_LIBRARIES}
     INCLUDE_DIRECTORIES ${bunsan_bacs_common_INCLUDE_DIRS}
     INSTALL
