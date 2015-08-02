@@ -28,6 +28,7 @@ bunsan_add_library(${PROJECT_NAME}
     src/importer.cpp
     src/statement.cpp
     src/resource/parse.cpp
+    src/system_verifier.cpp
 
     src/utilities/none.cpp
     src/utilities/single.cpp
@@ -37,6 +38,7 @@ bunsan_add_library(${PROJECT_NAME}
     src/statement_versions/pdflatex.cpp
 )
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_pm bunsan_pm)
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_protobuf bunsan_protobuf)
 bunsan_use_target(${PROJECT_NAME} ${PROJECT_NAME}_pb)
 
 bunsan_install_headers()
