@@ -21,12 +21,13 @@ statement::version_ptr statement::version::instance(
                   config_location.parent_path(), config);
 }
 
-statement::version::version(const std::string &lang_,
+statement::version::version(const std::string &language_,
                             const std::string &format_)
-    : m_lang(lang_), m_format(format_) {
-  if (!bunsan::pm::entry::is_allowed_subpath(m_lang))
-    BOOST_THROW_EXCEPTION(invalid_statement_lang_error()
-                          << invalid_statement_lang_error::lang(m_lang));
+    : m_language(language_), m_format(format_) {
+  if (!bunsan::pm::entry::is_allowed_subpath(m_language))
+    BOOST_THROW_EXCEPTION(
+        invalid_statement_language_error()
+        << invalid_statement_language_error::language(m_language));
   if (!bunsan::pm::entry::is_allowed_subpath(m_format))
     BOOST_THROW_EXCEPTION(invalid_statement_format_error()
                           << invalid_statement_format_error::format(m_format));
@@ -35,17 +36,17 @@ statement::version::version(const std::string &lang_,
 
 statement::version::~version() {}
 
-std::string statement::version::lang() const { return m_lang; }
+std::string statement::version::language() const { return m_language; }
 
 std::string statement::version::format() const { return m_format; }
 
 bunsan::pm::entry statement::version::subpackage() const {
-  return bunsan::pm::entry(lang()) / format();
+  return bunsan::pm::entry(language()) / format();
 }
 
 Statement::Version statement::version::info() const {
   Statement::Version v;
-  v.set_lang(lang());
+  v.set_language(language());
   v.set_format(format());
   v.set_package(subpackage().name());
   return v;

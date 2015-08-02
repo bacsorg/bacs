@@ -24,9 +24,9 @@ struct statement_version_make_package_error
   using resources_package =
       boost::error_info<struct tag_resources_package, bunsan::pm::entry>;
 };
-struct invalid_statement_lang_error : virtual invalid_id_error,
-                                      virtual statement_error {
-  using lang = boost::error_info<struct tag_lang, std::string>;
+struct invalid_statement_language_error : virtual invalid_id_error,
+                                          virtual statement_error {
+  using language = boost::error_info<struct tag_language, std::string>;
 };
 struct invalid_statement_format_error : virtual invalid_id_error,
                                         virtual statement_error {
@@ -49,11 +49,11 @@ class statement : public buildable {
       struct {
         template <typename Archive>
         void serialize(Archive &ar, const unsigned int) {
-          ar & BOOST_SERIALIZATION_NVP(lang);
+          ar & BOOST_SERIALIZATION_NVP(language);
           ar & BOOST_SERIALIZATION_NVP(format);
         }
 
-        std::string lang;
+        std::string language;
         std::string format;
       } version;
 
@@ -90,7 +90,7 @@ class statement : public buildable {
     static version_ptr instance(const boost::filesystem::path &config_location);
 
    public:
-    version(const std::string &lang_, const std::string &format_);
+    version(const std::string &language_, const std::string &format_);
 
     virtual ~version();
 
@@ -103,7 +103,7 @@ class statement : public buildable {
     virtual Statement::Version info() const;
 
    public:
-    virtual std::string lang() const;
+    virtual std::string language() const;
     virtual std::string format() const;
 
     /// relative unique entry name for this statement version
@@ -114,7 +114,7 @@ class statement : public buildable {
     static const boost::filesystem::path manifest_path, data_path;
 
    private:
-    std::string m_lang;
+    std::string m_language;
     std::string m_format;
   };
   BUNSAN_FACTORY_TYPES(version)

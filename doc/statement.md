@@ -37,7 +37,7 @@ Only "en_html.ini" and "en_pdf.ini" define statement versions.
 Configuration file defines the following sections:
 
 1. `[info]` defines the following options:
-..a. *lang* defines statement version [Language](#language)
+..a. *language* defines statement version [Language](#language)
 2. `[build]` section is described in particular builder specifications.
 
 See [bacs::problem::statement_versions](../src/statement_versions).

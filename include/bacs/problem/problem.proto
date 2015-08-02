@@ -21,7 +21,7 @@ message System {
 
 message Info {
   message Name {
-    string lang = 1;
+    string language = 1;
     string value = 2;
   }
   repeated Name name = 1;
@@ -32,7 +32,7 @@ message Info {
 
 message Statement {
   message Version {
-    string lang = 1;
+    string language = 1;
     string format = 2;
     string package = 3;
   }

@@ -35,7 +35,7 @@ boost::filesystem::path get_target(const boost::filesystem::path &source) {
 
 pdflatex::pdflatex(const boost::filesystem::path & /*location*/,
                    const boost::property_tree::ptree &config)
-    : version(config.get<std::string>("info.lang"), "pdf"),
+    : version(config.get<std::string>("info.language"), "pdf"),
       m_root(get_root(config.get<std::string>("build.source"))),
       m_source(get_source(config.get<std::string>("build.source"))),
       m_target(get_target(config.get<std::string>("build.source"))) {}
@@ -61,7 +61,7 @@ void pdflatex::make_package(const boost::filesystem::path &destination,
     fout.close();
     boost::filesystem::create_directory(destination / "pkg");
     manifest statement_manifest;
-    statement_manifest.version.lang = lang();
+    statement_manifest.version.language = language();
     statement_manifest.version.format = format();
     statement_manifest.data.index = m_target;
     boost::property_tree::write_ini(

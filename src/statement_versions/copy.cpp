@@ -33,7 +33,7 @@ std::string get_format(const boost::filesystem::path &source) {
 
 copy::copy(const boost::filesystem::path & /*location*/,
            const boost::property_tree::ptree &config)
-    : version(config.get<std::string>("info.lang"),
+    : version(config.get<std::string>("info.language"),
               get_format(config.get<std::string>("build.source"))),
       m_source(config.get<std::string>("build.source")) {}
 
@@ -48,7 +48,7 @@ void copy::make_package(const boost::filesystem::path &destination,
     index.package.self.insert(std::make_pair(".", "pkg"));
     boost::filesystem::create_directory(destination / "pkg");
     manifest statement_manifest;
-    statement_manifest.version.lang = lang();
+    statement_manifest.version.language = language();
     statement_manifest.version.format = format();
     statement_manifest.data.index = m_source;
     boost::property_tree::write_ini(
