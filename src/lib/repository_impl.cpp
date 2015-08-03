@@ -48,7 +48,7 @@ void write_binary(const boost::filesystem::path &path,
   fout.close();
 }
 
-problem::hash compute_hash(const boost::filesystem::path &path) {
+problem::revision compute_hash(const boost::filesystem::path &path) {
   boost::crc_32_type crc;
   bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
   BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin) {
@@ -60,7 +60,7 @@ problem::hash compute_hash(const boost::filesystem::path &path) {
   } BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
   fin.close();
   auto value = crc.checksum();
-  problem::hash hash(sizeof(value));
+  problem::revision hash(sizeof(value));
   for (std::size_t i = 0; i < sizeof(value); ++i, value >>= 8)
     hash[i] = value & 0xFF;
   return hash;
@@ -105,9 +105,9 @@ problem::Info info_problem(bacs::problem::Problem problem) {
 
 /// entry names
 namespace ename {
-const boost::filesystem::path hash = "hash";
-const boost::filesystem::path info = "info";
 const boost::filesystem::path flags = "flags";
+const boost::filesystem::path info = "info";
+const boost::filesystem::path revision = "revision";
 }  // namespace ename
 
 problem::ImportInfo repository::insert(
@@ -122,7 +122,7 @@ problem::ImportInfo repository::insert(
         boost::filesystem::remove(m_location.repository_root / id /
                                   m_problem.data.filename);
         boost::filesystem::remove(m_location.repository_root / id /
-                                  ename::hash);
+                                  ename::revision);
         boost::filesystem::remove(m_location.repository_root / id /
                                   ename::info);
       } else {
@@ -136,10 +136,10 @@ problem::ImportInfo repository::insert(
       BOOST_ASSERT(archiver);
       archiver->pack_contents(
           m_location.repository_root / id / m_problem.data.filename, location);
-      const problem::hash hash = compute_hash(m_location.repository_root / id /
-                                              m_problem.data.filename);
-      write_hash_(id, hash);
-      import_info = repack_(id, hash, location);
+      const problem::revision revision = compute_hash(
+          m_location.repository_root / id / m_problem.data.filename);
+      write_revision_(id, revision);
+      import_info = repack_(id, revision, location);
     } else {
       error = problem_is_locked;
     }
@@ -233,9 +233,9 @@ problem::ImportInfo repository::status(const problem::id &id) {
 
 problem::Status repository::status_(const problem::id &id) {
   problem::Status status;
-  const auto hash = read_hash_(id);
-  status.mutable_hash()->assign(reinterpret_cast<const char *>(hash.data()),
-                                hash.size());
+  const auto revision = read_revision_(id);
+  status.mutable_revision()->assign(
+      reinterpret_cast<const char *>(revision.data()), revision.size());
   *status.mutable_flags() = flags_(id);
   return status;
 }
@@ -369,21 +369,22 @@ bool repository::has_flag(const problem::id &id, const problem::flag &flag) {
                                    ename::flags / flag);
 }
 
-problem::hash repository::hash(const problem::id &id) {
+problem::revision repository::revision(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
     const shared_lock_guard lk(m_lock);
-    if (is_available_(id)) return read_hash_(id);
+    if (is_available_(id)) return read_revision_(id);
   }
-  return problem::hash();
+  return problem::revision();
 }
 
-problem::hash repository::read_hash_(const problem::id &id) {
-  return read_binary(m_location.repository_root / id / ename::hash);
+problem::revision repository::read_revision_(const problem::id &id) {
+  return read_binary(m_location.repository_root / id / ename::revision);
 }
 
-void repository::write_hash_(const problem::id &id, const problem::hash &hash) {
-  write_binary(m_location.repository_root / id / ename::hash, hash);
+void repository::write_revision_(const problem::id &id,
+                                const problem::revision &revision) {
+  write_binary(m_location.repository_root / id / ename::revision, revision);
 }
 
 problem::ImportInfo repository::rename(const problem::id &current,
@@ -437,19 +438,19 @@ problem::ImportInfo repository::repack(const problem::id &id) {
 
 problem::ImportInfo repository::repack_(const problem::id &id) {
   BOOST_ASSERT(exists(id));
-  return repack_(id, read_hash_(id));
+  return repack_(id, read_revision_(id));
 }
 
 problem::ImportInfo repository::repack_(const problem::id &id,
-                                        const problem::hash &hash) {
+                                        const problem::revision &revision) {
   const bunsan::tempfile tmpdir =
       bunsan::tempfile::directory_in_directory(m_location.tmpdir);
   extract_(id, tmpdir.path());
-  return repack_(id, hash, tmpdir.path());
+  return repack_(id, revision, tmpdir.path());
 }
 
 problem::ImportInfo repository::repack_(
-    const problem::id &id, const problem::hash &hash,
+    const problem::id &id, const problem::revision &revision,
     const boost::filesystem::path &problem_location) {
   problem::ImportInfo import_info;
   try {
@@ -459,13 +460,13 @@ problem::ImportInfo repository::repack_(
         m_location.pm_repository_root / m_problem.root_package.location() / id;
     options.root_package = m_problem.root_package / id;
     options.id = id;
-    options.hash = hash;
+    options.revision = revision;
     write_info_(id, info_problem(m_importer.convert(options)));
     m_repository.create_recursively(options.destination, m_problem.strip);
     unset_flag_(id, problem::flags::ignore);
     problem::Status &status = *import_info.mutable_status();
-    status.mutable_hash()->assign(reinterpret_cast<const char *>(hash.data()),
-                                  hash.size());
+    status.mutable_revision()->assign(
+        reinterpret_cast<const char *>(revision.data()), revision.size());
     *status.mutable_flags() = flags_(id);
   } catch (std::exception &e) {
     set_flag_(id, problem::flags::ignore);

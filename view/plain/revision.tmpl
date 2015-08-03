@@ -1,31 +1,31 @@
 <% c++ #include <bacs/archive/web/content/form.hpp> %>
 <% c++ #include <bacs/archive/web/filters/base64_binary.hpp> %>
 <% skin plain %>
-    <% view hash uses bacs::archive::web::content::hash extends base_form %>
+    <% view revision uses bacs::archive::web::content::revision extends base_form %>
         <% template subtitle() %>
-            <% gt "Problems hash" %>
+            <% gt "Problems revision" %>
         <% end template %>
         <% template form() %>
-            <h3><% gt "Get problems hash" %></h3>
+            <h3><% gt "Get problems revision" %></h3>
             <form method="post" action="">
                 <% form as_p form %>
             </form>
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id_hash in result->entry() %>
+                <% foreach id_revision in result->entry() %>
                     <table border="1" cellspacing="0" cellpadding="10">
-                        <caption><% gt "Problem hashes" %></caption>
+                        <caption><% gt "Problem revisions" %></caption>
                         <tr>
                             <th><% gt "Problem" %></th>
-                            <th><% gt "Hash" %></th>
+                            <th><% gt "Revision" %></th>
                         </tr>
                         <% item %>
                             <tr>
-                                <td><%= id_hash.first %></td>
+                                <td><%= id_revision.first %></td>
                                 <td>
-                                    <% if not id_hash.second.empty() %>
-                                        <%= id_hash.second | base64_binary %>
+                                    <% if not id_revision.second.empty() %>
+                                        <%= id_revision.second | base64_binary %>
                                     <% else %>
                                         <% gt "Not found" %>
                                     <% end %>

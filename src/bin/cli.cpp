@@ -69,9 +69,9 @@ class archive_application : public application {
       // TODO
       BUNSAN_LOG_WARNING << "Info is not implemented!";
       return exit_failure;
-    } else if (variables.count("hash")) {
+    } else if (variables.count("revision")) {
       // TODO
-      BUNSAN_LOG_WARNING << "Hash is not implemented!";
+      BUNSAN_LOG_WARNING << "Revision is not implemented!";
       return exit_failure;
     } else if (variables.count("repack")) {
       BUNSAN_LOG_INFO << "Repacking";

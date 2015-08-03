@@ -19,7 +19,7 @@ using bacs::problem::id;
 using bacs::problem::is_allowed_id;
 using bacs::problem::validate_id;
 using bacs::problem::binary;
-using bacs::problem::hash;
+using bacs::problem::revision;
 using flag = std::string;
 
 bool is_allowed_flag(const flag &flag_);

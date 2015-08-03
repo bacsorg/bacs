@@ -20,7 +20,7 @@
                             <th><% gt "Problem" %></th>
                             <th><% gt "Error" %></th>
                             <th><% gt "Flags" %></th>
-                            <th><% gt "Hash" %></th>
+                            <th><% gt "Revision" %></th>
                         </tr>
                         <% item %>
                             <tr>
@@ -42,7 +42,7 @@
                                             </ul>
                                         <% end %>
                                     </td>
-                                    <td><%= id_import.second.status().hash() | base64_binary %></td>
+                                    <td><%= id_import.second.status().revision() | base64_binary %></td>
                                 <% else %>
                                     <!-- Nothing here... -->
                                 <% end %>

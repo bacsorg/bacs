@@ -35,7 +35,7 @@ class repository : public cppcms::application {
   void clear_flags();
   void ignore();
   void info();
-  void hash();
+  void revision();
   void repack();
 
   template <typename ProtoBuf>
@@ -59,7 +59,7 @@ class repository : public cppcms::application {
   problem::IdSet clear_flags_(content::clear_flags &data);
   problem::IdSet ignore_(content::ignore &data);
   problem::InfoMap info_(content::info &data);
-  problem::HashMap hash_(content::hash &data);
+  problem::RevisionMap revision_(content::revision &data);
   problem::ImportMap repack_(content::repack &data);
 
  private:

@@ -19,8 +19,8 @@ message InfoMap {
   map<string, Info> entry = 1;
 }
 
-message HashMap {
-  // hash is empty iff problem does not exist
+message RevisionMap {
+  // revision is empty iff problem does not exist
   map<string, bytes> entry = 1;
 }
 
@@ -30,7 +30,7 @@ message FlagSet {
 
 message Status {
   required FlagSet flags = 1;
-  required bytes hash = 2;
+  required bytes revision = 2;
 }
 
 message ImportInfo {

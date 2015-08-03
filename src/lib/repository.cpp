@@ -40,8 +40,8 @@ struct converter {
 };
 
 template <>
-struct converter<problem::hash> {
-  static std::string call(const problem::hash &h) {
+struct converter<problem::revision> {
+  static std::string call(const problem::revision &h) {
     return std::string(reinterpret_cast<const char *>(h.data()), h.size());
   }
 };
@@ -188,8 +188,8 @@ problem::InfoMap repository::info_all(const problem::IdSet &id_set) {
   return get_all_map<problem::InfoMap>(this, &repository::info, id_set);
 }
 
-problem::HashMap repository::hash_all(const problem::IdSet &id_set) {
-  return get_all_map<problem::HashMap>(this, &repository::hash, id_set);
+problem::RevisionMap repository::revision_all(const problem::IdSet &id_set) {
+  return get_all_map<problem::RevisionMap>(this, &repository::revision, id_set);
 }
 
 /* repack */

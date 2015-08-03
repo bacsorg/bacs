@@ -30,7 +30,7 @@
                             <% end %>
                         </ul>
                     <% end %>
-                    <p><% gt "Problem hash:" %> <%= result->status().hash() | base64_binary %></p>
+                    <p><% gt "Problem revision:" %> <%= result->status().revision() | base64_binary %></p>
                 <% else %>
                     <% gt "N/A" %>
                 <% end %>

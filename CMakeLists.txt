@@ -82,8 +82,8 @@ bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/clear_flags.tmpl
     view/plain/ignore.tmpl
     view/plain/info.tmpl
-    view/plain/hash.tmpl
     view/plain/repack.tmpl
+    view/plain/revision.tmpl
 )
 bunsan_use_target(${PROJECT_NAME}_skin_plain ${PROJECT_NAME})
 

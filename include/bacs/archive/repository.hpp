@@ -393,23 +393,23 @@ class repository : private boost::noncopyable {
   problem::InfoMap info_all(const problem::IdSet &id_set);
 
   /*!
-   * \brief Get problem hash.
+   * \brief Get problem revision.
    *
-   * \return empty hash iff problem is not available
+   * \return empty revision iff problem is not available
    *
    * \see repository::is_available
    */
-  problem::hash hash(const problem::id &id);
+  problem::revision revision(const problem::id &id);
 
   /*!
-   * \brief Get hash map for given problems.
+   * \brief Get revision map for given problems.
    *
    * If problem is not available, id is ignored.
    *
    * \see repository::is_available
-   * \see repository::hash
+   * \see repository::revision
    */
-  problem::HashMap hash_all(const problem::IdSet &id_set);
+  problem::RevisionMap revision_all(const problem::IdSet &id_set);
 
   /* repack */
   /*!
@@ -476,10 +476,11 @@ class repository : private boost::noncopyable {
   void unset_flag_(const problem::id &id, const problem::flag &flag);
 
   /// \warning requires at least shared lock and problem existence
-  problem::hash read_hash_(const problem::id &id);
+  problem::revision read_revision_(const problem::id &id);
 
   /// \warning requires unique lock and problem existence
-  void write_hash_(const problem::id &id, const problem::hash &hash);
+  void write_revision_(const problem::id &id,
+                       const problem::revision &revision);
 
   /// \warning requires at least shared lock and problem existence
   problem::Info read_info_(const problem::id &id);
@@ -491,10 +492,12 @@ class repository : private boost::noncopyable {
   problem::ImportInfo repack_(const problem::id &id);
 
   /// \warning requires unique lock and problem existence
-  problem::ImportInfo repack_(const problem::id &id, const problem::hash &hash);
+  problem::ImportInfo repack_(const problem::id &id,
+                              const problem::revision &revision);
 
   /// \warning requires unique lock and problem existence
-  problem::ImportInfo repack_(const problem::id &id, const problem::hash &hash,
+  problem::ImportInfo repack_(const problem::id &id,
+                              const problem::revision &revision,
                               const boost::filesystem::path &problem_location);
 
  private:

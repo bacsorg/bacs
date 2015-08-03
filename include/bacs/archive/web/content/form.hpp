@@ -17,7 +17,7 @@
 // clear_flags
 // ignore
 // info
-// hash
+// revision
 // repack
 
 #include <bunsan/forward_constructor.hpp>
@@ -68,8 +68,8 @@ struct info : basic_form<form::list_query, problem::InfoMap> {
   info();
 };
 
-struct hash : basic_form<form::list_query, problem::HashMap> {
-  hash();
+struct revision : basic_form<form::list_query, problem::RevisionMap> {
+  revision();
 };
 
 struct repack : basic_form<form::list_query, problem::ImportMap> {

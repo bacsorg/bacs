@@ -7,7 +7,7 @@ repository/
            ${problem_id}/
                          flags/${flag_i}
                          info
-                         hash
+                         revision
                          ${problem.filename}
 \endverbatim
 
