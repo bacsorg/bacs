@@ -5,7 +5,7 @@ package bacs.problem;
 message SystemResult {
   enum Status {
     OK = 0;
-    INVALID_VERSION = 1;
+    INVALID_REVISION = 1;
   }
   Status status = 1;
 }

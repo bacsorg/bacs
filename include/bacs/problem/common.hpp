@@ -9,8 +9,8 @@ namespace problem {
 
 using binary = std::vector<unsigned char>;
 
-/// version string
-using version = binary;
+/// revision string
+using revision = binary;
 
 }  // namespace problem
 }  // namespace bacs
