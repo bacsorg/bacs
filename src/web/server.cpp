@@ -97,10 +97,9 @@ bool server::get_(const std::string &referrer, const std::string &request,
   *cache_entry = m_cache->get(package);
   const boost::filesystem::path package_dir = cache_entry->root();
   const problem::statement::version::built statement_version(package_dir);
-  if (false) {  // TODO check hash
-    response().status(
-        cppcms::http::response::gone,
-        "Problem's hash is not equal to statement version's hash");
+  if (false) {  // TODO check revision
+    response().status(cppcms::http::response::gone,
+                      "Problem's revision differs from requested");
     return false;
   }
   if (index) *index = statement_version.manifest().data.index;

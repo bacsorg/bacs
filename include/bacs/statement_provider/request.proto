@@ -1,8 +1,8 @@
-syntax = "proto2";
+syntax = "proto3";
 
 package bacs.statement_provider;
 
 message Request {
-  required string package = 1;
-  required bytes hash = 2;
+  string package = 1;
+  bytes revision = 2;
 }
