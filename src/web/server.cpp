@@ -7,6 +7,8 @@
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
 
+#include <google/protobuf/text_format.h>
+
 #include <cppcms/base64.h>
 #include <cppcms/url_dispatcher.h>
 #include <cppcms/url_mapper.h>
@@ -23,28 +25,35 @@ server::server(cppcms::service &srv,
       m_cache(cache),
       m_mime_file(bunsan::web::load_mime_file(
           srv.settings().get<std::string>("statement_provider.mime_types"))) {
-  dispatcher().assign("/([^/]+)/get/([^/]+)", &server::get_index, this, 1, 2);
-  mapper().assign("get_index", "/{1}/get/{2}");
+#define BACS_STATEMENT_GETTERS "get|text_get"
 
-  dispatcher().assign("/([^/]+)/get/([^/]+)/(.*)", &server::get, this, 1, 2, 3);
-  mapper().assign("get", "/{1}/get/{2}/{3}");
+  dispatcher().assign("/([^/]+)/(" BACS_STATEMENT_GETTERS ")/([^/]+)",
+                      &server::get_index, this, 1, 2, 3);
+  mapper().assign("get_index", "/{1}/{2}/{3}");
+
+  dispatcher().assign("/([^/]+)/(" BACS_STATEMENT_GETTERS ")/([^/]+)/(.*)",
+                      &server::get, this, 1, 2, 3, 4);
+  mapper().assign("get", "/{1}/{2}/{3}/{4}");
 
   mapper().root("/statement");
 }
 
-void server::get_index(std::string referrer, std::string request) {
+void server::get_index(std::string referrer, std::string getter,
+                       std::string coded_request) {
   boost::filesystem::path index;
-  if (get_(referrer, request, nullptr, &index)) {
+  if (get_index_and_root(referrer, getter, coded_request, nullptr, &index)) {
     response().status(cppcms::http::response::temporary_redirect);
     response().set_redirect_header(
-        url("get", referrer, request, index.generic_string()));
+        url("get", referrer, getter, coded_request, index.generic_string()));
   }
 }
 
-void server::get(std::string referrer, std::string request, std::string path) {
+void server::get(std::string referrer, std::string getter,
+                 std::string coded_request, std::string path) {
   bunsan::pm::cache::entry cache_entry;
   boost::filesystem::path data_root;
-  if (get_(referrer, request, &cache_entry, nullptr, &data_root)) {
+  if (get_index_and_root(referrer, getter, coded_request, &cache_entry, nullptr,
+                         &data_root)) {
     const boost::filesystem::path filepath =
         bunsan::filesystem::keep_in_root(path, data_root);
     const std::string filename = filepath.filename().string();
@@ -67,26 +76,17 @@ void server::get(std::string referrer, std::string request, std::string path) {
   }
 }
 
-bool server::get_(const std::string &referrer, const std::string &request,
-                  bunsan::pm::cache::entry *cache_entry,
-                  boost::filesystem::path *const index,
-                  boost::filesystem::path *const data_root) {
-  std::string cipherdata;
-  if (!cppcms::b64url::decode(request, cipherdata)) {
-    response().status(cppcms::http::response::bad_request,
-                      "Invalid base64url encoded message");
-    return false;
-  }
-  std::string data = cipherdata;  // TODO decrypt, this step is skipped for now
-  bacs::statement_provider::Request statement_request;
-  if (!statement_request.ParseFromString(data)) {
-    response().status(cppcms::http::response::bad_request,
-                      "Invalid protobuf message");
-    return false;
-  }
+bool server::get_index_and_root(const std::string &referrer,
+                                const std::string &getter,
+                                const std::string &coded_request,
+                                bunsan::pm::cache::entry *cache_entry,
+                                boost::filesystem::path *const index,
+                                boost::filesystem::path *const data_root) {
+  Request request;
+  if (!parse(referrer, getter, coded_request, request)) return false;
   bunsan::pm::entry package;
   try {
-    package = statement_request.package();
+    package = request.package();
   } catch (bunsan::pm::invalid_entry_name_error &) {
     response().status(cppcms::http::response::bad_request,
                       "Invalid package name");
@@ -97,13 +97,51 @@ bool server::get_(const std::string &referrer, const std::string &request,
   *cache_entry = m_cache->get(package);
   const boost::filesystem::path package_dir = cache_entry->root();
   const problem::statement::version::built statement_version(package_dir);
-  if (false) {  // TODO check revision
+  if (!request.revision().empty() && false) {  // TODO check revision
     response().status(cppcms::http::response::gone,
                       "Problem's revision differs from requested");
     return false;
   }
   if (index) *index = statement_version.manifest().data.index;
   if (data_root) *data_root = statement_version.data_root();
+  return true;
+}
+
+bool server::parse(const std::string &referrer, const std::string &getter,
+                   const std::string &coded_request, Request &request) {
+  std::string cipherdata;
+  if (!cppcms::b64url::decode(coded_request, cipherdata)) {
+    response().status(cppcms::http::response::bad_request,
+                      "Invalid base64url encoded message");
+    return false;
+  }
+  std::string data = cipherdata;  // TODO decrypt, this step is skipped for now
+  if (getter == "get") {
+    return parse_binary(data, request);
+  } else if (getter == "text_get") {
+    return parse_text(data, request);
+  } else {
+    response().status(cppcms::http::response::bad_request,
+                      "Unknown request format");
+    return false;
+  }
+}
+
+bool server::parse_binary(const std::string &coded_request, Request &request) {
+  if (!request.ParseFromString(coded_request)) {
+    response().status(cppcms::http::response::bad_request,
+                      "Invalid protobuf message");
+    return false;
+  }
+  return true;
+}
+
+bool server::parse_text(const std::string &coded_request, Request &request) {
+  if (!google::protobuf::TextFormat::ParseFromString(coded_request, &request)) {
+    response().status(cppcms::http::response::bad_request,
+                      "Invalid protobuf message");
+    return false;
+  }
   return true;
 }
 
