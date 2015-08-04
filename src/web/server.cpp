@@ -19,41 +19,42 @@ namespace bacs {
 namespace statement_provider {
 namespace web {
 
+#define BACS_STATEMENT_GETTERS "get|text_get"
+#define BACS_STATEMENT_REQUEST \
+  "(" BACS_STATEMENT_GETTERS ")/([^/]+)/([^/]+)/([^/]+)"
+#define BACS_STATEMENT_REQUEST_CAPTURES 4
+
 server::server(cppcms::service &srv,
                const std::shared_ptr<bunsan::pm::cache> &cache)
     : cppcms::application(srv),
+      m_request_regex(BACS_STATEMENT_REQUEST),
       m_cache(cache),
       m_mime_file(bunsan::web::load_mime_file(
           srv.settings().get<std::string>("statement_provider.mime_types"))) {
-#define BACS_STATEMENT_GETTERS "get|text_get"
+  dispatcher().assign("/(" BACS_STATEMENT_REQUEST ")", &server::get_index, this,
+                      1);
+  mapper().assign("get_index", "/{1}");
 
-  dispatcher().assign("/([^/]+)/(" BACS_STATEMENT_GETTERS ")/([^/]+)",
-                      &server::get_index, this, 1, 2, 3);
-  mapper().assign("get_index", "/{1}/{2}/{3}");
-
-  dispatcher().assign("/([^/]+)/(" BACS_STATEMENT_GETTERS ")/([^/]+)/(.*)",
-                      &server::get, this, 1, 2, 3, 4);
-  mapper().assign("get", "/{1}/{2}/{3}/{4}");
+  dispatcher().assign("/(" BACS_STATEMENT_REQUEST ")/(.*)", &server::get, this,
+                      1, 2 + BACS_STATEMENT_REQUEST_CAPTURES);
+  mapper().assign("get", "/{1}/{2}");
 
   mapper().root("/statement");
 }
 
-void server::get_index(std::string referrer, std::string getter,
-                       std::string coded_request) {
+void server::get_index(std::string signed_request) {
   boost::filesystem::path index;
-  if (get_index_and_root(referrer, getter, coded_request, nullptr, &index)) {
+  if (get_index_and_root(signed_request, nullptr, &index)) {
     response().status(cppcms::http::response::temporary_redirect);
     response().set_redirect_header(
-        url("get", referrer, getter, coded_request, index.generic_string()));
+        url("get", signed_request, index.generic_string()));
   }
 }
 
-void server::get(std::string referrer, std::string getter,
-                 std::string coded_request, std::string path) {
+void server::get(std::string signed_request, std::string path) {
   bunsan::pm::cache::entry cache_entry;
   boost::filesystem::path data_root;
-  if (get_index_and_root(referrer, getter, coded_request, &cache_entry, nullptr,
-                         &data_root)) {
+  if (get_index_and_root(signed_request, &cache_entry, nullptr, &data_root)) {
     const boost::filesystem::path filepath =
         bunsan::filesystem::keep_in_root(path, data_root);
     const std::string filename = filepath.filename().string();
@@ -76,14 +77,14 @@ void server::get(std::string referrer, std::string getter,
   }
 }
 
-bool server::get_index_and_root(const std::string &referrer,
-                                const std::string &getter,
-                                const std::string &coded_request,
+bool server::get_index_and_root(const std::string &signed_request,
                                 bunsan::pm::cache::entry *cache_entry,
                                 boost::filesystem::path *const index,
                                 boost::filesystem::path *const data_root) {
   Request request;
-  if (!parse(referrer, getter, coded_request, request)) return false;
+  if (!verify_and_parse(signed_request, request)) {
+    return false;
+  }
   bunsan::pm::entry package;
   try {
     package = request.package();
@@ -107,19 +108,53 @@ bool server::get_index_and_root(const std::string &referrer,
   return true;
 }
 
-bool server::parse(const std::string &referrer, const std::string &getter,
-                   const std::string &coded_request, Request &request) {
-  std::string cipherdata;
-  if (!cppcms::b64url::decode(coded_request, cipherdata)) {
+bool server::verify_and_parse(const std::string &signed_request,
+                              Request &request) {
+  const char *const begin = signed_request.data();
+  const char *const end = begin + signed_request.size();
+  std::vector<std::pair<int, int>> marks;
+  if (!m_request_regex.match(begin, end, marks)) {
     response().status(cppcms::http::response::bad_request,
-                      "Invalid base64url encoded message");
+                      "Invalid request format, /" BACS_STATEMENT_REQUEST
+                      "/ was expected");
     return false;
   }
-  std::string data = cipherdata;  // TODO decrypt, this step is skipped for now
+  BOOST_ASSERT(marks.size() == 5);
+  const std::string getter(begin + marks[1].first, begin + marks[1].second);
+  const std::string coded_request_64(begin + marks[2].first,
+                                    begin + marks[2].second);
+  const std::string referrer(begin + marks[3].first, begin + marks[3].second);
+  const std::string signature_64(begin + marks[4].first,
+                                 begin + marks[4].second);
+  std::string coded_request;
+  if (!cppcms::b64url::decode(coded_request_64, coded_request)) {
+    response().status(cppcms::http::response::bad_request,
+                      "Invalid base64url encoded request");
+    return false;
+  }
+  std::string signature;
+  if (!cppcms::b64url::decode(signature_64, signature)) {
+    response().status(cppcms::http::response::bad_request,
+                      "Invalid base64url encoded signature");
+    return false;
+  }
+  if (!verify(coded_request, referrer, signature)) return false;
+  return parse(getter, coded_request, request);
+}
+
+bool server::verify(const std::string &coded_request,
+                    const std::string &referrer,
+                    const std::string &signature) {
+  // TODO
+  return true;
+}
+
+bool server::parse(const std::string &getter, const std::string &coded_request,
+                   Request &request) {
   if (getter == "get") {
-    return parse_binary(data, request);
+    return parse_binary(coded_request, request);
   } else if (getter == "text_get") {
-    return parse_text(data, request);
+    return parse_text(coded_request, request);
   } else {
     response().status(cppcms::http::response::bad_request,
                       "Unknown request format");

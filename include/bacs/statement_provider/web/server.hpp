@@ -5,6 +5,7 @@
 #include <bunsan/pm/cache.hpp>
 #include <bunsan/web/mime_file.hpp>
 
+#include <booster/regex.h>
 #include <cppcms/application.h>
 
 #include <boost/filesystem/path.hpp>
@@ -22,26 +23,24 @@ class server : public cppcms::application {
   server(cppcms::service &srv, const std::shared_ptr<bunsan::pm::cache> &cache);
 
  private:
-  void get_index(std::string referrer, std::string getter,
-                 std::string coded_request);
+  void get_index(std::string signed_request);
+  void get(std::string signed_request, std::string path);
 
-  void get(std::string referrer, std::string getter, std::string coded_request,
-           std::string path);
-
-  /// \return false if instant return is required (response() was initialized)
-  bool get_index_and_root(const std::string &referrer,
-                          const std::string &getter,
-                          const std::string &coded_request,
+  bool get_index_and_root(const std::string &signed_request,
                           bunsan::pm::cache::entry *cache_entry = nullptr,
                           boost::filesystem::path *index = nullptr,
                           boost::filesystem::path *data_root = nullptr);
 
-  bool parse(const std::string &referrer, const std::string &getter,
-             const std::string &coded_request, Request &request);
+  bool verify_and_parse(const std::string &signed_request, Request &request);
+  bool verify(const std::string &coded_request, const std::string &referrer,
+              const std::string &signature);
+  bool parse(const std::string &getter, const std::string &coded_request,
+             Request &request);
   bool parse_binary(const std::string &coded_request, Request &request);
   bool parse_text(const std::string &coded_request, Request &request);
 
  private:
+  const booster::regex m_request_regex;
   const std::shared_ptr<bunsan::pm::cache> m_cache;
   const bunsan::web::mime_file m_mime_file;
 };
