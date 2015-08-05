@@ -1,6 +1,6 @@
 #pragma once
 
-#include <bacs/problem/common.hpp>
+#include <bacs/problem/id.hpp>
 #include <bacs/problem/problem.pb.h>
 
 #include <bunsan/factory_helper.hpp>
@@ -29,7 +29,7 @@ struct options {
   boost::filesystem::path destination;
   bunsan::pm::entry root_package;
   problem::id id;
-  problem::revision revision;
+  Revision revision;
 };
 }  // namespace importer_detail
 

@@ -16,7 +16,11 @@ message Problem {
 message System {
   string problem_type = 1;
   string package = 2;
-  bytes revision = 3;
+  Revision revision = 3;
+}
+
+message Revision {
+  bytes value = 1;
 }
 
 message Info {
