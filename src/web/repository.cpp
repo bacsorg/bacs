@@ -63,9 +63,6 @@ repository::repository(cppcms::service &srv,
   dispatcher().assign("/info", &repository::info, this);
   mapper().assign("info", "/info");
 
-  dispatcher().assign("/revision", &repository::revision, this);
-  mapper().assign("revision", "/revision");
-
   dispatcher().assign("/repack", &repository::repack, this);
   mapper().assign("repack", "/repack");
 
@@ -247,10 +244,6 @@ DEFINE_HANDLER(ignore, problem::IdSet) {
 
 DEFINE_HANDLER(info, problem::InfoMap) {
   return m_repository->info_all(data.form.ids.value());
-}
-
-DEFINE_HANDLER(revision, problem::RevisionMap) {
-  return m_repository->revision_all(data.form.ids.value());
 }
 
 DEFINE_HANDLER(repack, problem::ImportMap) {

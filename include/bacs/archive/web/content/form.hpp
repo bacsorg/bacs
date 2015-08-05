@@ -17,7 +17,6 @@
 // clear_flags
 // ignore
 // info
-// revision
 // repack
 
 #include <bunsan/forward_constructor.hpp>
@@ -66,10 +65,6 @@ struct ignore : basic_form<form::list_query, problem::IdSet> {
 
 struct info : basic_form<form::list_query, problem::InfoMap> {
   info();
-};
-
-struct revision : basic_form<form::list_query, problem::RevisionMap> {
-  revision();
 };
 
 struct repack : basic_form<form::list_query, problem::ImportMap> {

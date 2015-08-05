@@ -5,6 +5,7 @@
 
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
+#include <bunsan/log/trivial.hpp>
 #include <bunsan/protobuf/binary.hpp>
 
 #include <boost/assert.hpp>
@@ -25,30 +26,7 @@ void touch(const boost::filesystem::path &path) {
   BOOST_ASSERT(boost::filesystem::exists(path));
 }  // namespace
 
-problem::binary read_binary(const boost::filesystem::path &path) {
-  problem::binary bin;
-  bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
-  BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin) {
-    char buf[BUFSIZ];
-    do {
-      fin.read(buf, BUFSIZ);
-      bin.insert(bin.end(), buf, buf + fin.gcount());
-    } while (fin);
-  } BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
-  fin.close();
-  return bin;
-}
-
-void write_binary(const boost::filesystem::path &path,
-                  const problem::binary &bin) {
-  bunsan::filesystem::ofstream fout(path, std::ios_base::binary);
-  BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout) {
-    fout.write(reinterpret_cast<const char *>(bin.data()), bin.size());
-  } BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fout)
-  fout.close();
-}
-
-problem::revision compute_hash(const boost::filesystem::path &path) {
+problem::Revision compute_hash_revision(const boost::filesystem::path &path) {
   boost::crc_32_type crc;
   bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
   BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin) {
@@ -60,10 +38,11 @@ problem::revision compute_hash(const boost::filesystem::path &path) {
   } BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
   fin.close();
   auto value = crc.checksum();
-  problem::revision hash(sizeof(value));
+  problem::Revision revision;
+  revision.mutable_value()->resize(sizeof(value));
   for (std::size_t i = 0; i < sizeof(value); ++i, value >>= 8)
-    hash[i] = value & 0xFF;
-  return hash;
+    (*revision.mutable_value())[i] = value & 0xFF;
+  return revision;
 }
 
 problem::ImportInfo import_error(const std::string &error) {
@@ -101,7 +80,7 @@ problem::Info info_problem(bacs::problem::Problem problem) {
   *info.mutable_problem() = std::move(problem);
   return info;
 }
-}
+}  // namespace
 
 /// entry names
 namespace ename {
@@ -136,7 +115,7 @@ problem::ImportInfo repository::insert(
       BOOST_ASSERT(archiver);
       archiver->pack_contents(
           m_location.repository_root / id / m_problem.data.filename, location);
-      const problem::revision revision = compute_hash(
+      const problem::Revision revision = compute_hash_revision(
           m_location.repository_root / id / m_problem.data.filename);
       write_revision_(id, revision);
       import_info = repack_(id, revision, location);
@@ -233,9 +212,7 @@ problem::ImportInfo repository::status(const problem::id &id) {
 
 problem::Status repository::status_(const problem::id &id) {
   problem::Status status;
-  const auto revision = read_revision_(id);
-  status.mutable_revision()->assign(
-      reinterpret_cast<const char *>(revision.data()), revision.size());
+  *status.mutable_revision() = read_revision_(id);
   *status.mutable_flags() = flags_(id);
   return status;
 }
@@ -369,22 +346,15 @@ bool repository::has_flag(const problem::id &id, const problem::flag &flag) {
                                    ename::flags / flag);
 }
 
-problem::revision repository::revision(const problem::id &id) {
-  problem::validate_id(id);
-  if (exists(id)) {
-    const shared_lock_guard lk(m_lock);
-    if (is_available_(id)) return read_revision_(id);
-  }
-  return problem::revision();
-}
-
-problem::revision repository::read_revision_(const problem::id &id) {
-  return read_binary(m_location.repository_root / id / ename::revision);
+problem::Revision repository::read_revision_(const problem::id &id) {
+  return bunsan::protobuf::binary::parse_make<problem::Revision>(
+      m_location.repository_root / id / ename::revision);
 }
 
 void repository::write_revision_(const problem::id &id,
-                                const problem::revision &revision) {
-  write_binary(m_location.repository_root / id / ename::revision, revision);
+                                 const problem::Revision &revision) {
+  bunsan::protobuf::binary::serialize(
+      revision, m_location.repository_root / id / ename::revision);
 }
 
 problem::ImportInfo repository::rename(const problem::id &current,
@@ -438,11 +408,21 @@ problem::ImportInfo repository::repack(const problem::id &id) {
 
 problem::ImportInfo repository::repack_(const problem::id &id) {
   BOOST_ASSERT(exists(id));
-  return repack_(id, read_revision_(id));
+  problem::Revision revision;
+  try {
+    revision = read_revision_(id);
+  } catch (std::exception &) {
+    BUNSAN_LOG_WARNING << "Revision unreadable for problem = " << id
+                       << ", regenerated";
+    revision = compute_hash_revision(m_location.repository_root / id /
+                                     m_problem.data.filename);
+    write_revision_(id, revision);
+  }
+  return repack_(id, revision);
 }
 
 problem::ImportInfo repository::repack_(const problem::id &id,
-                                        const problem::revision &revision) {
+                                        const problem::Revision &revision) {
   const bunsan::tempfile tmpdir =
       bunsan::tempfile::directory_in_directory(m_location.tmpdir);
   extract_(id, tmpdir.path());
@@ -450,7 +430,7 @@ problem::ImportInfo repository::repack_(const problem::id &id,
 }
 
 problem::ImportInfo repository::repack_(
-    const problem::id &id, const problem::revision &revision,
+    const problem::id &id, const problem::Revision &revision,
     const boost::filesystem::path &problem_location) {
   problem::ImportInfo import_info;
   try {
@@ -465,8 +445,7 @@ problem::ImportInfo repository::repack_(
     m_repository.create_recursively(options.destination, m_problem.strip);
     unset_flag_(id, problem::flags::ignore);
     problem::Status &status = *import_info.mutable_status();
-    status.mutable_revision()->assign(
-        reinterpret_cast<const char *>(revision.data()), revision.size());
+    *status.mutable_revision() = revision;
     *status.mutable_flags() = flags_(id);
   } catch (std::exception &e) {
     set_flag_(id, problem::flags::ignore);

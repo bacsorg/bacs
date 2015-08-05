@@ -59,7 +59,6 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/web/content/form/widgets/problem/id_set.cpp
     src/web/content/form/widgets/problem/optional_id_set.cpp
     src/web/content/form/widgets/problem/flag_set.cpp
-    src/web/filters/base64_binary.cpp
     src/bin/web.cpp
 )
 bunsan_use_target(${PROJECT_NAME}_web ${PROJECT_NAME})
@@ -83,7 +82,6 @@ bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/ignore.tmpl
     view/plain/info.tmpl
     view/plain/repack.tmpl
-    view/plain/revision.tmpl
 )
 bunsan_use_target(${PROJECT_NAME}_skin_plain ${PROJECT_NAME})
 

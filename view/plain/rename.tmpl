@@ -30,7 +30,7 @@
                             <% end %>
                         </ul>
                     <% end %>
-                    <p><% gt "Problem revision:" %> <%= result->status().revision() | base64_binary %></p>
+                    <p><% gt "Problem revision:" %> <%= result->status().revision().DebugString() %></p>
                 <% else %>
                     <% gt "N/A" %>
                 <% end %>

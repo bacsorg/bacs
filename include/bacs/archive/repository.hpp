@@ -392,25 +392,6 @@ class repository : private boost::noncopyable {
    */
   problem::InfoMap info_all(const problem::IdSet &id_set);
 
-  /*!
-   * \brief Get problem revision.
-   *
-   * \return empty revision iff problem is not available
-   *
-   * \see repository::is_available
-   */
-  problem::revision revision(const problem::id &id);
-
-  /*!
-   * \brief Get revision map for given problems.
-   *
-   * If problem is not available, id is ignored.
-   *
-   * \see repository::is_available
-   * \see repository::revision
-   */
-  problem::RevisionMap revision_all(const problem::IdSet &id_set);
-
   /* repack */
   /*!
    * \brief Repack problem.
@@ -476,11 +457,11 @@ class repository : private boost::noncopyable {
   void unset_flag_(const problem::id &id, const problem::flag &flag);
 
   /// \warning requires at least shared lock and problem existence
-  problem::revision read_revision_(const problem::id &id);
+  problem::Revision read_revision_(const problem::id &id);
 
   /// \warning requires unique lock and problem existence
   void write_revision_(const problem::id &id,
-                       const problem::revision &revision);
+                       const problem::Revision &revision);
 
   /// \warning requires at least shared lock and problem existence
   problem::Info read_info_(const problem::id &id);
@@ -493,11 +474,11 @@ class repository : private boost::noncopyable {
 
   /// \warning requires unique lock and problem existence
   problem::ImportInfo repack_(const problem::id &id,
-                              const problem::revision &revision);
+                              const problem::Revision &revision);
 
   /// \warning requires unique lock and problem existence
   problem::ImportInfo repack_(const problem::id &id,
-                              const problem::revision &revision,
+                              const problem::Revision &revision,
                               const boost::filesystem::path &problem_location);
 
  private:

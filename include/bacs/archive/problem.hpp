@@ -2,7 +2,7 @@
 
 #include <bacs/archive/problem.pb.h>
 
-#include <bacs/problem/common.hpp>
+#include <bacs/problem/id.hpp>
 #include <bacs/problem/problem.pb.h>
 
 #include <boost/optional.hpp>
@@ -18,8 +18,7 @@ namespace problem {
 using bacs::problem::id;
 using bacs::problem::is_allowed_id;
 using bacs::problem::validate_id;
-using bacs::problem::binary;
-using bacs::problem::revision;
+using bacs::problem::Revision;
 using flag = std::string;
 
 bool is_allowed_flag(const flag &flag_);

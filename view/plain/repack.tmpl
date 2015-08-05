@@ -41,7 +41,7 @@
                                             </ul>
                                         <% end %>
                                     </td>
-                                    <td><%= id_import.second.status().revision() | base64_binary %></td>
+                                    <td><%= id_import.second.status().revision().DebugString() %></td>
                                 <% else %>
                                     <!-- Nothing here... -->
                                 <% end %>

@@ -1,5 +1,4 @@
 <% c++ #include <bacs/archive/web/content/form.hpp> %>
-<% c++ #include <bacs/archive/web/filters/base64_binary.hpp> %>
 <% skin plain %>
     <% view status uses bacs::archive::web::content::status extends base_form %>
         <% template subtitle() %>
@@ -42,7 +41,7 @@
                                             </ul>
                                         <% end %>
                                     </td>
-                                    <td><%= id_import.second.status().revision() | base64_binary %></td>
+                                    <td><%= id_import.second.status().revision().DebugString() %></td>
                                 <% else %>
                                     <!-- Nothing here... -->
                                 <% end %>

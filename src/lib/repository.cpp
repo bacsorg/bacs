@@ -40,9 +40,10 @@ struct converter {
 };
 
 template <>
-struct converter<problem::revision> {
-  static std::string call(const problem::revision &h) {
-    return std::string(reinterpret_cast<const char *>(h.data()), h.size());
+struct converter<problem::Revision> {
+  static std::string call(const problem::Revision &h) {
+    return std::string(reinterpret_cast<const char *>(h.value().data()),
+                       h.value().size());
   }
 };
 
@@ -75,7 +76,7 @@ problem::IdSet get_all_set(repository *const this_,
   *pset.mutable_id() = {set.begin(), set.end()};
   return pset;
 }
-}
+}  // namespace
 
 /* container */
 
@@ -186,10 +187,6 @@ problem::ImportMap repository::status_all(const problem::IdSet &id_set) {
 
 problem::InfoMap repository::info_all(const problem::IdSet &id_set) {
   return get_all_map<problem::InfoMap>(this, &repository::info, id_set);
-}
-
-problem::RevisionMap repository::revision_all(const problem::IdSet &id_set) {
-  return get_all_map<problem::RevisionMap>(this, &repository::revision, id_set);
 }
 
 /* repack */
