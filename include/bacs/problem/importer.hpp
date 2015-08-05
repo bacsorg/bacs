@@ -57,7 +57,7 @@ struct empty_problem_type_error : virtual problem_type_error {};
  * Use bunsan::factory to register problem types.
  */
 class importer : private boost::noncopyable {
-  BUNSAN_FACTORY_BODY(importer, const boost::property_tree::ptree &)
+  BUNSAN_FACTORY_BODY(importer, const boost::property_tree::ptree &config)
  public:
   using options = importer_detail::options;
 

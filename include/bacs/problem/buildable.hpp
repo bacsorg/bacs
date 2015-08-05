@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bacs/problem/error.hpp>
+#include <bacs/problem/problem.pb.h>
 
 #include <bunsan/pm/entry.hpp>
 
@@ -29,7 +30,8 @@ class buildable : private boost::noncopyable {
  public:
   /// \return false if no package is needed
   virtual bool make_package(const boost::filesystem::path &destination,
-                            const bunsan::pm::entry &package) const = 0;
+                            const bunsan::pm::entry &package,
+                            const Revision &revision) const = 0;
 };
 
 }  // namespace problem

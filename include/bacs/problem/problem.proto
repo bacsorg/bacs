@@ -36,6 +36,14 @@ message Info {
 
 message Statement {
   message Version {
+    message Manifest {
+      message Data {
+        string index = 1;
+      }
+      Version version = 1;
+      Revision revision = 2;
+      Data data = 3;
+    }
     string language = 1;
     string format = 2;
     string package = 3;

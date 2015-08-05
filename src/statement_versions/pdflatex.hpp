@@ -16,7 +16,8 @@ class pdflatex : public statement::version {
 
   void make_package(const boost::filesystem::path &destination,
                     const bunsan::pm::entry &package,
-                    const bunsan::pm::entry &resources_package) const override;
+                    const bunsan::pm::entry &resources_package,
+                    const Revision &revision) const override;
 
  private:
   const boost::filesystem::path m_root;

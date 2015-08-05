@@ -8,9 +8,9 @@
 namespace bacs {
 namespace problem {
 
-bool system_verifier::make_package(
-    const boost::filesystem::path &destination,
-    const bunsan::pm::entry & /*package*/) const {
+bool system_verifier::make_package(const boost::filesystem::path &destination,
+                                   const bunsan::pm::entry & /*package*/,
+                                   const Revision & /*revision*/) const {
   bunsan::filesystem::reset_dir(destination);
   bunsan::pm::index index;
   index.source.import.source.insert(

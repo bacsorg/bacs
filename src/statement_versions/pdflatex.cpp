@@ -1,12 +1,10 @@
 #include "pdflatex.hpp"
 
-#include <bunsan/config/cast.hpp>
 #include <bunsan/filesystem/fstream.hpp>
 #include <bunsan/filesystem/operations.hpp>
 #include <bunsan/pm/index.hpp>
+#include <bunsan/protobuf/binary.hpp>
 #include <bunsan/static_initializer.hpp>
-
-#include <boost/property_tree/ini_parser.hpp>
 
 namespace bacs {
 namespace problem {
@@ -41,8 +39,9 @@ pdflatex::pdflatex(const boost::filesystem::path & /*location*/,
       m_target(get_target(config.get<std::string>("build.source"))) {}
 
 void pdflatex::make_package(const boost::filesystem::path &destination,
-                            const bunsan::pm::entry & /*package*/,
-                            const bunsan::pm::entry &resources_package) const {
+                            const bunsan::pm::entry &package,
+                            const bunsan::pm::entry &resources_package,
+                            const Revision &revision) const {
   try {
     bunsan::filesystem::reset_dir(destination);
     bunsan::pm::index index;
@@ -60,13 +59,14 @@ void pdflatex::make_package(const boost::filesystem::path &destination,
     } BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fout)
     fout.close();
     boost::filesystem::create_directory(destination / "pkg");
-    manifest statement_manifest;
-    statement_manifest.version.language = language();
-    statement_manifest.version.format = format();
-    statement_manifest.data.index = m_target;
-    boost::property_tree::write_ini(
-        (destination / "pkg" / manifest_path).string(),
-        bunsan::config::save<boost::property_tree::ptree>(statement_manifest));
+    Statement::Version::Manifest statement_manifest;
+    statement_manifest.mutable_version()->set_language(language());
+    statement_manifest.mutable_version()->set_format(format());
+    statement_manifest.mutable_version()->set_package(package.name());
+    *statement_manifest.mutable_revision() = revision;
+    statement_manifest.mutable_data()->set_index(m_target.string());
+    bunsan::protobuf::binary::serialize(statement_manifest,
+                                        destination / "pkg" / manifest_path);
     index.save(destination / "index");
   } catch (std::exception &) {
     typedef statement_version_make_package_error svmp_error;

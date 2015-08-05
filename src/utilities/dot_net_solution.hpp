@@ -15,7 +15,8 @@ class dot_net_solution : public utility {
                    const boost::property_tree::ptree &config);
 
   bool make_package(const boost::filesystem::path &destination,
-                    const bunsan::pm::entry &package) const override;
+                    const bunsan::pm::entry &package,
+                    const Revision &revision) const override;
 
  private:
   const boost::filesystem::path m_solution;

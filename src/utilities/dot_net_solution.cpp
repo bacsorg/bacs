@@ -31,9 +31,9 @@ dot_net_solution::dot_net_solution(const boost::filesystem::path &location,
       m_configuration(config.get_optional<std::string>("build.configuration")),
       m_libs(split::get_vector(config, "build.libs")) {}
 
-bool dot_net_solution::make_package(
-    const boost::filesystem::path &destination,
-    const bunsan::pm::entry & /*package*/) const {
+bool dot_net_solution::make_package(const boost::filesystem::path &destination,
+                                    const bunsan::pm::entry & /*package*/,
+                                    const Revision & /*revision*/) const {
   try {
     boost::filesystem::create_directories(destination);
     bunsan::pm::index index;

@@ -53,7 +53,8 @@ std::string get_lang(const std::string &source) {
 }  // namespace
 
 bool single::make_package(const boost::filesystem::path &destination,
-                          const bunsan::pm::entry & /*package*/) const {
+                          const bunsan::pm::entry & /*package*/,
+                          const Revision & /*revision*/) const {
   try {
     boost::filesystem::create_directories(destination);
     bunsan::pm::index index;

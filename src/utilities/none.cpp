@@ -13,7 +13,8 @@ class none : public utility {
       : utility(location, config) {}
 
   bool make_package(const boost::filesystem::path & /*destination*/,
-                    const bunsan::pm::entry & /*package*/) const override {
+                    const bunsan::pm::entry & /*package*/,
+                    const Revision & /*revision*/) const override {
     return false;
   }
 };

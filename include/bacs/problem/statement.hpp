@@ -8,8 +8,6 @@
 #include <bunsan/forward_constructor.hpp>
 
 #include <boost/filesystem/path.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/nvp.hpp>
 
 #include <unordered_set>
 
@@ -36,45 +34,21 @@ struct invalid_statement_format_error : virtual invalid_id_error,
 class statement : public buildable {
  public:
   class version : private boost::noncopyable {
-    BUNSAN_FACTORY_BODY(version, const boost::filesystem::path & /*location*/,
-                        const boost::property_tree::ptree & /*config*/)
+    BUNSAN_FACTORY_BODY(version, const boost::filesystem::path &location,
+                        const boost::property_tree::ptree &config)
    public:
-    struct manifest {
-      template <typename Archive>
-      void serialize(Archive &ar, const unsigned int) {
-        ar & BOOST_SERIALIZATION_NVP(version);
-        ar & BOOST_SERIALIZATION_NVP(data);
-      }
-
-      struct {
-        template <typename Archive>
-        void serialize(Archive &ar, const unsigned int) {
-          ar & BOOST_SERIALIZATION_NVP(language);
-          ar & BOOST_SERIALIZATION_NVP(format);
-        }
-
-        std::string language;
-        std::string format;
-      } version;
-
-      struct {
-        template <typename Archive>
-        void serialize(Archive &ar, const unsigned int) {
-          ar & BOOST_SERIALIZATION_NVP(index);
-        }
-
-        boost::filesystem::path index;
-      } data;
-    };
-
     /// Built statement version.
     class built {
      public:
       explicit built(const boost::filesystem::path &package_root);
 
-      const boost::filesystem::path &package_root() const;
+      const boost::filesystem::path &package_root() const {
+        return m_package_root;
+      }
 
-      const version::manifest &manifest() const;
+      const Statement::Version::Manifest &manifest() const {
+        return m_manifest;
+      }
 
       boost::filesystem::path data_root() const;
 
@@ -82,7 +56,7 @@ class statement : public buildable {
 
      private:
       const boost::filesystem::path m_package_root;
-      const version::manifest m_manifest;
+      const Statement::Version::Manifest m_manifest;
     };
 
    public:
@@ -90,14 +64,14 @@ class statement : public buildable {
     static version_ptr instance(const boost::filesystem::path &config_location);
 
    public:
-    version(const std::string &language_, const std::string &format_);
+    version(const std::string &language, const std::string &format);
 
     virtual ~version();
 
-    virtual void make_package(
-        const boost::filesystem::path &destination,
-        const bunsan::pm::entry &package,
-        const bunsan::pm::entry &resources_package) const = 0;
+    virtual void make_package(const boost::filesystem::path &destination,
+                              const bunsan::pm::entry &package,
+                              const bunsan::pm::entry &resources_package,
+                              const Revision &revision) const = 0;
 
     /// \warning package name is relative to statement version package
     virtual Statement::Version info() const;
@@ -133,7 +107,8 @@ class statement : public buildable {
 
  public:
   bool make_package(const boost::filesystem::path &destination,
-                    const bunsan::pm::entry &package) const override;
+                    const bunsan::pm::entry &package,
+                    const Revision &revision) const override;
 
   /// \warning package names are relative to statement package
   const Statement &info() const;

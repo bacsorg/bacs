@@ -2,9 +2,9 @@
 
 #include <bacs/problem/error.hpp>
 
-#include <bunsan/config/cast.hpp>
 #include <bunsan/filesystem/operations.hpp>
 #include <bunsan/pm/index.hpp>
+#include <bunsan/protobuf/binary.hpp>
 
 #include <boost/property_tree/ini_parser.hpp>
 
@@ -21,9 +21,9 @@ statement::version_ptr statement::version::instance(
                   config_location.parent_path(), config);
 }
 
-statement::version::version(const std::string &language_,
-                            const std::string &format_)
-    : m_language(language_), m_format(format_) {
+statement::version::version(const std::string &language,
+                            const std::string &format)
+    : m_language(language), m_format(format) {
   if (!bunsan::pm::entry::is_allowed_subpath(m_language))
     BOOST_THROW_EXCEPTION(
         invalid_statement_language_error()
@@ -53,38 +53,21 @@ Statement::Version statement::version::info() const {
 }
 
 /// \warning keep in sync with bacs/system/statement
-const boost::filesystem::path statement::version::manifest_path =
-    "manifest.ini";
+const boost::filesystem::path statement::version::manifest_path = "manifest";
 const boost::filesystem::path statement::version::data_path = "data";
-
-namespace {
-statement::version::manifest load_manifest(
-    const boost::filesystem::path &path) {
-  boost::property_tree::ptree ptree;
-  boost::property_tree::read_ini(path.string(), ptree);
-  return bunsan::config::load<statement::version::manifest>(ptree);
-}
-}  // namespace
 
 statement::version::built::built(const boost::filesystem::path &package_root)
     : m_package_root(package_root),
-      m_manifest(load_manifest(package_root / manifest_path)) {}
-
-const boost::filesystem::path &statement::version::built::package_root() const {
-  return m_package_root;
-}
-
-const statement::version::manifest &statement::version::built::manifest()
-    const {
-  return m_manifest;
-}
+      m_manifest(
+          bunsan::protobuf::binary::parse_make<Statement::Version::Manifest>(
+              package_root / manifest_path)) {}
 
 boost::filesystem::path statement::version::built::data_root() const {
   return m_package_root / version::data_path;
 }
 
 boost::filesystem::path statement::version::built::index() const {
-  return data_root() / manifest().data.index;
+  return data_root() / manifest().data().index();
 }
 
 namespace {
@@ -110,6 +93,7 @@ statement::statement(const boost::filesystem::path &location,
 }
 
 void statement::update_info() {
+  m_info.clear_version();
   for (const version_ptr &version : m_versions) {
     Statement::Version &info = *m_info.add_version() = version->info();
     const bunsan::pm::entry package = versions_subpackage / info.package();
@@ -118,7 +102,8 @@ void statement::update_info() {
 }
 
 bool statement::make_package(const boost::filesystem::path &destination,
-                             const bunsan::pm::entry &package) const {
+                             const bunsan::pm::entry &package,
+                             const Revision &revision) const {
   try {
     const bunsan::pm::entry &root_package = package;
     bunsan::filesystem::reset_dir(destination);
@@ -147,7 +132,7 @@ bool statement::make_package(const boost::filesystem::path &destination,
         boost::filesystem::create_directories(package_path);
         v->make_package(package_path,
                         root_package / versions_subpackage / package,
-                        resources_package);
+                        resources_package, revision);
       }
     }
 
