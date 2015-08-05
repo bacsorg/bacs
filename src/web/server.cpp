@@ -103,7 +103,7 @@ bool server::get_index_and_root(const std::string &signed_request,
                       "Problem's revision differs from requested");
     return false;
   }
-  if (index) *index = statement_version.manifest().data.index;
+  if (index) *index = statement_version.manifest().data().index();
   if (data_root) *data_root = statement_version.data_root();
   return true;
 }
