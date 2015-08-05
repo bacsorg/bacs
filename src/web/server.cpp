@@ -98,7 +98,9 @@ bool server::get_index_and_root(const std::string &signed_request,
   *cache_entry = m_cache->get(package);
   const boost::filesystem::path package_dir = cache_entry->root();
   const problem::statement::version::built statement_version(package_dir);
-  if (request.has_revision() && false) {  // TODO check revision
+  if (request.has_revision() &&
+      request.revision().value() !=
+          statement_version.manifest().revision().value()) {
     response().status(cppcms::http::response::gone,
                       "Problem's revision differs from requested");
     return false;
