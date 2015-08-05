@@ -1,8 +1,10 @@
 syntax = "proto3";
 
+import "bacs/problem/problem.proto";
+
 package bacs.statement_provider;
 
 message Request {
   string package = 1;
-  bytes revision = 2;
+  problem.Revision revision = 2;
 }
