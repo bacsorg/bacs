@@ -2,7 +2,6 @@
 
 #include <bacs/archive/config.hpp>
 #include <bacs/archive/error.hpp>
-#include <bacs/archive/problem/flags.hpp>
 
 #include <bunsan/config/cast.hpp>
 #include <bunsan/filesystem/operations.hpp>
@@ -139,12 +138,12 @@ problem::IdSet repository::available(const problem::IdSet &id_set) {
 }
 
 bool repository::is_locked(const problem::id &id) {
-  return has_flag(id, problem::flags::locked) ||
-         has_flag(id, problem::flags::read_only);
+  return has_flag(id, problem::Flag::LOCKED) ||
+         has_flag(id, problem::Flag::READ_ONLY);
 }
 
 bool repository::is_read_only(const problem::id &id) {
-  return has_flag(id, problem::flags::read_only);
+  return has_flag(id, problem::Flag::READ_ONLY);
 }
 /* flags */
 
@@ -168,7 +167,7 @@ problem::IdSet repository::unset_flags_all(const problem::IdSet &id_set,
 }
 
 bool repository::ignore(const problem::id &id) {
-  return set_flag(id, problem::flags::ignore);
+  return set_flag(id, problem::Flag::IGNORE);
 }
 
 problem::IdSet repository::ignore_all(const problem::IdSet &id_set) {

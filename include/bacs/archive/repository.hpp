@@ -236,6 +236,11 @@ class repository : private boost::noncopyable {
    */
   bool has_flag(const problem::id &id, const problem::flag &flag);
 
+  template <typename Flag>
+  bool has_flag(const problem::id &id, const Flag &flag) {
+    return has_flag(id, problem::flag_cast(flag));
+  }
+
   /*!
    * \brief Return problems with specified flag.
    *
@@ -246,6 +251,11 @@ class repository : private boost::noncopyable {
   problem::IdSet with_flag(const problem::IdSet &id_set,
                            const problem::flag &flag);
 
+  template <typename Flag>
+  bool with_flag(const problem::IdSet &id_set, const Flag &flag) {
+    return with_flag(id_set, problem::flag_cast(flag));
+  }
+
   /*!
    * \brief Set of problems with flag.
    *
@@ -254,6 +264,11 @@ class repository : private boost::noncopyable {
    * \see repository::with_flag
    */
   problem::IdSet with_flag(const problem::flag &flag);
+
+  template <typename Flag>
+  bool with_flag(const Flag &flag) {
+    return with_flag(problem::flag_cast(flag));
+  }
 
   /*!
    * \brief Set problem flag.
@@ -266,6 +281,11 @@ class repository : private boost::noncopyable {
    * \see repository::is_read_only
    */
   bool set_flag(const problem::id &id, const problem::flag &flag);
+
+  template <typename Flag>
+  bool set_flag(const problem::id &id, const Flag &flag) {
+    return set_flag(id, problem::flag_cast(flag));
+  }
 
   /*!
    * \brief Set problem flags.
@@ -298,6 +318,11 @@ class repository : private boost::noncopyable {
    * \see repository::is_read_only
    */
   bool unset_flag(const problem::id &id, const problem::flag &flag);
+
+  template <typename Flag>
+  bool unset_flag(const problem::id &id, const Flag &flag) {
+    return unset_flag(id, problem::flag_cast(flag));
+  }
 
   /*!
    * \brief Unset problem flags.

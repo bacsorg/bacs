@@ -25,22 +25,24 @@ archive::problem::FlagSet flag_set::value() {
   if (!value_.empty())
     boost::algorithm::split(uset, value_, boost::algorithm::is_space(),
                             boost::algorithm::token_compress_on);
-  *set.mutable_flag() = {uset.begin(), uset.end()};
+  set.clear_flag();
+  for (const auto &flag : uset)
+    *set.add_flag() = archive::problem::flag_cast(flag);
   return set;
 }
 
 void flag_set::value(const archive::problem::FlagSet &flag_set_) {
-  std::vector<archive::problem::flag> flags(flag_set_.flag().begin(),
-                                            flag_set_.flag().end());
+  std::vector<archive::problem::flag> flags;
+  for (const archive::problem::Flag &flag : flag_set_.flag()) {
+    flags.push_back(archive::problem::flag_cast(flag));
+  }
   std::sort(flags.begin(), flags.end());
   text::value(boost::algorithm::join(flags, " "));
 }
 
 bool flag_set::validate() {
   if (!text::validate()) return false;
-  const archive::problem::FlagSet set = value();
-  valid(std::all_of(set.flag().begin(), set.flag().end(),
-                    archive::problem::is_allowed_flag));
+  valid(archive::problem::is_allowed_flag_set(value()));
   return valid();
 }
 

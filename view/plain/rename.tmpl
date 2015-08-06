@@ -22,15 +22,14 @@
                     <% end %>
                 </p>
                 <% if result->has_status() %>
-                    <% foreach flag in result->status().flags().flag() %>
+                    <p>
                         <% gt "Problem flags:" %>
-                        <ul class="problem_flags">
-                            <% item %>
-                                <li><%= flag %></li>
-                            <% end %>
-                        </ul>
-                    <% end %>
-                    <p><% gt "Problem revision:" %> <%= result->status().revision().DebugString() %></p>
+                        <pre><%= result->status().flags().DebugString() %></pre>
+                    </p>
+                    <p>
+                        <% gt "Problem revision:" %>
+                        <%= result->status().revision().DebugString() %>
+                    </p>
                 <% else %>
                     <% gt "N/A" %>
                 <% end %>

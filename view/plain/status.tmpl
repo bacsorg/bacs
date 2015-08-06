@@ -33,13 +33,7 @@
                                 </td>
                                 <% if id_import.second.has_status() %>
                                     <td>
-                                        <% foreach flag in id_import.second.status().flags().flag() %>
-                                            <ul class="problem_flags">
-                                                <% item %>
-                                                    <li><%= flag %></li>
-                                                <% end %>
-                                            </ul>
-                                        <% end %>
+                                        <pre><%= id_import.second.status().flags().DebugString() %></pre>
                                     </td>
                                     <td><%= id_import.second.status().revision().DebugString() %></td>
                                 <% else %>
