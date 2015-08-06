@@ -25,10 +25,10 @@
                             <tr>
                                 <td><%= id_import.first %></td>
                                 <td>
-                                    <% if id_import.second.has_error() %>
-                                        <pre class="error"><%= id_import.second.error() %></pre>
-                                    <% else %>
+                                    <% if id_import.second.error().empty() %>
                                         <% gt "OK" %>
+                                    <% else %>
+                                        <pre class="error"><%= id_import.second.error() %></pre>
                                     <% end %>
                                 </td>
                                 <% if id_import.second.has_status() %>

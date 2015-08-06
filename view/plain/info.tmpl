@@ -27,9 +27,7 @@
                             <tr>
                                 <td><%= id_info.first %></td>
                                 <td>
-                                    <% if id_info.second.has_error() %>
-                                        <pre class="error"><%= id_info.second.error() %></pre>
-                                    <% else %>
+                                    <% if id_info.second.error().empty() %>
                                         <div class="protobuf">
                                             <div class="spoiler">
                                                 <span class="action">
@@ -41,6 +39,8 @@
                                             </div>
                                             <pre style="display: none"><%= id_info.second.problem().DebugString() %></pre>
                                         </div>
+                                    <% else %>
+                                        <pre class="error"><%= id_info.second.error() %></pre>
                                     <% end %>
                                 </td>
                             </tr>

@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "proto3";
 
 package bacs.archive.problem;
 
@@ -24,8 +24,8 @@ message FlagSet {
 }
 
 message Status {
-  required FlagSet flags = 1;
-  required bacs.problem.Revision revision = 2;
+  FlagSet flags = 1;
+  bacs.problem.Revision revision = 2;
 }
 
 message ImportInfo {
