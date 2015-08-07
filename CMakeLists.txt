@@ -29,6 +29,7 @@ bunsan_use_target(${PROJECT_NAME}_web ${PROJECT_NAME})
 bunsan_use_bunsan_package(${PROJECT_NAME}_web bunsan_pm bunsan_pm)
 bunsan_use_bunsan_package(${PROJECT_NAME}_web bunsan_web bunsan_web)
 target_link_libraries(${PROJECT_NAME}_web PUBLIC cppcms booster)
+bunsan_use_package(${PROJECT_NAME}_web Botan)
 
 bunsan_install_headers()
 bunsan_install_targets(${PROJECT_NAME}_web)

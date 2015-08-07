@@ -5,6 +5,8 @@
 #include <bunsan/pm/cache.hpp>
 #include <bunsan/web/mime_file.hpp>
 
+#include <botan/pk_keys.h>
+
 #include <booster/regex.h>
 #include <cppcms/application.h>
 
@@ -43,6 +45,7 @@ class server : public cppcms::application {
   const booster::regex m_request_regex;
   const std::shared_ptr<bunsan::pm::cache> m_cache;
   const bunsan::web::mime_file m_mime_file;
+  std::unordered_map<std::string, std::unique_ptr<Botan::Public_Key>> m_keys;
 };
 
 }  // namespace web

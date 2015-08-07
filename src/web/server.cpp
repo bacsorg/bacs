@@ -9,6 +9,9 @@
 
 #include <google/protobuf/text_format.h>
 
+#include <botan/pubkey.h>
+#include <botan/x509_key.h>
+
 #include <cppcms/base64.h>
 #include <cppcms/url_dispatcher.h>
 #include <cppcms/url_mapper.h>
@@ -40,6 +43,13 @@ server::server(cppcms::service &srv,
   mapper().assign("get", "/{1}/{2}");
 
   mapper().root("/statement");
+
+  const auto &keys = srv.settings().find("statement_provider.keys").object();
+  for (const auto &ref_key : keys) {
+    std::unique_ptr<Botan::Public_Key> key(
+        Botan::X509::load_key(ref_key.second.str()));
+    m_keys[ref_key.first] = std::move(key);
+  }
 }
 
 void server::get_index(std::string signed_request) {
@@ -149,9 +159,21 @@ bool server::verify_and_parse(const std::string &signed_request,
 }
 
 bool server::verify(const std::string &coded_request,
-                    const std::string &referrer,
-                    const std::string &signature) {
-  // TODO
+                    const std::string &referrer, const std::string &signature) {
+  const auto ref_key = m_keys.find(referrer);
+  if (ref_key == m_keys.end()) {
+    response().status(cppcms::http::response::forbidden, "Unknown referrer");
+    return false;
+  }
+  Botan::PK_Verifier verifier(*ref_key->second, "EMSA3(SHA-1)");
+  if (!verifier.verify_message(
+          reinterpret_cast<const Botan::byte *>(coded_request.data()),
+          coded_request.size(),
+          reinterpret_cast<const Botan::byte *>(signature.data()),
+          signature.size())) {
+    response().status(cppcms::http::response::forbidden, "Bad signature");
+    return false;
+  }
   return true;
 }
 
