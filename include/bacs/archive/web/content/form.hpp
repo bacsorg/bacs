@@ -17,7 +17,7 @@
 // clear_flags
 // ignore
 // info
-// repack
+#include <bacs/archive/web/content/form/repack.hpp>
 
 #include <bunsan/forward_constructor.hpp>
 
@@ -67,9 +67,7 @@ struct info : basic_form<form::list_query, problem::InfoMap> {
   info();
 };
 
-struct repack : basic_form<form::list_query, problem::ImportMap> {
-  repack();
-};
+using repack = basic_form<form::repack, problem::ImportMap>;
 
 }  // namespace content
 }  // namespace web

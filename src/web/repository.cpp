@@ -247,7 +247,12 @@ DEFINE_HANDLER(info, problem::InfoMap) {
 }
 
 DEFINE_HANDLER(repack, problem::ImportMap) {
-  return m_repository->schedule_repack_all(data.form.ids.value());
+  const boost::optional<problem::IdSet> ids = data.form.ids.value();
+  if (ids) {
+    return m_repository->schedule_repack_all(ids.get());
+  } else {
+    return m_repository->schedule_repack_all();
+  }
 }
 
 template <typename ProtoBuf>

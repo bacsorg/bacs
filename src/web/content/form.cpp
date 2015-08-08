@@ -14,8 +14,6 @@ ignore::ignore() : basic_form(cppcms::locale::translate("Ignore")) {}
 
 info::info() : basic_form(cppcms::locale::translate("Get info")) {}
 
-repack::repack() : basic_form(cppcms::locale::translate("Repack")) {}
-
 }  // namespace content
 }  // namespace web
 }  // namespace archive
