@@ -237,7 +237,7 @@ class repository : private boost::noncopyable {
   bool has_flag(const problem::id &id, const problem::flag &flag);
 
   template <typename Flag>
-  bool has_flag(const problem::id &id, const Flag &flag) {
+  auto has_flag(const problem::id &id, const Flag &flag) {
     return has_flag(id, problem::flag_to_string(flag));
   }
 
@@ -252,7 +252,7 @@ class repository : private boost::noncopyable {
                            const problem::flag &flag);
 
   template <typename Flag>
-  bool with_flag(const problem::IdSet &id_set, const Flag &flag) {
+  auto with_flag(const problem::IdSet &id_set, const Flag &flag) {
     return with_flag(id_set, problem::flag_to_string(flag));
   }
 
@@ -266,7 +266,7 @@ class repository : private boost::noncopyable {
   problem::IdSet with_flag(const problem::flag &flag);
 
   template <typename Flag>
-  bool with_flag(const Flag &flag) {
+  auto with_flag(const Flag &flag) {
     return with_flag(problem::flag_to_string(flag));
   }
 
@@ -283,7 +283,7 @@ class repository : private boost::noncopyable {
   bool set_flag(const problem::id &id, const problem::flag &flag);
 
   template <typename Flag>
-  bool set_flag(const problem::id &id, const Flag &flag) {
+  auto set_flag(const problem::id &id, const Flag &flag) {
     return set_flag(id, problem::flag_to_string(flag));
   }
 
@@ -320,7 +320,7 @@ class repository : private boost::noncopyable {
   bool unset_flag(const problem::id &id, const problem::flag &flag);
 
   template <typename Flag>
-  bool unset_flag(const problem::id &id, const Flag &flag) {
+  auto unset_flag(const problem::id &id, const Flag &flag) {
     return unset_flag(id, problem::flag_to_string(flag));
   }
 
@@ -479,16 +479,16 @@ class repository : private boost::noncopyable {
   void set_flag_(const problem::id &id, const problem::flag &flag);
 
   template <typename Flag>
-  void set_flag_(const problem::id &id, const Flag &flag) {
-    set_flag_(id, problem::flag_to_string(flag));
+  auto set_flag_(const problem::id &id, const Flag &flag) {
+    return set_flag_(id, problem::flag_to_string(flag));
   }
 
   /// \warning requires unique lock and problem existence
   void unset_flag_(const problem::id &id, const problem::flag &flag);
 
   template <typename Flag>
-  void unset_flag_(const problem::id &id, const Flag &flag) {
-    unset_flag_(id, problem::flag_to_string(flag));
+  auto unset_flag_(const problem::id &id, const Flag &flag) {
+    return unset_flag_(id, problem::flag_to_string(flag));
   }
 
   /// \warning requires at least shared lock and problem existence
