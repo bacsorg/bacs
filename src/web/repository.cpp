@@ -247,7 +247,7 @@ DEFINE_HANDLER(info, problem::InfoMap) {
 }
 
 DEFINE_HANDLER(repack, problem::ImportMap) {
-  return m_repository->repack_all(data.form.ids.value());
+  return m_repository->schedule_repack_all(data.form.ids.value());
 }
 
 template <typename ProtoBuf>

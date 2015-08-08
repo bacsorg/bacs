@@ -5,13 +5,16 @@
 #include <bunsan/log/trivial.hpp>
 #include <bunsan/web/json.hpp>
 
+#include <booster/aio/io_service.h>
 #include <cppcms/applications_pool.h>
 #include <cppcms/service.h>
 
+#include <boost/asio/io_service.hpp>
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 #include <memory>
+#include <thread>
 
 using namespace bunsan::application;
 
@@ -33,12 +36,18 @@ class archive_application : public application {
     BUNSAN_LOG_DEBUG << "Parsing nested configuration at \"" << cfg << "\"";
     boost::property_tree::ptree config;
     boost::property_tree::read_info(cfg, config);
-    const auto repository = std::make_shared<bacs::archive::repository>(config);
+    boost::asio::io_service executor;
+    std::thread worker([&executor] { executor.run(); });
+    boost::asio::io_service::work work(executor);
+    const auto repository =
+        std::make_shared<bacs::archive::repository>(executor, config);
     srv.applications_pool().mount(
         cppcms::applications_factory<bacs::archive::web::repository>(
             repository));
     BUNSAN_LOG_INFO << "Starting server";
     srv.run();
+    executor.stop();
+    worker.join();
     BUNSAN_LOG_INFO << "Server terminated";
     return exit_success;
   }

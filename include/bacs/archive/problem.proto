@@ -40,6 +40,8 @@ message Flag {
     // It does not allow to edit flags.
     // Only administrator can remove this flag manually.
     READ_ONLY = 3;
+    // Repack is planned and will be done soon.
+    PENDING_REPACK = 4;
   }
   oneof flag {
     Reserved reserved = 1;

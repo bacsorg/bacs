@@ -9,6 +9,7 @@
 
 #include <boost/assert.hpp>
 #include <boost/crc.hpp>
+#include <boost/scope_exit.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_lock_guard.hpp>
 
@@ -117,7 +118,6 @@ problem::ImportInfo repository::insert(
       const problem::Revision revision = compute_hash_revision(
           m_location.repository_root / id / m_problem.data.filename);
       write_revision_(id, revision);
-      import_info = repack_(id, revision, location);
     } else {
       error = problem_is_locked;
     }
@@ -126,7 +126,7 @@ problem::ImportInfo repository::insert(
   }
   switch (error) {
     case ok:
-      /* nothing to do */
+      import_info = schedule_repack(id);
       break;
     case problem_is_locked:
       import_info.set_error("problem is locked");
@@ -231,6 +231,10 @@ problem::FlagSet repository::flags_(const problem::id &id) {
 bool repository::set_flag(const problem::id &id, const problem::flag &flag) {
   problem::validate_id(id);
   problem::validate_flag(flag);
+  if (problem::flag_equal(flag, problem::Flag::PENDING_REPACK)) {
+    BOOST_THROW_EXCEPTION(problem::flag_cant_be_set_error()
+                          << problem::flag_cant_be_set_error::flag(flag));
+  }
   if (exists(id)) {
     const lock_guard lk(m_lock);
     if (exists(id) && !is_read_only(id)) {
@@ -288,8 +292,9 @@ bool repository::unset_flags(const problem::id &id,
     const lock_guard lk(m_lock);
     if (exists(id) && !is_read_only(id)) {
       for (const problem::Flag &flag : flags.flag()) {
-        // it is not possible to remove ignore flag
-        if (!problem::flag_equal(flag, problem::Flag::IGNORE)) {
+        // it is not possible to unset IGNORE and PENDING_REPACK flags
+        if (!problem::flag_equal(flag, problem::Flag::IGNORE) &&
+            !problem::flag_equal(flag, problem::Flag::PENDING_REPACK)) {
           unset_flag_(id, flag);
         }
       }
@@ -309,8 +314,9 @@ bool repository::clear_flags(const problem::id &id) {
       for (boost::filesystem::directory_iterator i(flags_dir), end; i != end;
            ++i) {
         const problem::flag flag = i->path().filename().string();
-        // it is not possible to clear ignore flag
-        if (!problem::flag_equal(flag, problem::Flag::IGNORE)) {
+        // it is not possible to clear IGNORE and PENDING_REPACK flags
+        if (!problem::flag_equal(flag, problem::Flag::IGNORE) &&
+            !problem::flag_equal(flag, problem::Flag::PENDING_REPACK)) {
           BOOST_VERIFY(boost::filesystem::remove(*i));
         }
       }
@@ -324,7 +330,13 @@ problem::Info repository::info(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
     const shared_lock_guard lk(m_lock);
-    if (is_available_(id)) return read_info_(id);
+    if (exists(id)) {
+      if (has_flag(id, problem::Flag::PENDING_REPACK)) {
+        return info_error("Repack is pending");
+      } else {
+        return read_info_(id);
+      }
+    }
   }
   return info_does_not_exist();
 }
@@ -397,6 +409,51 @@ problem::ImportInfo repository::rename(const problem::id &current,
   return import_not_implemented();
 }
 
+bool repository::prepare_repack(const problem::id &id) {
+  BUNSAN_LOG_DEBUG << "Preparing " << id << " for repack";
+  if (exists(id)) {
+    const lock_guard lk(m_lock);
+    if (exists(id)) {
+      set_flag_(id, problem::Flag::PENDING_REPACK);
+      return true;
+    }
+  }
+  return false;
+}
+
+problem::ImportInfo repository::schedule_repack(const problem::id &id) {
+  BUNSAN_LOG_INFO << "Scheduling " << id << " for repack";
+  problem::validate_id(id);
+  bool schedule = false;
+  BOOST_SCOPE_EXIT_ALL(&) {
+    // lock should not be held during execution of this code
+    if (schedule) m_io_service.post([this, id] { repack(id); });
+  };
+  schedule = prepare_repack(id);
+  return status(id);
+}
+
+problem::ImportMap repository::schedule_repack_all(
+    const problem::IdSet &id_set) {
+  BUNSAN_LOG_INFO << "Scheduling " << id_set.ShortDebugString()
+                  << " for repack";
+  std::unordered_set<problem::id> schedule;
+  BOOST_SCOPE_EXIT_ALL(&) {
+    m_io_service.post([this, schedule] {
+      for (const auto &id : schedule) repack(id);
+    });
+  };
+  for (const auto &id : id_set.id()) {
+    if (prepare_repack(id)) schedule.insert(id);
+  }
+  return status_all(id_set);
+}
+
+problem::ImportMap repository::schedule_repack_all_pending() {
+  BUNSAN_LOG_INFO << "Scheduling all pending problems for repack";
+  return schedule_repack_all(with_flag(problem::Flag::PENDING_REPACK));
+}
+
 problem::ImportInfo repository::repack(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
@@ -432,6 +489,7 @@ problem::ImportInfo repository::repack_(const problem::id &id,
 problem::ImportInfo repository::repack_(
     const problem::id &id, const problem::Revision &revision,
     const boost::filesystem::path &problem_location) {
+  BUNSAN_LOG_INFO << "Repacking " << id;
   problem::ImportInfo import_info;
   try {
     bacs::problem::importer::options options;
@@ -449,8 +507,10 @@ problem::ImportInfo repository::repack_(
     *status.mutable_flags() = flags_(id);
   } catch (std::exception &e) {
     set_flag_(id, problem::Flag::IGNORE);
+    write_info_(id, info_error(e.what()));
     import_info.set_error(e.what());
   }
+  unset_flag_(id, problem::Flag::PENDING_REPACK);
   return import_info;
 }
 

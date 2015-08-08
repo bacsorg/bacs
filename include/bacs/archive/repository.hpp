@@ -10,12 +10,14 @@
 #include <bunsan/utility/archiver.hpp>
 #include <bunsan/utility/custom_resolver.hpp>
 
+#include <boost/asio/io_service.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/thread/shared_mutex.hpp>
 
+#include <functional>
 #include <string>
 
 namespace bacs {
@@ -42,6 +44,11 @@ namespace archive {
  */
 class repository : private boost::noncopyable {
  public:
+  explicit repository(boost::asio::io_service &io_service,
+                      const config &config_);
+  explicit repository(boost::asio::io_service &io_service,
+                      const boost::property_tree::ptree &tree);
+
   explicit repository(const config &config_);
   explicit repository(const boost::property_tree::ptree &tree);
 
@@ -446,6 +453,42 @@ class repository : private boost::noncopyable {
    */
   problem::ImportMap repack_all(const problem::IdSet &id_set);
 
+  /*!
+   * \brief Schedules repack for future execution with post.
+   *
+   * Atomic, exclusive-lock.
+   *
+   * \see repository::repack
+   */
+  problem::ImportInfo schedule_repack(const problem::id &id);
+
+  /*!
+   * \brief Schedules repack for all given problems.
+   *
+   * Not atomic.
+   *
+   * \see repository::schedule_repack
+   */
+  problem::ImportMap schedule_repack_all(const problem::IdSet &id_set);
+
+  /*!
+   * \brief Schedules repack for all problems.
+   *
+   * Not atomic.
+   *
+   * \see repository::schedule_repack_all
+   */
+  problem::ImportMap schedule_repack_all();
+
+  /*!
+   * \brief Schedules repack for all pending problems.
+   *
+   * Not atomic.
+   *
+   * \see repository::schedule_repack_all
+   */
+  problem::ImportMap schedule_repack_all_pending();
+
  private:
   /*!
    * \brief Check problem for validity.
@@ -516,8 +559,12 @@ class repository : private boost::noncopyable {
                               const problem::Revision &revision,
                               const boost::filesystem::path &problem_location);
 
+  /// \return true if repack should be scheduled
+  bool prepare_repack(const problem::id &id);
+
  private:
   boost::shared_mutex m_lock;
+  boost::asio::io_service &m_io_service;
   const bunsan::interprocess::file_guard m_flock;
   bunsan::utility::custom_resolver m_resolver;
   const location_config m_location;

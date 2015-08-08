@@ -6,6 +6,7 @@
 #include <bunsan/config/cast.hpp>
 #include <bunsan/filesystem/operations.hpp>
 #include <bunsan/get.hpp>
+#include <bunsan/log/trivial.hpp>
 #include <bunsan/system_error.hpp>
 #include <bunsan/utility/archiver.hpp>
 
@@ -19,18 +20,24 @@
 namespace bacs {
 namespace archive {
 
-repository::repository(const boost::property_tree::ptree &ptree)
-    : repository(bunsan::config::load<bacs::archive::config>(ptree)) {}
-
-repository::repository(const config &config_)
-    : m_flock(config_.lock),
+repository::repository(boost::asio::io_service &io_service,
+                       const config &config_)
+    : m_io_service(io_service),
+      m_flock(config_.lock),
       m_resolver(config_.resolver),
       m_location(config_.location),
       m_problem_archiver_factory(
           config_.problem.data.archiver.configured_factory()),
       m_problem(config_.problem),
       m_importer(config_.problem.importer),
-      m_repository(config_.pm) {}
+      m_repository(config_.pm) {
+  schedule_repack_all_pending();
+}
+
+repository::repository(boost::asio::io_service &io_service,
+                       const boost::property_tree::ptree &ptree)
+    : repository(io_service,
+                 bunsan::config::load<bacs::archive::config>(ptree)) {}
 
 namespace {
 template <typename T>
@@ -192,6 +199,11 @@ problem::InfoMap repository::info_all(const problem::IdSet &id_set) {
 
 problem::ImportMap repository::repack_all(const problem::IdSet &id_set) {
   return get_all_map<problem::ImportMap>(this, &repository::repack, id_set);
+}
+
+problem::ImportMap repository::schedule_repack_all() {
+  BUNSAN_LOG_INFO << "Scheduling all problems for repack";
+  return schedule_repack_all(existing());
 }
 
 }  // namespace archive

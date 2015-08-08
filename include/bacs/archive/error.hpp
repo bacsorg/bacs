@@ -27,9 +27,12 @@ struct unknown_archiver_error : virtual error {
 namespace problem {
 struct error : virtual archive::error {};
 
-struct invalid_flag_error : virtual error {
+struct flag_error : virtual error {
   using flag = boost::error_info<struct tag_flag, problem::flag>;
 };
+struct invalid_flag_error : virtual flag_error {};
+struct flag_cant_be_set_error : virtual flag_error {};
+
 }  // namespace problem
 
 }  // namespace archive
