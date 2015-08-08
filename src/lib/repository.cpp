@@ -201,6 +201,10 @@ problem::ImportMap repository::repack_all(const problem::IdSet &id_set) {
   return get_all_map<problem::ImportMap>(this, &repository::repack, id_set);
 }
 
+problem::ImportMap repository::repack_all() {
+  return repack_all(existing());
+}
+
 problem::ImportMap repository::schedule_repack_all() {
   BUNSAN_LOG_INFO << "Scheduling all problems for repack";
   return schedule_repack_all(existing());

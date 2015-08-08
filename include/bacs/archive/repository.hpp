@@ -454,6 +454,15 @@ class repository : private boost::noncopyable {
   problem::ImportMap repack_all(const problem::IdSet &id_set);
 
   /*!
+   * \brief Repack all problems.
+   *
+   * Not atomic.
+   *
+   * \see repository::repack_all
+   */
+  problem::ImportMap repack_all();
+
+  /*!
    * \brief Schedules repack for future execution with post.
    *
    * Atomic, exclusive-lock.
