@@ -252,9 +252,7 @@ bool repository::set_flags(const problem::id &id,
   if (exists(id)) {
     const lock_guard lk(m_lock);
     if (exists(id) && !is_read_only(id)) {
-      for (const problem::Flag &flag : flags.flag()) {
-        set_flag_(id, problem::flag_cast(flag));
-      }
+      for (const problem::Flag &flag : flags.flag()) set_flag_(id, flag);
       return true;
     }
   }
@@ -268,8 +266,9 @@ bool repository::unset_flag(const problem::id &id, const problem::flag &flag) {
     const lock_guard lk(m_lock);
     if (exists(id) && !is_read_only(id)) {
       // it is not possible to remove ignore flag
-      if (flag != problem::flag_cast(problem::Flag::IGNORE))
+      if (!problem::flag_equal(flag, problem::Flag::IGNORE)) {
         unset_flag_(id, flag);
+      }
       return true;
     }
   }
@@ -290,9 +289,8 @@ bool repository::unset_flags(const problem::id &id,
     if (exists(id) && !is_read_only(id)) {
       for (const problem::Flag &flag : flags.flag()) {
         // it is not possible to remove ignore flag
-        if (problem::flag_cast(flag) !=
-            problem::flag_cast(problem::Flag::IGNORE)) {
-          unset_flag_(id, problem::flag_cast(flag));
+        if (!problem::flag_equal(flag, problem::Flag::IGNORE)) {
+          unset_flag_(id, flag);
         }
       }
       return true;
@@ -312,8 +310,9 @@ bool repository::clear_flags(const problem::id &id) {
            ++i) {
         const problem::flag flag = i->path().filename().string();
         // it is not possible to clear ignore flag
-        if (flag != problem::flag_cast(problem::Flag::IGNORE))
+        if (!problem::flag_equal(flag, problem::Flag::IGNORE)) {
           BOOST_VERIFY(boost::filesystem::remove(*i));
+        }
       }
       return true;
     }
@@ -444,12 +443,12 @@ problem::ImportInfo repository::repack_(
     options.revision = revision;
     write_info_(id, info_problem(m_importer.convert(options)));
     m_repository.create_recursively(options.destination, m_problem.strip);
-    unset_flag_(id, problem::flag_cast(problem::Flag::IGNORE));
+    unset_flag_(id, problem::Flag::IGNORE);
     problem::Status &status = *import_info.mutable_status();
     *status.mutable_revision() = revision;
     *status.mutable_flags() = flags_(id);
   } catch (std::exception &e) {
-    set_flag_(id, problem::flag_cast(problem::Flag::IGNORE));
+    set_flag_(id, problem::Flag::IGNORE);
     import_info.set_error(e.what());
   }
   return import_info;

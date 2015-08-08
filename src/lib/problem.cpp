@@ -34,6 +34,16 @@ Flag flag_cast(const std::string &flag) {
   return result;
 }
 
+const std::string &flag_to_string(const problem::Flag &flag) {
+  return flag_cast(flag);
+}
+
+const std::string &flag_to_string(const problem::Flag::Reserved flag) {
+  return flag_cast(flag);
+}
+
+const std::string &flag_to_string(const std::string &flag) { return flag; }
+
 bool is_allowed_flag(const flag &flag_) {
   return bunsan::pm::entry::is_allowed_subpath(flag_);
 }

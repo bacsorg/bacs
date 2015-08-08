@@ -25,6 +25,15 @@ const std::string &flag_cast(const problem::Flag &flag);
 const std::string &flag_cast(const problem::Flag::Reserved flag);
 Flag flag_cast(const std::string &flag);
 
+const std::string &flag_to_string(const problem::Flag &flag);
+const std::string &flag_to_string(const problem::Flag::Reserved flag);
+const std::string &flag_to_string(const std::string &flag);
+
+template <typename Flag1, typename Flag2>
+bool flag_equal(const Flag1 &flag1, const Flag2 &flag2) {
+  return flag_to_string(flag1) == flag_to_string(flag2);
+}
+
 bool is_allowed_flag(const flag &flag_);
 bool is_allowed_flag(const Flag &flag);
 bool is_allowed_flag_set(const FlagSet &flags);

@@ -238,7 +238,7 @@ class repository : private boost::noncopyable {
 
   template <typename Flag>
   bool has_flag(const problem::id &id, const Flag &flag) {
-    return has_flag(id, problem::flag_cast(flag));
+    return has_flag(id, problem::flag_to_string(flag));
   }
 
   /*!
@@ -253,7 +253,7 @@ class repository : private boost::noncopyable {
 
   template <typename Flag>
   bool with_flag(const problem::IdSet &id_set, const Flag &flag) {
-    return with_flag(id_set, problem::flag_cast(flag));
+    return with_flag(id_set, problem::flag_to_string(flag));
   }
 
   /*!
@@ -267,7 +267,7 @@ class repository : private boost::noncopyable {
 
   template <typename Flag>
   bool with_flag(const Flag &flag) {
-    return with_flag(problem::flag_cast(flag));
+    return with_flag(problem::flag_to_string(flag));
   }
 
   /*!
@@ -284,7 +284,7 @@ class repository : private boost::noncopyable {
 
   template <typename Flag>
   bool set_flag(const problem::id &id, const Flag &flag) {
-    return set_flag(id, problem::flag_cast(flag));
+    return set_flag(id, problem::flag_to_string(flag));
   }
 
   /*!
@@ -321,7 +321,7 @@ class repository : private boost::noncopyable {
 
   template <typename Flag>
   bool unset_flag(const problem::id &id, const Flag &flag) {
-    return unset_flag(id, problem::flag_cast(flag));
+    return unset_flag(id, problem::flag_to_string(flag));
   }
 
   /*!
@@ -478,8 +478,18 @@ class repository : private boost::noncopyable {
   /// \warning requires unique lock and problem existence
   void set_flag_(const problem::id &id, const problem::flag &flag);
 
+  template <typename Flag>
+  void set_flag_(const problem::id &id, const Flag &flag) {
+    set_flag_(id, problem::flag_to_string(flag));
+  }
+
   /// \warning requires unique lock and problem existence
   void unset_flag_(const problem::id &id, const problem::flag &flag);
+
+  template <typename Flag>
+  void unset_flag_(const problem::id &id, const Flag &flag) {
+    unset_flag_(id, problem::flag_to_string(flag));
+  }
 
   /// \warning requires at least shared lock and problem existence
   problem::Revision read_revision_(const problem::id &id);
