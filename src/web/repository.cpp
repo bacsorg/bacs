@@ -196,7 +196,7 @@ DEFINE_HANDLER(rename, problem::ImportInfo) {
 DEFINE_HANDLER(existing, problem::IdSet) {
   const boost::optional<problem::IdSet> ids = data.form.ids.value();
   if (ids) {
-    return m_repository->existing(ids.get());
+    return m_repository->existing(*ids);
   } else {
     return m_repository->existing();
   }
@@ -205,7 +205,7 @@ DEFINE_HANDLER(existing, problem::IdSet) {
 DEFINE_HANDLER(available, problem::IdSet) {
   const boost::optional<problem::IdSet> ids = data.form.ids.value();
   if (ids) {
-    return m_repository->available(ids.get());
+    return m_repository->available(*ids);
   } else {
     return m_repository->available();
   }
@@ -218,7 +218,7 @@ DEFINE_HANDLER(status, problem::ImportMap) {
 DEFINE_HANDLER(with_flag, problem::IdSet) {
   const boost::optional<problem::IdSet> ids = data.form.ids.value();
   if (ids) {
-    return m_repository->with_flag(ids.get(), data.form.flag.value());
+    return m_repository->with_flag(*ids, data.form.flag.value());
   } else {
     return m_repository->with_flag(data.form.flag.value());
   }
@@ -249,7 +249,7 @@ DEFINE_HANDLER(info, problem::InfoMap) {
 DEFINE_HANDLER(repack, problem::ImportMap) {
   const boost::optional<problem::IdSet> ids = data.form.ids.value();
   if (ids) {
-    return m_repository->schedule_repack_all(ids.get());
+    return m_repository->schedule_repack_all(*ids);
   } else {
     return m_repository->schedule_repack_all();
   }
