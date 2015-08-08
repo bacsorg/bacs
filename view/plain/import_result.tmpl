@@ -1,46 +1,46 @@
 <% c++ #include <bacs/archive/web/content/form.hpp> %>
 <% skin plain %>
-    <% view info uses bacs::archive::web::content::info extends base_form %>
+    <% view import_result uses bacs::archive::web::content::import_result extends base_form %>
         <% template scripts() %>
             <% include base_form::scripts() %>
             <script src="/static/plain/protobuf.js" type="text/javascript"></script>
         <% end template %>
         <% template subtitle() %>
-            <% gt "Problems info" %>
+            <% gt "Import results" %>
         <% end template %>
         <% template form() %>
-            <h3><% gt "Get problems info" %></h3>
+            <h3><% gt "Get import results" %></h3>
             <form method="post" action="">
                 <% form as_p form %>
             </form>
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id_info in result->entry() %>
+                <% foreach id_result in result->entry() %>
                     <table border="1" cellspacing="0" cellpadding="10">
-                        <caption><% gt "Problem info" %></caption>
+                        <caption><% gt "Problem import result" %></caption>
                         <tr>
                             <th><% gt "Problem" %></th>
-                            <th><% gt "Info" %></th>
+                            <th><% gt "Import result" %></th>
                         </tr>
                         <% item %>
                             <tr>
-                                <td><%= id_info.first %></td>
+                                <td><%= id_result.first %></td>
                                 <td>
-                                    <% if id_info.second.error().empty() %>
+                                    <% if id_result.second.error().empty() %>
                                         <div class="protobuf">
                                             <div class="spoiler">
                                                 <span class="action">
-                                                    <% gt "Show" %>&nbsp;"<%= id_info.second.problem().system().problem_type() %>"&nbsp;<% gt "info" %>
+                                                    <% gt "Show" %>&nbsp;"<%= id_result.second.problem().system().problem_type() %>"&nbsp;<% gt "import result" %>
                                                 </span>
                                                 <span class="action" style="display: none">
-                                                    <% gt "Hide" %>&nbsp;"<%= id_info.second.problem().system().problem_type() %>"&nbsp;<% gt "info" %>
+                                                    <% gt "Hide" %>&nbsp;"<%= id_result.second.problem().system().problem_type() %>"&nbsp;<% gt "import result" %>
                                                 </span>
                                             </div>
-                                            <pre style="display: none"><%= id_info.second.problem().DebugString() %></pre>
+                                            <pre style="display: none"><%= id_result.second.problem().DebugString() %></pre>
                                         </div>
                                     <% else %>
-                                        <pre class="error"><%= id_info.second.error() %></pre>
+                                        <pre class="error"><%= id_result.second.error() %></pre>
                                     <% end %>
                                 </td>
                             </tr>

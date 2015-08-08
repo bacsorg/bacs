@@ -6,7 +6,7 @@
 repository/
            ${problem_id}/
                          flags/${flag_i}
-                         info
+                         import_result
                          revision
                          ${problem.filename}
 \endverbatim

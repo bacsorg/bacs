@@ -60,8 +60,8 @@ repository::repository(cppcms::service &srv,
   dispatcher().assign("/ignore", &repository::ignore, this);
   mapper().assign("ignore", "/ignore");
 
-  dispatcher().assign("/info", &repository::info, this);
-  mapper().assign("info", "/info");
+  dispatcher().assign("/import_result", &repository::import_result, this);
+  mapper().assign("import_result", "/import_result");
 
   dispatcher().assign("/repack", &repository::repack, this);
   mapper().assign("repack", "/repack");
@@ -150,7 +150,7 @@ void repository::main(std::string url) {
   }                                                               \
   RESULT repository::NAME##_(content::NAME &data)
 
-DEFINE_HANDLER(insert, problem::ImportMap) {
+DEFINE_HANDLER(insert, problem::StatusMap) {
   const bunsan::tempfile tmpfile =
       bunsan::tempfile::regular_file_in_directory(m_upload_directory);
   data.form.archive.value()->save_to(tmpfile.string());
@@ -188,7 +188,7 @@ void repository::extract() {
   handler_wrapper<content::extract>(__func__, handler, sender);
 }
 
-DEFINE_HANDLER(rename, problem::ImportInfo) {
+DEFINE_HANDLER(rename, problem::StatusResult) {
   return m_repository->rename(data.form.current.value(),
                               data.form.future.value());
 }
@@ -211,7 +211,7 @@ DEFINE_HANDLER(available, problem::IdSet) {
   }
 }
 
-DEFINE_HANDLER(status, problem::ImportMap) {
+DEFINE_HANDLER(status, problem::StatusMap) {
   return m_repository->status_all(data.form.ids.value());
 }
 
@@ -242,11 +242,11 @@ DEFINE_HANDLER(ignore, problem::IdSet) {
   return m_repository->ignore_all(data.form.ids.value());
 }
 
-DEFINE_HANDLER(info, problem::InfoMap) {
-  return m_repository->info_all(data.form.ids.value());
+DEFINE_HANDLER(import_result, problem::ImportMap) {
+  return m_repository->import_result_all(data.form.ids.value());
 }
 
-DEFINE_HANDLER(repack, problem::ImportMap) {
+DEFINE_HANDLER(repack, problem::StatusMap) {
   const boost::optional<problem::IdSet> ids = data.form.ids.value();
   if (ids) {
     return m_repository->schedule_repack_all(*ids);

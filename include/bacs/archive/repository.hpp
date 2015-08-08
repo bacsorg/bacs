@@ -62,12 +62,12 @@ class repository : private boost::noncopyable {
    *
    * \see repository::insert
    */
-  problem::ImportMap insert_all(const boost::filesystem::path &location);
+  problem::StatusMap insert_all(const boost::filesystem::path &location);
 
   /*!
    * \copydoc insert_all()
    */
-  problem::ImportMap insert_all(const archiver_options &archiver_options_,
+  problem::StatusMap insert_all(const archiver_options &archiver_options_,
                                 const boost::filesystem::path &archive);
 
   /*!
@@ -82,11 +82,11 @@ class repository : private boost::noncopyable {
    *
    * \see repository::reset_flags
    */
-  problem::ImportInfo insert(const problem::id &id,
-                             const boost::filesystem::path &location);
+  problem::StatusResult insert(const problem::id &id,
+                               const boost::filesystem::path &location);
 
   /// repository::insert(location.filename().string(), location)
-  problem::ImportInfo insert(const boost::filesystem::path &location);
+  problem::StatusResult insert(const boost::filesystem::path &location);
 
   /*!
    * \brief Extract problems from repository.
@@ -138,8 +138,8 @@ class repository : private boost::noncopyable {
    *
    * \see repository::repack
    */
-  problem::ImportInfo rename(const problem::id &current,
-                             const problem::id &future);
+  problem::StatusResult rename(const problem::id &current,
+                               const problem::id &future);
 
   /*!
    * \brief Set of existing problems.
@@ -222,7 +222,7 @@ class repository : private boost::noncopyable {
    *
    * Atomic, lock-free.
    */
-  problem::ImportInfo status(const problem::id &id);
+  problem::StatusResult status(const problem::id &id);
 
   /*!
    * \brief Get problems status.
@@ -231,7 +231,7 @@ class repository : private boost::noncopyable {
    *
    * \see repository::status
    */
-  problem::ImportMap status_all(const problem::IdSet &id_set);
+  problem::StatusMap status_all(const problem::IdSet &id_set);
 
   /*!
    * \brief Check problem for flag.
@@ -406,23 +406,23 @@ class repository : private boost::noncopyable {
    */
   bool ignore(const problem::id &id);
 
-  /* info */
+  /* import result */
   /*!
-   * \brief Get problem info.
+   * \brief Get problem import result.
    *
    * \return error if problem is not available
    *
    * \see repository::is_available
    */
-  problem::Info info(const problem::id &id);
+  problem::ImportResult import_result(const problem::id &id);
 
   /*!
-   * \brief Get info map for given problems.
+   * \brief Get problems import result.
    *
    * \see repository::is_available
-   * \see repository::info
+   * \see repository::import_result
    */
-  problem::InfoMap info_all(const problem::IdSet &id_set);
+  problem::ImportMap import_result_all(const problem::IdSet &id_set);
 
   /* repack */
   /*!
@@ -442,7 +442,7 @@ class repository : private boost::noncopyable {
    * \see repository::exists
    * \see repository::set_flag
    */
-  problem::ImportInfo repack(const problem::id &id);
+  problem::StatusResult repack(const problem::id &id);
 
   /*!
    * \brief Repack all given problems.
@@ -451,7 +451,7 @@ class repository : private boost::noncopyable {
    *
    * \see repository::repack
    */
-  problem::ImportMap repack_all(const problem::IdSet &id_set);
+  problem::StatusMap repack_all(const problem::IdSet &id_set);
 
   /*!
    * \brief Repack all problems.
@@ -460,7 +460,7 @@ class repository : private boost::noncopyable {
    *
    * \see repository::repack_all
    */
-  problem::ImportMap repack_all();
+  problem::StatusMap repack_all();
 
   /*!
    * \brief Schedules repack for future execution with post.
@@ -469,7 +469,7 @@ class repository : private boost::noncopyable {
    *
    * \see repository::repack
    */
-  problem::ImportInfo schedule_repack(const problem::id &id);
+  problem::StatusResult schedule_repack(const problem::id &id);
 
   /*!
    * \brief Schedules repack for all given problems.
@@ -478,7 +478,7 @@ class repository : private boost::noncopyable {
    *
    * \see repository::schedule_repack
    */
-  problem::ImportMap schedule_repack_all(const problem::IdSet &id_set);
+  problem::StatusMap schedule_repack_all(const problem::IdSet &id_set);
 
   /*!
    * \brief Schedules repack for all problems.
@@ -487,7 +487,7 @@ class repository : private boost::noncopyable {
    *
    * \see repository::schedule_repack_all
    */
-  problem::ImportMap schedule_repack_all();
+  problem::StatusMap schedule_repack_all();
 
   /*!
    * \brief Schedules repack for all pending problems.
@@ -496,7 +496,7 @@ class repository : private boost::noncopyable {
    *
    * \see repository::schedule_repack_all
    */
-  problem::ImportMap schedule_repack_all_pending();
+  problem::StatusMap schedule_repack_all_pending();
 
  private:
   /*!
@@ -551,22 +551,23 @@ class repository : private boost::noncopyable {
                        const problem::Revision &revision);
 
   /// \warning requires at least shared lock and problem existence
-  problem::Info read_info_(const problem::id &id);
+  problem::ImportResult read_import_result_(const problem::id &id);
 
   /// \warning requires unique lock and problem existence
-  void write_info_(const problem::id &id, const problem::Info &info);
+  void write_import_result_(const problem::id &id,
+                            const problem::ImportResult &import_result);
 
   /// \warning requires unique lock and problem existence
-  problem::ImportInfo repack_(const problem::id &id);
+  problem::StatusResult repack_(const problem::id &id);
 
   /// \warning requires unique lock and problem existence
-  problem::ImportInfo repack_(const problem::id &id,
-                              const problem::Revision &revision);
+  problem::StatusResult repack_(const problem::id &id,
+                                const problem::Revision &revision);
 
   /// \warning requires unique lock and problem existence
-  problem::ImportInfo repack_(const problem::id &id,
-                              const problem::Revision &revision,
-                              const boost::filesystem::path &problem_location);
+  problem::StatusResult repack_(
+      const problem::id &id, const problem::Revision &revision,
+      const boost::filesystem::path &problem_location);
 
   /// \return true if repack should be scheduled
   bool prepare_repack(const problem::id &id);

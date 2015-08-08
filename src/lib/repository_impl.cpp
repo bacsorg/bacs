@@ -45,55 +45,55 @@ problem::Revision compute_hash_revision(const boost::filesystem::path &path) {
   return revision;
 }
 
-problem::ImportInfo import_error(const std::string &error) {
-  problem::ImportInfo import_info;
-  import_info.set_error(error);
-  return import_info;
+problem::StatusResult status_error(const std::string &error) {
+  problem::StatusResult status_result;
+  status_result.set_error(error);
+  return status_result;
 }
 
-problem::ImportInfo import_does_not_exist() {
+problem::StatusResult status_does_not_exist() {
+  return status_error("Problem does not exist");
+}
+
+problem::StatusResult status_not_implemented() {
+  return status_error("Not implemented");
+}
+
+problem::StatusResult status_status(problem::Status status) {
+  problem::StatusResult status_result;
+  *status_result.mutable_status() = std::move(status);
+  return status_result;
+}
+
+problem::ImportResult import_error(const std::string &error) {
+  problem::ImportResult import_result;
+  import_result.set_error(error);
+  return import_result;
+}
+
+problem::ImportResult import_does_not_exist() {
   return import_error("Problem does not exist");
 }
 
-problem::ImportInfo import_not_implemented() {
-  return import_error("Not implemented");
-}
-
-problem::ImportInfo import_status(problem::Status status) {
-  problem::ImportInfo import_info;
-  *import_info.mutable_status() = std::move(status);
-  return import_info;
-}
-
-problem::Info info_error(const std::string &error) {
-  problem::Info info;
-  info.set_error(error);
-  return info;
-}
-
-problem::Info info_does_not_exist() {
-  return info_error("Problem does not exist");
-}
-
-problem::Info info_problem(bacs::problem::Problem problem) {
-  problem::Info info;
-  *info.mutable_problem() = std::move(problem);
-  return info;
+problem::ImportResult import_problem(bacs::problem::Problem problem) {
+  problem::ImportResult import_result;
+  *import_result.mutable_problem() = std::move(problem);
+  return import_result;
 }
 }  // namespace
 
 /// entry names
 namespace ename {
 const boost::filesystem::path flags = "flags";
-const boost::filesystem::path info = "info";
+const boost::filesystem::path import_result = "import_result";
 const boost::filesystem::path revision = "revision";
 }  // namespace ename
 
-problem::ImportInfo repository::insert(
+problem::StatusResult repository::insert(
     const problem::id &id, const boost::filesystem::path &location) {
   enum error_type { ok, problem_is_locked } error = ok;
   problem::validate_id(id);
-  problem::ImportInfo import_info;
+  problem::StatusResult status_result;
   if (!is_locked(id)) {
     const lock_guard lk(m_lock);
     if (!is_locked(id)) {
@@ -103,7 +103,7 @@ problem::ImportInfo repository::insert(
         boost::filesystem::remove(m_location.repository_root / id /
                                   ename::revision);
         boost::filesystem::remove(m_location.repository_root / id /
-                                  ename::info);
+                                  ename::import_result);
       } else {
         BOOST_VERIFY(boost::filesystem::create_directory(
             m_location.repository_root / id));
@@ -126,13 +126,13 @@ problem::ImportInfo repository::insert(
   }
   switch (error) {
     case ok:
-      import_info = schedule_repack(id);
+      status_result = schedule_repack(id);
       break;
     case problem_is_locked:
-      import_info.set_error("problem is locked");
+      status_result.set_error("problem is locked");
       break;
   }
-  return import_info;
+  return status_result;
 }
 
 bool repository::extract(const problem::id &id,
@@ -200,13 +200,13 @@ bool repository::is_available_(const problem::id &id) {
   return exists(id) && !has_flag(id, problem::Flag::IGNORE);
 }
 
-problem::ImportInfo repository::status(const problem::id &id) {
+problem::StatusResult repository::status(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
     const shared_lock_guard lk(m_lock);
-    if (exists(id)) return import_status(status_(id));
+    if (exists(id)) return status_status(status_(id));
   }
-  return import_does_not_exist();
+  return status_does_not_exist();
 }
 
 problem::Status repository::status_(const problem::id &id) {
@@ -326,29 +326,30 @@ bool repository::clear_flags(const problem::id &id) {
   return false;
 }
 
-problem::Info repository::info(const problem::id &id) {
+problem::ImportResult repository::import_result(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
     const shared_lock_guard lk(m_lock);
     if (exists(id)) {
       if (has_flag(id, problem::Flag::PENDING_REPACK)) {
-        return info_error("Repack is pending");
+        return import_error("Repack is pending");
       } else {
-        return read_info_(id);
+        return read_import_result_(id);
       }
     }
   }
-  return info_does_not_exist();
+  return import_does_not_exist();
 }
 
-problem::Info repository::read_info_(const problem::id &id) {
-  return bunsan::protobuf::binary::parse_make<problem::Info>(
-      m_location.repository_root / id / ename::info);
+problem::ImportResult repository::read_import_result_(const problem::id &id) {
+  return bunsan::protobuf::binary::parse_make<problem::ImportResult>(
+      m_location.repository_root / id / ename::import_result);
 }
 
-void repository::write_info_(const problem::id &id, const problem::Info &info) {
+void repository::write_import_result_(
+    const problem::id &id, const problem::ImportResult &import_result) {
   bunsan::protobuf::binary::serialize(
-      info, m_location.repository_root / id / ename::info);
+      import_result, m_location.repository_root / id / ename::import_result);
 }
 
 bool repository::has_flag(const problem::id &id, const problem::flag &flag) {
@@ -369,8 +370,8 @@ void repository::write_revision_(const problem::id &id,
       revision, m_location.repository_root / id / ename::revision);
 }
 
-problem::ImportInfo repository::rename(const problem::id &current,
-                                       const problem::id &future) {
+problem::StatusResult repository::rename(const problem::id &current,
+                                         const problem::id &future) {
   problem::validate_id(current);
   problem::validate_id(future);
   enum error_type {
@@ -391,22 +392,22 @@ problem::ImportInfo repository::rename(const problem::id &current,
     error = rename_status();
     if (error == ok) {
       // TODO
-      return import_not_implemented();
+      return status_not_implemented();
     }
   }
   switch (error) {
     case ok:
       BOOST_ASSERT_MSG(false, "Impossible");
-      return import_not_implemented();
+      return status_not_implemented();
     case current_does_not_exist:
-      return import_error("$current problem does not exist");
+      return status_error("$current problem does not exist");
     case current_is_locked:
-      return import_error("$current problem is locked");
+      return status_error("$current problem is locked");
     case future_exists:
-      return import_error("$future problem exists");
+      return status_error("$future problem exists");
   }
   BOOST_ASSERT_MSG(false, "Impossible to get here");
-  return import_not_implemented();
+  return status_not_implemented();
 }
 
 bool repository::prepare_repack(const problem::id &id) {
@@ -421,7 +422,7 @@ bool repository::prepare_repack(const problem::id &id) {
   return false;
 }
 
-problem::ImportInfo repository::schedule_repack(const problem::id &id) {
+problem::StatusResult repository::schedule_repack(const problem::id &id) {
   BUNSAN_LOG_INFO << "Scheduling " << id << " for repack";
   problem::validate_id(id);
   bool schedule = false;
@@ -433,7 +434,7 @@ problem::ImportInfo repository::schedule_repack(const problem::id &id) {
   return status(id);
 }
 
-problem::ImportMap repository::schedule_repack_all(
+problem::StatusMap repository::schedule_repack_all(
     const problem::IdSet &id_set) {
   BUNSAN_LOG_INFO << "Scheduling " << id_set.ShortDebugString()
                   << " for repack";
@@ -449,21 +450,21 @@ problem::ImportMap repository::schedule_repack_all(
   return status_all(id_set);
 }
 
-problem::ImportMap repository::schedule_repack_all_pending() {
+problem::StatusMap repository::schedule_repack_all_pending() {
   BUNSAN_LOG_INFO << "Scheduling all pending problems for repack";
   return schedule_repack_all(with_flag(problem::Flag::PENDING_REPACK));
 }
 
-problem::ImportInfo repository::repack(const problem::id &id) {
+problem::StatusResult repository::repack(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
     const lock_guard lk(m_lock);
     if (exists(id)) return repack_(id);
   }
-  return import_does_not_exist();
+  return status_does_not_exist();
 }
 
-problem::ImportInfo repository::repack_(const problem::id &id) {
+problem::StatusResult repository::repack_(const problem::id &id) {
   BOOST_ASSERT(exists(id));
   problem::Revision revision;
   try {
@@ -478,19 +479,19 @@ problem::ImportInfo repository::repack_(const problem::id &id) {
   return repack_(id, revision);
 }
 
-problem::ImportInfo repository::repack_(const problem::id &id,
-                                        const problem::Revision &revision) {
+problem::StatusResult repository::repack_(const problem::id &id,
+                                          const problem::Revision &revision) {
   const bunsan::tempfile tmpdir =
       bunsan::tempfile::directory_in_directory(m_location.tmpdir);
   extract_(id, tmpdir.path());
   return repack_(id, revision, tmpdir.path());
 }
 
-problem::ImportInfo repository::repack_(
+problem::StatusResult repository::repack_(
     const problem::id &id, const problem::Revision &revision,
     const boost::filesystem::path &problem_location) {
   BUNSAN_LOG_INFO << "Repacking " << id;
-  problem::ImportInfo import_info;
+  problem::StatusResult status_result;
   try {
     bacs::problem::importer::options options;
     options.problem_dir = problem_location;
@@ -499,19 +500,19 @@ problem::ImportInfo repository::repack_(
     options.root_package = m_problem.root_package / id;
     options.id = id;
     options.revision = revision;
-    write_info_(id, info_problem(m_importer.convert(options)));
+    write_import_result_(id, import_problem(m_importer.convert(options)));
     m_repository.create_recursively(options.destination, m_problem.strip);
     unset_flag_(id, problem::Flag::IGNORE);
-    problem::Status &status = *import_info.mutable_status();
+    problem::Status &status = *status_result.mutable_status();
     *status.mutable_revision() = revision;
     *status.mutable_flags() = flags_(id);
   } catch (std::exception &e) {
     set_flag_(id, problem::Flag::IGNORE);
-    write_info_(id, info_error(e.what()));
-    import_info.set_error(e.what());
+    write_import_result_(id, import_error(e.what()));
+    status_result.set_error(e.what());
   }
   unset_flag_(id, problem::Flag::PENDING_REPACK);
-  return import_info;
+  return status_result;
 }
 
 }  // namespace archive

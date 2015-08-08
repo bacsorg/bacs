@@ -86,9 +86,9 @@ problem::IdSet get_all_set(repository *const this_,
 
 /* container */
 
-problem::ImportMap repository::insert_all(
+problem::StatusMap repository::insert_all(
     const boost::filesystem::path &location) {
-  problem::ImportMap map;
+  problem::StatusMap map;
   for (boost::filesystem::directory_iterator i(location), end; i != end; ++i) {
     const problem::id id = i->path().filename().string();
     // TODO validate problem id (should be implemented in repository::insert)
@@ -97,7 +97,7 @@ problem::ImportMap repository::insert_all(
   return map;
 }
 
-problem::ImportMap repository::insert_all(
+problem::StatusMap repository::insert_all(
     const archiver_options &archiver_options_,
     const boost::filesystem::path &archive) {
   const bunsan::tempfile unpacked =
@@ -185,27 +185,26 @@ problem::IdSet repository::clear_flags_all(const problem::IdSet &id_set) {
   return get_all_set(this, &repository::clear_flags, id_set);
 }
 
-/* info */
+/* import_result */
 
-problem::ImportMap repository::status_all(const problem::IdSet &id_set) {
-  return get_all_map<problem::ImportMap>(this, &repository::status, id_set);
+problem::StatusMap repository::status_all(const problem::IdSet &id_set) {
+  return get_all_map<problem::StatusMap>(this, &repository::status, id_set);
 }
 
-problem::InfoMap repository::info_all(const problem::IdSet &id_set) {
-  return get_all_map<problem::InfoMap>(this, &repository::info, id_set);
+problem::ImportMap repository::import_result_all(const problem::IdSet &id_set) {
+  return get_all_map<problem::ImportMap>(this, &repository::import_result,
+                                         id_set);
 }
 
 /* repack */
 
-problem::ImportMap repository::repack_all(const problem::IdSet &id_set) {
-  return get_all_map<problem::ImportMap>(this, &repository::repack, id_set);
+problem::StatusMap repository::repack_all(const problem::IdSet &id_set) {
+  return get_all_map<problem::StatusMap>(this, &repository::repack, id_set);
 }
 
-problem::ImportMap repository::repack_all() {
-  return repack_all(existing());
-}
+problem::StatusMap repository::repack_all() { return repack_all(existing()); }
 
-problem::ImportMap repository::schedule_repack_all() {
+problem::StatusMap repository::schedule_repack_all() {
   BUNSAN_LOG_INFO << "Scheduling all problems for repack";
   return schedule_repack_all(existing());
 }

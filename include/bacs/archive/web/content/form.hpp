@@ -16,7 +16,7 @@
 #include <bacs/archive/web/content/form/unset_flags.hpp>
 // clear_flags
 // ignore
-// info
+// import_result
 #include <bacs/archive/web/content/form/repack.hpp>
 
 #include <bunsan/forward_constructor.hpp>
@@ -41,13 +41,13 @@ struct basic_form<Form, void> : base_form {
   Form form;
 };
 
-using insert = basic_form<form::insert, problem::ImportMap>;
+using insert = basic_form<form::insert, problem::StatusMap>;
 using extract = basic_form<form::extract, void>;
-using rename = basic_form<form::rename, problem::ImportInfo>;
+using rename = basic_form<form::rename, problem::StatusResult>;
 using existing = basic_form<form::existing, problem::IdSet>;
 using available = basic_form<form::available, problem::IdSet>;
 
-struct status : basic_form<form::list_query, problem::ImportMap> {
+struct status : basic_form<form::list_query, problem::StatusMap> {
   status();
 };
 
@@ -63,11 +63,11 @@ struct ignore : basic_form<form::list_query, problem::IdSet> {
   ignore();
 };
 
-struct info : basic_form<form::list_query, problem::InfoMap> {
-  info();
+struct import_result : basic_form<form::list_query, problem::ImportMap> {
+  import_result();
 };
 
-using repack = basic_form<form::repack, problem::ImportMap>;
+using repack = basic_form<form::repack, problem::StatusMap>;
 
 }  // namespace content
 }  // namespace web

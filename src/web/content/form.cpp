@@ -12,7 +12,8 @@ clear_flags::clear_flags()
 
 ignore::ignore() : basic_form(cppcms::locale::translate("Ignore")) {}
 
-info::info() : basic_form(cppcms::locale::translate("Get info")) {}
+import_result::import_result()
+    : basic_form(cppcms::locale::translate("Get import result")) {}
 
 }  // namespace content
 }  // namespace web

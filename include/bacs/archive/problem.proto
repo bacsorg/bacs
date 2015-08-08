@@ -8,15 +8,15 @@ message IdSet {
   repeated string id = 1;
 }
 
-message Info {
+message ImportResult {
   oneof result {
     string error = 1;
     bacs.problem.Problem problem = 2;
   }
 }
 
-message InfoMap {
-  map<string, Info> entry = 1;
+message ImportMap {
+  map<string, ImportResult> entry = 1;
 }
 
 message FlagSet {
@@ -54,13 +54,13 @@ message Status {
   bacs.problem.Revision revision = 2;
 }
 
-message ImportInfo {
+message StatusResult {
   oneof result {
     string error = 1;
     Status status = 2;
   }
 }
 
-message ImportMap {
-  map<string, ImportInfo> entry = 1;
+message StatusMap {
+  map<string, StatusResult> entry = 1;
 }
