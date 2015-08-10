@@ -205,10 +205,6 @@ problem::StatusMap repository::clear_flags_all(const problem::IdSet &id_set) {
 
 /* import_result */
 
-problem::StatusMap repository::status_all(const problem::IdSet &id_set) {
-  return get_all_map(this, &repository::status, id_set);
-}
-
 problem::ImportMap repository::import_result_all(const problem::IdSet &id_set) {
   return get_all_map(this, &repository::import_result, id_set);
 }

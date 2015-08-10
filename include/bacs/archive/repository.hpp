@@ -518,6 +518,9 @@ class repository : private boost::noncopyable {
   /// \warning requires at least shared lock
   bool is_available_(const problem::id &id);
 
+  /// \warning requires at least shared lock
+  problem::StatusResult status_result_(const problem::id &id);
+
   /// \warning requires at least shared lock and problem existence
   problem::Status status_(const problem::id &id);
 

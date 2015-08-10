@@ -203,8 +203,22 @@ problem::StatusResult repository::status(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
     const shared_lock_guard lk(m_lock);
-    if (exists(id)) return status_status(status_(id));
+    return status_result_(id);
   }
+  return status_not_found();
+}
+
+problem::StatusMap repository::status_all(const problem::IdSet &id_set) {
+  problem::StatusMap status_map;
+  const shared_lock_guard lk(m_lock);
+  for (const problem::id &id : id_set.id()) {
+    (*status_map.mutable_entry())[id] = status_result_(id);
+  }
+  return status_map;
+}
+
+problem::StatusResult repository::status_result_(const problem::id &id) {
+  if (exists(id)) return status_status(status_(id));
   return status_not_found();
 }
 
