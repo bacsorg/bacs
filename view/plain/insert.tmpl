@@ -1,5 +1,10 @@
 <% c++ #include <bacs/archive/web/content/form.hpp> %>
 <% skin plain %>
+    <% view insert_result uses bacs::archive::web::content::status_map_result extends status_map_result %>
+        <% template caption() %>
+            <% gt "Insertion results" %>
+        <% end template %>
+    <% end view %>
     <% view insert uses bacs::archive::web::content::insert extends base_form %>
         <% template subtitle() %>
             <% gt "Insert problems" %>
@@ -12,39 +17,9 @@
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id_import in result->entry() %>
-                    <table border="1" cellspacing="0" cellpadding="10">
-                        <caption><% gt "Insertion results" %></caption>
-                        <tr>
-                            <th><% gt "Problem" %></th>
-                            <th><% gt "Error" %></th>
-                            <th><% gt "Flags" %></th>
-                            <th><% gt "Revision" %></th>
-                        </tr>
-                        <% item %>
-                            <tr>
-                                <td><%= id_import.first %></td>
-                                <td>
-                                    <% if id_import.second.has_error() %>
-                                        <pre class="error"><%= id_import.second.error().ShortDebugString() %></pre>
-                                    <% else %>
-                                        <% gt "OK" %>
-                                    <% end %>
-                                </td>
-                                <% if id_import.second.has_status() %>
-                                    <td>
-                                        <pre><%= id_import.second.status().flags().DebugString() %></pre>
-                                    </td>
-                                    <td><%= id_import.second.status().revision().DebugString() %></td>
-                                <% else %>
-                                    <!-- Nothing here... -->
-                                <% end %>
-                            </tr>
-                        <% end %>
-                    </table>
-                <% empty %>
-                    <% gt "There are no inserted problems." %>
-                <% end %>
+                <% using insert_result with *result as result_view %>
+                    <% include render() from result_view %>
+                <% end using %>
             <% end %>
         <% end template %>
     <% end view %>

@@ -1,5 +1,13 @@
 <% c++ #include <bacs/archive/web/content/form.hpp> %>
 <% skin plain %>
+    <% view existing_result uses bacs::archive::web::content::id_set_result extends id_set_result %>
+        <% template caption() %>
+            <% gt "The following problems exist:" %>
+        <% end template %>
+        <% template caption_empty() %>
+            <% gt "There are no existing problems." %>
+        <% end template %>
+    <% end view %>
     <% view existing uses bacs::archive::web::content::existing extends base_form %>
         <% template subtitle() %>
             <% gt "Existing problems" %>
@@ -12,16 +20,9 @@
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id in result->id() %>
-                    <% gt "The following problems exist:" %>
-                    <ul class="problem_ids">
-                        <% item %>
-                            <li><%= id %></li>
-                        <% end %>
-                    </ul>
-                <% empty %>
-                    <% gt "There are no existing problems." %>
-                <% end %>
+                <% using existing_result with *result as result_view %>
+                    <% include render() from result_view %>
+                <% end using %>
             <% end %>
         <% end template %>
     <% end view %>

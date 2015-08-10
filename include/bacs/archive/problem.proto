@@ -12,6 +12,9 @@ message Error {
   enum Code {
     UNKNOWN = 0;
     NOT_FOUND = 1;
+    LOCKED = 2;
+    READ_ONLY = 3;
+    PENDING_REPACK = 4;
   }
   Code code = 1;
   string reason = 2;

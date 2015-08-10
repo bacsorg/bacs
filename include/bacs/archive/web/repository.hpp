@@ -53,10 +53,10 @@ class repository : public cppcms::application {
   problem::IdSet available_(content::available &data);
   problem::StatusMap status_(content::status &data);
   problem::IdSet with_flag_(content::with_flag &data);
-  problem::IdSet set_flags_(content::set_flags &data);
-  problem::IdSet unset_flags_(content::unset_flags &data);
-  problem::IdSet clear_flags_(content::clear_flags &data);
-  problem::IdSet ignore_(content::ignore &data);
+  problem::StatusMap set_flags_(content::set_flags &data);
+  problem::StatusMap unset_flags_(content::unset_flags &data);
+  problem::StatusMap clear_flags_(content::clear_flags &data);
+  problem::StatusMap ignore_(content::ignore &data);
   problem::ImportMap import_result_(content::import_result &data);
   problem::StatusMap repack_(content::repack &data);
 

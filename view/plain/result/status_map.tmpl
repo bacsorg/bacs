@@ -1,0 +1,43 @@
+<% c++ #include <bacs/archive/web/content/form.hpp> %>
+<% skin plain %>
+    <% view status_map_result uses bacs::archive::web::content::status_map_result %>
+        <% template render() %>
+            <% foreach id_status in data.entry() %>
+                <table border="1" cellspacing="0" cellpadding="10">
+                    <caption><% include caption() %></caption>
+                    <tr>
+                        <th><% gt "Problem" %></th>
+                        <th><% gt "Error" %></th>
+                        <th><% gt "Flags" %></th>
+                        <th><% gt "Revision" %></th>
+                    </tr>
+                    <% item %>
+                        <tr>
+                            <td><%= id_status.first %></td>
+                            <td>
+                                <% if id_status.second.has_error() %>
+                                    <pre class="error"><%= id_status.second.error().ShortDebugString() %></pre>
+                                <% else %>
+                                    <% gt "OK" %>
+                                <% end %>
+                            </td>
+                            <% if id_status.second.has_status() %>
+                                <td>
+                                    <pre><%= id_status.second.status().flags().DebugString() %></pre>
+                                </td>
+                                <td><%= id_status.second.status().revision().DebugString() %></td>
+                            <% else %>
+                                <!-- Nothing here... -->
+                            <% end %>
+                        </tr>
+                    <% end %>
+                </table>
+            <% empty %>
+                <% gt "There are no inserted problems." %>
+            <% end %>
+        <% end template %>
+        <% template caption() %>
+            <% gt "Problem status" %>
+        <% end template %>
+    <% end view %>
+<% end skin %>

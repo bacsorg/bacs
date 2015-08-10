@@ -135,7 +135,7 @@ void repository::main(std::string url) {
   void repository::NAME() {                                       \
     handler_wrapper<content::NAME>(#NAME,                         \
                                    [this](content::NAME & data) { \
-      data.result = repository::NAME##_(data);                    \
+      data.result.emplace(repository::NAME##_(data));             \
                                    },                             \
                                    [this](content::NAME & data) { \
       switch (data.form.response()) {                             \
@@ -143,7 +143,7 @@ void repository::main(std::string url) {
           render(#NAME, data);                                    \
           break;                                                  \
         case content::form::base::response_type::protobuf:        \
-          send_protobuf(*data.result, #NAME ".pb.data");          \
+          send_protobuf(data.result->data, #NAME ".pb.data");     \
           break;                                                  \
       }                                                           \
                                    });                            \
@@ -224,21 +224,21 @@ DEFINE_HANDLER(with_flag, problem::IdSet) {
   }
 }
 
-DEFINE_HANDLER(set_flags, problem::IdSet) {
+DEFINE_HANDLER(set_flags, problem::StatusMap) {
   return m_repository->set_flags_all(data.form.ids.value(),
                                      data.form.flags.value());
 }
 
-DEFINE_HANDLER(unset_flags, problem::IdSet) {
+DEFINE_HANDLER(unset_flags, problem::StatusMap) {
   return m_repository->unset_flags_all(data.form.ids.value(),
                                        data.form.flags.value());
 }
 
-DEFINE_HANDLER(clear_flags, problem::IdSet) {
+DEFINE_HANDLER(clear_flags, problem::StatusMap) {
   return m_repository->clear_flags_all(data.form.ids.value());
 }
 
-DEFINE_HANDLER(ignore, problem::IdSet) {
+DEFINE_HANDLER(ignore, problem::StatusMap) {
   return m_repository->ignore_all(data.form.ids.value());
 }
 

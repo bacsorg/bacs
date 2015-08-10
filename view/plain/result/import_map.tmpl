@@ -1,0 +1,43 @@
+<% c++ #include <bacs/archive/web/content/form.hpp> %>
+<% skin plain %>
+    <% view import_map_result uses bacs::archive::web::content::import_map_result %>
+        <% template render() %>
+            <% foreach id_import in data.entry() %>
+                <table border="1" cellspacing="0" cellpadding="10">
+                    <caption><% include caption() %></caption>
+                    <tr>
+                        <th><% gt "Problem" %></th>
+                        <th><% gt "Import result" %></th>
+                    </tr>
+                    <% item %>
+                        <tr>
+                            <td><%= id_import.first %></td>
+                            <td>
+                                <% if id_import.second.has_error() %>
+                                    <pre class="error"><%= id_import.second.error().ShortDebugString() %></pre>
+                                <% else %>
+                                    <div class="protobuf">
+                                        <div class="spoiler">
+                                            <span class="action">
+                                                <% gt "Show" %>&nbsp;"<%= id_import.second.problem().system().problem_type() %>"&nbsp;<% gt "import result" %>
+                                            </span>
+                                            <span class="action" style="display: none">
+                                                <% gt "Hide" %>&nbsp;"<%= id_import.second.problem().system().problem_type() %>"&nbsp;<% gt "import result" %>
+                                            </span>
+                                        </div>
+                                        <pre style="display: none"><%= id_import.second.problem().DebugString() %></pre>
+                                    </div>
+                                <% end %>
+                            </td>
+                        </tr>
+                    <% end %>
+                </table>
+            <% empty %>
+                <% gt "There are no problems available." %>
+            <% end %>
+        <% end template %>
+        <% template caption() %>
+            <% gt "Problem import result" %>
+        <% end template %>
+    <% end view %>
+<% end skin %>

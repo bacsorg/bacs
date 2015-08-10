@@ -12,39 +12,9 @@
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id_import in result->entry() %>
-                    <table border="1" cellspacing="0" cellpadding="10">
-                        <caption><% gt "Problem status" %></caption>
-                        <tr>
-                            <th><% gt "Problem" %></th>
-                            <th><% gt "Error" %></th>
-                            <th><% gt "Flags" %></th>
-                            <th><% gt "Revision" %></th>
-                        </tr>
-                        <% item %>
-                            <tr>
-                                <td><%= id_import.first %></td>
-                                <td>
-                                    <% if id_import.second.has_error() %>
-                                        <pre class="error"><%= id_import.second.error().ShortDebugString() %></pre>
-                                    <% else %>
-                                        <% gt "OK" %>
-                                    <% end %>
-                                </td>
-                                <% if id_import.second.has_status() %>
-                                    <td>
-                                        <pre><%= id_import.second.status().flags().DebugString() %></pre>
-                                    </td>
-                                    <td><%= id_import.second.status().revision().DebugString() %></td>
-                                <% else %>
-                                    <!-- Nothing here... -->
-                                <% end %>
-                            </tr>
-                        <% end %>
-                    </table>
-                <% empty %>
-                    <% gt "There are no existing problems." %>
-                <% end %>
+                <% using status_map_result with *result as result_view %>
+                    <% include render() from result_view %>
+                <% end using %>
             <% end %>
         <% end template %>
     <% end view %>

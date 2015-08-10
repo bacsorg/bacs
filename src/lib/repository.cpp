@@ -59,15 +59,33 @@ auto convert(T &&obj) {
 }
 
 template <typename MapType, typename Ret, typename... Args>
-MapType get_all_map(repository *const this_,
-                    Ret (repository::*get)(const problem::id &, Args...),
-                    const problem::IdSet &id_set, Args &&... args) {
+MapType get_all_map_(repository *const this_,
+                     Ret (repository::*get)(const problem::id &, Args...),
+                     const problem::IdSet &id_set, Args &&... args) {
   MapType map;
   for (const problem::id &id : id_set.id()) {
     (*map.mutable_entry())[id] =
         convert((this_->*get)(id, std::forward<Args>(args)...));
   }
   return map;
+}
+
+template <typename... Args>
+problem::StatusMap get_all_map(
+    repository *const this_,
+    problem::StatusResult (repository::*get)(const problem::id &, Args...),
+    const problem::IdSet &id_set, Args &&... args) {
+  return get_all_map_<problem::StatusMap>(this_, get, id_set,
+                                          std::forward<Args>(args)...);
+}
+
+template <typename... Args>
+problem::ImportMap get_all_map(
+    repository *const this_,
+    problem::ImportResult (repository::*get)(const problem::id &, Args...),
+    const problem::IdSet &id_set, Args &&... args) {
+  return get_all_map_<problem::ImportMap>(this_, get, id_set,
+                                          std::forward<Args>(args)...);
 }
 
 template <typename... Args>
@@ -163,43 +181,42 @@ problem::IdSet repository::with_flag(const problem::flag &flag) {
   return get_all_set(this, &repository::has_flag, existing(), flag);
 }
 
-problem::IdSet repository::set_flags_all(const problem::IdSet &id_set,
-                                         const problem::FlagSet &flags) {
-  return get_all_set(this, &repository::set_flags, id_set, flags);
+problem::StatusMap repository::set_flags_all(const problem::IdSet &id_set,
+                                             const problem::FlagSet &flags) {
+  return get_all_map(this, &repository::set_flags, id_set, flags);
 }
 
-problem::IdSet repository::unset_flags_all(const problem::IdSet &id_set,
-                                           const problem::FlagSet &flags) {
-  return get_all_set(this, &repository::unset_flags, id_set, flags);
+problem::StatusMap repository::unset_flags_all(const problem::IdSet &id_set,
+                                               const problem::FlagSet &flags) {
+  return get_all_map(this, &repository::unset_flags, id_set, flags);
 }
 
-bool repository::ignore(const problem::id &id) {
+problem::StatusResult repository::ignore(const problem::id &id) {
   return set_flag(id, problem::Flag::IGNORE);
 }
 
-problem::IdSet repository::ignore_all(const problem::IdSet &id_set) {
-  return get_all_set(this, &repository::ignore, id_set);
+problem::StatusMap repository::ignore_all(const problem::IdSet &id_set) {
+  return get_all_map(this, &repository::ignore, id_set);
 }
 
-problem::IdSet repository::clear_flags_all(const problem::IdSet &id_set) {
-  return get_all_set(this, &repository::clear_flags, id_set);
+problem::StatusMap repository::clear_flags_all(const problem::IdSet &id_set) {
+  return get_all_map(this, &repository::clear_flags, id_set);
 }
 
 /* import_result */
 
 problem::StatusMap repository::status_all(const problem::IdSet &id_set) {
-  return get_all_map<problem::StatusMap>(this, &repository::status, id_set);
+  return get_all_map(this, &repository::status, id_set);
 }
 
 problem::ImportMap repository::import_result_all(const problem::IdSet &id_set) {
-  return get_all_map<problem::ImportMap>(this, &repository::import_result,
-                                         id_set);
+  return get_all_map(this, &repository::import_result, id_set);
 }
 
 /* repack */
 
 problem::StatusMap repository::repack_all(const problem::IdSet &id_set) {
-  return get_all_map<problem::StatusMap>(this, &repository::repack, id_set);
+  return get_all_map(this, &repository::repack, id_set);
 }
 
 problem::StatusMap repository::repack_all() { return repack_all(existing()); }

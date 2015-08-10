@@ -1,5 +1,10 @@
 <% c++ #include <bacs/archive/web/content/form.hpp> %>
 <% skin plain %>
+    <% view import_result_result uses bacs::archive::web::content::import_map_result extends import_map_result %>
+        <% template caption() %>
+            <% gt "Problem import result" %>
+        <% end template %>
+    <% end view %>
     <% view import_result uses bacs::archive::web::content::import_result extends base_form %>
         <% template scripts() %>
             <% include base_form::scripts() %>
@@ -16,39 +21,9 @@
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id_result in result->entry() %>
-                    <table border="1" cellspacing="0" cellpadding="10">
-                        <caption><% gt "Problem import result" %></caption>
-                        <tr>
-                            <th><% gt "Problem" %></th>
-                            <th><% gt "Import result" %></th>
-                        </tr>
-                        <% item %>
-                            <tr>
-                                <td><%= id_result.first %></td>
-                                <td>
-                                    <% if id_result.second.has_error() %>
-                                        <pre class="error"><%= id_result.second.error().ShortDebugString() %></pre>
-                                    <% else %>
-                                        <div class="protobuf">
-                                            <div class="spoiler">
-                                                <span class="action">
-                                                    <% gt "Show" %>&nbsp;"<%= id_result.second.problem().system().problem_type() %>"&nbsp;<% gt "import result" %>
-                                                </span>
-                                                <span class="action" style="display: none">
-                                                    <% gt "Hide" %>&nbsp;"<%= id_result.second.problem().system().problem_type() %>"&nbsp;<% gt "import result" %>
-                                                </span>
-                                            </div>
-                                            <pre style="display: none"><%= id_result.second.problem().DebugString() %></pre>
-                                        </div>
-                                    <% end %>
-                                </td>
-                            </tr>
-                        <% end %>
-                    </table>
-                <% empty %>
-                    <% gt "There are no problems available." %>
-                <% end %>
+                <% using import_result_result with *result as result_view %>
+                    <% include render() from result_view %>
+                <% end using %>
             <% end %>
         <% end template %>
     <% end view %>

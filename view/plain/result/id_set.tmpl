@@ -1,0 +1,23 @@
+<% c++ #include <bacs/archive/web/content/form.hpp> %>
+<% skin plain %>
+    <% view id_set_result uses bacs::archive::web::content::id_set_result %>
+        <% template render() %>
+            <% foreach id in data.id() %>
+                <% include caption() %>
+                <ul class="problem_ids">
+                    <% item %>
+                        <li><%= id %></li>
+                    <% end %>
+                </ul>
+            <% empty %>
+                <% include caption_empty() %>
+            <% end %>
+        <% end template %>
+        <% template caption() %>
+            <% gt "The following problems found:" %>
+        <% end template %>
+        <% template caption_empty() %>
+            <% gt "There are no problems found." %>
+        <% end template %>
+    <% end view %>
+<% end skin %>

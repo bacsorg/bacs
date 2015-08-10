@@ -12,16 +12,9 @@
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% foreach id in result->id() %>
-                    <% gt "The following problems are ignored:" %>
-                    <ul class="problem_ids">
-                        <% item %>
-                            <li><%= id %></li>
-                        <% end %>
-                    </ul>
-                <% empty %>
-                    <% gt "There are no existing problems." %>
-                <% end %>
+                <% using status_map_result with *result as result_view %>
+                    <% include render() from result_view %>
+                <% end using %>
             <% end %>
         <% end template %>
     <% end view %>

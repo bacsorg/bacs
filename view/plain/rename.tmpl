@@ -12,27 +12,9 @@
         <% end template %>
         <% template result() %>
             <% if result %>
-                <!-- FIXME -->
-                <p>
-                    <% gt "Import status:" %>
-                    <% if result->has_error() %>
-                        <pre class="error"><%= result->error().ShortDebugString() %></pre>
-                    <% else %>
-                        <% gt "OK" %>
-                    <% end %>
-                </p>
-                <% if result->has_status() %>
-                    <p>
-                        <% gt "Problem flags:" %>
-                        <pre><%= result->status().flags().DebugString() %></pre>
-                    </p>
-                    <p>
-                        <% gt "Problem revision:" %>
-                        <%= result->status().revision().DebugString() %>
-                    </p>
-                <% else %>
-                    <% gt "N/A" %>
-                <% end %>
+                <% using status_result with *result as result_view %>
+                    <% include render() from result_view %>
+                <% end using %>
             <% end %>
         <% end template %>
     <% end view %>

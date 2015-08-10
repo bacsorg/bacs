@@ -41,33 +41,45 @@ struct basic_form<Form, void> : base_form {
   Form form;
 };
 
-using insert = basic_form<form::insert, problem::StatusMap>;
-using extract = basic_form<form::extract, void>;
-using rename = basic_form<form::rename, problem::StatusResult>;
-using existing = basic_form<form::existing, problem::IdSet>;
-using available = basic_form<form::available, problem::IdSet>;
+template <typename T>
+struct basic_result : base_result {
+  BUNSAN_FORWARD_EXPLICIT_CONSTRUCTOR(basic_result, data)
 
-struct status : basic_form<form::list_query, problem::StatusMap> {
+  T data;
+};
+
+using id_set_result = basic_result<problem::IdSet>;
+using import_map_result = basic_result<problem::ImportMap>;
+using status_map_result = basic_result<problem::StatusMap>;
+using status_result = basic_result<problem::StatusResult>;
+
+using insert = basic_form<form::insert, status_map_result>;
+using extract = basic_form<form::extract, void>;
+using rename = basic_form<form::rename, status_result>;
+using existing = basic_form<form::existing, id_set_result>;
+using available = basic_form<form::available, id_set_result>;
+
+struct status : basic_form<form::list_query, status_map_result> {
   status();
 };
 
-using with_flag = basic_form<form::with_flag, problem::IdSet>;
-using set_flags = basic_form<form::set_flags, problem::IdSet>;
-using unset_flags = basic_form<form::unset_flags, problem::IdSet>;
+using with_flag = basic_form<form::with_flag, id_set_result>;
+using set_flags = basic_form<form::set_flags, status_map_result>;
+using unset_flags = basic_form<form::unset_flags, status_map_result>;
 
-struct clear_flags : basic_form<form::list_query, problem::IdSet> {
+struct clear_flags : basic_form<form::list_query, status_map_result> {
   clear_flags();
 };
 
-struct ignore : basic_form<form::list_query, problem::IdSet> {
+struct ignore : basic_form<form::list_query, status_map_result> {
   ignore();
 };
 
-struct import_result : basic_form<form::list_query, problem::ImportMap> {
+struct import_result : basic_form<form::list_query, import_map_result> {
   import_result();
 };
 
-using repack = basic_form<form::repack, problem::StatusMap>;
+using repack = basic_form<form::repack, status_map_result>;
 
 }  // namespace content
 }  // namespace web

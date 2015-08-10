@@ -1,0 +1,27 @@
+<% c++ #include <bacs/archive/web/content/form.hpp> %>
+<% skin plain %>
+    <% view status_result uses bacs::archive::web::content::status_result %>
+        <% template render() %>
+            <p>
+                <% gt "Import status:" %>
+                <% if data.has_error() %>
+                    <pre class="error"><%= data.error().ShortDebugString() %></pre>
+                <% else %>
+                    <% gt "OK" %>
+                <% end %>
+            </p>
+            <% if data.has_status() %>
+                <p>
+                    <% gt "Problem flags:" %>
+                    <pre><%= data.status().flags().DebugString() %></pre>
+                </p>
+                <p>
+                    <% gt "Problem revision:" %>
+                    <%= data.status().revision().DebugString() %>
+                </p>
+            <% else %>
+                <% gt "N/A" %>
+            <% end %>
+        <% end template %>
+    <% end view %>
+<% end skin %>

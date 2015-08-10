@@ -103,7 +103,6 @@ const boost::filesystem::path revision = "revision";
 
 problem::StatusResult repository::insert(
     const problem::id &id, const boost::filesystem::path &location) {
-  enum error_type { ok, problem_is_locked } error = ok;
   problem::validate_id(id);
   if (!is_locked(id)) {
     const lock_guard lk(m_lock);
@@ -129,20 +128,10 @@ problem::StatusResult repository::insert(
       const problem::Revision revision = compute_hash_revision(
           m_location.repository_root / id / m_problem.data.filename);
       write_revision_(id, revision);
-    } else {
-      error = problem_is_locked;
-    }
-  } else {
-    error = problem_is_locked;
-  }
-  switch (error) {
-    case ok:
       return schedule_repack(id);
-    case problem_is_locked:
-      return status_error("Problem is locked");
+    }
   }
-  BOOST_ASSERT(false);
-  return status_not_implemented();
+  return status_error(problem::Error::LOCKED);
 }
 
 bool repository::extract(const problem::id &id,
@@ -238,7 +227,8 @@ problem::FlagSet repository::flags_(const problem::id &id) {
   return flags;
 }
 
-bool repository::set_flag(const problem::id &id, const problem::flag &flag) {
+problem::StatusResult repository::set_flag(const problem::id &id,
+                                           const problem::flag &flag) {
   problem::validate_id(id);
   problem::validate_flag(flag);
   if (problem::flag_equal(flag, problem::Flag::PENDING_REPACK)) {
@@ -247,46 +237,50 @@ bool repository::set_flag(const problem::id &id, const problem::flag &flag) {
   }
   if (exists(id)) {
     const lock_guard lk(m_lock);
-    if (exists(id) && !is_read_only(id)) {
+    if (exists(id)) {
+      if (is_read_only(id)) return status_error(problem::Error::READ_ONLY);
       set_flag_(id, flag);
-      return true;
+      return status_status(status_(id));
     }
   }
-  return false;
+  return status_not_found();
 }
 
 void repository::set_flag_(const problem::id &id, const problem::flag &flag) {
   touch(m_location.repository_root / id / ename::flags / flag);
 }
 
-bool repository::set_flags(const problem::id &id,
-                           const problem::FlagSet &flags) {
+problem::StatusResult repository::set_flags(const problem::id &id,
+                                            const problem::FlagSet &flags) {
   problem::validate_id(id);
   problem::validate_flag_set(flags);
   if (exists(id)) {
     const lock_guard lk(m_lock);
-    if (exists(id) && !is_read_only(id)) {
+    if (exists(id)) {
+      if (is_read_only(id)) return status_error(problem::Error::READ_ONLY);
       for (const problem::Flag &flag : flags.flag()) set_flag_(id, flag);
-      return true;
+      return status_status(status_(id));
     }
   }
-  return false;
+  return status_not_found();
 }
 
-bool repository::unset_flag(const problem::id &id, const problem::flag &flag) {
+problem::StatusResult repository::unset_flag(const problem::id &id,
+                                             const problem::flag &flag) {
   problem::validate_id(id);
   problem::validate_flag(flag);
   if (exists(id)) {
     const lock_guard lk(m_lock);
-    if (exists(id) && !is_read_only(id)) {
+    if (exists(id)) {
+      if (is_read_only(id)) return status_error(problem::Error::READ_ONLY);
       // it is not possible to remove ignore flag
-      if (!problem::flag_equal(flag, problem::Flag::IGNORE)) {
+      if (problem::flag_equal(flag, problem::Flag::IGNORE)) {
         unset_flag_(id, flag);
       }
-      return true;
+      return status_status(status_(id));
     }
   }
-  return false;
+  return status_not_found();
 }
 
 void repository::unset_flag_(const problem::id &id, const problem::flag &flag) {
@@ -294,13 +288,14 @@ void repository::unset_flag_(const problem::id &id, const problem::flag &flag) {
                             flag);
 }
 
-bool repository::unset_flags(const problem::id &id,
-                             const problem::FlagSet &flags) {
+problem::StatusResult repository::unset_flags(const problem::id &id,
+                                              const problem::FlagSet &flags) {
   problem::validate_id(id);
   problem::validate_flag_set(flags);
   if (exists(id)) {
     const lock_guard lk(m_lock);
-    if (exists(id) && !is_read_only(id)) {
+    if (exists(id)) {
+      if (is_read_only(id)) return status_error(problem::Error::READ_ONLY);
       for (const problem::Flag &flag : flags.flag()) {
         // it is not possible to unset IGNORE and PENDING_REPACK flags
         if (!problem::flag_equal(flag, problem::Flag::IGNORE) &&
@@ -308,17 +303,18 @@ bool repository::unset_flags(const problem::id &id,
           unset_flag_(id, flag);
         }
       }
-      return true;
+      return status_status(status_(id));
     }
   }
-  return false;
+  return status_not_found();
 }
 
-bool repository::clear_flags(const problem::id &id) {
+problem::StatusResult repository::clear_flags(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
     const lock_guard lk(m_lock);
-    if (exists(id) && !is_read_only(id)) {
+    if (exists(id)) {
+      if (is_read_only(id)) return status_error(problem::Error::READ_ONLY);
       const boost::filesystem::path flags_dir =
           m_location.repository_root / id / ename::flags;
       for (boost::filesystem::directory_iterator i(flags_dir), end; i != end;
@@ -330,10 +326,10 @@ bool repository::clear_flags(const problem::id &id) {
           BOOST_VERIFY(boost::filesystem::remove(*i));
         }
       }
-      return true;
+      return status_status(status_(id));
     }
   }
-  return false;
+  return status_not_found();
 }
 
 problem::ImportResult repository::import_result(const problem::id &id) {
@@ -342,7 +338,7 @@ problem::ImportResult repository::import_result(const problem::id &id) {
     const shared_lock_guard lk(m_lock);
     if (exists(id)) {
       if (has_flag(id, problem::Flag::PENDING_REPACK)) {
-        return import_error("Repack is pending");
+        return import_error(problem::Error::PENDING_REPACK);
       } else {
         return read_import_result_(id);
       }

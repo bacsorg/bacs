@@ -160,8 +160,7 @@ class repository : private boost::noncopyable {
   /*!
    * \brief Check problem for existence.
    *
-   * Albeit problem exists, it may be ignored
-   * by some functions.
+   * Albeit problem exists, it may be ignored by some functions.
    *
    * Atomic, lock-free.
    *
@@ -280,14 +279,13 @@ class repository : private boost::noncopyable {
   /*!
    * \brief Set problem flag.
    *
-   * \return false if problem does not exist or is_read_only
-   *
    * Atomic, exclusive-lock.
    *
    * \see repository::exists
    * \see repository::is_read_only
    */
-  bool set_flag(const problem::id &id, const problem::flag &flag);
+  problem::StatusResult set_flag(const problem::id &id,
+                                 const problem::flag &flag);
 
   template <typename Flag>
   auto set_flag(const problem::id &id, const Flag &flag) {
@@ -302,7 +300,8 @@ class repository : private boost::noncopyable {
    * \see repository::exists
    * \see repository::is_read_only
    */
-  bool set_flags(const problem::id &id, const problem::FlagSet &flags);
+  problem::StatusResult set_flags(const problem::id &id,
+                                  const problem::FlagSet &flags);
 
   /*!
    * \brief Set problems flags.
@@ -311,8 +310,8 @@ class repository : private boost::noncopyable {
    *
    * \see repository::set_flags
    */
-  problem::IdSet set_flags_all(const problem::IdSet &id_set,
-                               const problem::FlagSet &flags);
+  problem::StatusMap set_flags_all(const problem::IdSet &id_set,
+                                   const problem::FlagSet &flags);
 
   /*!
    * \brief Unset problem flag.
@@ -324,7 +323,8 @@ class repository : private boost::noncopyable {
    * \see repository::exists
    * \see repository::is_read_only
    */
-  bool unset_flag(const problem::id &id, const problem::flag &flag);
+  problem::StatusResult unset_flag(const problem::id &id,
+                                   const problem::flag &flag);
 
   template <typename Flag>
   auto unset_flag(const problem::id &id, const Flag &flag) {
@@ -333,8 +333,6 @@ class repository : private boost::noncopyable {
 
   /*!
    * \brief Unset problem flags.
-   *
-   * \return false if problem does not exist or is_read_only
    *
    * \note Since problem::flags::ignore may not be removed,
    * if flag == problem::flags::ignore this call is equivalent
@@ -345,7 +343,8 @@ class repository : private boost::noncopyable {
    * \see repository::exists
    * \see repository::is_read_only
    */
-  bool unset_flags(const problem::id &id, const problem::FlagSet &flags);
+  problem::StatusResult unset_flags(const problem::id &id,
+                                    const problem::FlagSet &flags);
 
   /*!
    * \brief Unset problems flags.
@@ -354,8 +353,8 @@ class repository : private boost::noncopyable {
    *
    * \see repository::unset_flags
    */
-  problem::IdSet unset_flags_all(const problem::IdSet &id_set,
-                                 const problem::FlagSet &flags);
+  problem::StatusMap unset_flags_all(const problem::IdSet &id_set,
+                                     const problem::FlagSet &flags);
 
   /*!
    * \brief Clear problem flags.
@@ -367,7 +366,7 @@ class repository : private boost::noncopyable {
    * \see repository::exists
    * \see repository::is_read_only
    */
-  bool clear_flags(const problem::id &id);
+  problem::StatusResult clear_flags(const problem::id &id);
 
   /*!
    * \brief Clear problems flags.
@@ -378,7 +377,7 @@ class repository : private boost::noncopyable {
    *
    * \see repository::clear_flags
    */
-  problem::IdSet clear_flags_all(const problem::IdSet &id_set);
+  problem::StatusMap clear_flags_all(const problem::IdSet &id_set);
 
   /*!
    * \brief Mark problems with problem::flag::ignore.
@@ -391,20 +390,18 @@ class repository : private boost::noncopyable {
    *
    * \see repository::ignore
    */
-  problem::IdSet ignore_all(const problem::IdSet &id_set);
+  problem::StatusMap ignore_all(const problem::IdSet &id_set);
 
   /*!
    * \brief Alias for repository::set_flag(id, #problem::flag::ignore).
    *
-   * \return false if problem does not exists or is_read_only
-   *
-   * \note It is not possible to remove ignore flag manually.
+   * \note It is not possible to remove ignore flag manually, repack it instead.
    *
    * \see repository::set_flag
    * \see repository::exists
    * \see repository::is_read_only
    */
-  bool ignore(const problem::id &id);
+  problem::StatusResult ignore(const problem::id &id);
 
   /* import result */
   /*!

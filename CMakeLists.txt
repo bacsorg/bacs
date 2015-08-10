@@ -65,8 +65,14 @@ target_link_libraries(${PROJECT_NAME}_web PUBLIC cppcms)
 
 bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/base.tmpl
-    view/plain/error.tmpl
     view/plain/base_form.tmpl
+
+    view/plain/result/id_set.tmpl
+    view/plain/result/import_map.tmpl
+    view/plain/result/status.tmpl
+    view/plain/result/status_map.tmpl
+
+    view/plain/error.tmpl
     view/plain/insert.tmpl
     view/plain/extract.tmpl
     view/plain/rename.tmpl
