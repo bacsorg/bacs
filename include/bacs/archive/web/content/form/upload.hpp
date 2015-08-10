@@ -9,8 +9,8 @@ namespace web {
 namespace content {
 namespace form {
 
-struct insert : base {
-  insert();
+struct upload : base {
+  upload();
 
   widgets::archiver_config config;
   cppcms::widgets::file archive;

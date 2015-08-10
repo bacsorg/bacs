@@ -31,7 +31,7 @@ repository::repository(boost::asio::io_service &io_service,
       m_problem(config_.problem),
       m_importer(config_.problem.importer),
       m_repository(config_.pm) {
-  schedule_repack_all_pending();
+  schedule_import_all_pending();
 }
 
 repository::repository(boost::asio::io_service &io_service,
@@ -104,18 +104,18 @@ problem::IdSet get_all_set(repository *const this_,
 
 /* container */
 
-problem::StatusMap repository::insert_all(
+problem::StatusMap repository::upload_all(
     const boost::filesystem::path &location) {
   problem::StatusMap map;
   for (boost::filesystem::directory_iterator i(location), end; i != end; ++i) {
     const problem::id id = i->path().filename().string();
-    // TODO validate problem id (should be implemented in repository::insert)
-    (*map.mutable_entry())[id] = insert(id, i->path());
+    // TODO validate problem id (should be implemented in repository::upload)
+    (*map.mutable_entry())[id] = upload(id, i->path());
   }
   return map;
 }
 
-problem::StatusMap repository::insert_all(
+problem::StatusMap repository::upload_all(
     const archiver_options &archiver_options_,
     const boost::filesystem::path &archive) {
   const bunsan::tempfile unpacked =
@@ -123,34 +123,34 @@ problem::StatusMap repository::insert_all(
   const bunsan::utility::archiver_ptr archiver =
       archiver_options_.instance(m_resolver);
   archiver->unpack(archive, unpacked.path());
-  return insert_all(unpacked.path());
+  return upload_all(unpacked.path());
 }
 
-void repository::extract_all(const problem::IdSet &id_set,
-                             const boost::filesystem::path &location) {
+void repository::download_all(const problem::IdSet &id_set,
+                              const boost::filesystem::path &location) {
   bunsan::filesystem::reset_dir(location);
   for (const problem::id &id : id_set.id()) {
     const boost::filesystem::path dst = location / id;
-    if (!extract(id, dst) && boost::filesystem::exists(dst))
+    if (!download(id, dst) && boost::filesystem::exists(dst))
       boost::filesystem::remove_all(dst);
   }
 }
 
-void repository::extract_all(const problem::IdSet &id_set,
-                             const archiver_options &archiver_options_,
-                             const boost::filesystem::path &archive) {
+void repository::download_all(const problem::IdSet &id_set,
+                              const archiver_options &archiver_options_,
+                              const boost::filesystem::path &archive) {
   const bunsan::tempfile unpacked =
       bunsan::tempfile::directory_in_directory(m_location.tmpdir);
-  extract_all(id_set, unpacked.path());
+  download_all(id_set, unpacked.path());
   archiver_options_.instance(m_resolver)
       ->pack_contents(archive, unpacked.path());
 }
 
-bunsan::tempfile repository::extract_all(
+bunsan::tempfile repository::download_all(
     const problem::IdSet &id_set, const archiver_options &archiver_options_) {
   bunsan::tempfile packed =
       bunsan::tempfile::regular_file_in_directory(m_location.tmpdir);
-  extract_all(id_set, archiver_options_, packed.path());
+  download_all(id_set, archiver_options_, packed.path());
   return packed;
 }
 
@@ -203,23 +203,24 @@ problem::StatusMap repository::clear_flags_all(const problem::IdSet &id_set) {
   return get_all_map(this, &repository::clear_flags, id_set);
 }
 
-/* import_result */
+/* get_import_result */
 
-problem::ImportMap repository::import_result_all(const problem::IdSet &id_set) {
-  return get_all_map(this, &repository::import_result, id_set);
+problem::ImportMap repository::get_import_result_all(
+    const problem::IdSet &id_set) {
+  return get_all_map(this, &repository::get_import_result, id_set);
 }
 
-/* repack */
+/* import */
 
-problem::StatusMap repository::repack_all(const problem::IdSet &id_set) {
-  return get_all_map(this, &repository::repack, id_set);
+problem::StatusMap repository::import_all(const problem::IdSet &id_set) {
+  return get_all_map(this, &repository::import, id_set);
 }
 
-problem::StatusMap repository::repack_all() { return repack_all(existing()); }
+problem::StatusMap repository::import_all() { return import_all(existing()); }
 
-problem::StatusMap repository::schedule_repack_all() {
-  BUNSAN_LOG_INFO << "Scheduling all problems for repack";
-  return schedule_repack_all(existing());
+problem::StatusMap repository::schedule_import_all() {
+  BUNSAN_LOG_INFO << "Scheduling all problems for import";
+  return schedule_import_all(existing());
 }
 
 }  // namespace archive

@@ -54,24 +54,24 @@ class repository : private boost::noncopyable {
 
   /* container */
   /*!
-   * \brief Insert problems from archive into repository.
+   * \brief Upload problems from archive into repository.
    *
    * \return import information
    *
    * Not atomic.
    *
-   * \see repository::insert
+   * \see repository::upload
    */
-  problem::StatusMap insert_all(const boost::filesystem::path &location);
+  problem::StatusMap upload_all(const boost::filesystem::path &location);
 
   /*!
-   * \copydoc insert_all()
+   * \copydoc upload_all()
    */
-  problem::StatusMap insert_all(const archiver_options &archiver_options_,
+  problem::StatusMap upload_all(const archiver_options &archiver_options_,
                                 const boost::filesystem::path &archive);
 
   /*!
-   * \brief Insert particular problem into repository.
+   * \brief Upload particular problem into repository.
    *
    * \param location -- directory with problem
    *
@@ -82,42 +82,42 @@ class repository : private boost::noncopyable {
    *
    * \see repository::reset_flags
    */
-  problem::StatusResult insert(const problem::id &id,
+  problem::StatusResult upload(const problem::id &id,
                                const boost::filesystem::path &location);
 
-  /// repository::insert(location.filename().string(), location)
-  problem::StatusResult insert(const boost::filesystem::path &location);
+  /// repository::upload(location.filename().string(), location)
+  problem::StatusResult upload(const boost::filesystem::path &location);
 
   /*!
-   * \brief Extract problems from repository.
+   * \brief Download problems from repository.
    *
    * Ignores nonexistent problems.
    *
    * Not atomic.
    *
    * \see repository::exists
-   * \see repository::extract
+   * \see repository::download
    */
-  void extract_all(const problem::IdSet &id_set,
-                   const boost::filesystem::path &location);
+  void download_all(const problem::IdSet &id_set,
+                    const boost::filesystem::path &location);
 
   /*!
-   * \copydoc extract_all()
+   * \copydoc download_all()
    *
    * \return archive with problems
    */
-  void extract_all(const problem::IdSet &id_set,
-                   const archiver_options &archiver_options_,
-                   const boost::filesystem::path &archive);
+  void download_all(const problem::IdSet &id_set,
+                    const archiver_options &archiver_options_,
+                    const boost::filesystem::path &archive);
 
   /*!
-   * \copydoc extract_all()
+   * \copydoc download_all()
    */
-  bunsan::tempfile extract_all(const problem::IdSet &id_set,
-                               const archiver_options &archiver_options_);
+  bunsan::tempfile download_all(const problem::IdSet &id_set,
+                                const archiver_options &archiver_options_);
 
   /*!
-   * \brief Extract problem from repository.
+   * \brief Download problem from repository.
    *
    * \return false if problem does not exist
    *
@@ -125,18 +125,18 @@ class repository : private boost::noncopyable {
    *
    * \see repository::exists
    */
-  bool extract(const problem::id &id, const boost::filesystem::path &location);
+  bool download(const problem::id &id, const boost::filesystem::path &location);
 
   /*!
-   * \brief Change problem id and repack.
+   * \brief Change problem id and import.
    *
-   * If problem with id=future exists or repack fails functions does nothing.
+   * If problem with id=future exists or import fails functions does nothing.
    *
    * Atomic, shared-lock, exclusive-lock.
    *
    * \todo full locking documentation
    *
-   * \see repository::repack
+   * \see repository::import
    */
   problem::StatusResult rename(const problem::id &current,
                                const problem::id &future);
@@ -404,7 +404,7 @@ class repository : private boost::noncopyable {
   /*!
    * \brief Alias for repository::set_flag(id, #problem::flag::ignore).
    *
-   * \note It is not possible to remove ignore flag manually, repack it instead.
+   * \note It is not possible to remove ignore flag manually, import it instead.
    *
    * \see repository::set_flag
    * \see repository::exists
@@ -420,27 +420,27 @@ class repository : private boost::noncopyable {
    *
    * \see repository::is_available
    */
-  problem::ImportResult import_result(const problem::id &id);
+  problem::ImportResult get_import_result(const problem::id &id);
 
   /*!
    * \brief Get problems import result.
    *
    * \see repository::is_available
-   * \see repository::import_result
+   * \see repository::get_import_result
    */
-  problem::ImportMap import_result_all(const problem::IdSet &id_set);
+  problem::ImportMap get_import_result_all(const problem::IdSet &id_set);
 
-  /* repack */
+  /* import */
   /*!
-   * \brief Repack problem.
+   * \brief Import problem.
    *
-   * Repacking is similar to import
+   * Importing is similar to upload
    * except using internal copy of problem.
    *
    * Can be useful if problem conversion utility is changed
    * or index is corrupted.
    *
-   * If repack is not successful problem is marked by problem::flag::ignore.
+   * If import is not successful problem is marked by problem::flag::ignore.
    * Otherwise, problem::flag::ignore is unset.
    *
    * Atomic, exclusive-lock.
@@ -448,61 +448,61 @@ class repository : private boost::noncopyable {
    * \see repository::exists
    * \see repository::set_flag
    */
-  problem::StatusResult repack(const problem::id &id);
+  problem::StatusResult import(const problem::id &id);
 
   /*!
-   * \brief Repack all given problems.
+   * \brief Import all given problems.
    *
    * Not atomic.
    *
-   * \see repository::repack
+   * \see repository::import
    */
-  problem::StatusMap repack_all(const problem::IdSet &id_set);
+  problem::StatusMap import_all(const problem::IdSet &id_set);
 
   /*!
-   * \brief Repack all problems.
+   * \brief Import all problems.
    *
    * Not atomic.
    *
-   * \see repository::repack_all
+   * \see repository::import_all
    */
-  problem::StatusMap repack_all();
+  problem::StatusMap import_all();
 
   /*!
-   * \brief Schedules repack for future execution with post.
+   * \brief Schedules import for future execution with post.
    *
    * Atomic, exclusive-lock.
    *
-   * \see repository::repack
+   * \see repository::import
    */
-  problem::StatusResult schedule_repack(const problem::id &id);
+  problem::StatusResult schedule_import(const problem::id &id);
 
   /*!
-   * \brief Schedules repack for all given problems.
+   * \brief Schedules import for all given problems.
    *
    * Not atomic.
    *
-   * \see repository::schedule_repack
+   * \see repository::schedule_import
    */
-  problem::StatusMap schedule_repack_all(const problem::IdSet &id_set);
+  problem::StatusMap schedule_import_all(const problem::IdSet &id_set);
 
   /*!
-   * \brief Schedules repack for all problems.
+   * \brief Schedules import for all problems.
    *
    * Not atomic.
    *
-   * \see repository::schedule_repack_all
+   * \see repository::schedule_import_all
    */
-  problem::StatusMap schedule_repack_all();
+  problem::StatusMap schedule_import_all();
 
   /*!
-   * \brief Schedules repack for all pending problems.
+   * \brief Schedules import for all pending problems.
    *
    * Not atomic.
    *
-   * \see repository::schedule_repack_all
+   * \see repository::schedule_import_all
    */
-  problem::StatusMap schedule_repack_all_pending();
+  problem::StatusMap schedule_import_all_pending();
 
  private:
   /*!
@@ -528,7 +528,7 @@ class repository : private boost::noncopyable {
   problem::StatusMap status_all_(const problem::IdSet &id_set);
 
   /// \warning requires at least shared lock and problem existence
-  void extract_(const problem::id &id, const boost::filesystem::path &location);
+  void download_(const problem::id &id, const boost::filesystem::path &location);
 
   /// \warning requires at least shared lock
   bool is_available_(const problem::id &id);
@@ -573,19 +573,19 @@ class repository : private boost::noncopyable {
                             const problem::ImportResult &import_result);
 
   /// \warning requires unique lock and problem existence
-  problem::StatusResult repack_(const problem::id &id);
+  problem::StatusResult import_(const problem::id &id);
 
   /// \warning requires unique lock and problem existence
-  problem::StatusResult repack_(const problem::id &id,
+  problem::StatusResult import_(const problem::id &id,
                                 const problem::Revision &revision);
 
   /// \warning requires unique lock and problem existence
-  problem::StatusResult repack_(
+  problem::StatusResult import_(
       const problem::id &id, const problem::Revision &revision,
       const boost::filesystem::path &problem_location);
 
-  /// \return true if repack should be scheduled
-  bool prepare_repack(const problem::id &id);
+  /// \return true if import should be scheduled
+  bool prepare_import(const problem::id &id);
 
  private:
   boost::shared_mutex m_lock;

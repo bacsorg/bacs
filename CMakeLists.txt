@@ -42,8 +42,8 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/web/repository.cpp
     src/web/content/form/base.cpp
     src/web/content/form/list_query.cpp
-    src/web/content/form/insert.cpp
-    src/web/content/form/extract.cpp
+    src/web/content/form/upload.cpp
+    src/web/content/form/download.cpp
     src/web/content/form/rename.cpp
     src/web/content/form/existing.cpp
     src/web/content/form/available.cpp
@@ -51,7 +51,7 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/web/content/form/with_flag.cpp
     src/web/content/form/set_flags.cpp
     src/web/content/form/unset_flags.cpp
-    src/web/content/form/repack.cpp
+    src/web/content/form/import.cpp
     src/web/content/form.cpp
     src/web/content/form/widgets/archiver_config.cpp
     src/web/content/form/widgets/problem/id.cpp
@@ -74,8 +74,8 @@ bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/result/status_map.tmpl
 
     view/plain/error.tmpl
-    view/plain/insert.tmpl
-    view/plain/extract.tmpl
+    view/plain/upload.tmpl
+    view/plain/download.tmpl
     view/plain/rename.tmpl
     view/plain/existing.tmpl
     view/plain/available.tmpl
@@ -85,8 +85,8 @@ bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/unset_flags.tmpl
     view/plain/clear_flags.tmpl
     view/plain/ignore.tmpl
-    view/plain/import_result.tmpl
-    view/plain/repack.tmpl
+    view/plain/get_import_result.tmpl
+    view/plain/import.tmpl
 )
 bunsan_use_target(${PROJECT_NAME}_skin_plain ${PROJECT_NAME})
 

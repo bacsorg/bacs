@@ -1,23 +1,23 @@
 <% c++ #include <bacs/archive/web/content/form.hpp> %>
 <% skin plain %>
-    <% view repack_result uses bacs::archive::web::content::status_map_result extends status_map_result %>
+    <% view import_result uses bacs::archive::web::content::status_map_result extends status_map_result %>
         <% template caption() %>
-            <% gt "Repack results" %>
+            <% gt "Import results" %>
         <% end template %>
     <% end view %>
-    <% view repack uses bacs::archive::web::content::repack extends base_form %>
+    <% view import uses bacs::archive::web::content::import extends base_form %>
         <% template subtitle() %>
-            <% gt "Repack problems" %>
+            <% gt "Import problems" %>
         <% end template %>
         <% template form() %>
-            <h3><% gt "Repack problems" %></h3>
+            <h3><% gt "Import problems" %></h3>
             <form method="post" action="">
                 <% form as_p form %>
             </form>
         <% end template %>
         <% template result() %>
             <% if result %>
-                <% using repack_result with *result as result_view %>
+                <% using import_result with *result as result_view %>
                     <% include render() from result_view %>
                 <% end using %>
             <% end %>

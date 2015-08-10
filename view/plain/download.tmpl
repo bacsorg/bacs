@@ -1,11 +1,11 @@
 <% c++ #include <bacs/archive/web/content/form.hpp> %>
 <% skin plain %>
-    <% view extract uses bacs::archive::web::content::extract extends base_form %>
+    <% view download uses bacs::archive::web::content::download extends base_form %>
         <% template subtitle() %>
-            <% gt "Extract problems" %>
+            <% gt "Download problems" %>
         <% end template %>
         <% template form() %>
-            <h3><% gt "Extract problems from archive" %></h3>
+            <h3><% gt "Download problems from archive" %></h3>
             <form method="post" action="">
                 <% form as_p form %>
             </form>

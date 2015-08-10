@@ -10,8 +10,8 @@ namespace web {
 namespace content {
 namespace form {
 
-struct extract : base {
-  extract();
+struct download : base {
+  download();
 
   widgets::archiver_config config;
   widgets::problem::id_set ids;

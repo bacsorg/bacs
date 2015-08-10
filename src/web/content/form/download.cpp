@@ -1,4 +1,4 @@
-#include <bacs/archive/web/content/form/extract.hpp>
+#include <bacs/archive/web/content/form/download.hpp>
 
 namespace bacs {
 namespace archive {
@@ -6,10 +6,10 @@ namespace web {
 namespace content {
 namespace form {
 
-extract::extract() {
+download::download() {
   ids.name("ids");
   ids.message(cppcms::locale::translate("Problem ids"));
-  submit.value(cppcms::locale::translate("Extract"));
+  submit.value(cppcms::locale::translate("Download"));
   add(config);
   add(ids);
   add(submit);

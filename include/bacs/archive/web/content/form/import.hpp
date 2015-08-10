@@ -9,8 +9,8 @@ namespace web {
 namespace content {
 namespace form {
 
-struct repack : base {
-  repack();
+struct import : base {
+  import();
 
   widgets::problem::optional_id_set ids;
   cppcms::widgets::submit submit;

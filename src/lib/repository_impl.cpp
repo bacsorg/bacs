@@ -101,7 +101,7 @@ const boost::filesystem::path import_result = "import_result";
 const boost::filesystem::path revision = "revision";
 }  // namespace ename
 
-problem::StatusResult repository::insert(
+problem::StatusResult repository::upload(
     const problem::id &id, const boost::filesystem::path &location) {
   problem::validate_id(id);
   if (!is_locked(id)) {
@@ -128,27 +128,27 @@ problem::StatusResult repository::insert(
       const problem::Revision revision = compute_hash_revision(
           m_location.repository_root / id / m_problem.data.filename);
       write_revision_(id, revision);
-      return schedule_repack(id);
+      return schedule_import(id);
     }
   }
   return status_error(problem::Error::LOCKED);
 }
 
-bool repository::extract(const problem::id &id,
-                         const boost::filesystem::path &location) {
+bool repository::download(const problem::id &id,
+                          const boost::filesystem::path &location) {
   problem::validate_id(id);
   if (exists(id)) {
     const shared_lock_guard lk(m_lock);
     if (exists(id)) {
-      extract_(id, location);
+      download_(id, location);
       return true;
     }
   }
   return false;
 }
 
-void repository::extract_(const problem::id &id,
-                          const boost::filesystem::path &location) {
+void repository::download_(const problem::id &id,
+                           const boost::filesystem::path &location) {
   bunsan::filesystem::reset_dir(location);
   const bunsan::utility::archiver_ptr archiver =
       m_problem_archiver_factory(m_resolver);
@@ -262,7 +262,7 @@ problem::StatusResult repository::set_flag(const problem::id &id,
                                            const problem::flag &flag) {
   problem::validate_id(id);
   problem::validate_flag(flag);
-  if (problem::flag_equal(flag, problem::Flag::PENDING_REPACK)) {
+  if (problem::flag_equal(flag, problem::Flag::PENDING_IMPORT)) {
     BOOST_THROW_EXCEPTION(problem::flag_cant_be_set_error()
                           << problem::flag_cant_be_set_error::flag(flag));
   }
@@ -328,9 +328,9 @@ problem::StatusResult repository::unset_flags(const problem::id &id,
     if (exists(id)) {
       if (is_read_only(id)) return status_error(problem::Error::READ_ONLY);
       for (const problem::Flag &flag : flags.flag()) {
-        // it is not possible to unset IGNORE and PENDING_REPACK flags
+        // it is not possible to unset IGNORE and PENDING_IMPORT flags
         if (!problem::flag_equal(flag, problem::Flag::IGNORE) &&
-            !problem::flag_equal(flag, problem::Flag::PENDING_REPACK)) {
+            !problem::flag_equal(flag, problem::Flag::PENDING_IMPORT)) {
           unset_flag_(id, flag);
         }
       }
@@ -351,9 +351,9 @@ problem::StatusResult repository::clear_flags(const problem::id &id) {
       for (boost::filesystem::directory_iterator i(flags_dir), end; i != end;
            ++i) {
         const problem::flag flag = i->path().filename().string();
-        // it is not possible to clear IGNORE and PENDING_REPACK flags
+        // it is not possible to clear IGNORE and PENDING_IMPORT flags
         if (!problem::flag_equal(flag, problem::Flag::IGNORE) &&
-            !problem::flag_equal(flag, problem::Flag::PENDING_REPACK)) {
+            !problem::flag_equal(flag, problem::Flag::PENDING_IMPORT)) {
           BOOST_VERIFY(boost::filesystem::remove(*i));
         }
       }
@@ -363,13 +363,13 @@ problem::StatusResult repository::clear_flags(const problem::id &id) {
   return status_not_found();
 }
 
-problem::ImportResult repository::import_result(const problem::id &id) {
+problem::ImportResult repository::get_import_result(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
     const shared_lock_guard lk(m_lock);
     if (exists(id)) {
-      if (has_flag(id, problem::Flag::PENDING_REPACK)) {
-        return import_error(problem::Error::PENDING_REPACK);
+      if (has_flag(id, problem::Flag::PENDING_IMPORT)) {
+        return import_error(problem::Error::PENDING_IMPORT);
       } else {
         return read_import_result_(id);
       }
@@ -447,63 +447,63 @@ problem::StatusResult repository::rename(const problem::id &current,
   return status_not_implemented();
 }
 
-bool repository::prepare_repack(const problem::id &id) {
-  BUNSAN_LOG_DEBUG << "Preparing " << id << " for repack";
+bool repository::prepare_import(const problem::id &id) {
+  BUNSAN_LOG_DEBUG << "Preparing " << id << " for import";
   if (exists(id)) {
     const lock_guard lk(m_lock);
     if (exists(id)) {
-      set_flag_(id, problem::Flag::PENDING_REPACK);
+      set_flag_(id, problem::Flag::PENDING_IMPORT);
       return true;
     }
   }
   return false;
 }
 
-problem::StatusResult repository::schedule_repack(const problem::id &id) {
-  BUNSAN_LOG_INFO << "Scheduling " << id << " for repack";
+problem::StatusResult repository::schedule_import(const problem::id &id) {
+  BUNSAN_LOG_INFO << "Scheduling " << id << " for import";
   problem::validate_id(id);
   bool schedule = false;
   BOOST_SCOPE_EXIT_ALL(&) {
     // lock should not be held during execution of this code
-    if (schedule) m_io_service.post([this, id] { repack(id); });
+    if (schedule) m_io_service.post([this, id] { import(id); });
   };
-  schedule = prepare_repack(id);
+  schedule = prepare_import(id);
   return status(id);
 }
 
-problem::StatusMap repository::schedule_repack_all(
+problem::StatusMap repository::schedule_import_all(
     const problem::IdSet &id_set) {
   BUNSAN_LOG_INFO << "Scheduling { " << id_set.ShortDebugString()
-                  << " } for repack";
+                  << " } for import";
   std::unordered_set<problem::id> schedule;
   BOOST_SCOPE_EXIT_ALL(&) {
     BUNSAN_LOG_DEBUG << "Posting scheduled { " << id_set.ShortDebugString()
                      << " } for execution";
     for (const auto &id : schedule) {
-      m_io_service.post([this, id] { repack(id); });
+      m_io_service.post([this, id] { import(id); });
     }
   };
   for (const auto &id : id_set.id()) {
-    if (prepare_repack(id)) schedule.insert(id);
+    if (prepare_import(id)) schedule.insert(id);
   }
   return status_all(id_set);
 }
 
-problem::StatusMap repository::schedule_repack_all_pending() {
-  BUNSAN_LOG_INFO << "Scheduling all pending problems for repack";
-  return schedule_repack_all(with_flag(problem::Flag::PENDING_REPACK));
+problem::StatusMap repository::schedule_import_all_pending() {
+  BUNSAN_LOG_INFO << "Scheduling all pending problems for import";
+  return schedule_import_all(with_flag(problem::Flag::PENDING_IMPORT));
 }
 
-problem::StatusResult repository::repack(const problem::id &id) {
+problem::StatusResult repository::import(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
     const lock_guard lk(m_lock);
-    if (exists(id)) return repack_(id);
+    if (exists(id)) return import_(id);
   }
   return status_not_found();
 }
 
-problem::StatusResult repository::repack_(const problem::id &id) {
+problem::StatusResult repository::import_(const problem::id &id) {
   BOOST_ASSERT(exists(id));
   problem::Revision revision;
   try {
@@ -515,21 +515,21 @@ problem::StatusResult repository::repack_(const problem::id &id) {
                                      m_problem.data.filename);
     write_revision_(id, revision);
   }
-  return repack_(id, revision);
+  return import_(id, revision);
 }
 
-problem::StatusResult repository::repack_(const problem::id &id,
+problem::StatusResult repository::import_(const problem::id &id,
                                           const problem::Revision &revision) {
   const bunsan::tempfile tmpdir =
       bunsan::tempfile::directory_in_directory(m_location.tmpdir);
-  extract_(id, tmpdir.path());
-  return repack_(id, revision, tmpdir.path());
+  download_(id, tmpdir.path());
+  return import_(id, revision, tmpdir.path());
 }
 
-problem::StatusResult repository::repack_(
+problem::StatusResult repository::import_(
     const problem::id &id, const problem::Revision &revision,
     const boost::filesystem::path &problem_location) {
-  BUNSAN_LOG_INFO << "Repacking " << id;
+  BUNSAN_LOG_INFO << "Importing " << id;
   problem::StatusResult status_result;
   try {
     bacs::problem::importer::options options;
@@ -550,7 +550,7 @@ problem::StatusResult repository::repack_(
     write_import_result_(id, import_error(e.what()));
     status_result = status_error(e.what());
   }
-  unset_flag_(id, problem::Flag::PENDING_REPACK);
+  unset_flag_(id, problem::Flag::PENDING_IMPORT);
   return status_result;
 }
 

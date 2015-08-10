@@ -27,11 +27,11 @@ repository::repository(cppcms::service &srv,
       m_repository(repository_),
       m_upload_directory(
           srv.settings().get<std::string>("repository.upload_directory")) {
-  dispatcher().assign("/insert", &repository::insert, this);
-  mapper().assign("insert", "/insert");
+  dispatcher().assign("/upload", &repository::upload, this);
+  mapper().assign("upload", "/upload");
 
-  dispatcher().assign("/extract", &repository::extract, this);
-  mapper().assign("extract", "/extract");
+  dispatcher().assign("/download", &repository::download, this);
+  mapper().assign("download", "/download");
 
   dispatcher().assign("/rename", &repository::rename, this);
   mapper().assign("rename", "/rename");
@@ -60,11 +60,12 @@ repository::repository(cppcms::service &srv,
   dispatcher().assign("/ignore", &repository::ignore, this);
   mapper().assign("ignore", "/ignore");
 
-  dispatcher().assign("/import_result", &repository::import_result, this);
-  mapper().assign("import_result", "/import_result");
+  dispatcher().assign("/get_import_result", &repository::get_import_result,
+                      this);
+  mapper().assign("get_import_result", "/get_import_result");
 
-  dispatcher().assign("/repack", &repository::repack, this);
-  mapper().assign("repack", "/repack");
+  dispatcher().assign("/import", &repository::import, this);
+  mapper().assign("import", "/import");
 
   mapper().root("/repository");
 }
@@ -150,42 +151,43 @@ void repository::main(std::string url) {
   }                                                               \
   RESULT repository::NAME##_(content::NAME &data)
 
-DEFINE_HANDLER(insert, problem::StatusMap) {
+DEFINE_HANDLER(upload, problem::StatusMap) {
   const bunsan::tempfile tmpfile =
       bunsan::tempfile::regular_file_in_directory(m_upload_directory);
   data.form.archive.value()->save_to(tmpfile.string());
-  return m_repository->insert_all(data.form.config.value(), tmpfile.path());
+  return m_repository->upload_all(data.form.config.value(), tmpfile.path());
 }
 
-/*void repository::extract() {
-  content::extract data;
+/*void repository::download() {
+  content::download data;
   if (request().request_method() == "POST") {
     data.form.load(context());
     if (data.form.validate()) {
-      bunsan::tempfile tmpfile = m_repository->extract_all(
+      bunsan::tempfile tmpfile = m_repository->download_all(
           data.form.ids.value(), data.form.config.value());
       const std::string filename = "archive." + data.form.config.type.value() +
                                    "." + data.form.config.format.value();
       send_tempfile(std::move(tmpfile), filename);
     }
   }
-  render("extract", data);
+  render("download", data);
 }*/
 
-void repository::extract() {
+void repository::download() {
   bunsan::tempfile tmpfile;
   std::string filename;
-  const auto handler = [this, &tmpfile, &filename](content::extract &data) {
-    tmpfile = m_repository->extract_all(data.form.ids.value(),
+  const auto handler = [this, &tmpfile, &filename](content::download &data) {
+    tmpfile = m_repository->download_all(data.form.ids.value(),
                                         data.form.config.value());
     filename = "archive." + data.form.config.type.value();
     if (!data.form.config.format.value().empty())
       filename.append("." + data.form.config.format.value());
   };
-  const auto sender = [this, &tmpfile, &filename](content::extract & /*data*/) {
-    send_tempfile(std::move(tmpfile), filename);
-  };
-  handler_wrapper<content::extract>(__func__, handler, sender);
+  const auto sender =
+      [this, &tmpfile, &filename](content::download & /*data*/) {
+        send_tempfile(std::move(tmpfile), filename);
+      };
+  handler_wrapper<content::download>(__func__, handler, sender);
 }
 
 DEFINE_HANDLER(rename, problem::StatusResult) {
@@ -247,16 +249,16 @@ DEFINE_HANDLER(ignore, problem::StatusMap) {
   return m_repository->ignore_all(data.form.ids.value());
 }
 
-DEFINE_HANDLER(import_result, problem::ImportMap) {
-  return m_repository->import_result_all(data.form.ids.value());
+DEFINE_HANDLER(get_import_result, problem::ImportMap) {
+  return m_repository->get_import_result_all(data.form.ids.value());
 }
 
-DEFINE_HANDLER(repack, problem::StatusMap) {
+DEFINE_HANDLER(import, problem::StatusMap) {
   const boost::optional<problem::IdSet> ids = data.form.ids.value();
   if (ids) {
-    return m_repository->schedule_repack_all(*ids);
+    return m_repository->schedule_import_all(*ids);
   } else {
-    return m_repository->schedule_repack_all();
+    return m_repository->schedule_import_all();
   }
 }
 

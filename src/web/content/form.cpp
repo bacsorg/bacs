@@ -10,7 +10,7 @@ clear_flags::clear_flags()
 
 ignore::ignore() : basic_form(cppcms::locale::translate("Ignore")) {}
 
-import_result::import_result()
+get_import_result::get_import_result()
     : basic_form(cppcms::locale::translate("Get import result")) {}
 
 }  // namespace content

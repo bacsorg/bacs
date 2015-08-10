@@ -23,8 +23,8 @@ class repository : public cppcms::application {
   void handler_wrapper(const std::string &name, const Handler &handler,
                        const Sender &sender);
 
-  void insert();
-  void extract();
+  void upload();
+  void download();
   void rename();
   void existing();
   void available();
@@ -34,8 +34,8 @@ class repository : public cppcms::application {
   void unset_flags();
   void clear_flags();
   void ignore();
-  void import_result();
-  void repack();
+  void get_import_result();
+  void import();
 
   template <typename ProtoBuf>
   void send_protobuf(const ProtoBuf &protobuf, const std::string &filename);
@@ -46,8 +46,8 @@ class repository : public cppcms::application {
   void send_tempfile(bunsan::tempfile &&tmpfile, const std::string &filename);
 
  private:
-  problem::StatusMap insert_(content::insert &data);
-  // void extract_(content::extract &data);
+  problem::StatusMap upload_(content::upload &data);
+  // void download_(content::download &data);
   problem::StatusResult rename_(content::rename &data);
   problem::IdSet existing_(content::existing &data);
   problem::IdSet available_(content::available &data);
@@ -57,8 +57,8 @@ class repository : public cppcms::application {
   problem::StatusMap unset_flags_(content::unset_flags &data);
   problem::StatusMap clear_flags_(content::clear_flags &data);
   problem::StatusMap ignore_(content::ignore &data);
-  problem::ImportMap import_result_(content::import_result &data);
-  problem::StatusMap repack_(content::repack &data);
+  problem::ImportMap get_import_result_(content::get_import_result &data);
+  problem::StatusMap import_(content::import &data);
 
  private:
   const std::shared_ptr<archive::repository> m_repository;

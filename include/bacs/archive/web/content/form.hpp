@@ -5,8 +5,8 @@
 #include <bacs/archive/web/content/base_form.hpp>
 
 #include <bacs/archive/web/content/form/list_query.hpp>
-#include <bacs/archive/web/content/form/insert.hpp>
-#include <bacs/archive/web/content/form/extract.hpp>
+#include <bacs/archive/web/content/form/upload.hpp>
+#include <bacs/archive/web/content/form/download.hpp>
 #include <bacs/archive/web/content/form/rename.hpp>
 #include <bacs/archive/web/content/form/existing.hpp>
 #include <bacs/archive/web/content/form/available.hpp>
@@ -16,8 +16,8 @@
 #include <bacs/archive/web/content/form/unset_flags.hpp>
 // clear_flags
 // ignore
-// import_result
-#include <bacs/archive/web/content/form/repack.hpp>
+// get_import_result
+#include <bacs/archive/web/content/form/import.hpp>
 
 #include <bunsan/forward_constructor.hpp>
 
@@ -53,8 +53,8 @@ using import_map_result = basic_result<problem::ImportMap>;
 using status_map_result = basic_result<problem::StatusMap>;
 using status_result = basic_result<problem::StatusResult>;
 
-using insert = basic_form<form::insert, status_map_result>;
-using extract = basic_form<form::extract, void>;
+using upload = basic_form<form::upload, status_map_result>;
+using download = basic_form<form::download, void>;
 using rename = basic_form<form::rename, status_result>;
 using existing = basic_form<form::existing, id_set_result>;
 using available = basic_form<form::available, id_set_result>;
@@ -71,11 +71,11 @@ struct ignore : basic_form<form::list_query, status_map_result> {
   ignore();
 };
 
-struct import_result : basic_form<form::list_query, import_map_result> {
-  import_result();
+struct get_import_result : basic_form<form::list_query, import_map_result> {
+  get_import_result();
 };
 
-using repack = basic_form<form::repack, status_map_result>;
+using import = basic_form<form::import, status_map_result>;
 
 }  // namespace content
 }  // namespace web
