@@ -225,6 +225,8 @@ problem::StatusMap repository::status_all() {
 }
 
 problem::StatusMap repository::status_all_(const problem::IdSet &id_set) {
+  BUNSAN_LOG_INFO << "Reading status of { " << id_set.ShortDebugString()
+                  << " }";
   problem::StatusMap status_map;
   for (const problem::id &id : id_set.id()) {
     (*status_map.mutable_entry())[id] = status_result_(id);
@@ -471,10 +473,12 @@ problem::StatusResult repository::schedule_repack(const problem::id &id) {
 
 problem::StatusMap repository::schedule_repack_all(
     const problem::IdSet &id_set) {
-  BUNSAN_LOG_INFO << "Scheduling " << id_set.ShortDebugString()
-                  << " for repack";
+  BUNSAN_LOG_INFO << "Scheduling { " << id_set.ShortDebugString()
+                  << " } for repack";
   std::unordered_set<problem::id> schedule;
   BOOST_SCOPE_EXIT_ALL(&) {
+    BUNSAN_LOG_DEBUG << "Posting scheduled { " << id_set.ShortDebugString()
+                     << " } for execution";
     for (const auto &id : schedule) {
       m_io_service.post([this, id] { repack(id); });
     }
