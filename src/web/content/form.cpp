@@ -5,8 +5,6 @@ namespace archive {
 namespace web {
 namespace content {
 
-status::status() : basic_form(cppcms::locale::translate("Get status")) {}
-
 clear_flags::clear_flags()
     : basic_form(cppcms::locale::translate("Clear flags")) {}
 

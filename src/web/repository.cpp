@@ -212,7 +212,12 @@ DEFINE_HANDLER(available, problem::IdSet) {
 }
 
 DEFINE_HANDLER(status, problem::StatusMap) {
-  return m_repository->status_all(data.form.ids.value());
+  const boost::optional<problem::IdSet> ids = data.form.ids.value();
+  if (ids) {
+    return m_repository->status_all(*ids);
+  } else {
+    return m_repository->status_all();
+  }
 }
 
 DEFINE_HANDLER(with_flag, problem::IdSet) {

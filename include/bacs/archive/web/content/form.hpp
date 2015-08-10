@@ -10,7 +10,7 @@
 #include <bacs/archive/web/content/form/rename.hpp>
 #include <bacs/archive/web/content/form/existing.hpp>
 #include <bacs/archive/web/content/form/available.hpp>
-// status
+#include <bacs/archive/web/content/form/status.hpp>
 #include <bacs/archive/web/content/form/with_flag.hpp>
 #include <bacs/archive/web/content/form/set_flags.hpp>
 #include <bacs/archive/web/content/form/unset_flags.hpp>
@@ -58,11 +58,7 @@ using extract = basic_form<form::extract, void>;
 using rename = basic_form<form::rename, status_result>;
 using existing = basic_form<form::existing, id_set_result>;
 using available = basic_form<form::available, id_set_result>;
-
-struct status : basic_form<form::list_query, status_map_result> {
-  status();
-};
-
+using status = basic_form<form::status, status_map_result>;
 using with_flag = basic_form<form::with_flag, id_set_result>;
 using set_flags = basic_form<form::set_flags, status_map_result>;
 using unset_flags = basic_form<form::unset_flags, status_map_result>;

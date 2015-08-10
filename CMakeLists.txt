@@ -47,6 +47,7 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/web/content/form/rename.cpp
     src/web/content/form/existing.cpp
     src/web/content/form/available.cpp
+    src/web/content/form/status.cpp
     src/web/content/form/with_flag.cpp
     src/web/content/form/set_flags.cpp
     src/web/content/form/unset_flags.cpp

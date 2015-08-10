@@ -233,6 +233,15 @@ class repository : private boost::noncopyable {
   problem::StatusMap status_all(const problem::IdSet &id_set);
 
   /*!
+   * \brief Get all problems status.
+   *
+   * Not atomic.
+   *
+   * \see repository::status_all
+   */
+  problem::StatusMap status_all();
+
+  /*!
    * \brief Check problem for flag.
    *
    * \return false if problem does not exist
@@ -511,6 +520,12 @@ class repository : private boost::noncopyable {
   bool valid(const problem::id &id);
 
   /* not synchronized function versions for internal usage */
+
+  /// \warning requires at least shared lock
+  problem::IdSet existing_();
+
+  /// \warning requires at least shared lock
+  problem::StatusMap status_all_(const problem::IdSet &id_set);
 
   /// \warning requires at least shared lock and problem existence
   void extract_(const problem::id &id, const boost::filesystem::path &location);

@@ -159,6 +159,10 @@ void repository::extract_(const problem::id &id,
 
 problem::IdSet repository::existing() {
   const shared_lock_guard lk(m_lock);
+  return existing_();
+}
+
+problem::IdSet repository::existing_() {
   problem::IdSet set;
   for (boost::filesystem::directory_iterator i(m_location.repository_root), end;
        i != end; ++i) {
@@ -211,6 +215,17 @@ problem::StatusResult repository::status(const problem::id &id) {
 problem::StatusMap repository::status_all(const problem::IdSet &id_set) {
   problem::StatusMap status_map;
   const shared_lock_guard lk(m_lock);
+  return status_all_(id_set);
+}
+
+problem::StatusMap repository::status_all() {
+  problem::StatusMap status_map;
+  const shared_lock_guard lk(m_lock);
+  return status_all_(existing_());
+}
+
+problem::StatusMap repository::status_all_(const problem::IdSet &id_set) {
+  problem::StatusMap status_map;
   for (const problem::id &id : id_set.id()) {
     (*status_map.mutable_entry())[id] = status_result_(id);
   }
