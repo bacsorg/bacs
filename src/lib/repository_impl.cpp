@@ -45,14 +45,20 @@ problem::Revision compute_hash_revision(const boost::filesystem::path &path) {
   return revision;
 }
 
-problem::StatusResult status_error(const std::string &error) {
+problem::StatusResult status_error(const std::string &reason) {
   problem::StatusResult status_result;
-  status_result.set_error(error);
+  status_result.mutable_error()->set_reason(reason);
   return status_result;
 }
 
-problem::StatusResult status_does_not_exist() {
-  return status_error("Problem does not exist");
+problem::StatusResult status_error(const problem::Error::Code code) {
+  problem::StatusResult status_result;
+  status_result.mutable_error()->set_code(code);
+  return status_result;
+}
+
+problem::StatusResult status_not_found() {
+  return status_error(problem::Error::NOT_FOUND);
 }
 
 problem::StatusResult status_not_implemented() {
@@ -65,14 +71,20 @@ problem::StatusResult status_status(problem::Status status) {
   return status_result;
 }
 
-problem::ImportResult import_error(const std::string &error) {
+problem::ImportResult import_error(const std::string &reason) {
   problem::ImportResult import_result;
-  import_result.set_error(error);
+  import_result.mutable_error()->set_reason(reason);
   return import_result;
 }
 
-problem::ImportResult import_does_not_exist() {
-  return import_error("Problem does not exist");
+problem::ImportResult import_error(const problem::Error::Code code) {
+  problem::ImportResult import_result;
+  import_result.mutable_error()->set_code(code);
+  return import_result;
+}
+
+problem::ImportResult import_not_found() {
+  return import_error(problem::Error::NOT_FOUND);
 }
 
 problem::ImportResult import_problem(bacs::problem::Problem problem) {
@@ -93,7 +105,6 @@ problem::StatusResult repository::insert(
     const problem::id &id, const boost::filesystem::path &location) {
   enum error_type { ok, problem_is_locked } error = ok;
   problem::validate_id(id);
-  problem::StatusResult status_result;
   if (!is_locked(id)) {
     const lock_guard lk(m_lock);
     if (!is_locked(id)) {
@@ -126,13 +137,12 @@ problem::StatusResult repository::insert(
   }
   switch (error) {
     case ok:
-      status_result = schedule_repack(id);
-      break;
+      return schedule_repack(id);
     case problem_is_locked:
-      status_result.set_error("problem is locked");
-      break;
+      return status_error("Problem is locked");
   }
-  return status_result;
+  BOOST_ASSERT(false);
+  return status_not_implemented();
 }
 
 bool repository::extract(const problem::id &id,
@@ -206,7 +216,7 @@ problem::StatusResult repository::status(const problem::id &id) {
     const shared_lock_guard lk(m_lock);
     if (exists(id)) return status_status(status_(id));
   }
-  return status_does_not_exist();
+  return status_not_found();
 }
 
 problem::Status repository::status_(const problem::id &id) {
@@ -338,7 +348,7 @@ problem::ImportResult repository::import_result(const problem::id &id) {
       }
     }
   }
-  return import_does_not_exist();
+  return import_not_found();
 }
 
 problem::ImportResult repository::read_import_result_(const problem::id &id) {
@@ -461,7 +471,7 @@ problem::StatusResult repository::repack(const problem::id &id) {
     const lock_guard lk(m_lock);
     if (exists(id)) return repack_(id);
   }
-  return status_does_not_exist();
+  return status_not_found();
 }
 
 problem::StatusResult repository::repack_(const problem::id &id) {
@@ -509,7 +519,7 @@ problem::StatusResult repository::repack_(
   } catch (std::exception &e) {
     set_flag_(id, problem::Flag::IGNORE);
     write_import_result_(id, import_error(e.what()));
-    status_result.set_error(e.what());
+    status_result = status_error(e.what());
   }
   unset_flag_(id, problem::Flag::PENDING_REPACK);
   return status_result;

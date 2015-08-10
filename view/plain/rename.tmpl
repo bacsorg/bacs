@@ -15,10 +15,10 @@
                 <!-- FIXME -->
                 <p>
                     <% gt "Import status:" %>
-                    <% if result->error().empty() %>
-                        <% gt "OK" %>
+                    <% if result->has_error() %>
+                        <pre class="error"><%= result->error().ShortDebugString() %></pre>
                     <% else %>
-                        <pre class="error"><%= result->error() %></pre>
+                        <% gt "OK" %>
                     <% end %>
                 </p>
                 <% if result->has_status() %>
