@@ -475,9 +475,9 @@ problem::StatusMap repository::schedule_repack_all(
                   << " for repack";
   std::unordered_set<problem::id> schedule;
   BOOST_SCOPE_EXIT_ALL(&) {
-    m_io_service.post([this, schedule] {
-      for (const auto &id : schedule) repack(id);
-    });
+    for (const auto &id : schedule) {
+      m_io_service.post([this, id] { repack(id); });
+    }
   };
   for (const auto &id : id_set.id()) {
     if (prepare_repack(id)) schedule.insert(id);
