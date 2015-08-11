@@ -16,8 +16,11 @@
 namespace bacs {
 namespace archive {
 
-using lock_guard = boost::lock_guard<boost::shared_mutex>;
-using shared_lock_guard = boost::shared_lock_guard<boost::shared_mutex>;
+using lock_guard = boost::lock_guard<boost::upgrade_mutex>;
+using shared_lock_guard = boost::shared_lock_guard<boost::upgrade_mutex>;
+using upgrade_lock_guard = boost::upgrade_lock<boost::upgrade_mutex>;
+using upgrade_to_unique_lock_guard =
+    boost::upgrade_to_unique_lock<boost::upgrade_mutex>;
 
 namespace {
 void touch(const boost::filesystem::path &path) {
@@ -496,41 +499,43 @@ problem::StatusMap repository::schedule_import_all_pending() {
 
 problem::StatusResult repository::import(const problem::id &id) {
   problem::validate_id(id);
+  BUNSAN_LOG_INFO << "Importing " << id;
+  // no parallel imports permitted
+  const boost::lock_guard<boost::mutex> lk(m_import_lock);
   if (exists(id)) {
-    const lock_guard lk(m_lock);
-    if (exists(id)) return import_(id);
+    upgrade_lock_guard lk(m_lock);
+    if (exists(id)) {
+      BOOST_ASSERT(exists(id));
+      problem::Revision revision;
+      try {
+        revision = read_revision_(id);
+      } catch (std::exception &) {
+        BUNSAN_LOG_WARNING << "Revision unreadable for problem = " << id
+                           << ", regenerated";
+        revision = compute_hash_revision(m_location.repository_root / id /
+                                         m_problem.data.filename);
+        upgrade_to_unique_lock_guard ulk(lk);
+        write_revision_(id, revision);
+      }
+      const bunsan::tempfile tmpdir =
+          bunsan::tempfile::directory_in_directory(m_location.tmpdir);
+      download_(id, tmpdir.path());
+      lk.unlock();
+      // import_() uses downloaded source to perform operations
+      // all required locks are handled inside
+      return import_(id, revision, tmpdir.path());
+    }
   }
   return status_not_found();
-}
-
-problem::StatusResult repository::import_(const problem::id &id) {
-  BOOST_ASSERT(exists(id));
-  problem::Revision revision;
-  try {
-    revision = read_revision_(id);
-  } catch (std::exception &) {
-    BUNSAN_LOG_WARNING << "Revision unreadable for problem = " << id
-                       << ", regenerated";
-    revision = compute_hash_revision(m_location.repository_root / id /
-                                     m_problem.data.filename);
-    write_revision_(id, revision);
-  }
-  return import_(id, revision);
-}
-
-problem::StatusResult repository::import_(const problem::id &id,
-                                          const problem::Revision &revision) {
-  const bunsan::tempfile tmpdir =
-      bunsan::tempfile::directory_in_directory(m_location.tmpdir);
-  download_(id, tmpdir.path());
-  return import_(id, revision, tmpdir.path());
 }
 
 problem::StatusResult repository::import_(
     const problem::id &id, const problem::Revision &revision,
     const boost::filesystem::path &problem_location) {
-  BUNSAN_LOG_INFO << "Importing " << id;
+  // this code does not lock storage and may be executed in parallel
   problem::StatusResult status_result;
+  problem::ImportResult import_result;
+  bool ok = false;
   try {
     bacs::problem::importer::options options;
     options.problem_dir = problem_location;
@@ -539,19 +544,40 @@ problem::StatusResult repository::import_(
     options.root_package = m_problem.root_package / id;
     options.id = id;
     options.revision = revision;
-    write_import_result_(id, import_problem(m_importer.convert(options)));
-    m_repository.create_recursively(options.destination, m_problem.strip);
-    unset_flag_(id, problem::Flag::IGNORE);
-    problem::Status &status = *status_result.mutable_status();
-    *status.mutable_revision() = revision;
-    *status.mutable_flags() = flags_(id);
+    import_result = import_problem(m_importer.convert(options));
+    pm_create_recursively(options.destination);
+    ok = true;
   } catch (std::exception &e) {
-    set_flag_(id, problem::Flag::IGNORE);
-    write_import_result_(id, import_error(e.what()));
+    import_result = import_error(e.what());
     status_result = status_error(e.what());
   }
-  unset_flag_(id, problem::Flag::PENDING_IMPORT);
+  // end of non-locking section
+  {
+    const lock_guard lk(m_lock);
+    if (!exists(id)) return status_error("Problem was removed during import");
+    const problem::Revision current_revision = read_revision_(id);
+    if (current_revision.value() != revision.value()) {
+      return status_error("Problem was changed during import");
+    }
+    write_import_result_(id, import_result);
+    if (ok) {
+      unset_flag_(id, problem::Flag::IGNORE);
+    } else {
+      set_flag_(id, problem::Flag::IGNORE);
+    }
+    unset_flag_(id, problem::Flag::PENDING_IMPORT);
+    if (ok) {  // should be last block since it reads
+      problem::Status &status = *status_result.mutable_status();
+      *status.mutable_revision() = revision;
+      *status.mutable_flags() = flags_(id);
+    }
+  }
   return status_result;
+}
+
+void repository::pm_create_recursively(const boost::filesystem::path &path) {
+  const boost::lock_guard<boost::mutex> lk(m_pm_lock);
+  m_repository.create_recursively(path, m_problem.strip);
 }
 
 }  // namespace archive

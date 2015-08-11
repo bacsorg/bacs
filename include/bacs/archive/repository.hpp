@@ -587,8 +587,12 @@ class repository : private boost::noncopyable {
   /// \return true if import should be scheduled
   bool prepare_import(const problem::id &id);
 
+  void pm_create_recursively(const boost::filesystem::path &path);
+
  private:
-  boost::shared_mutex m_lock;
+  boost::mutex m_import_lock;
+  boost::upgrade_mutex m_lock;
+  boost::mutex m_pm_lock;
   boost::asio::io_service &m_io_service;
   const bunsan::interprocess::file_guard m_flock;
   bunsan::utility::custom_resolver m_resolver;
