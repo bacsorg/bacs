@@ -68,10 +68,10 @@ bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/base.tmpl
     view/plain/base_form.tmpl
 
-    view/plain/result/id_set.tmpl
-    view/plain/result/import_map.tmpl
-    view/plain/result/status.tmpl
-    view/plain/result/status_map.tmpl
+    view/plain/response/id_set.tmpl
+    view/plain/response/import_map.tmpl
+    view/plain/response/status.tmpl
+    view/plain/response/status_map.tmpl
 
     view/plain/error.tmpl
     view/plain/upload.tmpl
@@ -85,7 +85,7 @@ bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/unset_flags.tmpl
     view/plain/clear_flags.tmpl
     view/plain/ignore.tmpl
-    view/plain/get_import_result.tmpl
+    view/plain/import_result.tmpl
     view/plain/import.tmpl
 )
 bunsan_use_target(${PROJECT_NAME}_skin_plain ${PROJECT_NAME})

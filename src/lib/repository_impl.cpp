@@ -363,7 +363,7 @@ problem::StatusResult repository::clear_flags(const problem::id &id) {
   return status_not_found();
 }
 
-problem::ImportResult repository::get_import_result(const problem::id &id) {
+problem::ImportResult repository::import_result(const problem::id &id) {
   problem::validate_id(id);
   if (exists(id)) {
     const shared_lock_guard lk(m_lock);

@@ -10,10 +10,10 @@
                 <% form as_p form %>
             </form>
         <% end template %>
-        <% template result() %>
-            <% if result %>
-                <% using status_result with *result as result_view %>
-                    <% include render() from result_view %>
+        <% template response() %>
+            <% if response %>
+                <% using status_response with *response as response_view %>
+                    <% include render() from response_view %>
                 <% end using %>
             <% end %>
         <% end template %>

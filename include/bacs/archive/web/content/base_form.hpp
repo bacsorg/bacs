@@ -8,7 +8,7 @@ namespace web {
 namespace content {
 
 struct base_form : base {};
-struct base_result : base {};
+struct base_response : base {};
 
 }  // namespace content
 }  // namespace web

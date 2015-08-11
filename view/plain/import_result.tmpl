@@ -1,11 +1,11 @@
 <% c++ #include <bacs/archive/web/content/form.hpp> %>
 <% skin plain %>
-    <% view get_import_result_result uses bacs::archive::web::content::import_map_result extends import_map_result %>
+    <% view import_result_response uses bacs::archive::web::content::import_map_response extends import_map_response %>
         <% template caption() %>
             <% gt "Problem import result" %>
         <% end template %>
     <% end view %>
-    <% view get_import_result uses bacs::archive::web::content::get_import_result extends base_form %>
+    <% view import_result uses bacs::archive::web::content::import_result extends base_form %>
         <% template scripts() %>
             <% include base_form::scripts() %>
             <script src="/static/plain/protobuf.js" type="text/javascript"></script>
@@ -19,10 +19,10 @@
                 <% form as_p form %>
             </form>
         <% end template %>
-        <% template result() %>
-            <% if result %>
-                <% using get_import_result_result with *result as result_view %>
-                    <% include render() from result_view %>
+        <% template response() %>
+            <% if response %>
+                <% using import_result_response with *response as response_view %>
+                    <% include render() from response_view %>
                 <% end using %>
             <% end %>
         <% end template %>

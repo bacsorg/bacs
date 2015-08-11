@@ -34,7 +34,7 @@ class repository : public cppcms::application {
   void unset_flags();
   void clear_flags();
   void ignore();
-  void get_import_result();
+  void import_result();
   void import();
 
   template <typename ProtoBuf>
@@ -57,7 +57,7 @@ class repository : public cppcms::application {
   problem::StatusMap unset_flags_(content::unset_flags &data);
   problem::StatusMap clear_flags_(content::clear_flags &data);
   problem::StatusMap ignore_(content::ignore &data);
-  problem::ImportMap get_import_result_(content::get_import_result &data);
+  problem::ImportMap import_result_(content::import_result &data);
   problem::StatusMap import_(content::import &data);
 
  private:

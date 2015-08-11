@@ -203,11 +203,10 @@ problem::StatusMap repository::clear_flags_all(const problem::IdSet &id_set) {
   return get_all_map(this, &repository::clear_flags, id_set);
 }
 
-/* get_import_result */
+/* import_result */
 
-problem::ImportMap repository::get_import_result_all(
-    const problem::IdSet &id_set) {
-  return get_all_map(this, &repository::get_import_result, id_set);
+problem::ImportMap repository::import_result_all(const problem::IdSet &id_set) {
+  return get_all_map(this, &repository::import_result, id_set);
 }
 
 /* import */

@@ -60,9 +60,8 @@ repository::repository(cppcms::service &srv,
   dispatcher().assign("/ignore", &repository::ignore, this);
   mapper().assign("ignore", "/ignore");
 
-  dispatcher().assign("/get_import_result", &repository::get_import_result,
-                      this);
-  mapper().assign("get_import_result", "/get_import_result");
+  dispatcher().assign("/import_result", &repository::import_result, this);
+  mapper().assign("import_result", "/import_result");
 
   dispatcher().assign("/import", &repository::import, this);
   mapper().assign("import", "/import");
@@ -136,7 +135,7 @@ void repository::main(std::string url) {
   void repository::NAME() {                                       \
     handler_wrapper<content::NAME>(#NAME,                         \
                                    [this](content::NAME & data) { \
-      data.result.emplace(repository::NAME##_(data));             \
+      data.response.emplace(repository::NAME##_(data));           \
                                    },                             \
                                    [this](content::NAME & data) { \
       switch (data.form.response()) {                             \
@@ -144,7 +143,7 @@ void repository::main(std::string url) {
           render(#NAME, data);                                    \
           break;                                                  \
         case content::form::base::response_type::protobuf:        \
-          send_protobuf(data.result->data, #NAME ".pb.data");     \
+          send_protobuf(data.response->data, #NAME ".pb.data");   \
           break;                                                  \
       }                                                           \
                                    });                            \
@@ -249,8 +248,8 @@ DEFINE_HANDLER(ignore, problem::StatusMap) {
   return m_repository->ignore_all(data.form.ids.value());
 }
 
-DEFINE_HANDLER(get_import_result, problem::ImportMap) {
-  return m_repository->get_import_result_all(data.form.ids.value());
+DEFINE_HANDLER(import_result, problem::ImportMap) {
+  return m_repository->import_result_all(data.form.ids.value());
 }
 
 DEFINE_HANDLER(import, problem::StatusMap) {

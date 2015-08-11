@@ -420,15 +420,15 @@ class repository : private boost::noncopyable {
    *
    * \see repository::is_available
    */
-  problem::ImportResult get_import_result(const problem::id &id);
+  problem::ImportResult import_result(const problem::id &id);
 
   /*!
    * \brief Get problems import result.
    *
    * \see repository::is_available
-   * \see repository::get_import_result
+   * \see repository::import_result
    */
-  problem::ImportMap get_import_result_all(const problem::IdSet &id_set);
+  problem::ImportMap import_result_all(const problem::IdSet &id_set);
 
   /* import */
   /*!
