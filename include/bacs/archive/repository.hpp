@@ -32,13 +32,12 @@ namespace archive {
  * \warning User should not create multiple instances bind to single repository
  * (nor in process scope, nor in thread scope). Exception will be thrown.
  *
- * *_all() functions are wrappers for their counterparts
- * without "_all" suffix. These functions return maps, with values
- * returned by functions counterparts.
+ * *_all() functions are wrappers for their counterparts without "_all" suffix.
+ * These functions return maps, with values returned by functions counterparts.
  *
  * There are three kinds of locks:
- *     - exclusive-lock -- single operation at time, no other locks (except
- *lock-free)
+ *     - exclusive-lock -- single operation at time,
+ *                         no other locks (except lock-free)
  *     - shared-lock -- multiple operations at time, no exclusive locks
  *     - lock-free -- multiple operations at time
  */
