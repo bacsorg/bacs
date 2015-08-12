@@ -252,7 +252,7 @@ class repository : private boost::noncopyable {
   bool has_flag(const problem::id &id, const problem::flag &flag);
 
   template <typename Flag>
-  auto has_flag(const problem::id &id, const Flag &flag) {
+  decltype(auto) has_flag(const problem::id &id, const Flag &flag) {
     return has_flag(id, problem::flag_to_string(flag));
   }
 
@@ -267,7 +267,7 @@ class repository : private boost::noncopyable {
                            const problem::flag &flag);
 
   template <typename Flag>
-  auto with_flag(const problem::IdSet &id_set, const Flag &flag) {
+  decltype(auto) with_flag(const problem::IdSet &id_set, const Flag &flag) {
     return with_flag(id_set, problem::flag_to_string(flag));
   }
 
@@ -281,7 +281,7 @@ class repository : private boost::noncopyable {
   problem::IdSet with_flag(const problem::flag &flag);
 
   template <typename Flag>
-  auto with_flag(const Flag &flag) {
+  decltype(auto) with_flag(const Flag &flag) {
     return with_flag(problem::flag_to_string(flag));
   }
 
@@ -297,7 +297,7 @@ class repository : private boost::noncopyable {
                                  const problem::flag &flag);
 
   template <typename Flag>
-  auto set_flag(const problem::id &id, const Flag &flag) {
+  decltype(auto) set_flag(const problem::id &id, const Flag &flag) {
     return set_flag(id, problem::flag_to_string(flag));
   }
 
@@ -336,7 +336,7 @@ class repository : private boost::noncopyable {
                                    const problem::flag &flag);
 
   template <typename Flag>
-  auto unset_flag(const problem::id &id, const Flag &flag) {
+  decltype(auto) unset_flag(const problem::id &id, const Flag &flag) {
     return unset_flag(id, problem::flag_to_string(flag));
   }
 
@@ -546,7 +546,7 @@ class repository : private boost::noncopyable {
   void set_flag_(const problem::id &id, const problem::flag &flag);
 
   template <typename Flag>
-  auto set_flag_(const problem::id &id, const Flag &flag) {
+  decltype(auto) set_flag_(const problem::id &id, const Flag &flag) {
     return set_flag_(id, problem::flag_to_string(flag));
   }
 
@@ -554,7 +554,7 @@ class repository : private boost::noncopyable {
   void unset_flag_(const problem::id &id, const problem::flag &flag);
 
   template <typename Flag>
-  auto unset_flag_(const problem::id &id, const Flag &flag) {
+  decltype(auto) unset_flag_(const problem::id &id, const Flag &flag) {
     return unset_flag_(id, problem::flag_to_string(flag));
   }
 
