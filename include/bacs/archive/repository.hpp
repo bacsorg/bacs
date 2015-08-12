@@ -142,7 +142,7 @@ class repository : private boost::noncopyable {
                                const problem::id &future);
 
   /*!
-   * \brief Set of existing problems.
+   * \brief Get all existing problems.
    *
    * Not atomic, lock-free.
    *
