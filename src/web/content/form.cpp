@@ -8,8 +8,6 @@ namespace content {
 clear_flags::clear_flags()
     : basic_form(cppcms::locale::translate("Clear flags")) {}
 
-ignore::ignore() : basic_form(cppcms::locale::translate("Ignore")) {}
-
 import_result::import_result()
     : basic_form(cppcms::locale::translate("Get import result")) {}
 

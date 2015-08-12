@@ -27,13 +27,11 @@ class repository : public cppcms::application {
   void download();
   void rename();
   void existing();
-  void available();
   void status();
   void with_flag();
   void set_flags();
   void unset_flags();
   void clear_flags();
-  void ignore();
   void import_result();
   void import();
 
@@ -50,13 +48,11 @@ class repository : public cppcms::application {
   // void download_(content::download &data);
   problem::StatusResult rename_(content::rename &data);
   problem::IdSet existing_(content::existing &data);
-  problem::IdSet available_(content::available &data);
   problem::StatusMap status_(content::status &data);
   problem::IdSet with_flag_(content::with_flag &data);
   problem::StatusMap set_flags_(content::set_flags &data);
   problem::StatusMap unset_flags_(content::unset_flags &data);
   problem::StatusMap clear_flags_(content::clear_flags &data);
-  problem::StatusMap ignore_(content::ignore &data);
   problem::ImportMap import_result_(content::import_result &data);
   problem::StatusMap import_(content::import &data);
 

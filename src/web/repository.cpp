@@ -39,9 +39,6 @@ repository::repository(cppcms::service &srv,
   dispatcher().assign("/existing", &repository::existing, this);
   mapper().assign("existing", "/existing");
 
-  dispatcher().assign("/available", &repository::available, this);
-  mapper().assign("available", "/available");
-
   dispatcher().assign("/status", &repository::status, this);
   mapper().assign("status", "/status");
 
@@ -56,9 +53,6 @@ repository::repository(cppcms::service &srv,
 
   dispatcher().assign("/clear_flags", &repository::clear_flags, this);
   mapper().assign("clear_flags", "/clear_flags");
-
-  dispatcher().assign("/ignore", &repository::ignore, this);
-  mapper().assign("ignore", "/ignore");
 
   dispatcher().assign("/import_result", &repository::import_result, this);
   mapper().assign("import_result", "/import_result");
@@ -203,15 +197,6 @@ DEFINE_HANDLER(existing, problem::IdSet) {
   }
 }
 
-DEFINE_HANDLER(available, problem::IdSet) {
-  const boost::optional<problem::IdSet> ids = data.form.ids.value();
-  if (ids) {
-    return m_repository->available(*ids);
-  } else {
-    return m_repository->available();
-  }
-}
-
 DEFINE_HANDLER(status, problem::StatusMap) {
   const boost::optional<problem::IdSet> ids = data.form.ids.value();
   if (ids) {
@@ -242,10 +227,6 @@ DEFINE_HANDLER(unset_flags, problem::StatusMap) {
 
 DEFINE_HANDLER(clear_flags, problem::StatusMap) {
   return m_repository->clear_flags_all(data.form.ids.value());
-}
-
-DEFINE_HANDLER(ignore, problem::StatusMap) {
-  return m_repository->ignore_all(data.form.ids.value());
 }
 
 DEFINE_HANDLER(import_result, problem::ImportMap) {

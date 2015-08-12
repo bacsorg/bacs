@@ -46,7 +46,6 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/web/content/form/download.cpp
     src/web/content/form/rename.cpp
     src/web/content/form/existing.cpp
-    src/web/content/form/available.cpp
     src/web/content/form/status.cpp
     src/web/content/form/with_flag.cpp
     src/web/content/form/set_flags.cpp
@@ -78,13 +77,11 @@ bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/download.tmpl
     view/plain/rename.tmpl
     view/plain/existing.tmpl
-    view/plain/available.tmpl
     view/plain/status.tmpl
     view/plain/with_flag.tmpl
     view/plain/set_flags.tmpl
     view/plain/unset_flags.tmpl
     view/plain/clear_flags.tmpl
-    view/plain/ignore.tmpl
     view/plain/import_result.tmpl
     view/plain/import.tmpl
 )

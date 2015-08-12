@@ -176,34 +176,9 @@ problem::IdSet repository::existing_() {
   return set;
 }
 
-problem::IdSet repository::available() {
-  const shared_lock_guard lk(m_lock);
-  problem::IdSet set;
-  for (boost::filesystem::directory_iterator i(m_location.repository_root), end;
-       i != end; ++i) {
-    const problem::id id = i->path().filename().string();
-    problem::validate_id(id);
-    if (is_available_(id)) set.add_id(id);
-  }
-  return set;
-}
-
 bool repository::exists(const problem::id &id) {
   problem::validate_id(id);
   return boost::filesystem::exists(m_location.repository_root / id);
-}
-
-bool repository::is_available(const problem::id &id) {
-  problem::validate_id(id);
-  if (exists(id)) {
-    const shared_lock_guard lk(m_lock);
-    return is_available_(id);
-  }
-  return false;
-}
-
-bool repository::is_available_(const problem::id &id) {
-  return exists(id) && !has_flag(id, problem::Flag::IGNORE);
 }
 
 problem::StatusResult repository::status(const problem::id &id) {

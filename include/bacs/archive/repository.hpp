@@ -151,20 +151,11 @@ class repository : private boost::noncopyable {
   problem::IdSet existing();
 
   /*!
-   * \brief Set of available problems.
-   *
-   * \see repository::is_available
-   */
-  problem::IdSet available();
-
-  /*!
    * \brief Check problem for existence.
-   *
-   * Albeit problem exists, it may be ignored by some functions.
    *
    * Atomic, lock-free.
    *
-   * \see repository::is_available
+   * \see repository::existing
    */
   bool exists(const problem::id &id);
 
@@ -173,31 +164,9 @@ class repository : private boost::noncopyable {
    *
    * Not atomic.
    *
-   * \see repository::is_available
+   * \see repository::exists
    */
   problem::IdSet existing(const problem::IdSet &id_set);
-
-  /*!
-   * \brief Check problem for availability.
-   *
-   * \return true if problem exists and
-   * is not marked by problem::flag::ignore.
-   *
-   * Atomic, shared-lock.
-   *
-   * \see repository::exists
-   * \see repository::has_flag
-   */
-  bool is_available(const problem::id &id);
-
-  /*!
-   * \brief Get available problems from list.
-   *
-   * Not atomic.
-   *
-   * \see repository::is_available
-   */
-  problem::IdSet available(const problem::IdSet &id_set);
 
   /*!
    * \brief Check if problem is locked or read only.
@@ -388,44 +357,20 @@ class repository : private boost::noncopyable {
    */
   problem::StatusMap clear_flags_all(const problem::IdSet &id_set);
 
-  /*!
-   * \brief Mark problems with problem::flag::ignore.
-   *
-   * If problem does not exists id is ignored.
-   *
-   * \return set of marked problems
-   *
-   * Not atomic.
-   *
-   * \see repository::ignore
-   */
-  problem::StatusMap ignore_all(const problem::IdSet &id_set);
-
-  /*!
-   * \brief Alias for repository::set_flag(id, #problem::flag::ignore).
-   *
-   * \note It is not possible to remove ignore flag manually, import it instead.
-   *
-   * \see repository::set_flag
-   * \see repository::exists
-   * \see repository::is_read_only
-   */
-  problem::StatusResult ignore(const problem::id &id);
-
   /* import result */
   /*!
    * \brief Get problem import result.
    *
-   * \return error if problem is not available
+   * \return error if problem does not exist
    *
-   * \see repository::is_available
+   * \see repository::exists
    */
   problem::ImportResult import_result(const problem::id &id);
 
   /*!
    * \brief Get problems import result.
    *
-   * \see repository::is_available
+   * \see repository::exists
    * \see repository::import_result
    */
   problem::ImportMap import_result_all(const problem::IdSet &id_set);
@@ -529,9 +474,6 @@ class repository : private boost::noncopyable {
 
   /// \warning requires at least shared lock and problem existence
   void download_(const problem::id &id, const boost::filesystem::path &location);
-
-  /// \warning requires at least shared lock
-  bool is_available_(const problem::id &id);
 
   /// \warning requires at least shared lock
   problem::StatusResult status_result_(const problem::id &id);

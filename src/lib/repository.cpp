@@ -158,10 +158,6 @@ problem::IdSet repository::existing(const problem::IdSet &id_set) {
   return get_all_set(this, &repository::exists, id_set);
 }
 
-problem::IdSet repository::available(const problem::IdSet &id_set) {
-  return get_all_set(this, &repository::is_available, id_set);
-}
-
 bool repository::is_locked(const problem::id &id) {
   return has_flag(id, problem::Flag::LOCKED) ||
          has_flag(id, problem::Flag::READ_ONLY);
@@ -189,14 +185,6 @@ problem::StatusMap repository::set_flags_all(const problem::IdSet &id_set,
 problem::StatusMap repository::unset_flags_all(const problem::IdSet &id_set,
                                                const problem::FlagSet &flags) {
   return get_all_map(this, &repository::unset_flags, id_set, flags);
-}
-
-problem::StatusResult repository::ignore(const problem::id &id) {
-  return set_flag(id, problem::Flag::IGNORE);
-}
-
-problem::StatusMap repository::ignore_all(const problem::IdSet &id_set) {
-  return get_all_map(this, &repository::ignore, id_set);
 }
 
 problem::StatusMap repository::clear_flags_all(const problem::IdSet &id_set) {
