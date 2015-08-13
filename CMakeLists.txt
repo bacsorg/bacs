@@ -25,8 +25,8 @@ bunsan_add_library(${PROJECT_NAME}
 
     src/lib/cache.cpp
 )
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_crypto bunsan_crypto)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_utility bunsan_utility)
-target_link_libraries(${PROJECT_NAME} PRIVATE cryptopp)
 
 bunsan_add_library(${PROJECT_NAME}_compatibility
     src/compatibility/repository_cpp.cpp
