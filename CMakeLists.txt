@@ -34,6 +34,21 @@ bunsan_add_library(${PROJECT_NAME}_compatibility
 )
 bunsan_use_target(${PROJECT_NAME}_compatibility ${PROJECT_NAME})
 
+bunsan_add_library(${PROJECT_NAME}_python
+    src/compatibility/repository_python.cpp
+)
+bunsan_use_target(${PROJECT_NAME}_python ${PROJECT_NAME}_compatibility)
+bunsan_use_boost(${PROJECT_NAME}_python python3)
+bunsan_use_python3(${PROJECT_NAME}_python)
+bunsan_install_python_module_target(
+    TARGET ${PROJECT_NAME}_python
+    MODULE bunsan.pm._pm
+)
+bunsan_install_python_module_init(
+    INIT src/compatibility/__init__.py
+    MODULE bunsan.pm
+)
+
 bunsan_add_executable(${PROJECT_NAME}_cli
     src/bin/cli.cpp
 )
