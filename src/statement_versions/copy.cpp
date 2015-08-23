@@ -56,7 +56,7 @@ void copy::make_package(const boost::filesystem::path &destination,
                                         destination / "pkg" / manifest_path);
     index.save(destination / "index");
   } catch (std::exception &) {
-    typedef statement_version_make_package_error svmp_error;
+    using svmp_error = statement_version_make_package_error;
     BOOST_THROW_EXCEPTION(svmp_error()
                           << svmp_error::destination(destination)
                           // << svmp_error::package(package)
