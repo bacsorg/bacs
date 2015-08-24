@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package bacs.archive;
+
+import "bacs/archive/problem.proto";
+
+import "google/protobuf/empty.proto";
+
+message ArchiverOptions {
+  string type = 1;
+  string format = 2;
+}
+
+message Chunk {
+  ArchiverOptions format = 1;
+  bytes data = 2;
+}
+
+message DownloadRequest {
+  problem.IdSet ids = 1;
+  ArchiverOptions format = 2;
+}
+
+message RenameRequest {
+  string from = 1;
+  string to = 2;
+}
+
+message ChangeFlagsRequest {
+  problem.IdSet ids = 1;
+  problem.FlagSet flag = 2;
+}
+
+service Archive {
+  rpc Upload(stream Chunk) returns (problem.StatusMap);
+  rpc Download(DownloadRequest) returns (stream Chunk);
+
+  rpc Rename(RenameRequest) returns (problem.StatusResult);
+
+  rpc Existing(problem.IdSet) returns (problem.IdSet);
+  rpc ExistingAll(google.protobuf.Empty) returns (problem.IdSet);
+
+  rpc Status(problem.IdSet) returns (problem.StatusMap);
+  rpc StatusAll(google.protobuf.Empty) returns (problem.StatusMap);
+
+  rpc ImportResult(problem.IdSet) returns (problem.ImportMap);
+
+  rpc Import(problem.IdSet) returns (problem.StatusMap);
+  rpc ImportAll(google.protobuf.Empty) returns (problem.StatusMap);
+
+  // Flag API is not stable. Not intended for public usage.
+  rpc WithFlag(problem.IdSet) returns (problem.IdSet);
+  rpc WithFlagAll(google.protobuf.Empty) returns (problem.IdSet);
+  rpc SetFlags(ChangeFlagsRequest) returns (problem.StatusMap);
+  rpc UnsetFlags(ChangeFlagsRequest) returns (problem.StatusMap);
+  rpc ClearFlags(problem.IdSet) returns (problem.StatusMap);
+}
+
+// Configuration
+message ArchiveServiceConfig {
+  string upload_directory = 1;
+}
