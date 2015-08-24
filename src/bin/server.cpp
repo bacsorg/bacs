@@ -59,6 +59,6 @@ class archive_application : public application {
 
 int main(int argc, char *argv[]) {
   archive_application app(argc, argv);
-  app.name("bacs::archive::web");
+  app.name("bacs::archive::server");
   return app.exec();
 }

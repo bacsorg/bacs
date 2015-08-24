@@ -46,7 +46,7 @@ bunsan_add_library(${PROJECT_NAME}_client
 )
 bunsan_use_target(${PROJECT_NAME}_client ${PROJECT_NAME}_pb)
 
-bunsan_add_executable(${PROJECT_NAME}_web
+bunsan_add_executable(${PROJECT_NAME}_server
     src/web/repository.cpp
     src/web/content/form/base.cpp
     src/web/content/form/list_query.cpp
@@ -65,10 +65,10 @@ bunsan_add_executable(${PROJECT_NAME}_web
     src/web/content/form/widgets/problem/id_set.cpp
     src/web/content/form/widgets/problem/optional_id_set.cpp
     src/web/content/form/widgets/problem/flag_set.cpp
-    src/bin/web.cpp
+    src/bin/server.cpp
 )
-bunsan_use_target(${PROJECT_NAME}_web ${PROJECT_NAME})
-bunsan_use_bunsan_package(${PROJECT_NAME}_web bunsan_web bunsan_web)
+bunsan_use_target(${PROJECT_NAME}_server ${PROJECT_NAME})
+bunsan_use_bunsan_package(${PROJECT_NAME}_server bunsan_web bunsan_web)
 bunsan_use_package(${PROJECT_NAME} CppCMS)
 
 bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
@@ -99,7 +99,7 @@ bunsan_install_headers()
 bunsan_install_targets(
     ${PROJECT_NAME}
     ${PROJECT_NAME}_client
-    ${PROJECT_NAME}_web
+    ${PROJECT_NAME}_server
 )
 bunsan_web_install_skins(${PROJECT_NAME}_skin_plain)
 bunsan_web_install_static()
