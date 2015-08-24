@@ -41,6 +41,11 @@ bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_crypto bunsan_crypto)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_protobuf bunsan_protobuf)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_pm bunsan_pm)
 
+bunsan_add_library(${PROJECT_NAME}_client
+    src/lib/archive_client.cpp
+)
+bunsan_use_target(${PROJECT_NAME}_client ${PROJECT_NAME}_pb)
+
 bunsan_add_executable(${PROJECT_NAME}_web
     src/web/repository.cpp
     src/web/content/form/base.cpp
@@ -91,7 +96,11 @@ bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
 bunsan_use_target(${PROJECT_NAME}_skin_plain ${PROJECT_NAME})
 
 bunsan_install_headers()
-bunsan_install_targets(${PROJECT_NAME} ${PROJECT_NAME}_web)
+bunsan_install_targets(
+    ${PROJECT_NAME}
+    ${PROJECT_NAME}_client
+    ${PROJECT_NAME}_web
+)
 bunsan_web_install_skins(${PROJECT_NAME}_skin_plain)
 bunsan_web_install_static()
 bunsan_install_project()
