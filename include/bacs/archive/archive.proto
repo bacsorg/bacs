@@ -60,3 +60,19 @@ service Archive {
 message ArchiveServiceConfig {
   string upload_directory = 1;
 }
+
+message ArchiveServerConfig {
+  message SslCredentials {
+    message PemKeyCertPair {
+      string private_key_path = 1;
+      string cert_chain_path = 2;
+    }
+    string pem_root_certs_path = 1;
+    repeated PemKeyCertPair pem_key_cert_pair = 2;
+  }
+  string listen = 1;
+  ArchiveServiceConfig service = 2;
+  oneof credentials {
+    SslCredentials ssl_credentials = 3;
+  }
+}

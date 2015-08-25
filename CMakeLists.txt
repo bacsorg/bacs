@@ -70,6 +70,7 @@ bunsan_add_executable(${PROJECT_NAME}_server
 bunsan_use_target(${PROJECT_NAME}_server ${PROJECT_NAME})
 bunsan_use_bunsan_package(${PROJECT_NAME}_server bunsan_web bunsan_web)
 bunsan_use_package(${PROJECT_NAME} CppCMS)
+bunsan_use_bunsan_package(${PROJECT_NAME}_server bunsan_protobuf bunsan_protobuf)
 
 bunsan_web_add_skin(${PROJECT_NAME}_skin_plain plain
     view/plain/base.tmpl
