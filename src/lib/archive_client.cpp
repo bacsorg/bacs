@@ -34,7 +34,8 @@ ArchiverOptions ArchiveClient::Download(const DownloadRequest &request,
 
 grpc::Status ArchiveClient::Rename(const RenameRequest &request,
                                    problem::StatusResult &response) {
-  return grpc::Status::CANCELLED;
+  grpc::ClientContext context;
+  return m_stub->Rename(&context, request, &response);
 }
 
 problem::StatusResult ArchiveClient::Rename(const RenameRequest &request) {
@@ -51,7 +52,8 @@ problem::StatusResult ArchiveClient::Rename(const std::string &from,
 
 grpc::Status ArchiveClient::Existing(const problem::IdSet &request,
                                      problem::IdSet &response) {
-  return grpc::Status::CANCELLED;
+  grpc::ClientContext context;
+  return m_stub->Existing(&context, request, &response);
 }
 
 problem::IdSet ArchiveClient::Existing(const problem::IdSet &request) {
@@ -59,7 +61,8 @@ problem::IdSet ArchiveClient::Existing(const problem::IdSet &request) {
 }
 
 grpc::Status ArchiveClient::ExistingAll(problem::IdSet &response) {
-  return grpc::Status::CANCELLED;
+  grpc::ClientContext context;
+  return m_stub->ExistingAll(&context, google::protobuf::Empty(), &response);
 }
 
 problem::IdSet ArchiveClient::ExistingAll() {
@@ -68,7 +71,8 @@ problem::IdSet ArchiveClient::ExistingAll() {
 
 grpc::Status ArchiveClient::Status(const problem::IdSet &request,
                                    problem::StatusMap &response) {
-  return grpc::Status::CANCELLED;
+  grpc::ClientContext context;
+  return m_stub->Status(&context, request, &response);
 }
 
 problem::StatusMap ArchiveClient::Status(const problem::IdSet &request) {
@@ -76,7 +80,8 @@ problem::StatusMap ArchiveClient::Status(const problem::IdSet &request) {
 }
 
 grpc::Status ArchiveClient::StatusAll(problem::StatusMap &response) {
-  return grpc::Status::CANCELLED;
+  grpc::ClientContext context;
+  return m_stub->StatusAll(&context, google::protobuf::Empty(), &response);
 }
 
 problem::StatusMap ArchiveClient::StatusAll() {
@@ -85,7 +90,8 @@ problem::StatusMap ArchiveClient::StatusAll() {
 
 grpc::Status ArchiveClient::ImportResult(const problem::IdSet &request,
                                          problem::ImportMap &response) {
-  return grpc::Status::CANCELLED;
+  grpc::ClientContext context;
+  return m_stub->ImportResult(&context, request, &response);
 }
 
 problem::ImportMap ArchiveClient::ImportResult(const problem::IdSet &request) {
@@ -94,7 +100,8 @@ problem::ImportMap ArchiveClient::ImportResult(const problem::IdSet &request) {
 
 grpc::Status ArchiveClient::Import(const problem::IdSet &request,
                                    problem::StatusMap &response) {
-  return grpc::Status::CANCELLED;
+  grpc::ClientContext context;
+  return m_stub->Import(&context, request, &response);
 }
 
 problem::StatusMap ArchiveClient::Import(const problem::IdSet &request) {
@@ -102,7 +109,8 @@ problem::StatusMap ArchiveClient::Import(const problem::IdSet &request) {
 }
 
 grpc::Status ArchiveClient::ImportAll(problem::StatusMap &response) {
-  return grpc::Status::CANCELLED;
+  grpc::ClientContext context;
+  return m_stub->ImportAll(&context, google::protobuf::Empty(), &response);
 }
 
 problem::StatusMap ArchiveClient::ImportAll() {

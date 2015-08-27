@@ -1,5 +1,7 @@
 #include <bacs/archive/archive_service.hpp>
 
+#include <bunsan/rpc/implement.hpp>
+
 namespace bacs {
 namespace archive {
 
@@ -12,62 +14,81 @@ ArchiveService::ArchiveService(
 grpc::Status ArchiveService::Upload(grpc::ServerContext *const context,
                                     grpc::ServerReader<Chunk> *const reader,
                                     problem::StatusMap *const response) {
-  return grpc::Status::CANCELLED;
+  BUNSAN_RPC_IMPLEMENT_STATUS(context, reader, response, {
+    return grpc::Status::CANCELLED;
+  })
 }
 
 grpc::Status ArchiveService::Download(grpc::ServerContext *const context,
                                       const DownloadRequest *const request,
                                       grpc::ServerWriter<Chunk> *const writer) {
-  return grpc::Status::CANCELLED;
+  BUNSAN_RPC_IMPLEMENT_STATUS(context, request, writer, {
+    return grpc::Status::CANCELLED;
+  })
 }
 
 grpc::Status ArchiveService::Rename(grpc::ServerContext *const context,
                                     const RenameRequest *const request,
                                     problem::StatusResult *const response) {
-  return grpc::Status::CANCELLED;
+  BUNSAN_RPC_IMPLEMENT_RESPONSE(context, request, response, {
+    return m_repository->rename(request->from(), request->to());
+  })
 }
 
 grpc::Status ArchiveService::Existing(grpc::ServerContext *const context,
                                       const problem::IdSet *const request,
                                       problem::IdSet *const response) {
-  return grpc::Status::CANCELLED;
+  BUNSAN_RPC_IMPLEMENT_RESPONSE(context, request, response, {
+    return m_repository->existing(*request);
+  })
 }
-grpc::Status ArchiveService::ExistingAll(
-    grpc::ServerContext *const context,
-    const google::protobuf::Empty * /*request*/,
-    problem::IdSet *const response) {
-  return grpc::Status::CANCELLED;
+
+grpc::Status ArchiveService::ExistingAll(grpc::ServerContext *const context,
+                                         const google::protobuf::Empty *request,
+                                         problem::IdSet *const response) {
+  BUNSAN_RPC_IMPLEMENT_RESPONSE(context, request, response, {
+    return m_repository->existing();
+  })
 }
 
 grpc::Status ArchiveService::Status(grpc::ServerContext *const context,
                                     const problem::IdSet *const request,
                                     problem::StatusMap *const response) {
-  return grpc::Status::CANCELLED;
+  BUNSAN_RPC_IMPLEMENT_RESPONSE(context, request, response, {
+    return m_repository->status_all(*request);
+  })
 }
 
-grpc::Status ArchiveService::StatusAll(
-    grpc::ServerContext *const context,
-    const google::protobuf::Empty * /*request*/, problem::StatusMap *response) {
-  return grpc::Status::CANCELLED;
+grpc::Status ArchiveService::StatusAll(grpc::ServerContext *const context,
+                                       const google::protobuf::Empty *request,
+                                       problem::StatusMap *response) {
+  BUNSAN_RPC_IMPLEMENT_RESPONSE(context, request, response, {
+    return m_repository->status_all();
+  })
 }
 
 grpc::Status ArchiveService::ImportResult(grpc::ServerContext *const context,
                                           const problem::IdSet *const request,
                                           problem::ImportMap *const response) {
-  return grpc::Status::CANCELLED;
+  BUNSAN_RPC_IMPLEMENT_RESPONSE(context, request, response, {
+    return m_repository->import_result_all(*request);
+  })
 }
 
 grpc::Status ArchiveService::Import(grpc::ServerContext *const context,
                                     const problem::IdSet *const request,
                                     problem::StatusMap *const response) {
-  return grpc::Status::CANCELLED;
+  BUNSAN_RPC_IMPLEMENT_RESPONSE(context, request, response, {
+    return m_repository->import_all(*request);
+  })
 }
 
-grpc::Status ArchiveService::ImportAll(
-    grpc::ServerContext *const context,
-    const google::protobuf::Empty * /*request*/,
-    problem::StatusMap *const response) {
-  return grpc::Status::CANCELLED;
+grpc::Status ArchiveService::ImportAll(grpc::ServerContext *const context,
+                                       const google::protobuf::Empty *request,
+                                       problem::StatusMap *const response) {
+  BUNSAN_RPC_IMPLEMENT_RESPONSE(context, request, response, {
+    return m_repository->import_all();
+  })
 }
 
 // Unstable flag API
@@ -77,10 +98,9 @@ grpc::Status ArchiveService::WithFlag(grpc::ServerContext *const context,
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::WithFlagAll(
-    grpc::ServerContext *const context,
-    const google::protobuf::Empty * /*request*/,
-    problem::IdSet *const response) {
+grpc::Status ArchiveService::WithFlagAll(grpc::ServerContext *const context,
+                                         const google::protobuf::Empty *request,
+                                         problem::IdSet *const response) {
   return grpc::Status::CANCELLED;
 }
 
