@@ -107,6 +107,7 @@ const boost::filesystem::path revision = "revision";
 problem::StatusResult repository::upload(
     const problem::id &id, const boost::filesystem::path &location) {
   problem::validate_id(id);
+  BUNSAN_LOG_INFO << "Uploading " << id << " from " << location;
   if (!is_locked(id)) {
     const lock_guard lk(m_lock);
     if (!is_locked(id)) {
@@ -152,6 +153,7 @@ bool repository::download(const problem::id &id,
 
 void repository::download_(const problem::id &id,
                            const boost::filesystem::path &location) {
+  BUNSAN_LOG_DEBUG << "Downloading " << id << " into " << location;
   bunsan::filesystem::reset_dir(location);
   const bunsan::utility::archiver_ptr archiver =
       m_problem_archiver_factory(m_resolver);
