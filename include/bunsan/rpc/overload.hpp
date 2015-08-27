@@ -11,7 +11,8 @@
   RESPONSE response;                                               \
   const auto status = NAME(BOOST_PP_TUPLE_REM() ARGUMENTS);        \
   if (!status.ok())                                                \
-    BOOST_THROW_EXCEPTION(ERROR() << ERROR::rpc_status(status));   \
+    BOOST_THROW_EXCEPTION(ERROR() << ERROR::rpc_status(status)     \
+                                  << ERROR::rpc_method(#NAME));    \
   return response;
 
 #define BUNSAN_RPC_OVERLOAD_INVOKER(NAME, RESPONSE, ARGS)                \
