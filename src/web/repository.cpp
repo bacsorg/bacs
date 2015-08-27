@@ -171,7 +171,7 @@ void repository::download() {
   std::string filename;
   const auto handler = [this, &tmpfile, &filename](content::download &data) {
     tmpfile = m_repository->download_all(data.form.ids.value(),
-                                        data.form.config.value());
+                                         data.form.config.value());
     filename = "archive." + data.form.config.type.value();
     if (!data.form.config.format.value().empty())
       filename.append("." + data.form.config.format.value());
