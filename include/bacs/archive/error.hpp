@@ -3,11 +3,13 @@
 #include <bacs/archive/problem.hpp>
 
 #include <bunsan/error.hpp>
+#include <bunsan/rpc/error.hpp>
 
 namespace bacs {
 namespace archive {
 
 struct error : virtual bunsan::error {};
+struct rpc_error : virtual error, virtual bunsan::rpc::error {};
 
 struct protobuf_error : virtual error {};
 struct protobuf_parsing_error : virtual protobuf_error {};

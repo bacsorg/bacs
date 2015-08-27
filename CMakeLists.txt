@@ -30,6 +30,7 @@ bunsan_add_protobuf_cxx_library(
 )
 
 bunsan_add_library(${PROJECT_NAME}
+    src/lib/archive_client.cpp
     src/lib/archive_service.cpp
     src/lib/importer.cpp
     src/lib/repository.cpp
@@ -40,11 +41,12 @@ bunsan_use_target(${PROJECT_NAME} ${PROJECT_NAME}_pb)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_crypto bunsan_crypto)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_protobuf bunsan_protobuf)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_pm bunsan_pm)
+bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_rpc bunsan_rpc)
 
-bunsan_add_library(${PROJECT_NAME}_client
-    src/lib/archive_client.cpp
+bunsan_add_executable(${PROJECT_NAME}_client
+    src/bin/client.cpp
 )
-bunsan_use_target(${PROJECT_NAME}_client ${PROJECT_NAME}_pb)
+bunsan_use_target(${PROJECT_NAME}_client ${PROJECT_NAME})
 
 bunsan_add_executable(${PROJECT_NAME}_server
     src/web/repository.cpp

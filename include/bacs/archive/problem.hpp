@@ -21,6 +21,13 @@ using bacs::problem::validate_id;
 using bacs::problem::Revision;
 using flag = std::string;
 
+template <typename Range>
+IdSet make_id_set(const Range &range) {
+  IdSet set;
+  for (const problem::id &id : range) set.add_id(id);
+  return set;
+}
+
 const std::string &flag_cast(const problem::Flag &flag);
 const std::string &flag_cast(const problem::Flag::Reserved flag);
 Flag flag_cast(const std::string &flag);
