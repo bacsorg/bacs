@@ -132,7 +132,9 @@ problem::StatusResult repository::upload(
       const problem::Revision revision = compute_hash_revision(
           m_location.repository_root / id / m_problem.data.filename);
       write_revision_(id, revision);
-      return schedule_import(id);
+      prepare_import_(id);
+      post_import_(id);
+      return status_status(status_(id));
     }
   }
   return status_error(problem::Error::LOCKED);
@@ -427,16 +429,29 @@ problem::StatusResult repository::rename(const problem::id &current,
   return status_not_implemented();
 }
 
+void repository::prepare_import_(const problem::id &id) {
+  set_flag_(id, problem::Flag::PENDING_IMPORT);
+}
+
 bool repository::prepare_import(const problem::id &id) {
+  problem::validate_id(id);
   BUNSAN_LOG_DEBUG << "Preparing " << id << " for import";
   if (exists(id)) {
     const lock_guard lk(m_lock);
     if (exists(id)) {
-      set_flag_(id, problem::Flag::PENDING_IMPORT);
+      prepare_import_(id);
       return true;
     }
   }
   return false;
+}
+
+void repository::post_import_(const problem::id &id) {
+  m_io_service.post([this, id] { import(id); });
+}
+
+void repository::post_import(const problem::id &id) {
+  post_import_(id);
 }
 
 problem::StatusResult repository::schedule_import(const problem::id &id) {
@@ -445,7 +460,7 @@ problem::StatusResult repository::schedule_import(const problem::id &id) {
   bool schedule = false;
   BOOST_SCOPE_EXIT_ALL(&) {
     // lock should not be held during execution of this code
-    if (schedule) m_io_service.post([this, id] { import(id); });
+    if (schedule) post_import(id);
   };
   schedule = prepare_import(id);
   return status(id);

@@ -525,8 +525,13 @@ class repository : private boost::noncopyable {
       const problem::id &id, const problem::Revision &revision,
       const boost::filesystem::path &problem_location);
 
+  /// \warning requires unique lock and problem existence
+  void prepare_import_(const problem::id &id);
   /// \return true if import should be scheduled
   bool prepare_import(const problem::id &id);
+
+  void post_import_(const problem::id &id);
+  void post_import(const problem::id &id);
 
   void pm_create_recursively(const boost::filesystem::path &path);
 
