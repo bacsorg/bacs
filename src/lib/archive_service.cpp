@@ -9,93 +9,96 @@ ArchiveService::ArchiveService(
     : m_upload_directory(config.upload_directory()),
       m_repository(repository_) {}
 
-grpc::Status ArchiveService::Upload(grpc::ServerContext *context,
-                                    grpc::ServerReader<Chunk> *reader,
-                                    problem::StatusMap *response) {
+grpc::Status ArchiveService::Upload(grpc::ServerContext *const context,
+                                    grpc::ServerReader<Chunk> *const reader,
+                                    problem::StatusMap *const response) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::Download(grpc::ServerContext *context,
-                                      const DownloadRequest *request,
-                                      grpc::ServerWriter<Chunk> *writer) {
+grpc::Status ArchiveService::Download(grpc::ServerContext *const context,
+                                      const DownloadRequest *const request,
+                                      grpc::ServerWriter<Chunk> *const writer) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::Rename(grpc::ServerContext *context,
-                                    const RenameRequest *request,
-                                    problem::StatusResult *response) {
+grpc::Status ArchiveService::Rename(grpc::ServerContext *const context,
+                                    const RenameRequest *const request,
+                                    problem::StatusResult *const response) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::Existing(grpc::ServerContext *context,
-                                      const problem::IdSet *request,
-                                      problem::IdSet *response) {
+grpc::Status ArchiveService::Existing(grpc::ServerContext *const context,
+                                      const problem::IdSet *const request,
+                                      problem::IdSet *const response) {
   return grpc::Status::CANCELLED;
 }
-grpc::Status ArchiveService::ExistingAll(grpc::ServerContext *context,
-                                         const google::protobuf::Empty *request,
-                                         problem::IdSet *response) {
-  return grpc::Status::CANCELLED;
-}
-
-grpc::Status ArchiveService::Status(grpc::ServerContext *context,
-                                    const problem::IdSet *request,
-                                    problem::StatusMap *response) {
+grpc::Status ArchiveService::ExistingAll(
+    grpc::ServerContext *const context,
+    const google::protobuf::Empty * /*request*/,
+    problem::IdSet *const response) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::StatusAll(grpc::ServerContext *context,
-                                       const google::protobuf::Empty *request,
-                                       problem::StatusMap *response) {
+grpc::Status ArchiveService::Status(grpc::ServerContext *const context,
+                                    const problem::IdSet *const request,
+                                    problem::StatusMap *const response) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::ImportResult(grpc::ServerContext *context,
-                                          const problem::IdSet *request,
-                                          problem::ImportMap *response) {
+grpc::Status ArchiveService::StatusAll(
+    grpc::ServerContext *const context,
+    const google::protobuf::Empty * /*request*/, problem::StatusMap *response) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::Import(grpc::ServerContext *context,
-                                    const problem::IdSet *request,
-                                    problem::StatusMap *response) {
+grpc::Status ArchiveService::ImportResult(grpc::ServerContext *const context,
+                                          const problem::IdSet *const request,
+                                          problem::ImportMap *const response) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::ImportAll(grpc::ServerContext *context,
-                                       const google::protobuf::Empty *request,
-                                       problem::StatusMap *response) {
+grpc::Status ArchiveService::Import(grpc::ServerContext *const context,
+                                    const problem::IdSet *const request,
+                                    problem::StatusMap *const response) {
+  return grpc::Status::CANCELLED;
+}
+
+grpc::Status ArchiveService::ImportAll(
+    grpc::ServerContext *const context,
+    const google::protobuf::Empty * /*request*/,
+    problem::StatusMap *const response) {
   return grpc::Status::CANCELLED;
 }
 
 // Unstable flag API
-grpc::Status ArchiveService::WithFlag(grpc::ServerContext *context,
-                                      const problem::IdSet *request,
-                                      problem::IdSet *response) {
+grpc::Status ArchiveService::WithFlag(grpc::ServerContext *const context,
+                                      const problem::IdSet *const request,
+                                      problem::IdSet *const response) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::WithFlagAll(grpc::ServerContext *context,
-                                         const google::protobuf::Empty *request,
-                                         problem::IdSet *response) {
+grpc::Status ArchiveService::WithFlagAll(
+    grpc::ServerContext *const context,
+    const google::protobuf::Empty * /*request*/,
+    problem::IdSet *const response) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::SetFlags(grpc::ServerContext *context,
-                                      const ChangeFlagsRequest *request,
-                                      problem::StatusMap *response) {
+grpc::Status ArchiveService::SetFlags(grpc::ServerContext *const context,
+                                      const ChangeFlagsRequest *const request,
+                                      problem::StatusMap *const response) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::UnsetFlags(grpc::ServerContext *context,
-                                        const ChangeFlagsRequest *request,
-                                        problem::StatusMap *response) {
+grpc::Status ArchiveService::UnsetFlags(grpc::ServerContext *const context,
+                                        const ChangeFlagsRequest *const request,
+                                        problem::StatusMap *const response) {
   return grpc::Status::CANCELLED;
 }
 
-grpc::Status ArchiveService::ClearFlags(grpc::ServerContext *context,
-                                        const problem::IdSet *request,
-                                        problem::StatusMap *response) {
+grpc::Status ArchiveService::ClearFlags(grpc::ServerContext *const context,
+                                        const problem::IdSet *const request,
+                                        problem::StatusMap *const response) {
   return grpc::Status::CANCELLED;
 }
 
