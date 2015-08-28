@@ -1,6 +1,9 @@
 #include <bacs/archive/archive_service.hpp>
 
+#include <bacs/archive/rpc.hpp>
+
 #include <bunsan/rpc/implement.hpp>
+#include <bunsan/tempfile.hpp>
 
 namespace bacs {
 namespace archive {
@@ -11,11 +14,29 @@ ArchiveService::ArchiveService(
     : m_upload_directory(config.upload_directory()),
       m_repository(repository_) {}
 
+namespace {
+archiver_options make_archiver_options(const ArchiverOptions &archiver) {
+  archiver_options config;
+  config.type = archiver.type();
+  if (!archiver.format().empty()) {
+    config.config.put("format", archiver.format());
+  }
+  return config;
+}
+}  // namespace
+
 grpc::Status ArchiveService::Upload(grpc::ServerContext *const context,
                                     grpc::ServerReader<Chunk> *const reader,
                                     problem::StatusMap *const response) {
   BUNSAN_RPC_IMPLEMENT_STATUS(context, reader, response, {
-    return grpc::Status::CANCELLED;
+    const auto archive =
+        bunsan::tempfile::regular_file_in_directory(m_upload_directory);
+    ArchiverOptions format;
+    rpc::recv_file(*reader, archive.path(), format);
+    if (context->IsCancelled()) return grpc::Status::CANCELLED;
+    *response = m_repository->upload_all(make_archiver_options(format),
+                                         archive.path());
+    return grpc::Status::OK;
   })
 }
 
@@ -23,7 +44,11 @@ grpc::Status ArchiveService::Download(grpc::ServerContext *const context,
                                       const DownloadRequest *const request,
                                       grpc::ServerWriter<Chunk> *const writer) {
   BUNSAN_RPC_IMPLEMENT_STATUS(context, request, writer, {
-    return grpc::Status::CANCELLED;
+    const auto archive = m_repository->download_all(
+        request->ids(), make_archiver_options(request->format()));
+    rpc::send_file(request->format(), archive.path(), *writer);
+    if (context->IsCancelled()) return grpc::Status::CANCELLED;
+    return grpc::Status::OK;
   })
 }
 

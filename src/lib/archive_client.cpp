@@ -1,6 +1,7 @@
 #include <bacs/archive/archive_client.hpp>
 
 #include <bacs/archive/error.hpp>
+#include <bacs/archive/rpc.hpp>
 
 #include <bunsan/rpc/overload.hpp>
 
@@ -13,7 +14,11 @@ ArchiveClient::ArchiveClient(std::shared_ptr<grpc::ChannelInterface> channel)
 grpc::Status ArchiveClient::Upload(const ArchiverOptions &format,
                                    const boost::filesystem::path &path,
                                    problem::StatusMap &response) {
-  return grpc::Status::CANCELLED;
+  grpc::ClientContext context;
+  const auto writer = m_stub->Upload(&context, &response);
+  rpc::send_file(format, path, *writer);
+  writer->WritesDone();
+  return writer->Finish();
 }
 
 problem::StatusMap ArchiveClient::Upload(const ArchiverOptions &format,
@@ -24,7 +29,10 @@ problem::StatusMap ArchiveClient::Upload(const ArchiverOptions &format,
 grpc::Status ArchiveClient::Download(const DownloadRequest &request,
                                      const boost::filesystem::path &path,
                                      ArchiverOptions &format) {
-  return grpc::Status::CANCELLED;
+  grpc::ClientContext context;
+  const auto reader = m_stub->Download(&context, request);
+  rpc::recv_file(*reader, path, format);
+  return reader->Finish();
 }
 
 ArchiverOptions ArchiveClient::Download(const DownloadRequest &request,
