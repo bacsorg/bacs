@@ -32,7 +32,7 @@ if(ENABLE_TESTS)
         TARGET ${PROJECT_NAME}_test_pb
         STATIC
         PROTOS
-            bunsan/protobuf/detail/testing/message.proto
+            bunsan/protobuf/test/message.proto
     )
 endif()
 

@@ -4,14 +4,14 @@
 #define IO binary
 #endif
 
-#include <bunsan/protobuf/detail/testing/message.pb.h>
+#include <bunsan/protobuf/test/message.pb.h>
 
 #include <google/protobuf/text_format.h>
 
 #include <boost/preprocessor/cat.hpp>
 
 namespace bp = bunsan::protobuf;
-using namespace bp::detail::testing;
+using namespace bp::test;
 
 struct message_fixture {
   message_fixture() {

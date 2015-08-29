@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package bunsan.protobuf.detail.testing;
+package bunsan.protobuf.test;
 
 message Message {
   required string required_field = 1;
