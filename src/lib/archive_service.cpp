@@ -15,7 +15,7 @@ ArchiveService::ArchiveService(
       m_repository(repository_) {}
 
 namespace {
-archiver_options make_archiver_options(const ArchiverOptions &archiver) {
+archiver_options make_archiver_options(const utility::Archiver &archiver) {
   archiver_options config;
   config.type = archiver.type();
   if (!archiver.format().empty()) {
@@ -31,7 +31,7 @@ grpc::Status ArchiveService::Upload(grpc::ServerContext *const context,
   BUNSAN_RPC_IMPLEMENT_STATUS(context, reader, response, {
     const auto archive =
         bunsan::tempfile::regular_file_in_directory(m_upload_directory);
-    ArchiverOptions format;
+    utility::Archiver format;
     rpc::recv_file(*reader, archive.path(), format);
     if (context->IsCancelled()) return grpc::Status::CANCELLED;
     *response = m_repository->upload_all(make_archiver_options(format),

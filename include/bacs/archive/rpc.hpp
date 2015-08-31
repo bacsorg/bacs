@@ -11,8 +11,8 @@ namespace archive {
 namespace rpc {
 
 void recv_file(grpc::ReaderInterface<Chunk> &reader,
-               const boost::filesystem::path &path, ArchiverOptions &format);
-void send_file(const ArchiverOptions &format,
+               const boost::filesystem::path &path, utility::Archiver &format);
+void send_file(const utility::Archiver &format,
                const boost::filesystem::path &path,
                grpc::WriterInterface<Chunk> &writer);
 

@@ -14,21 +14,21 @@ class ArchiveClient {
  public:
   explicit ArchiveClient(std::shared_ptr<grpc::ChannelInterface> channel);
 
-  grpc::Status Upload(const ArchiverOptions &format,
+  grpc::Status Upload(const utility::Archiver &format,
                       const boost::filesystem::path &path,
                       problem::StatusMap &response);
-  problem::StatusMap Upload(const ArchiverOptions &format,
+  problem::StatusMap Upload(const utility::Archiver &format,
                             const boost::filesystem::path &path);
 
   grpc::Status Download(const DownloadRequest &request,
                         const boost::filesystem::path &path,
-                        ArchiverOptions &format);
-  ArchiverOptions Download(const DownloadRequest &request,
-                           const boost::filesystem::path &path);
+                        utility::Archiver &format);
+  utility::Archiver Download(const DownloadRequest &request,
+                             const boost::filesystem::path &path);
   template <typename IdRange>
-  ArchiverOptions Download(const ArchiverOptions &format,
-                           const boost::filesystem::path &path,
-                           const IdRange &ids) {
+  utility::Archiver Download(const utility::Archiver &format,
+                             const boost::filesystem::path &path,
+                             const IdRange &ids) {
     DownloadRequest request;
     *request.mutable_format() = format;
     *request.mutable_ids() = problem::make_id_set(ids);

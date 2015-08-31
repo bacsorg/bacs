@@ -3,22 +3,18 @@ syntax = "proto3";
 package bacs.archive;
 
 import "bacs/archive/problem.proto";
+import "bacs/utility.proto";
 
 import "google/protobuf/empty.proto";
 
-message ArchiverOptions {
-  string type = 1;
-  string format = 2;
-}
-
 message Chunk {
-  ArchiverOptions format = 1;
+  utility.Archiver format = 1;
   bytes data = 2;
 }
 
 message DownloadRequest {
   problem.IdSet ids = 1;
-  ArchiverOptions format = 2;
+  utility.Archiver format = 2;
 }
 
 message RenameRequest {

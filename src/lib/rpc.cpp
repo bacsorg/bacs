@@ -7,7 +7,7 @@ namespace archive {
 namespace rpc {
 
 void recv_file(grpc::ReaderInterface<Chunk> &reader,
-               const boost::filesystem::path &path, ArchiverOptions &format) {
+               const boost::filesystem::path &path, utility::Archiver &format) {
   format.Clear();
   bunsan::filesystem::ofstream fout(path);
   BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout) {
@@ -22,7 +22,7 @@ void recv_file(grpc::ReaderInterface<Chunk> &reader,
   fout.close();
 }
 
-void send_file(const ArchiverOptions &format,
+void send_file(const utility::Archiver &format,
                const boost::filesystem::path &path,
                grpc::WriterInterface<Chunk> &writer) {
   bunsan::filesystem::ifstream fin(path);

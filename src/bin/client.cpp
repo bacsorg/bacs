@@ -9,7 +9,8 @@
 #include <grpc++/create_channel.h>
 #include <grpc++/credentials.h>
 
-using namespace bacs::archive;
+using namespace bacs;
+using namespace archive;
 using namespace bunsan::application;
 
 namespace {
@@ -80,10 +81,11 @@ class archive_application : public application {
     ArchiveClient client(channel);
     if (command == "Upload") {
       exactly(2);
-      client.Upload(parse<ArchiverOptions>(arg(0)), arg(1)).PrintDebugString();
+      client.Upload(parse<utility::Archiver>(arg(0)), arg(1))
+          .PrintDebugString();
     } else if (command == "Download") {
       at_least(3);
-      client.Download(parse<ArchiverOptions>(arg(0)), arg(1), args(2))
+      client.Download(parse<utility::Archiver>(arg(0)), arg(1), args(2))
           .PrintDebugString();
     } else if (command == "Rename") {
       exactly(2);

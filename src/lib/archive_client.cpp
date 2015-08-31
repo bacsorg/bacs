@@ -11,7 +11,7 @@ namespace archive {
 ArchiveClient::ArchiveClient(std::shared_ptr<grpc::ChannelInterface> channel)
     : m_stub(Archive::NewStub(channel)) {}
 
-grpc::Status ArchiveClient::Upload(const ArchiverOptions &format,
+grpc::Status ArchiveClient::Upload(const utility::Archiver &format,
                                    const boost::filesystem::path &path,
                                    problem::StatusMap &response) {
   grpc::ClientContext context;
@@ -21,23 +21,23 @@ grpc::Status ArchiveClient::Upload(const ArchiverOptions &format,
   return writer->Finish();
 }
 
-problem::StatusMap ArchiveClient::Upload(const ArchiverOptions &format,
+problem::StatusMap ArchiveClient::Upload(const utility::Archiver &format,
                                          const boost::filesystem::path &path) {
   BUNSAN_RPC_OVERLOAD(Upload, problem::StatusMap, rpc_error, format, path)
 }
 
 grpc::Status ArchiveClient::Download(const DownloadRequest &request,
                                      const boost::filesystem::path &path,
-                                     ArchiverOptions &format) {
+                                     utility::Archiver &format) {
   grpc::ClientContext context;
   const auto reader = m_stub->Download(&context, request);
   rpc::recv_file(*reader, path, format);
   return reader->Finish();
 }
 
-ArchiverOptions ArchiveClient::Download(const DownloadRequest &request,
-                                        const boost::filesystem::path &path) {
-  BUNSAN_RPC_OVERLOAD(Download, ArchiverOptions, rpc_error, request, path)
+utility::Archiver ArchiveClient::Download(const DownloadRequest &request,
+                                          const boost::filesystem::path &path) {
+  BUNSAN_RPC_OVERLOAD(Download, utility::Archiver, rpc_error, request, path)
 }
 
 grpc::Status ArchiveClient::Rename(const RenameRequest &request,
