@@ -48,6 +48,9 @@ bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_crypto bunsan_crypto)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_protobuf bunsan_protobuf)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_pm bunsan_pm)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_rpc bunsan_rpc)
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
+endif()
 
 bunsan_add_executable(${PROJECT_NAME}_client
     src/bin/client.cpp
@@ -83,6 +86,9 @@ bunsan_add_executable(${PROJECT_NAME}_server
 )
 bunsan_use_target(${PROJECT_NAME}_server ${PROJECT_NAME})
 bunsan_use_bunsan_package(${PROJECT_NAME}_server bunsan_protobuf bunsan_protobuf)
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME}_server PRIVATE ws2_32)
+endif()
 if(ENABLE_WEB)
     target_compile_definitions(${PROJECT_NAME}_server PRIVATE
         BACS_ARCHIVE_USE_WEB=1
