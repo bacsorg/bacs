@@ -39,6 +39,7 @@ bunsan_add_library(${PROJECT_NAME}
     src/lib/importer.cpp
     src/lib/repository.cpp
     src/lib/repository_impl.cpp
+    src/lib/repository_post.cpp
     src/lib/rpc.cpp
     src/lib/problem.cpp
 )

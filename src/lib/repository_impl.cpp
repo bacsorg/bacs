@@ -446,10 +446,6 @@ bool repository::prepare_import(const problem::id &id) {
   return false;
 }
 
-void repository::post_import_(const problem::id &id) {
-  m_io_service.post([this, id] { import(id); });
-}
-
 void repository::post_import(const problem::id &id) {
   post_import_(id);
 }
@@ -475,7 +471,7 @@ problem::StatusMap repository::schedule_import_all(
     BUNSAN_LOG_DEBUG << "Posting scheduled { " << id_set.ShortDebugString()
                      << " } for execution";
     for (const auto &id : schedule) {
-      m_io_service.post([this, id] { import(id); });
+      post_import(id);
     }
   };
   for (const auto &id : id_set.id()) {

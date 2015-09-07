@@ -10,15 +10,21 @@
 #include <bunsan/utility/archiver.hpp>
 #include <bunsan/utility/custom_resolver.hpp>
 
-#include <boost/asio/io_service.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/thread/shared_mutex.hpp>
 
 #include <functional>
 #include <string>
+
+namespace boost {
+namespace asio {
+class io_service;
+}  // namespace asio
+}  // namespace boost
 
 namespace bacs {
 namespace archive {
