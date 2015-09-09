@@ -1,6 +1,6 @@
 #pragma once
 
-#include <grpc++/grpc++.h>
+#include <grpc++/support/status.h>
 
 #include <boost/exception/to_string.hpp>
 
