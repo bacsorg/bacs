@@ -1,6 +1,6 @@
 #pragma once
 
-#include <grpc++/status.h>
+#include <grpc++/grpc++.h>
 
 #include <type_traits>
 

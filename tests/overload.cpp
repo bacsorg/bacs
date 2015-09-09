@@ -4,7 +4,7 @@
 #include <bunsan/rpc/overload.hpp>
 #include <bunsan/test/test_tools.hpp>
 
-#include <grpc++/status.h>
+#include <grpc++/grpc++.h>
 
 BOOST_AUTO_TEST_SUITE(overload)
 
