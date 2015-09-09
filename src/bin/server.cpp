@@ -18,9 +18,7 @@
 #include <cppcms/service.h>
 #endif
 
-#include <grpc++/server.h>
-#include <grpc++/server_builder.h>
-#include <grpc++/server_credentials.h>
+#include <grpc++/grpc++.h>
 
 #include <boost/asio/io_service.hpp>
 #ifndef BACS_ARCHIVE_USE_WEB

@@ -5,9 +5,7 @@
 #include <bunsan/log/trivial.hpp>
 #include <bunsan/protobuf/text.hpp>
 
-#include <grpc++/channel_arguments.h>
-#include <grpc++/create_channel.h>
-#include <grpc++/credentials.h>
+#include <grpc++/grpc++.h>
 
 using namespace bacs;
 using namespace archive;
@@ -76,8 +74,7 @@ class archive_application : public application {
     } else {
       credentials = grpc::InsecureCredentials();
     }
-    const auto channel =
-        grpc::CreateChannel(target, credentials, grpc::ChannelArguments());
+    const auto channel = grpc::CreateChannel(target, credentials);
     ArchiveClient client(channel);
     if (command == "Upload") {
       exactly(2);

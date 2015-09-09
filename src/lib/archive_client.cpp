@@ -8,7 +8,7 @@
 namespace bacs {
 namespace archive {
 
-ArchiveClient::ArchiveClient(std::shared_ptr<grpc::ChannelInterface> channel)
+ArchiveClient::ArchiveClient(std::shared_ptr<grpc::Channel> channel)
     : m_stub(Archive::NewStub(channel)) {}
 
 grpc::Status ArchiveClient::Upload(const utility::Archiver &format,

@@ -3,7 +3,7 @@
 #include <bacs/archive/archive.grpc.pb.h>
 #include <bacs/archive/problem.hpp>
 
-#include <grpc++/channel_interface.h>
+#include <grpc++/grpc++.h>
 
 #include <boost/filesystem/path.hpp>
 
@@ -12,7 +12,7 @@ namespace archive {
 
 class ArchiveClient {
  public:
-  explicit ArchiveClient(std::shared_ptr<grpc::ChannelInterface> channel);
+  explicit ArchiveClient(std::shared_ptr<grpc::Channel> channel);
 
   grpc::Status Upload(const utility::Archiver &format,
                       const boost::filesystem::path &path,

@@ -2,7 +2,7 @@
 
 #include <bacs/archive/archive.grpc.pb.h>
 
-#include <grpc++/stream.h>
+#include <grpc++/grpc++.h>
 
 #include <boost/filesystem/path.hpp>
 
