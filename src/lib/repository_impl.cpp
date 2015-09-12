@@ -108,6 +108,9 @@ problem::StatusResult repository::upload(
     const problem::id &id, const boost::filesystem::path &location) {
   problem::validate_id(id);
   BUNSAN_LOG_INFO << "Uploading " << id << " from " << location;
+  if (!boost::filesystem::exists(location / "format")) {
+    return status_error(problem::Error::INVALID_FORMAT);
+  }
   if (!is_locked(id)) {
     const lock_guard lk(m_lock);
     if (!is_locked(id)) {

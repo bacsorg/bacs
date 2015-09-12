@@ -15,6 +15,7 @@ message Error {
     LOCKED = 2;
     READ_ONLY = 3;
     PENDING_IMPORT = 4;
+    INVALID_FORMAT = 5;
   }
   Code code = 1;
   string reason = 2;
