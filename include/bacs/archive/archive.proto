@@ -65,6 +65,7 @@ message ArchiveServerConfig {
     }
     string pem_root_certs_path = 1;
     repeated PemKeyCertPair pem_key_cert_pair = 2;
+    bool force_client_auth = 3;
   }
   string listen = 1;
   ArchiveServiceConfig service = 2;

@@ -84,6 +84,7 @@ class archive_application : public application {
                 bunsan::filesystem::read_data(pair.private_key_path()),
                 bunsan::filesystem::read_data(pair.cert_chain_path())});
       }
+      ssl.force_client_auth = cred.force_client_auth();
       credentials = grpc::SslServerCredentials(ssl);
     } else {
       credentials = grpc::InsecureServerCredentials();
