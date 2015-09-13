@@ -54,7 +54,15 @@ service Archive {
 
 // Configuration
 message ArchiveServiceConfig {
+  message Permissions {
+    message User {
+      repeated string identity = 1;
+    }
+    bool allow_any = 1;
+    repeated User allowed_user = 2;
+  }
   string upload_directory = 1;
+  Permissions permissions = 2;
 }
 
 message ArchiveServerConfig {
