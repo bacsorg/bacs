@@ -2,6 +2,7 @@
 #include <bacs/archive/error.hpp>
 
 #include <bunsan/application.hpp>
+#include <bunsan/filesystem/operations.hpp>
 #include <bunsan/log/trivial.hpp>
 #include <bunsan/protobuf/text.hpp>
 
@@ -27,8 +28,20 @@ class archive_application : public application {
 
   void initialize_argument_parser(argument_parser &parser) override {
     application::initialize_argument_parser(parser);
-    parser.add_options()("target", value<std::string>(&target)->required(),
-                         "Archive host:port");
+    parser.add_options()(
+        "target", value<std::string>(&target)->required(), "Archive host:port"
+    )(
+        "ssl", value<bool>(&use_ssl)->default_value(false), "Use SSL"
+    )(
+        "ssl_pem_root_certs", value<std::string>(&ssl_pem_root_certs),
+        "SSL root certificates, leave empty (or skip) to use OS"
+    )(
+        "ssl_pem_private_key", value<std::string>(&ssl_pem_private_key),
+        "SSL private key, leave empty "
+    )(
+        "ssl_pem_cert_chain", value<std::string>(&ssl_pem_cert_chain),
+        "SSL certificate chain"
+    );
     parser.add_positional("command", 1,
                           value<std::string>(&command)->required())
         .add_positional("arguments", -1,
@@ -70,7 +83,19 @@ class archive_application : public application {
 
   int main(const variables_map & /*variables*/) override {
     std::shared_ptr<grpc::Credentials> credentials;
-    if (false) {
+    if (use_ssl) {
+      grpc::SslCredentialsOptions ssl;
+      if (!ssl_pem_root_certs.empty()) {
+        ssl.pem_root_certs = bunsan::filesystem::read_data(ssl_pem_root_certs);
+      }
+      if (!ssl_pem_private_key.empty()) {
+        ssl.pem_private_key =
+            bunsan::filesystem::read_data(ssl_pem_private_key);
+      }
+      if (!ssl_pem_cert_chain.empty()) {
+        ssl.pem_cert_chain = bunsan::filesystem::read_data(ssl_pem_cert_chain);
+      }
+      credentials = grpc::SslCredentials(ssl);
     } else {
       credentials = grpc::InsecureCredentials();
     }
@@ -126,6 +151,10 @@ class archive_application : public application {
   std::string target;
   std::string command;
   std::vector<std::string> arguments;
+  bool use_ssl;
+  std::string ssl_pem_root_certs;
+  std::string ssl_pem_private_key;
+  std::string ssl_pem_cert_chain;
 };
 }  // namespace
 
