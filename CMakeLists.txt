@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 include(${CMAKE_SOURCE_DIR}/system-config.cmake OPTIONAL)
 
-project(bunsan_bacs_statement_provider)
+project(bacs_statement_provider)
 
 if(BunsanCMakeBuiltin)
     BunsanCMakeLoad()
@@ -16,14 +16,14 @@ else()
     find_package(BunsanWeb CONFIG REQUIRED)
 endif()
 
-bunsan_find_bunsan_package(bunsan_bacs_problems bunsan_bacs_problems)
+bunsan_find_bunsan_package(bacs_problems bacs_problems)
 
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}
     PROTOS
         bacs/statement_provider/request.proto
-    LIBRARIES ${bunsan_bacs_problems_LIBRARIES}
-    INCLUDE_DIRECTORIES ${bunsan_bacs_problems_INCLUDE_DIRS}
+    LIBRARIES ${bacs_problems_LIBRARIES}
+    INCLUDE_DIRECTORIES ${bacs_problems_INCLUDE_DIRS}
     INSTALL
 )
 
