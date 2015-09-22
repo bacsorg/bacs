@@ -2,21 +2,8 @@ syntax = "proto3";
 
 package bacs.process;
 
-import "bacs/utility.proto";
-
-message ResourceLimits {
-  uint64 time_limit_millis = 1;
-  uint64 memory_limit_bytes = 2;
-  uint64 output_limit_bytes = 3;
-  uint64 number_of_processes = 4;
-  uint64 real_time_limit_millis = 5;
-}
-
-message ResourceUsage {
-  // TODO: do we need to export Process::ResourceUsage::timeUsage?
-  uint64 time_usage_millis = 1;
-  uint64 memory_usage_bytes = 2;
-}
+import "bacs/process/resource.proto";
+import "bacs/utility/archiver.proto";
 
 message Source {
   bytes data = 1;

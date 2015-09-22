@@ -13,9 +13,13 @@ endif()
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
     PROTOS
-        bacs/file.proto
-        bacs/process.proto
-        bacs/utility.proto
+        bacs/file/path.proto
+        bacs/file/range.proto
+
+        bacs/process/resource.proto
+        bacs/process/source.proto
+
+        bacs/utility/archiver.proto
     INSTALL
 )
 
