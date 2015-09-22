@@ -22,7 +22,7 @@ bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}
     PROTOS
         bacs/statement_provider/request.proto
-    LIBRARIES ${bunsan_bacs_problems_LIBRARIES} cryptopp
+    LIBRARIES ${bunsan_bacs_problems_LIBRARIES}
     INCLUDE_DIRECTORIES ${bunsan_bacs_problems_INCLUDE_DIRS}
     INSTALL
 )
