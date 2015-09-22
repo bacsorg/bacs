@@ -3,7 +3,7 @@ syntax = "proto3";
 package bacs.archive;
 
 import "bacs/archive/problem.proto";
-import "bacs/utility.proto";
+import "bacs/utility/archiver.proto";
 
 import "google/protobuf/empty.proto";
 
