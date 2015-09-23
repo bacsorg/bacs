@@ -2,36 +2,6 @@ syntax = "proto3";
 
 package bacs.archive.problem;
 
-import "bacs/problem/problem.proto";
-
-message IdSet {
-  repeated string id = 1;
-}
-
-message Error {
-  enum Code {
-    UNKNOWN = 0;
-    NOT_FOUND = 1;
-    LOCKED = 2;
-    READ_ONLY = 3;
-    PENDING_IMPORT = 4;
-    INVALID_FORMAT = 5;
-  }
-  Code code = 1;
-  string reason = 2;
-}
-
-message ImportResult {
-  oneof result {
-    Error error = 1;
-    bacs.problem.Problem problem = 2;
-  }
-}
-
-message ImportMap {
-  map<string, ImportResult> entry = 1;
-}
-
 message FlagSet {
   repeated Flag flag = 1;
 }
@@ -60,20 +30,4 @@ message Flag {
     Reserved reserved = 1;
     string custom = 2;
   }
-}
-
-message Status {
-  FlagSet flags = 1;
-  bacs.problem.Revision revision = 2;
-}
-
-message StatusResult {
-  oneof result {
-    Error error = 1;
-    Status status = 2;
-  }
-}
-
-message StatusMap {
-  map<string, StatusResult> entry = 1;
 }

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package bacs.archive.problem;
+
+import "bacs/archive/problem/error.proto";
+import "bacs/problem/problem.proto";
+
+message ImportResult {
+  oneof result {
+    Error error = 1;
+    bacs.problem.Problem problem = 2;
+  }
+}
+
+message ImportMap {
+  map<string, ImportResult> entry = 1;
+}

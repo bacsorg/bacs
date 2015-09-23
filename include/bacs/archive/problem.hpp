@@ -1,6 +1,10 @@
 #pragma once
 
-#include <bacs/archive/problem.pb.h>
+#include <bacs/archive/problem/error.pb.h>
+#include <bacs/archive/problem/flag.pb.h>
+#include <bacs/archive/problem/id.pb.h>
+#include <bacs/archive/problem/import.pb.h>
+#include <bacs/archive/problem/status.pb.h>
 
 #include <bacs/problem/id.hpp>
 #include <bacs/problem/problem.pb.h>

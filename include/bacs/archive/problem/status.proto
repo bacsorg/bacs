@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package bacs.archive.problem;
+
+import "bacs/archive/problem/error.proto";
+import "bacs/archive/problem/flag.proto";
+import "bacs/problem/problem.proto";
+
+message Status {
+  FlagSet flags = 1;
+  bacs.problem.Revision revision = 2;
+}
+
+message StatusResult {
+  oneof result {
+    Error error = 1;
+    Status status = 2;
+  }
+}
+
+message StatusMap {
+  map<string, StatusResult> entry = 1;
+}

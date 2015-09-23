@@ -26,7 +26,11 @@ bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
     PROTOS
         bacs/archive/archive.proto
-        bacs/archive/problem.proto
+        bacs/archive/problem/error.proto
+        bacs/archive/problem/flag.proto
+        bacs/archive/problem/id.proto
+        bacs/archive/problem/import.proto
+        bacs/archive/problem/status.proto
     LIBRARIES ${bacs_problems_LIBRARIES}
     GRPC
     INCLUDE_DIRECTORIES ${bacs_problems_INCLUDE_DIRS}

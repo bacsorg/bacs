@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package bacs.archive.problem;
+
+message Error {
+  enum Code {
+    UNKNOWN = 0;
+    NOT_FOUND = 1;
+    LOCKED = 2;
+    READ_ONLY = 3;
+    PENDING_IMPORT = 4;
+    INVALID_FORMAT = 5;
+  }
+  Code code = 1;
+  string reason = 2;
+}

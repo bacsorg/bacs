@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package bacs.archive.problem;
+
+message IdSet {
+  repeated string id = 1;
+}
