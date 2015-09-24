@@ -1,0 +1,9 @@
+{
+    "Local": {
+        "ProtoPrefix": "include",
+        "GoPrefix": "go"
+    },
+    "Dependencies": [
+        "github.com/bacsorg/problems"
+    ]
+}
