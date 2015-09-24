@@ -65,6 +65,11 @@ bool single::make_package(const boost::filesystem::path &destination,
     // sources, note: only build section is needed from config
     index.source.self.insert(std::make_pair("src", "src"));
     bunsan::filesystem::copy_tree(location(), destination / "src");
+    // utility configuration
+    index.package.self.insert(std::make_pair("etc", "etc"));
+    boost::filesystem::create_directory(destination / "etc");
+    boost::property_tree::write_ini((destination / "etc" / target()).string(),
+                                    section("call"));
     // modules: set binary name
     index.source.self.insert(std::make_pair("modules", "modules"));
     boost::filesystem::create_directory(destination / "modules");
