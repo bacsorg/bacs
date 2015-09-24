@@ -59,7 +59,7 @@ Utility utility::info() const {
 }
 
 boost::property_tree::ptree utility::section(const std::string &name) const {
-  return m_config.get_child(name);
+  return m_config.get_child(name, boost::property_tree::ptree());
 }
 
 boost::filesystem::path utility::location() const { return m_location; }
