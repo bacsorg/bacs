@@ -30,6 +30,7 @@ bunsan_add_library(${PROJECT_NAME}
     src/resource/parse.cpp
     src/system_verifier.cpp
 
+    src/utilities/alias.cpp
     src/utilities/none.cpp
     src/utilities/single.cpp
     src/utilities/dot_net_solution.cpp
