@@ -51,33 +51,34 @@ int bunsan_pm_extract(cstring config, cstring package, cstring destination,
                            config, error_msg, error_size, package, destination);
 }
 
-repository bunsan_pm_repository_new(cstring config, string error_msg,
-                                    size_type error_size) {
+bunsan_pm_repository bunsan_pm_repository_new(cstring config, string error_msg,
+                                              size_type error_size) {
   bunsan::pm::compatibility::repository *repo = nullptr;
   wrap_cpp([&] { repo = new bunsan::pm::compatibility::repository(config); },
            error_msg, error_size);
   return repo;
 }
 
-void bunsan_pm_repository_free(repository repo) {
+void bunsan_pm_repository_free(bunsan_pm_repository repo) {
   delete static_cast<bunsan::pm::compatibility::repository *>(repo);
 }
 
-int bunsan_pm_repository_create(repository repo, cstring path, bool strip,
-                                string error_msg, size_type error_size) {
+int bunsan_pm_repository_create(bunsan_pm_repository repo, cstring path,
+                                bool strip, string error_msg,
+                                size_type error_size) {
   const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
   BOOST_ASSERT(r);
   return wrap_cpp([&] { r->create(path, strip); }, error_msg, error_size);
 }
 
-int bunsan_pm_repository_clean_cache(repository repo, string error_msg,
-                                     size_type error_size) {
+int bunsan_pm_repository_clean_cache(bunsan_pm_repository repo,
+                                     string error_msg, size_type error_size) {
   const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
   BOOST_ASSERT(r);
   return wrap_cpp([&] { r->clean_cache(); }, error_msg, error_size);
 }
 
-int bunsan_pm_repository_extract(repository repo, cstring package,
+int bunsan_pm_repository_extract(bunsan_pm_repository repo, cstring package,
                                  cstring destination, string error_msg,
                                  size_type error_size) {
   const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
