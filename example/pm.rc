@@ -1,7 +1,7 @@
 remote
 {
     ;url "http://localhost/~lex/repo"
-    url "/home/lex/dev/bunsan/bacs/repository"
+    url "/home/lex/dev/bacs/repository"
 
     fetcher
     {
