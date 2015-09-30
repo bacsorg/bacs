@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package bacs_utility is a generated protocol buffer package.
+Package utility is a generated protocol buffer package.
 
 It is generated from these files:
 	bacs/utility/archiver.proto
@@ -11,7 +11,7 @@ It is generated from these files:
 It has these top-level messages:
 	Archiver
 */
-package bacs_utility
+package utility
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"

@@ -1,4 +1,4 @@
-package bacs_file
+package file
 
 import (
     "github.com/stretchr/testify/assert"

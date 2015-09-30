@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package bacs_process is a generated protocol buffer package.
+Package process is a generated protocol buffer package.
 
 It is generated from these files:
 	bacs/process/resource.proto
@@ -12,8 +12,14 @@ It is generated from these files:
 It has these top-level messages:
 	ResourceLimits
 	ResourceUsage
+	Source
+	Buildable
+	BuildSettings
+	BuilderConfig
+	BuildResult
+	ExecutionResult
 */
-package bacs_process
+package process
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"

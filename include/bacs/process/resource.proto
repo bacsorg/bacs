@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package bacs.process;
+option go_package = "process";
 
 message ResourceLimits {
   uint64 time_limit_millis = 1;

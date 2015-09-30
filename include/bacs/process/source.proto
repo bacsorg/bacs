@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package bacs.process;
+option go_package = "process";
 
 import "bacs/process/resource.proto";
 import "bacs/utility/archiver.proto";

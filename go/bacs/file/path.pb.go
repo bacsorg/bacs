@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package bacs_file is a generated protocol buffer package.
+Package file is a generated protocol buffer package.
 
 It is generated from these files:
 	bacs/file/path.proto
@@ -11,8 +11,9 @@ It is generated from these files:
 
 It has these top-level messages:
 	Path
+	Range
 */
-package bacs_file
+package file
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"

@@ -2,7 +2,7 @@
 // source: bacs/file/range.proto
 // DO NOT EDIT!
 
-package bacs_file
+package file
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"

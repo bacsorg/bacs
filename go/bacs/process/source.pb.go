@@ -2,7 +2,7 @@
 // source: bacs/process/source.proto
 // DO NOT EDIT!
 
-package bacs_process
+package process
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -186,10 +186,10 @@ type isExecutionResult_Termination interface {
 }
 
 type ExecutionResult_ExitStatus struct {
-	ExitStatus int32 `protobuf:"varint,2,opt,name=exit_status"`
+	ExitStatus int32 `protobuf:"varint,2,opt,name=exit_status,oneof"`
 }
 type ExecutionResult_TermSig struct {
-	TermSig int32 `protobuf:"varint,3,opt,name=term_sig"`
+	TermSig int32 `protobuf:"varint,3,opt,name=term_sig,oneof"`
 }
 
 func (*ExecutionResult_ExitStatus) isExecutionResult_Termination() {}

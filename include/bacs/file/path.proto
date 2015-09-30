@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package bacs.file;
+option go_package = "file";
 
 /// Filesystem path.
 message Path {
