@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package bacs_archive is a generated protocol buffer package.
+Package archive is a generated protocol buffer package.
 
 It is generated from these files:
 	bacs/archive/archive.proto
@@ -16,7 +16,7 @@ It has these top-level messages:
 	ArchiveServiceConfig
 	ArchiveServerConfig
 */
-package bacs_archive
+package archive
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -167,7 +167,7 @@ type isArchiveServerConfig_Credentials interface {
 }
 
 type ArchiveServerConfig_SslCredentials_ struct {
-	SslCredentials *ArchiveServerConfig_SslCredentials `protobuf:"bytes,3,opt,name=ssl_credentials"`
+	SslCredentials *ArchiveServerConfig_SslCredentials `protobuf:"bytes,3,opt,name=ssl_credentials,oneof"`
 }
 
 func (*ArchiveServerConfig_SslCredentials_) isArchiveServerConfig_Credentials() {}

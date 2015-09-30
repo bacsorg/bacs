@@ -2,7 +2,7 @@
 // source: bacs/archive/problem/flag.proto
 // DO NOT EDIT!
 
-package bacs_archive_problem
+package problem
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -85,10 +85,10 @@ type isFlag_Flag interface {
 }
 
 type Flag_Reserved_ struct {
-	Reserved Flag_Reserved `protobuf:"varint,1,opt,name=reserved,enum=bacs.archive.problem.Flag_Reserved"`
+	Reserved Flag_Reserved `protobuf:"varint,1,opt,name=reserved,enum=bacs.archive.problem.Flag_Reserved,oneof"`
 }
 type Flag_Custom struct {
-	Custom string `protobuf:"bytes,2,opt,name=custom"`
+	Custom string `protobuf:"bytes,2,opt,name=custom,oneof"`
 }
 
 func (*Flag_Reserved_) isFlag_Flag() {}

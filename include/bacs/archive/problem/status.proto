@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package bacs.archive.problem;
+option go_package = "problem";
 
 import "bacs/archive/problem/error.proto";
 import "bacs/archive/problem/flag.proto";

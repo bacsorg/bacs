@@ -2,7 +2,7 @@
 // source: bacs/archive/problem/import.proto
 // DO NOT EDIT!
 
-package bacs_archive_problem
+package problem
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -30,10 +30,10 @@ type isImportResult_Result interface {
 }
 
 type ImportResult_Error struct {
-	Error *Error `protobuf:"bytes,1,opt,name=error"`
+	Error *Error `protobuf:"bytes,1,opt,name=error,oneof"`
 }
 type ImportResult_Problem struct {
-	Problem *bacs_problem.Problem `protobuf:"bytes,2,opt,name=problem"`
+	Problem *bacs_problem.Problem `protobuf:"bytes,2,opt,name=problem,oneof"`
 }
 
 func (*ImportResult_Error) isImportResult_Result()   {}

@@ -2,7 +2,7 @@
 // source: bacs/archive/problem/status.proto
 // DO NOT EDIT!
 
-package bacs_archive_problem
+package problem
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -53,10 +53,10 @@ type isStatusResult_Result interface {
 }
 
 type StatusResult_Error struct {
-	Error *Error `protobuf:"bytes,1,opt,name=error"`
+	Error *Error `protobuf:"bytes,1,opt,name=error,oneof"`
 }
 type StatusResult_Status struct {
-	Status *Status `protobuf:"bytes,2,opt,name=status"`
+	Status *Status `protobuf:"bytes,2,opt,name=status,oneof"`
 }
 
 func (*StatusResult_Error) isStatusResult_Result()  {}

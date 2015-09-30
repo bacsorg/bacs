@@ -2,7 +2,7 @@
 // source: bacs/archive/problem/id.proto
 // DO NOT EDIT!
 
-package bacs_archive_problem
+package problem
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"

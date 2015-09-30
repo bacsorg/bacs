@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package bacs.archive.problem;
+option go_package = "problem";
 
 message FlagSet {
   repeated Flag flag = 1;

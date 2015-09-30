@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package bacs_archive_problem is a generated protocol buffer package.
+Package problem is a generated protocol buffer package.
 
 It is generated from these files:
 	bacs/archive/problem/error.proto
@@ -14,8 +14,16 @@ It is generated from these files:
 
 It has these top-level messages:
 	Error
+	FlagSet
+	Flag
+	IdSet
+	ImportResult
+	ImportMap
+	Status
+	StatusResult
+	StatusMap
 */
-package bacs_archive_problem
+package problem
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
