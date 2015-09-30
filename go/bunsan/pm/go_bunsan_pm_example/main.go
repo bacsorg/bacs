@@ -13,6 +13,7 @@ func main() {
     if err != nil {
         panic(err)
     }
+    defer repo.Close()
     err = repo.Extract("hello", "world")
     if err != nil {
         panic(err)

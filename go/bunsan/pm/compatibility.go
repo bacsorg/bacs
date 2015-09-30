@@ -6,7 +6,6 @@ package pm
 import "C"
 
 import (
-    "runtime"
     "unsafe"
 )
 
@@ -35,15 +34,13 @@ func NewRepository(config string) (Repository, error) {
     if c_repo == nil {
         return nil, &cError{C.GoString((*C.char)(c_error))}
     }
-    repo := &cRepository{c_repo}
-    runtime.SetFinalizer(repo, func(r *cRepository) {
-        r.Destroy()
-    })
-    return repo, nil
+    return &cRepository{c_repo}, nil
 }
 
-func (r *cRepository) Destroy() {
+func (r *cRepository) Close() error {
     C.bunsan_pm_repository_free(r.repo)
+    r.repo = nil
+    return nil
 }
 
 func (r *cRepository) Create(path string, strip bool) error {
