@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package bacs_statement_provider is a generated protocol buffer package.
+Package statement_provider is a generated protocol buffer package.
 
 It is generated from these files:
 	bacs/statement_provider/request.proto
@@ -11,7 +11,7 @@ It is generated from these files:
 It has these top-level messages:
 	Request
 */
-package bacs_statement_provider
+package statement_provider
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
