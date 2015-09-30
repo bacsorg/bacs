@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package bacs_problem is a generated protocol buffer package.
+Package problem is a generated protocol buffer package.
 
 It is generated from these files:
 	bacs/problem/problem.proto
@@ -17,8 +17,9 @@ It has these top-level messages:
 	Statement
 	Profile
 	Utility
+	SystemResult
 */
-package bacs_problem
+package problem
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"

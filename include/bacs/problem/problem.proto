@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package bacs.problem;
+option go_package = "problem";
 
 import "google/protobuf/any.proto";
 

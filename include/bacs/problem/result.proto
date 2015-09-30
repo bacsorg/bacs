@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package bacs.problem;
+option go_package = "problem";
 
 message SystemResult {
   enum Status {
