@@ -88,6 +88,21 @@ func (x *Index) All() []string {
     return result
 }
 
+func (x *Index) Sources() []string {
+    sources := make(map[string]struct{})
+    for _, imp := range x.Source.Self {
+        sources[imp.Source] = struct{}{}
+    }
+    for _, imp := range x.Package.Self {
+        sources[imp.Source] = struct{}{}
+    }
+    result := make([]string, 0, len(sources))
+    for source, _ := range sources {
+        result = append(result, source)
+    }
+    return result
+}
+
 func (x *Index) Unmarshal(data []byte) error {
     err := json.Unmarshal(data, x)
     if err != nil {

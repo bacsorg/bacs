@@ -11,12 +11,13 @@ import (
 
 func TestIndex(t *testing.T) {
     testData := []struct {
-        data  string
-        index Index
-        all   []string
+        data    string
+        index   Index
+        all     []string
+        sources []string
     }{
         {
-            `{
+            data: `{
                 "source": {
                     "import": {
                         "source": [
@@ -50,7 +51,7 @@ func TestIndex(t *testing.T) {
                     ]
                 }
             }`,
-            Index{
+            index: Index{
                 Source: PackageStage{
                     Import: ExternalImports{
                         Source: []TreeImport{
@@ -84,7 +85,7 @@ func TestIndex(t *testing.T) {
                     },
                 },
             },
-            []string{
+            all: []string{
                 "package1",
                 "package2",
                 "package3",
@@ -94,15 +95,21 @@ func TestIndex(t *testing.T) {
                 "package9",
                 "package10",
             },
+            sources: []string{
+                "source5",
+                "source6",
+                "source11",
+                "source12",
+            },
         },
     }
     for _, tt := range testData {
-        {   //read
+        {   // read
             index, err := ReadIndexFromString(tt.data)
             assert.NoError(t, err)
             assert.Equal(t, &tt.index, index)
         }
-        {   //marshal
+        {   // marshal
             data, err := tt.index.Marshal()
             assert.NoError(t, err)
             var actual, expected bytes.Buffer
@@ -110,11 +117,17 @@ func TestIndex(t *testing.T) {
             json.Indent(&actual, data, "", "")
             assert.Equal(t, string(expected.Bytes()), string(actual.Bytes()))
         }
-        {   //all
+        {   // all
             actual := tt.index.All()
             sort.Strings(actual)
             sort.Strings(tt.all)
             assert.Equal(t, tt.all, actual)
+        }
+        {   // sources
+            actual := tt.index.Sources()
+            sort.Strings(actual)
+            sort.Strings(tt.sources)
+            assert.Equal(t, tt.sources, actual)
         }
     }
 }
