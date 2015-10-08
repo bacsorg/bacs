@@ -18,14 +18,14 @@ struct is_direct_assignable<pm::entry> : std::integral_constant<bool, true> {};
 
 namespace pm {
 
-bool index::stage::empty() const {
+bool package_stage::empty() const {
   return self.empty() && import.package.empty() && import.source.empty();
 }
 
-std::set<entry> index::stage::all() const {
+std::set<entry> package_stage::all() const {
   std::set<entry> all_;
-  for (const auto &i : import.package) all_.insert(i.second);
-  for (const auto &i : import.source) all_.insert(i.second);
+  for (const auto &i : import.package) all_.insert(i.package);
+  for (const auto &i : import.source) all_.insert(i.package);
   return all_;
 }
 
@@ -38,8 +38,8 @@ std::set<entry> index::all() const {
 
 std::unordered_set<std::string> index::sources() const {
   std::unordered_set<std::string> sources_;
-  for (const auto &i : source.self) sources_.insert(i.second);
-  for (const auto &i : package.self) sources_.insert(i.second);
+  for (const auto &i : source.self) sources_.insert(i.source);
+  for (const auto &i : package.self) sources_.insert(i.source);
   return sources_;
 }
 

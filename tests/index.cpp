@@ -15,33 +15,33 @@ BOOST_AUTO_TEST_CASE(load) {
   std::stringstream ind(R"EOF(
 {
   "package": {
-      "self": {
-          "path1": "source1"
-      },
+      "self": [
+          {"path": "path1", "source": "source1"}
+      ],
       "import": {
-          "package": {
-              "path2": "package/number/one",
-              "path3": "package/number/two"
-          },
-          "source": {
-              "path4": "package/number/three"
-          }
+          "package": [
+              {"path": "path2", "package": "package/number/one"},
+              {"path": "path3", "package": "package/number/two"}
+          ],
+          "source": [
+              {"path": "path4", "package": "package/number/three"}
+          ]
       }
   },
   "source": {
-      "self": {
-          "path5": "source2",
-          "path6": "source3"
-      },
+      "self": [
+          {"path": "path5", "source": "source2"},
+          {"path": "path6", "source":  "source3"}
+      ],
       "import": {
-          "package": {
-              "path7": "package/number/four",
-              "path8": "package/number/five"
-          },
-          "source": {
-              "path9": "package/number/six",
-              "path10": "package/number/seven"
-          }
+          "package": [
+              {"path": "path7", "package": "package/number/four"},
+              {"path": "path8", "package": "package/number/five"}
+          ],
+          "source": [
+              {"path": "path9", "package": "package/number/six"},
+              {"path": "path10", "package": "package/number/seven"}
+          ]
       }
   }
 }

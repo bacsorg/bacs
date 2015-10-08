@@ -89,7 +89,7 @@ void repository::builder::unpack_source(
   const index deps = cache_().read_index(package);
   // extract sources
   for (const auto &i : deps.source.self)
-    extractor_().extract_source(package, i.second, destination / i.first);
+    extractor_().extract_source(package, i.source, destination / i.path);
   // dump package checksum into snapshot
   {
     const auto iter = snapshot_.find(package);
@@ -101,11 +101,11 @@ void repository::builder::unpack_source(
   }
   // extract source imports
   for (const auto &i : deps.source.import.source)
-    unpack_source(i.second, destination / i.first, snapshot_);
+    unpack_source(i.package, destination / i.path, snapshot_);
   // extract package imports
   for (const auto &i : deps.source.import.package) {
-    extractor_().extract_installation(i.second, destination / i.first);
-    merge_maps(snapshot_, cache_().read_installation_snapshot(i.second));
+    extractor_().extract_installation(i.package, destination / i.path);
+    merge_maps(snapshot_, cache_().read_installation_snapshot(i.package));
   }
 }
 
@@ -120,12 +120,12 @@ void repository::builder::build_installation(const entry &package) {
     snapshot snapshot_ = cache_().read_build_snapshot(package);
     const index deps = cache_().read_index(package);
     for (const auto &i : deps.package.self)
-      extractor_().extract_source(package, i.second, install_dir / i.first);
+      extractor_().extract_source(package, i.source, install_dir / i.path);
     for (const auto &i : deps.package.import.source)
-      unpack_source(i.second, install_dir / i.first, snapshot_);
+      unpack_source(i.package, install_dir / i.path, snapshot_);
     for (const auto &i : deps.package.import.package) {
-      extractor_().extract_installation(i.second, install_dir / i.first);
-      merge_maps(snapshot_, cache_().read_installation_snapshot(i.second));
+      extractor_().extract_installation(i.package, install_dir / i.path);
+      merge_maps(snapshot_, cache_().read_installation_snapshot(i.package));
     }
     // save
     cache_().pack_installation(package, install_dir);

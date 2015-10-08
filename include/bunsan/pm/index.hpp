@@ -13,6 +13,57 @@
 namespace bunsan {
 namespace pm {
 
+struct tree_import {
+  template <typename Archive>
+  void serialize(Archive &ar, const unsigned int) {
+    ar & BOOST_SERIALIZATION_NVP(path);
+    ar & BOOST_SERIALIZATION_NVP(package);
+  }
+
+  bool operator==(const tree_import &o) const {
+    return path == o.path && package == o.package;
+  }
+
+  boost::filesystem::path path;
+  entry package;
+};
+
+struct local_import {
+  template <typename Archive>
+  void serialize(Archive &ar, const unsigned int) {
+    ar & BOOST_SERIALIZATION_NVP(path);
+    ar & BOOST_SERIALIZATION_NVP(source);
+  }
+
+  bool operator==(const local_import &o) const {
+    return path == o.path && source == o.source;
+  }
+
+  boost::filesystem::path path;
+  std::string source;
+};
+
+using tree_import_list = std::vector<tree_import>;
+using local_import_list = std::vector<local_import>;
+
+struct package_stage {
+  template <typename Archive>
+  void serialize(Archive &ar, const unsigned int) {
+    ar & BOOST_SERIALIZATION_NVP(self);
+    ar & BOOST_SERIALIZATION_NVP(import.source);
+    ar & BOOST_SERIALIZATION_NVP(import.package);
+  }
+
+  struct {
+    tree_import_list source, package;
+  } import;
+  local_import_list self;
+
+  bool empty() const;
+
+  std::set<entry> all() const;
+};
+
 struct index {
   template <typename Archive>
   void serialize(Archive &ar, const unsigned int) {
@@ -42,23 +93,7 @@ struct index {
 
   std::unordered_set<std::string> sources() const;
 
-  struct stage {
-    template <typename Archive>
-    void serialize(Archive &ar, const unsigned int) {
-      ar & BOOST_SERIALIZATION_NVP(self);
-      ar & BOOST_SERIALIZATION_NVP(import.source);
-      ar & BOOST_SERIALIZATION_NVP(import.package);
-    }
-
-    struct {
-      std::multimap<boost::filesystem::path, entry> source, package;
-    } import;
-    std::multimap<boost::filesystem::path, std::string> self;
-
-    bool empty() const;
-
-    std::set<entry> all() const;
-  } source, package;
+  package_stage source, package;
 };
 
 }  // namespace pm

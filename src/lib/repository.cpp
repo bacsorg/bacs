@@ -231,7 +231,7 @@ bool repository::update_package_depends(
       for (const auto &i : deps.package.import.package) {
         snapshot snapshot_;
         const bool ret =
-            update_package_depends(stage(i.second, stage_type::installation),
+            update_package_depends(stage(i.package, stage_type::installation),
                                    updated, in, snapshot_, snapshot_cache);
         upd = upd || ret;
         merge_maps(current_snapshot, snapshot_);
@@ -239,8 +239,8 @@ bool repository::update_package_depends(
       for (const auto &i : deps.package.import.source) {
         snapshot snapshot_;
         const bool ret =
-            update_package_depends(stage(i.second, stage_type::source), updated,
-                                   in, snapshot_, snapshot_cache);
+            update_package_depends(stage(i.package, stage_type::source),
+                                   updated, in, snapshot_, snapshot_cache);
         upd = upd || ret;
         merge_maps(current_snapshot, snapshot_);
       }
@@ -303,7 +303,7 @@ bool repository::update_package_depends(
       for (const auto &i : deps.source.import.package) {
         snapshot snapshot_;
         const bool ret =
-            update_package_depends(stage(i.second, stage_type::installation),
+            update_package_depends(stage(i.package, stage_type::installation),
                                    updated, in, snapshot_, snapshot_cache);
         upd = upd || ret;
         merge_maps(current_snapshot, snapshot_);
@@ -311,8 +311,8 @@ bool repository::update_package_depends(
       for (const auto &i : deps.source.import.source) {
         snapshot snapshot_;
         const bool ret =
-            update_package_depends(stage(i.second, stage_type::source), updated,
-                                   in, snapshot_, snapshot_cache);
+            update_package_depends(stage(i.package, stage_type::source),
+                                   updated, in, snapshot_, snapshot_cache);
         upd = upd || ret;
         merge_maps(current_snapshot, snapshot_);
       }
