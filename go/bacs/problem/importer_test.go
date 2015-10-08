@@ -49,8 +49,7 @@ func TestFormat(t *testing.T) {
     require.NoError(t, err)
     defer os.RemoveAll(tmpdir)
 
-    formatFile, err := os.OpenFile(
-        path.Join(tmpdir, "format"), os.O_CREATE|os.O_WRONLY, 0666)
+    formatFile, err := os.Create(path.Join(tmpdir, "format"))
     require.NoError(t, err)
     formatFile.WriteString("my_problem_format")
     require.NoError(t, formatFile.Close())
@@ -66,8 +65,7 @@ func TestOpen(t *testing.T) {
     require.NoError(t, err)
     defer os.RemoveAll(tmpdir)
 
-    formatFile, err := os.OpenFile(
-        path.Join(tmpdir, "format"), os.O_CREATE|os.O_WRONLY, 0666)
+    formatFile, err := os.Create(path.Join(tmpdir, "format"))
     require.NoError(t, err)
     formatFile.WriteString("test")
     require.NoError(t, formatFile.Close())
