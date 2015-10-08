@@ -115,7 +115,7 @@ bool statement::make_package(const boost::filesystem::path &destination,
           destination / resources_package.location().filename();
       boost::filesystem::create_directory(package_root);
       bunsan::pm::index index;
-      index.source.self.insert(std::make_pair(".", "src"));
+      index.source.self.push_back({".", "src"});
       bunsan::filesystem::copy_tree(m_location, package_root / "src");
       index.save(package_root / "index");
     }

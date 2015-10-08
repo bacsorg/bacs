@@ -45,11 +45,11 @@ void pdflatex::make_package(const boost::filesystem::path &destination,
   try {
     bunsan::filesystem::reset_dir(destination);
     bunsan::pm::index index;
-    index.source.import.source.insert(
-        std::make_pair(".", "bacs/system/statement/pdflatex"));
-    index.source.import.source.insert(std::make_pair("src", resources_package));
-    index.source.self.insert(std::make_pair(".", "src"));
-    index.package.self.insert(std::make_pair(".", "pkg"));
+    index.source.import.source.push_back(
+        {".", "bacs/system/statement/pdflatex"});
+    index.source.import.source.push_back({"src", resources_package});
+    index.source.self.push_back({".", "src"});
+    index.package.self.push_back({".", "pkg"});
     boost::filesystem::create_directory(destination / "src");
     bunsan::filesystem::ofstream fout(destination / "src" / "source.cmake");
     BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fout) {

@@ -60,18 +60,18 @@ bool single::make_package(const boost::filesystem::path &destination,
     bunsan::pm::index index;
     const std::string lang = get_lang(m_source.filename().string());
     // builder itself
-    index.source.import.source.insert(
-        std::make_pair(".", "bacs/system/utility/single/" + lang));
+    index.source.import.source.push_back(
+        {".", "bacs/system/utility/single/" + lang});
     // sources, note: only build section is needed from config
-    index.source.self.insert(std::make_pair("src", "src"));
+    index.source.self.push_back({"src", "src"});
     bunsan::filesystem::copy_tree(location(), destination / "src");
     // utility configuration
-    index.package.self.insert(std::make_pair("etc", "etc"));
+    index.package.self.push_back({"etc", "etc"});
     boost::filesystem::create_directory(destination / "etc");
     boost::property_tree::write_ini((destination / "etc" / target()).string(),
                                     section("call"));
     // modules: set binary name
-    index.source.self.insert(std::make_pair("modules", "modules"));
+    index.source.self.push_back({"modules", "modules"});
     boost::filesystem::create_directory(destination / "modules");
     bunsan::filesystem::ofstream fout(destination / "modules" /
                                       "utility.cmake");
@@ -86,8 +86,8 @@ bool single::make_package(const boost::filesystem::path &destination,
     fout.close();
     // dependencies
     for (const std::string &lib : m_libs) {
-      index.source.import.package.insert(
-          std::make_pair(".", "bacs/lib/" + lang + "/" + lib));
+      index.source.import.package.push_back(
+          {".", "bacs/lib/" + lang + "/" + lib});
     }
     // save it
     index.save(destination / "index");

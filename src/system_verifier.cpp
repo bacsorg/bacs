@@ -13,9 +13,8 @@ bool system_verifier::make_package(const boost::filesystem::path &destination,
                                    const Revision & /*revision*/) const {
   bunsan::filesystem::reset_dir(destination);
   bunsan::pm::index index;
-  index.source.import.source.insert(
-      std::make_pair(".", "bacs/system/system_verifier"));
-  index.source.self.insert(std::make_pair(".", "src"));
+  index.source.import.source.push_back({".", "bacs/system/system_verifier"});
+  index.source.self.push_back({".", "src"});
   boost::filesystem::create_directories(destination / "src" / "src");
   bunsan::filesystem::ofstream fout(destination / "src" / "src" /
                                     "system_verifier.cpp");

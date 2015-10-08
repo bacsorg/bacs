@@ -42,9 +42,8 @@ void copy::make_package(const boost::filesystem::path &destination,
   try {
     bunsan::filesystem::reset_dir(destination);
     bunsan::pm::index index;
-    index.package.import.source.insert(
-        std::make_pair("data", resources_package));
-    index.package.self.insert(std::make_pair(".", "pkg"));
+    index.package.import.source.push_back({"data", resources_package});
+    index.package.self.push_back({".", "pkg"});
     boost::filesystem::create_directory(destination / "pkg");
     Statement::Version::Manifest statement_manifest;
     statement_manifest.mutable_version()->set_language(language());

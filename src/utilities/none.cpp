@@ -23,7 +23,7 @@ class none : public utility {
       boost::filesystem::create_directories(destination);
       bunsan::pm::index index;
       // utility configuration
-      index.package.self.insert(std::make_pair("etc", "etc"));
+      index.package.self.push_back({"etc", "etc"});
       boost::filesystem::create_directory(destination / "etc");
       boost::property_tree::write_ini((destination / "etc" / target()).string(),
                                       section("call"));

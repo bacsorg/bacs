@@ -53,11 +53,11 @@ bool alias::make_package(const boost::filesystem::path &destination,
     boost::filesystem::create_directories(destination);
     bunsan::pm::index index;
     // alias
-    index.package.import.package.insert(
-        std::make_pair(".", bunsan::pm::entry("bacs/system/single") /
-                                target().string() / "std" / m_alias));
+    index.package.import.package.push_back(
+        {".", bunsan::pm::entry("bacs/system/single") / target().string() /
+                  "std" / m_alias});
     // utility configuration
-    index.package.self.insert(std::make_pair("etc", "etc"));
+    index.package.self.push_back({"etc", "etc"});
     boost::filesystem::create_directory(destination / "etc");
     boost::property_tree::write_ini((destination / "etc" / target()).string(),
                                     section("call"));
