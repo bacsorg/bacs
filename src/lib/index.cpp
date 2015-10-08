@@ -3,7 +3,7 @@
 #include <bunsan/config/input_archive.hpp>
 #include <bunsan/config/output_archive.hpp>
 
-#include <boost/property_tree/info_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include <algorithm>
 
@@ -57,12 +57,12 @@ void index::load(const boost::property_tree::ptree &ptree) {
 
 void index::load(const boost::filesystem::path &path) {
   boost::property_tree::ptree ptree;
-  boost::property_tree::read_info(path.string(), ptree);
+  boost::property_tree::read_json(path.string(), ptree);
   load(ptree);
 }
 
 void index::save(const boost::filesystem::path &path) const {
-  boost::property_tree::write_info(
+  boost::property_tree::write_json(
       path.string(), static_cast<boost::property_tree::ptree>(*this));
 }
 

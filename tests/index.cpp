@@ -4,7 +4,7 @@
 #include <bunsan/pm/index.hpp>
 
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/info_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include <sstream>
 
@@ -13,52 +13,41 @@ BOOST_AUTO_TEST_SUITE(index_)
 
 BOOST_AUTO_TEST_CASE(load) {
   std::stringstream ind(R"EOF(
-package
 {
-    self
-    {
-        path1 source1
-    }
-
-    import
-    {
-        package
-        {
-            path2 package/number/one
-            path3 package/number/two
-        }
-        source
-        {
-            path4 package/number/three
-        }
-    }
-}
-
-source
-{
-    self
-    {
-        path5 source2
-        path6 source3
-    }
-
-    import
-    {
-        package
-        {
-            path7 package/number/four
-            path8 package/number/five
-        }
-        source
-        {
-            path9 package/number/six
-            path10 package/number/seven
-        }
-    }
+  "package": {
+      "self": {
+          "path1": "source1"
+      },
+      "import": {
+          "package": {
+              "path2": "package/number/one",
+              "path3": "package/number/two"
+          },
+          "source": {
+              "path4": "package/number/three"
+          }
+      }
+  },
+  "source": {
+      "self": {
+          "path5": "source2",
+          "path6": "source3"
+      },
+      "import": {
+          "package": {
+              "path7": "package/number/four",
+              "path8": "package/number/five"
+          },
+          "source": {
+              "path9": "package/number/six",
+              "path10": "package/number/seven"
+          }
+      }
+  }
 }
 )EOF");
   boost::property_tree::ptree ptree;
-  boost::property_tree::read_info(ind, ptree);
+  boost::property_tree::read_json(ind, ptree);
   const bunsan::pm::index index(ptree);
   const decltype(index.package.self) package_self = {{"path1", "source1"}};
   const decltype(index.package.import.package) package_import_package = {
