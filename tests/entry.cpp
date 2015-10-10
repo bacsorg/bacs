@@ -9,12 +9,14 @@
 
 #include <sstream>
 
+BOOST_AUTO_TEST_SUITE(entry)
+
 BOOST_AUTO_TEST_CASE(empty) {
   BOOST_CHECK_THROW(bunsan::pm::entry(""),
                     bunsan::pm::invalid_entry_name_error);
 }
 
-BOOST_AUTO_TEST_CASE(entry) {
+BOOST_AUTO_TEST_CASE(misc) {
   const std::string name = "some/long/name";
   const bunsan::pm::entry e(name);
   BOOST_CHECK_EQUAL(e.name(), name);
@@ -46,3 +48,5 @@ BOOST_AUTO_TEST_CASE(entry) {
   boost::property_tree::read_info(in, pt);
   BOOST_CHECK_EQUAL(pt.get<std::string>(e.ptree_path()), "hello world");
 }
+
+BOOST_AUTO_TEST_SUITE_END()  // entry
