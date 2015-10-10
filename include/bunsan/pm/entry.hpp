@@ -39,8 +39,8 @@ class entry {
   // operations
   bool empty() const;
   entry operator/(const entry &e) const;
-  entry absolute(const entry &root) const;
-  void make_absolute(const entry &root);
+  entry absolute(const entry &root = entry{}) const;
+  void make_absolute(const entry &root = entry{});
 
   // entry conversion getters
   boost::filesystem::path location() const;

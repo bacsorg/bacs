@@ -28,16 +28,23 @@ BOOST_AUTO_TEST_CASE(absolute) {
   BOOST_CHECK_EQUAL(entry("absolute/entry").absolute(root),
                     entry("absolute/entry"));
   BOOST_CHECK_EQUAL(entry().absolute(root), entry());
-  BOOST_CHECK_EQUAL(entry("~/relative/entry").absolute(root),
+  BOOST_CHECK_EQUAL(entry("./relative/entry").absolute(root),
                     entry("my/package/root/relative/entry"));
-  // empty root is not allowed
-  BOOST_CHECK_THROW(entry("absolute/entry").absolute(entry()),
-                    bunsan::pm::empty_entry_error);
-  BOOST_CHECK_THROW(entry().absolute(entry()), bunsan::pm::empty_entry_error);
-  BOOST_CHECK_THROW(entry("~/relative/entry").absolute(entry()),
-                    bunsan::pm::empty_entry_error);
+  BOOST_CHECK_EQUAL(entry("./../entry").absolute(root),
+                    entry("my/package/entry"));
+  BOOST_CHECK_EQUAL(entry("../entry").absolute(root),
+                    entry("my/package/entry"));
+  BOOST_CHECK_EQUAL(entry("hello/../world").absolute(root), entry("world"));
+  BOOST_CHECK_EQUAL(entry("absolute/./entry").absolute(root),
+                    entry("absolute/entry"));
+  // empty root
+  BOOST_CHECK_EQUAL(entry("absolute/entry").absolute(),
+                    entry("absolute/entry"));
+  BOOST_CHECK_EQUAL(entry().absolute(), entry());
+  BOOST_CHECK_EQUAL(entry("./relative/entry").absolute(),
+                    entry("relative/entry"));
   // in-place
-  entry e("~/relative/entry");
+  entry e("./relative/entry");
   e.make_absolute(root);
   BOOST_CHECK_EQUAL(e, entry("my/package/root/relative/entry"));
 }

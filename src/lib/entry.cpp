@@ -16,9 +16,8 @@ bool entry::is_allowed_symbol(char c) {
 }
 
 bool entry::is_allowed_subpath(const std::string &subpath) {
-  return !subpath.empty() && subpath != "." && subpath != ".." &&
-         (subpath == "~" ||
-          boost::algorithm::all(subpath, entry::is_allowed_symbol));
+  return !subpath.empty() &&
+         boost::algorithm::all(subpath, entry::is_allowed_symbol);
 }
 
 entry::entry(const std::string &name_, char delim) { build(name_, delim); }
@@ -74,16 +73,28 @@ entry entry::operator/(const entry &e) const {
 }
 
 entry entry::absolute(const entry &root) const {
-  if (root.empty()) BOOST_THROW_EXCEPTION(empty_entry_error());
-  if (empty()) return *this;
-  if (m_location[0] != "~") return *this;
-  entry e;
-  e.m_location.assign(m_location.begin() + 1, m_location.end());
-  return root / e;
+  entry ent(*this);
+  ent.make_absolute(root);
+  return ent;
 }
 
 void entry::make_absolute(const entry &root) {
-  *this = absolute(root);
+  if (empty()) return;
+  if (m_location.front() == "." || m_location.front() == "..") {
+    m_location.insert(m_location.begin(), root.m_location.begin(),
+                      root.m_location.end());
+  }
+  std::vector<std::string> location;
+  for (const std::string &e : m_location) {
+    if (e == ".") {
+      // nothing
+    } else if (e == "..") {
+      if (!location.empty()) location.pop_back();
+    } else {
+      location.push_back(e);
+    }
+  }
+  m_location.swap(location);
 }
 
 boost::filesystem::path entry::location() const {
