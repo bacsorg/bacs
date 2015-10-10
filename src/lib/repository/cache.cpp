@@ -150,7 +150,7 @@ void repository::cache::clean() {
 
 index repository::cache::read_index(const entry &package) {
   try {
-    return index(index_path(package));
+    return index(index_path(package)).absolute(package);
   } catch (std::exception &) {
     BOOST_THROW_EXCEPTION(cache_read_index_error()
                           << cache_read_index_error::package(package)

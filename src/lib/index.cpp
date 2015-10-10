@@ -66,5 +66,18 @@ void index::save(const boost::filesystem::path &path) const {
       path.string(), static_cast<boost::property_tree::ptree>(*this));
 }
 
+index index::absolute(const entry &root) const {
+  index ind = *this;
+  ind.make_absolute(root);
+  return ind;
+}
+
+void index::make_absolute(const entry &root) {
+  for (auto &i : source.import.source) i.package.make_absolute(root);
+  for (auto &i : source.import.package) i.package.make_absolute(root);
+  for (auto &i : package.import.source) i.package.make_absolute(root);
+  for (auto &i : package.import.package) i.package.make_absolute(root);
+}
+
 }  // namespace pm
 }  // namespace bunsan

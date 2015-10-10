@@ -88,6 +88,9 @@ struct index {
   void load(const boost::filesystem::path &path);
   void save(const boost::filesystem::path &path) const;
 
+  index absolute(const entry &root) const;
+  void make_absolute(const entry &root);
+
   // TODO make it unordered
   std::set<entry> all() const;
 
