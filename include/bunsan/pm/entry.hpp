@@ -36,8 +36,11 @@ class entry {
   bool operator==(const entry &e) const;
   bool operator<(const entry &e) const;
 
-  // concatenation
+  // operations
+  bool empty() const;
   entry operator/(const entry &e) const;
+  entry absolute(const entry &root) const;
+  void make_absolute(const entry &root);
 
   // entry conversion getters
   boost::filesystem::path location() const;

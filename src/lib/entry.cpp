@@ -17,7 +17,8 @@ bool entry::is_allowed_symbol(char c) {
 
 bool entry::is_allowed_subpath(const std::string &subpath) {
   return !subpath.empty() && subpath != "." && subpath != ".." &&
-         boost::algorithm::all(subpath, entry::is_allowed_symbol);
+         (subpath == "~" ||
+          boost::algorithm::all(subpath, entry::is_allowed_symbol));
 }
 
 entry::entry(const std::string &name_, char delim) { build(name_, delim); }
@@ -33,7 +34,7 @@ void entry::build(const std::string &name_, char delim) {
     if (!is_allowed_subpath(i))
       BOOST_THROW_EXCEPTION(invalid_entry_name_error()
                             << invalid_entry_name_error::entry_name(name_));
-  BOOST_ASSERT(!m_location.empty());
+  BOOST_ASSERT(!empty());
 }
 
 entry &entry::operator=(entry &&e) noexcept {
@@ -61,11 +62,28 @@ bool entry::operator<(const entry &e) const {
   return m_location < e.m_location;
 }
 
+bool entry::empty() const {
+  return m_location.empty();
+}
+
 entry entry::operator/(const entry &e) const {
   entry ent(*this);
   ent.m_location.insert(ent.m_location.end(), e.m_location.begin(),
                         e.m_location.end());
   return ent;
+}
+
+entry entry::absolute(const entry &root) const {
+  if (root.empty()) BOOST_THROW_EXCEPTION(empty_entry_error());
+  if (empty()) return *this;
+  if (m_location[0] != "~") return *this;
+  entry e;
+  e.m_location.assign(m_location.begin() + 1, m_location.end());
+  return root / e;
+}
+
+void entry::make_absolute(const entry &root) {
+  *this = absolute(root);
 }
 
 boost::filesystem::path entry::location() const {
@@ -83,8 +101,7 @@ boost::property_tree::ptree::path_type entry::ptree_path() const {
 }
 
 std::string entry::name(const std::string &delim) const {
-  if (m_location.empty())
-    BOOST_THROW_EXCEPTION(empty_entry_error());
+  if (empty()) BOOST_THROW_EXCEPTION(empty_entry_error());
   return boost::algorithm::join(m_location, delim);
 }
 
