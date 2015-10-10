@@ -2,14 +2,20 @@
 #include <boost/test/unit_test.hpp>
 
 #include <bunsan/pm/entry.hpp>
+#include <bunsan/pm/error.hpp>
 
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 #include <sstream>
 
+BOOST_AUTO_TEST_CASE(empty) {
+  BOOST_CHECK_THROW(bunsan::pm::entry(""),
+                    bunsan::pm::invalid_entry_name_error);
+}
+
 BOOST_AUTO_TEST_CASE(entry) {
-  std::string name = "some/long/name";
+  const std::string name = "some/long/name";
   const bunsan::pm::entry e(name);
   BOOST_CHECK_EQUAL(e.name(), name);
   BOOST_CHECK_EQUAL(e.location().string(), name);
