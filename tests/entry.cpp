@@ -11,6 +11,11 @@
 
 BOOST_AUTO_TEST_SUITE(entry)
 
+BOOST_AUTO_TEST_CASE(default_) {
+  const bunsan::pm::entry e;
+  BOOST_CHECK_THROW(e.name(), bunsan::pm::empty_entry_error);
+}
+
 BOOST_AUTO_TEST_CASE(empty) {
   BOOST_CHECK_THROW(bunsan::pm::entry(""),
                     bunsan::pm::invalid_entry_name_error);

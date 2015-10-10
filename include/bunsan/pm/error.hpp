@@ -51,7 +51,10 @@ struct need_update_error : virtual repository_error {};
 struct clean_error : virtual repository_error {};
 
 /// \todo consider rename
-struct invalid_entry_name_error : virtual error {
+struct entry_error : virtual error {};
+struct entry_name_error : virtual entry_error {};
+struct empty_entry_error : virtual entry_error {};
+struct invalid_entry_name_error : virtual entry_name_error {
   using entry_name = boost::error_info<struct tag_entry_name, std::string>;
 };
 

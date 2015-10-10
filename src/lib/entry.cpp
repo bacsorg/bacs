@@ -83,7 +83,8 @@ boost::property_tree::ptree::path_type entry::ptree_path() const {
 }
 
 std::string entry::name(const std::string &delim) const {
-  BOOST_ASSERT(!m_location.empty());
+  if (m_location.empty())
+    BOOST_THROW_EXCEPTION(empty_entry_error());
   return boost::algorithm::join(m_location, delim);
 }
 
