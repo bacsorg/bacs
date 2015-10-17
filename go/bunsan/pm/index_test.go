@@ -105,9 +105,10 @@ func TestIndex(t *testing.T) {
     }
     for _, tt := range testData {
         {   // read
-            index, err := ReadIndexFromString(tt.data)
+            var index Index
+            err := index.ReadFromString(tt.data)
             assert.NoError(t, err)
-            assert.Equal(t, &tt.index, index)
+            assert.Equal(t, tt.index, index)
         }
         {   // marshal
             data, err := tt.index.Marshal()

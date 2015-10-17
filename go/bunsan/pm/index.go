@@ -140,15 +140,3 @@ func (x *Index) WriteToFile(filename string) error {
     }
     return nil
 }
-
-func ReadIndexFromString(data string) (*Index, error) {
-    index := &Index{}
-    err := index.ReadFromString(data)
-    return index, err
-}
-
-func ReadIndexFromFile(file string) (*Index, error) {
-    index := &Index{}
-    err := index.ReadFromFile(file)
-    return index, err
-}
