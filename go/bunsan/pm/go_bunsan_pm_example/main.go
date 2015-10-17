@@ -2,6 +2,7 @@ package main
 
 import (
     "flag"
+    "log"
 
     "github.com/bunsanorg/pm/go/bunsan/pm"
 )
@@ -12,11 +13,11 @@ func main() {
     flag.Parse()
     repo, err := pm.NewRepository(*config)
     if err != nil {
-        panic(err)
+        log.Fatal(err)
     }
     defer repo.Close()
     err = repo.Extract("hello", "world")
     if err != nil {
-        panic(err)
+        log.Fatal(err)
     }
 }
