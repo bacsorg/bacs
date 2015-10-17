@@ -3,29 +3,12 @@ package pm
 import (
     "encoding/json"
     "fmt"
-    "io/ioutil"
 )
 
 const (
     maxFileSize   = 64 * 1024 * 1024 // 64 MiB
     IndexFileName = "index"
 )
-
-type indexReadError struct {
-    err error
-}
-
-func (e *indexReadError) Error() string {
-    return fmt.Sprintf("unable to read index: %v", e.err)
-}
-
-type indexWriteError struct {
-    err error
-}
-
-func (e *indexWriteError) Error() string {
-    return fmt.Sprintf("unable to write index: %v", e.err)
-}
 
 type TreeImport struct {
     Path    string `json:"path"`
@@ -101,42 +84,18 @@ func (x *Index) Sources() []string {
     return result
 }
 
-func (x *Index) Unmarshal(data []byte) error {
-    err := json.Unmarshal(data, x)
-    if err != nil {
-        return &indexReadError{err}
-    }
-    return nil
-}
-
 func (x *Index) Marshal() ([]byte, error) {
     data, err := json.MarshalIndent(x, "", "    ")
     if err != nil {
-        return nil, &indexWriteError{err}
+        return nil, fmt.Errorf("unable to marshal index: %v", err)
     }
     return data, nil
 }
 
-func (x *Index) ReadFromString(data string) error {
-    return x.Unmarshal([]byte(data))
-}
-
-func (x *Index) ReadFromFile(filename string) error {
-    data, err := ioutil.ReadFile(filename)
+func (x *Index) Unmarshal(data []byte) error {
+    err := json.Unmarshal(data, x)
     if err != nil {
-        return &indexReadError{err}
-    }
-    return x.Unmarshal(data)
-}
-
-func (x *Index) WriteToFile(filename string) error {
-    data, err := x.Marshal()
-    if err != nil {
-        return err
-    }
-    err = ioutil.WriteFile(filename, data, 0666)
-    if err != nil {
-        return &indexWriteError{err}
+        return fmt.Errorf("unable to unmarshal index: %v", err)
     }
     return nil
 }

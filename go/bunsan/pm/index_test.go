@@ -106,7 +106,7 @@ func TestIndex(t *testing.T) {
     for _, tt := range testData {
         {   // read
             var index Index
-            err := index.ReadFromString(tt.data)
+            err := index.Unmarshal([]byte(tt.data))
             assert.NoError(t, err)
             assert.Equal(t, tt.index, index)
         }
