@@ -38,4 +38,13 @@ func TestSnapshot(t *testing.T) {
     assert.True(t, a.Equal(b))
     assert.True(t, b.Equal(a))
     assert.True(t, b.Equal(b))
+
+    data, err := a.Marshal()
+    assert.NoError(t, err)
+    assert.Regexp(t, `(?s).*"package1":.*"package2":.*`, string(data))
+    var c Snapshot
+    err = c.Unmarshal(data)
+    assert.NoError(t, err)
+    assert.True(t, c.Equal(a))
+    assert.Equal(t, a, c)
 }
