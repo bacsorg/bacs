@@ -3,9 +3,7 @@ package pm
 import (
     "encoding/json"
     "fmt"
-    "io"
     "io/ioutil"
-    "os"
 )
 
 const (
@@ -123,38 +121,20 @@ func (x *Index) ReadFromString(data string) error {
     return x.Unmarshal([]byte(data))
 }
 
-func (x *Index) ReadFromFile(file string) error {
-    f, err := os.Open(file)
+func (x *Index) ReadFromFile(filename string) error {
+    data, err := ioutil.ReadFile(filename)
     if err != nil {
         return &indexReadError{err}
-    }
-    defer f.Close()
-    data, err := ioutil.ReadAll(io.LimitReader(f, maxFileSize))
-    if err != nil {
-        return &indexReadError{err}
-    }
-    if len(data) == maxFileSize {
-        return &indexReadError{fmt.Errorf("file %q is too big", file)}
     }
     return x.Unmarshal(data)
 }
 
-func (x *Index) WriteToFile(file string) (err error) {
-    f, err := os.Open(file)
-    if err != nil {
-        return &indexWriteError{err}
-    }
-    defer func() {
-        cerr := f.Close()
-        if cerr != nil {
-            err = &indexWriteError{cerr}
-        }
-    }()
+func (x *Index) WriteToFile(filename string) error {
     data, err := x.Marshal()
     if err != nil {
         return err
     }
-    _, err = f.Write(data)
+    err = ioutil.WriteFile(filename, data, 0666)
     if err != nil {
         return &indexWriteError{err}
     }
