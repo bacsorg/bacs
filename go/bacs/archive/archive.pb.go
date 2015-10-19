@@ -26,7 +26,7 @@ import bacs_archive_problem1 "github.com/bacsorg/archive/go/bacs/archive/problem
 import bacs_archive_problem3 "github.com/bacsorg/archive/go/bacs/archive/problem"
 import bacs_archive_problem4 "github.com/bacsorg/archive/go/bacs/archive/problem"
 import bacs_utility "github.com/bacsorg/common/go/bacs/utility"
-import google_protobuf1 "github.com/bacsorg/protobuf/google/protobuf"
+import google_protobuf1 "github.com/bunsanorg/protoutils/google/protobuf"
 
 import (
 	context "golang.org/x/net/context"
