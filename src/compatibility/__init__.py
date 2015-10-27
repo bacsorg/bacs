@@ -4,7 +4,9 @@ from bunsan.pm import _pm
 
 
 class Error(Exception):
-    pass
+
+    def __init__(self, **kwargs):
+        super(Error, self).__init__(kwargs)
 
 
 class CreateError(Error):
