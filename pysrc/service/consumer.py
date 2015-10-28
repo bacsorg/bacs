@@ -4,7 +4,7 @@ import threading
 import time
 
 from bunsan.broker.service import sender
-from bunsan.broker import rabbit_pb2
+from bunsan.broker.rabbit import connection_pb2
 
 
 _RETRY_TIME = 5
@@ -109,7 +109,7 @@ class Consumer(object):
         """Actual consume implementation, may throw exceptions"""
         self._logger.info('Received task: %s', properties.correlation_id)
         error_sender = sender.ErrorSender(channel, properties)
-        rabbit_task = rabbit_pb2.RabbitTask()
+        rabbit_task = connection_pb2.RabbitTask()
         try:
             rabbit_task.ParseFromString(body)
         except Exception as e:
@@ -125,7 +125,7 @@ class Consumer(object):
         self._logger.debug('Running callback')
 
         def send_status(status):
-            rabbit_status = rabbit_pb2.RabbitStatus()
+            rabbit_status = connection_pb2.RabbitStatus()
             rabbit_status.identifier = rabbit_task.identifier
             rabbit_status.status.CopyFrom(status)
             status_sender.send_proto(rabbit_status)
@@ -138,7 +138,7 @@ class Consumer(object):
             error_sender.sendmsg('Unable to complete callback: %s', e)
             raise
         try:
-            rabbit_result = rabbit_pb2.RabbitResult()
+            rabbit_result = connection_pb2.RabbitResult()
             rabbit_result.identifier = rabbit_task.identifier
             rabbit_result.result.CopyFrom(result)
             result_sender.send_proto(rabbit_result)

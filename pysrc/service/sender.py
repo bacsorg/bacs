@@ -1,7 +1,7 @@
 import logging
 import pika
 
-from bunsan.broker import rabbit_pb2
+from bunsan.broker.rabbit import connection_pb2
 
 
 class Sender(object):
@@ -43,7 +43,7 @@ class StatusSender(ProtoSender):
         super(StatusSender, self).__init__(*args, **kwargs)
 
     def send_status(self, code, reason=None, data=None):
-        status = rabbit_pb2.RabbitStatus()
+        status = connection_pb2.RabbitStatus()
         status.identifier = self._identifier
         status.status.code = code
         if reason is not None:
@@ -60,7 +60,7 @@ class ResultSender(ProtoSender):
         super(ResultSender, self).__init__(*args, **kwargs)
 
     def send_result(self, status, reason=None, data=None):
-        result = rabbit_pb2.RabbitResult()
+        result = connection_pb2.RabbitResult()
         result.identifier = self._identifier
         result.result.status = status
         if reason is not None:

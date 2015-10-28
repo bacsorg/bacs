@@ -18,7 +18,7 @@ bunsan_add_protobuf_cxx_library(
     PROTOS
         bunsan/broker/connection.proto
         bunsan/broker/protocol.proto
-        bunsan/broker/rabbit.proto
+        bunsan/broker/rabbit/connection.proto
     INSTALL
 )
 bunsan_install_python_package(
