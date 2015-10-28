@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package bunsan_broker is a generated protocol buffer package.
+Package broker is a generated protocol buffer package.
 
 It is generated from these files:
 	bunsan/broker/connection.proto
@@ -17,7 +17,7 @@ It has these top-level messages:
 	Status
 	Result
 */
-package bunsan_broker
+package broker
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"

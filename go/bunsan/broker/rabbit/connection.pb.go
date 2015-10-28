@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package bunsan_broker_rabbit is a generated protocol buffer package.
+Package rabbit is a generated protocol buffer package.
 
 It is generated from these files:
 	bunsan/broker/rabbit/connection.proto
@@ -13,7 +13,7 @@ It has these top-level messages:
 	RabbitStatus
 	RabbitResult
 */
-package bunsan_broker_rabbit
+package rabbit
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"

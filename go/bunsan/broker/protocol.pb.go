@@ -2,7 +2,7 @@
 // source: bunsan/broker/protocol.proto
 // DO NOT EDIT!
 
-package bunsan_broker
+package broker
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"

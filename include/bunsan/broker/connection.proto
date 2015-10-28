@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package bunsan.broker;
+option go_package = "broker";
 
 message Credentials {
   string method = 1;

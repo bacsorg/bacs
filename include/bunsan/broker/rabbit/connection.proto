@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package bunsan.broker.rabbit;
+option go_package = "rabbit";
 
 import "bunsan/broker/connection.proto";
 import "bunsan/broker/protocol.proto";
