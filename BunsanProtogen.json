@@ -1,0 +1,6 @@
+{
+    "Local": {
+        "ProtoPrefix": "include",
+        "GoPrefix": "go"
+    }
+}
