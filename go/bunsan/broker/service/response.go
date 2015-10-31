@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/assembla/cony"
 	"github.com/bunsanorg/broker/go/bunsan/broker"
+	"github.com/streadway/amqp"
 )
 
 type StatusWriter interface {
@@ -41,15 +41,20 @@ func (w *rabbitResponseWriter) WriteError(err error) error {
 }
 
 func NewResponseWriter(
-	publisher *cony.Publisher, correlationId string) ResponseWriter {
+	channel *amqp.Channel,
+	statusQueue, resultQueue, errorQueue,
+	correlationId string) ResponseWriter {
 
 	return &rabbitResponseWriter{
 		statusWriter: &bytesProtoWriter{
-			NewNonPersistentBytesWriter(publisher, correlationId),
+			NewNonPersistentBytesWriter(
+				channel, statusQueue, correlationId),
 		},
 		resultWriter: &bytesProtoWriter{
-			NewPersistentBytesWriter(publisher, correlationId),
+			NewPersistentBytesWriter(
+				channel, resultQueue, correlationId),
 		},
-		errorWriter: NewPersistentBytesWriter(publisher, correlationId),
+		errorWriter: NewPersistentBytesWriter(
+			channel, errorQueue, correlationId),
 	}
 }

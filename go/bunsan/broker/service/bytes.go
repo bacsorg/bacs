@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/assembla/cony"
 	"github.com/streadway/amqp"
 )
 
@@ -10,35 +9,45 @@ type BytesWriter interface {
 }
 
 type rabbitBytesWriter struct {
-	publisher     *cony.Publisher
+	channel       *amqp.Channel
+	destination   string
 	deliveryMode  uint8
 	correlationId string
 }
 
 func NewNonPersistentBytesWriter(
-	publisher *cony.Publisher, correlationId string) BytesWriter {
+	channel *amqp.Channel,
+	destination, correlationId string) BytesWriter {
 
 	return &rabbitBytesWriter{
-		publisher:     publisher,
+		channel:       channel,
+		destination:   destination,
 		deliveryMode:  1,
 		correlationId: correlationId,
 	}
 }
 
 func NewPersistentBytesWriter(
-	publisher *cony.Publisher, correlationId string) BytesWriter {
+	channel *amqp.Channel,
+	destination, correlationId string) BytesWriter {
 
 	return &rabbitBytesWriter{
-		publisher:     publisher,
+		channel:       channel,
+		destination:   destination,
 		deliveryMode:  2,
 		correlationId: correlationId,
 	}
 }
 
 func (w *rabbitBytesWriter) WriteBytes(data []byte) error {
-	return w.publisher.Publish(amqp.Publishing{
-		Body:          data,
-		DeliveryMode:  w.deliveryMode,
-		CorrelationId: w.correlationId,
-	})
+	return w.channel.Publish(
+		"",            // exchange
+		w.destination, // routing key
+		false,         // mandatory
+		false,         // immediate
+		amqp.Publishing{
+			Body:          data,
+			DeliveryMode:  w.deliveryMode,
+			CorrelationId: w.correlationId,
+		})
 }
