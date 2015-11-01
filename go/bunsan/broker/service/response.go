@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/bunsanorg/broker/go/bunsan/broker"
+	"github.com/bunsanorg/broker/go/bunsan/broker/rabbit"
 	"github.com/streadway/amqp"
 )
 
@@ -24,16 +25,23 @@ type ResponseWriter interface {
 }
 
 type rabbitResponseWriter struct {
+	correlationId              string
 	statusWriter, resultWriter ProtoWriter
 	errorWriter                BytesWriter
 }
 
 func (w *rabbitResponseWriter) WriteStatus(status broker.Status) error {
-	return w.statusWriter.WriteProto(&status)
+	return w.statusWriter.WriteProto(&rabbit.RabbitStatus{
+		Identifier: w.correlationId,
+		Status:     &status,
+	})
 }
 
 func (w *rabbitResponseWriter) WriteResult(result broker.Result) error {
-	return w.resultWriter.WriteProto(&result)
+	return w.resultWriter.WriteProto(&rabbit.RabbitResult{
+		Identifier: w.correlationId,
+		Result:     &result,
+	})
 }
 
 func (w *rabbitResponseWriter) WriteError(err error) error {
