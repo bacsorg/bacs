@@ -18,51 +18,81 @@ type ErrorWriter interface {
 	WriteError(err error) error
 }
 
-type ResponseWriter interface {
-	StatusWriter
-	ResultWriter
-	ErrorWriter
+type rabbitStatusWriter struct {
+	correlationId string
+	writer        ProtoWriter
 }
 
-type rabbitResponseWriter struct {
-	correlationId              string
-	statusWriter, resultWriter ProtoWriter
-	errorWriter                BytesWriter
+func NewStatusWriter(
+	channel *amqp.Channel, queue, correlationId string) StatusWriter {
+
+	return &rabbitStatusWriter{
+		correlationId: correlationId,
+		writer: &bytesProtoWriter{
+			&rabbitBytesWriter{
+				Channel:       channel,
+				DeliveryMode:  amqp.Transient,
+				Destination:   queue,
+				CorrelationId: correlationId,
+			},
+		},
+	}
 }
 
-func (w *rabbitResponseWriter) WriteStatus(status broker.Status) error {
-	return w.statusWriter.WriteProto(&rabbit.RabbitStatus{
+func (w *rabbitStatusWriter) WriteStatus(status broker.Status) error {
+	return w.writer.WriteProto(&rabbit.RabbitStatus{
 		Identifier: w.correlationId,
 		Status:     &status,
 	})
 }
 
-func (w *rabbitResponseWriter) WriteResult(result broker.Result) error {
-	return w.resultWriter.WriteProto(&rabbit.RabbitResult{
+type rabbitResultWriter struct {
+	correlationId string
+	writer        ProtoWriter
+}
+
+func NewResultWriter(
+	channel *amqp.Channel, queue, correlationId string) ResultWriter {
+
+	return &rabbitResultWriter{
+		correlationId: correlationId,
+		writer: &bytesProtoWriter{
+			&rabbitBytesWriter{
+				Channel:       channel,
+				DeliveryMode:  amqp.Persistent,
+				Destination:   queue,
+				CorrelationId: correlationId,
+			},
+		},
+	}
+}
+
+func (w *rabbitResultWriter) WriteResult(result broker.Result) error {
+	return w.writer.WriteProto(&rabbit.RabbitResult{
 		Identifier: w.correlationId,
 		Result:     &result,
 	})
 }
 
-func (w *rabbitResponseWriter) WriteError(err error) error {
-	return w.errorWriter.WriteBytes([]byte(err.Error()))
+type rabbitErrorWriter struct {
+	correlationId string
+	writer        BytesWriter
 }
 
-func NewResponseWriter(
-	channel *amqp.Channel,
-	statusQueue, resultQueue, errorQueue,
-	correlationId string) ResponseWriter {
+func NewErrorWriter(
+	channel *amqp.Channel, queue, correlationId string) ErrorWriter {
 
-	return &rabbitResponseWriter{
-		statusWriter: &bytesProtoWriter{
-			NewNonPersistentBytesWriter(
-				channel, statusQueue, correlationId),
+	return &rabbitErrorWriter{
+		correlationId: correlationId,
+		writer: &rabbitBytesWriter{
+			Channel:       channel,
+			DeliveryMode:  amqp.Persistent,
+			Destination:   queue,
+			CorrelationId: correlationId,
 		},
-		resultWriter: &bytesProtoWriter{
-			NewPersistentBytesWriter(
-				channel, resultQueue, correlationId),
-		},
-		errorWriter: NewPersistentBytesWriter(
-			channel, errorQueue, correlationId),
 	}
+}
+
+func (w *rabbitErrorWriter) WriteError(err error) error {
+	return w.writer.WriteBytes([]byte(err.Error()))
 }

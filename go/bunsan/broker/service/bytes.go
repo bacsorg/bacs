@@ -9,45 +9,21 @@ type BytesWriter interface {
 }
 
 type rabbitBytesWriter struct {
-	channel       *amqp.Channel
-	destination   string
-	deliveryMode  uint8
-	correlationId string
-}
-
-func NewNonPersistentBytesWriter(
-	channel *amqp.Channel,
-	destination, correlationId string) BytesWriter {
-
-	return &rabbitBytesWriter{
-		channel:       channel,
-		destination:   destination,
-		deliveryMode:  1,
-		correlationId: correlationId,
-	}
-}
-
-func NewPersistentBytesWriter(
-	channel *amqp.Channel,
-	destination, correlationId string) BytesWriter {
-
-	return &rabbitBytesWriter{
-		channel:       channel,
-		destination:   destination,
-		deliveryMode:  2,
-		correlationId: correlationId,
-	}
+	Channel       *amqp.Channel
+	Destination   string
+	DeliveryMode  uint8
+	CorrelationId string
 }
 
 func (w *rabbitBytesWriter) WriteBytes(data []byte) error {
-	return w.channel.Publish(
+	return w.Channel.Publish(
 		"",            // exchange
-		w.destination, // routing key
+		w.Destination, // routing key
 		false,         // mandatory
 		false,         // immediate
 		amqp.Publishing{
 			Body:          data,
-			DeliveryMode:  w.deliveryMode,
-			CorrelationId: w.correlationId,
+			DeliveryMode:  w.DeliveryMode,
+			CorrelationId: w.CorrelationId,
 		})
 }
