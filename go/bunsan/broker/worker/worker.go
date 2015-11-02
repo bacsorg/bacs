@@ -7,6 +7,7 @@ import (
 
 	"github.com/bunsanorg/broker/go/bunsan/broker"
 	"github.com/bunsanorg/broker/go/bunsan/broker/service"
+	"github.com/bunsanorg/broker/go/bunsan/broker/worker/driver"
 	"github.com/bunsanorg/pm/go/bunsan/pm"
 )
 
@@ -48,7 +49,7 @@ func (w *worker) do(request service.Request) error {
 		}
 		close(done)
 	}()
-	result, err := run(request.Task(), statuses)
+	result, err := driver.Run(request.Task(), statuses)
 	if err != nil {
 		return err
 	}

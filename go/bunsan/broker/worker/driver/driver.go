@@ -1,4 +1,4 @@
-package worker
+package driver
 
 import (
 	"fmt"
@@ -29,7 +29,7 @@ func Register(name string, driver Driver) {
 	drivers[name] = driver
 }
 
-func run(task *broker.Task,
+func Run(task *broker.Task,
 	statusWriter chan<- broker.Status) (broker.Result, error) {
 
 	driversMu.Lock()
