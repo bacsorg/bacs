@@ -2,6 +2,7 @@ package worker
 
 import (
 	"log"
+	"runtime"
 	"sync"
 
 	"github.com/bunsanorg/broker/go/bunsan/broker/service"
@@ -23,6 +24,14 @@ type workerPool struct {
 	workers          []Worker
 	requests         chan service.Request
 	canceler         chan struct{}
+}
+
+func NewWorkerPool() WorkerPool {
+	return &workerPool{
+		workers:  make([]Worker, 0, runtime.NumCPU()),
+		requests: make(chan service.Request),
+		canceler: make(chan struct{}),
+	}
 }
 
 func (p *workerPool) run(worker Worker) {
