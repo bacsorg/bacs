@@ -18,6 +18,13 @@ type Task struct {
 	StatusWriter     chan<- broker.Status
 }
 
+func (task Task) ReadDriverName() (string, error) {
+	if task.BrokerTask.Worker == "" {
+		return "", fmt.Errorf("empty driver name")
+	}
+	return task.BrokerTask.Worker, nil
+}
+
 type Driver interface {
 	Run(task Task) (broker.Result, error)
 }
@@ -35,12 +42,16 @@ func Register(name string, driver Driver) {
 }
 
 func Run(task Task) (broker.Result, error) {
+	driverName, err := task.ReadDriverName()
+	if err != nil {
+		return broker.Result{}, err
+	}
 	driversMu.Lock()
-	driver, ok := drivers[task.BrokerTask.Worker]
+	driver, ok := drivers[driverName]
 	driversMu.Unlock()
 	if !ok {
 		return broker.Result{}, fmt.Errorf(
-			"worker: unknown driver %q", task.BrokerTask.Worker)
+			"worker: unknown driver %q", driverName)
 	}
 	return driver.Run(task)
 }
