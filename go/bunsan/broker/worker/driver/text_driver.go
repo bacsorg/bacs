@@ -38,6 +38,7 @@ func (d TextDriver) Run(task Task) (result broker.Result, err error) {
 	var wlog bytes.Buffer
 	executable := path.Join(task.WorkingDirectory, d.executable)
 	cmd := exec.Command(executable)
+	cmd.Dir = task.WorkingDirectory
 	cmd.Stdin = bytes.NewReader(task.BrokerTask.Data)
 	cmd.Stderr = &wlog
 	stdout, err := cmd.StdoutPipe()
