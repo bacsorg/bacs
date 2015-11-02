@@ -12,9 +12,14 @@ var (
 	drivers   = make(map[string]Driver)
 )
 
+type Task struct {
+	BrokerTask       *broker.Task
+	WorkingDirectory string
+	StatusWriter     chan<- broker.Status
+}
+
 type Driver interface {
-	Run(task *broker.Task,
-		statusWriter chan<- broker.Status) (broker.Result, error)
+	Run(task Task) (broker.Result, error)
 }
 
 func Register(name string, driver Driver) {
@@ -29,15 +34,13 @@ func Register(name string, driver Driver) {
 	drivers[name] = driver
 }
 
-func Run(task *broker.Task,
-	statusWriter chan<- broker.Status) (broker.Result, error) {
-
+func Run(task Task) (broker.Result, error) {
 	driversMu.Lock()
-	driver, ok := drivers[task.Worker]
+	driver, ok := drivers[task.BrokerTask.Worker]
 	driversMu.Unlock()
 	if !ok {
 		return broker.Result{}, fmt.Errorf(
-			"worker: unknown driver %q", task.Worker)
+			"worker: unknown driver %q", task.BrokerTask.Worker)
 	}
-	return driver.Run(task, statusWriter)
+	return driver.Run(task)
 }

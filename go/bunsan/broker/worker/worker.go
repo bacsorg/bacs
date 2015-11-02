@@ -49,7 +49,11 @@ func (w *worker) do(request service.Request) error {
 		}
 		close(done)
 	}()
-	result, err := driver.Run(request.Task(), statuses)
+	result, err := driver.Run(driver.Task{
+		BrokerTask:       request.Task(),
+		WorkingDirectory: w.dir,
+		StatusWriter:     statuses,
+	})
 	if err != nil {
 		return err
 	}
