@@ -48,6 +48,7 @@ func (d TextDriver) Run(task Task) (result broker.Result, err error) {
 		return broker.Result{}, nil
 	}
 	defer func() {
+		close(task.StatusWriter)
 		stdout.Close()
 		werr := cmd.Wait()
 		if err != nil {
