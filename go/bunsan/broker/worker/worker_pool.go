@@ -75,7 +75,7 @@ func (p *workerPool) DoAll(requests <-chan service.Request) error {
 }
 
 func (p *workerPool) Cancel() error {
-	close(p.requests)
+	close(p.canceler)
 	return nil
 }
 
