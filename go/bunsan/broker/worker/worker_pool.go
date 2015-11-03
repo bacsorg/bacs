@@ -13,38 +13,93 @@ type WorkerPool interface {
 	Add(worker Worker) error
 	// Process requests from channel.
 	DoAll(requests <-chan service.Request) error
-	// Finish last request gracefully, do not process new requests.
+	// Finish all consumed requests, do not process new requests.
 	Cancel() error
-	// Abort everything now.
+	// Abort everything now, drop consumed requests.
 	Abort() error
+}
+
+type requestsChannelWaiter struct {
+	requestsReady *sync.Cond
+	requests      <-chan service.Request
+}
+
+func NewRequestsChannelWaiter() *requestsChannelWaiter {
+	return &requestsChannelWaiter{
+		requestsReady: sync.NewCond(&sync.Mutex{}),
+		requests:      nil,
+	}
+}
+
+func (r *requestsChannelWaiter) Get() <-chan service.Request {
+	r.requestsReady.L.Lock()
+	for r.requests == nil {
+		r.requestsReady.Wait()
+	}
+	r.requestsReady.L.Unlock()
+	return r.requests
+}
+
+func (r *requestsChannelWaiter) Set(requests <-chan service.Request) {
+	r.requestsReady.L.Lock()
+	if r.requests != nil {
+		panic("\"requests\" is set twice")
+	}
+	r.requests = requests
+	r.requestsReady.L.Unlock()
+	r.requestsReady.Broadcast()
 }
 
 type workerPool struct {
 	workersWaitGroup sync.WaitGroup
 	workers          []Worker
-	requests         chan service.Request
+	requests         *requestsChannelWaiter
 	canceler         chan struct{}
 }
 
 func NewWorkerPool() WorkerPool {
 	return &workerPool{
 		workers:  make([]Worker, 0, runtime.NumCPU()),
-		requests: make(chan service.Request),
+		requests: NewRequestsChannelWaiter(),
 		canceler: make(chan struct{}),
 	}
 }
 
+func (p *workerPool) do(worker Worker, request service.Request) {
+	err := worker.Do(request)
+	if err != nil {
+		log.Print(err)
+	}
+}
+
 func (p *workerPool) run(worker Worker) {
-	for request := range p.requests {
-		err := worker.Do(request)
-		if err != nil {
-			log.Print(err)
+	requests := p.requests.Get()
+	for run := true; run; {
+		select {
+		case <-p.canceler:
+			run = false
+		default:
+			select {
+			case request, ok := <-requests:
+				if !ok {
+					run = false
+					continue
+				}
+				p.do(worker, request)
+			case <-p.canceler:
+				run = false
+			}
 		}
 	}
 	p.workersWaitGroup.Done()
 }
 
 func (p *workerPool) Add(worker Worker) error {
+	select {
+	case <-p.canceler:
+		panic("Called Add() after Cancel()")
+	default:
+	}
 	p.workers = append(p.workers, worker)
 	p.workersWaitGroup.Add(1)
 	go p.run(worker)
@@ -52,24 +107,7 @@ func (p *workerPool) Add(worker Worker) error {
 }
 
 func (p *workerPool) DoAll(requests <-chan service.Request) error {
-	for run := true; run; {
-		select {
-		case request, ok := <-requests:
-			if ok {
-				select {
-				case p.requests <- request:
-					// just continue
-				case <-p.canceler:
-					run = false
-				}
-			} else {
-				run = false
-			}
-		case <-p.canceler:
-			run = false
-		}
-	}
-	close(p.requests)
+	p.requests.Set(requests)
 	p.workersWaitGroup.Wait()
 	return nil
 }
