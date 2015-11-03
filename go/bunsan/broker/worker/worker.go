@@ -1,5 +1,7 @@
 package worker
 
+//go:generate bunsan-mockgen -gofile=$GOFILE
+
 import (
 	"errors"
 	"fmt"
