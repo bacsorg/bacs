@@ -60,8 +60,17 @@ func TestWorkerPoolAdd(t *testing.T) {
 	gomock.InOrder(
 		f.w1.EXPECT().Do(f.req1).Do(func(r interface{}) {
 			t.Log("w1 begin 1")
+			close(f.w2CanStart)
+			t.Log("w1 mid 1")
 			<-f.w1CanEnd
 			t.Log("w1 end 1")
+		}),
+		f.w2.EXPECT().Do(f.req2).Do(func(r interface{}) {
+			t.Log("w2 begin")
+			close(f.w1CanEnd)
+			t.Log("w2 mid")
+			<-f.w2CanEnd
+			t.Log("w2 end")
 		}),
 		f.w1.EXPECT().Do(f.req3).Do(func(r interface{}) {
 			t.Log("w1 begin 2")
@@ -69,18 +78,12 @@ func TestWorkerPoolAdd(t *testing.T) {
 			t.Log("w1 end 2")
 		}),
 	)
-	f.w2.EXPECT().Do(f.req2).Do(func(r interface{}) {
-		t.Log("w2 begin")
-		close(f.w1CanEnd)
-		t.Log("w2 mid")
-		<-f.w2CanEnd
-		t.Log("w2 end")
-	})
 
 	f.wp.Add(f.w1)
 	f.requests <- f.req1
 	f.requests <- f.req2
 	f.requests <- f.req3
+	<-f.w2CanStart
 	f.wp.Add(f.w2)
 
 	f.Finish()

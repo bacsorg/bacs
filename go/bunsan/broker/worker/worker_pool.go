@@ -55,13 +55,16 @@ type workerPool struct {
 	workers          []Worker
 	requests         *requestsChannelWaiter
 	canceler         chan struct{}
+	closeFirstWorker sync.Once
+	firstWorker      chan struct{}
 }
 
 func NewWorkerPool() WorkerPool {
 	return &workerPool{
-		workers:  make([]Worker, 0, runtime.NumCPU()),
-		requests: NewRequestsChannelWaiter(),
-		canceler: make(chan struct{}),
+		workers:     make([]Worker, 0, runtime.NumCPU()),
+		requests:    NewRequestsChannelWaiter(),
+		canceler:    make(chan struct{}),
+		firstWorker: make(chan struct{}),
 	}
 }
 
@@ -103,11 +106,13 @@ func (p *workerPool) Add(worker Worker) error {
 	p.workers = append(p.workers, worker)
 	p.workersWaitGroup.Add(1)
 	go p.run(worker)
+	p.closeFirstWorker.Do(func() { close(p.firstWorker) })
 	return nil
 }
 
 func (p *workerPool) DoAll(requests <-chan service.Request) error {
 	p.requests.Set(requests)
+	<-p.firstWorker
 	p.workersWaitGroup.Wait()
 	return nil
 }
