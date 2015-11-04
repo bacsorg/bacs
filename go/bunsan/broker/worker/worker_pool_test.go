@@ -37,8 +37,9 @@ func NewWorkerPoolFixture(ctrl *gomock.Controller) *WorkerPoolFixture {
 	}
 }
 
-func (f *WorkerPoolFixture) Start() {
+func (f *WorkerPoolFixture) Start(t *testing.T) {
 	go func() {
+		t.Logf("req1 = %v\nreq2 = %v\nreq3 = %v", f.req1, f.req2, f.req3)
 		f.wp.DoAll(f.requests)
 		close(f.done)
 	}()
@@ -54,7 +55,7 @@ func TestWorkerPoolAdd(t *testing.T) {
 	defer ctrl.Finish()
 
 	f := NewWorkerPoolFixture(ctrl)
-	f.Start()
+	f.Start(t)
 
 	gomock.InOrder(
 		f.w1.EXPECT().Do(f.req1).Do(func(r interface{}) {
@@ -90,7 +91,7 @@ func TestWorkerPoolCancel(t *testing.T) {
 	defer ctrl.Finish()
 
 	f := NewWorkerPoolFixture(ctrl)
-	f.Start()
+	f.Start(t)
 
 	gomock.InOrder(
 		f.w1.EXPECT().Do(f.req1).Do(func(r interface{}) {
