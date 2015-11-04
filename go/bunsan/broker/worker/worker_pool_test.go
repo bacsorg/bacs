@@ -57,18 +57,18 @@ func TestWorkerPoolAdd(t *testing.T) {
 	f.Start()
 
 	gomock.InOrder(
-		f.w1.EXPECT().Do(gomock.Eq(f.req1)).Do(func(r interface{}) {
+		f.w1.EXPECT().Do(f.req1).Do(func(r interface{}) {
 			t.Log("w1 begin 1")
 			<-f.w1CanEnd
 			t.Log("w1 end 1")
 		}),
-		f.w1.EXPECT().Do(gomock.Eq(f.req3)).Do(func(r interface{}) {
+		f.w1.EXPECT().Do(f.req3).Do(func(r interface{}) {
 			t.Log("w1 begin 2")
 			close(f.w2CanEnd)
 			t.Log("w1 end 2")
 		}),
 	)
-	f.w2.EXPECT().Do(gomock.Eq(f.req2)).Do(func(r interface{}) {
+	f.w2.EXPECT().Do(f.req2).Do(func(r interface{}) {
 		t.Log("w2 begin")
 		close(f.w1CanEnd)
 		t.Log("w2 mid")
@@ -93,10 +93,10 @@ func TestWorkerPoolCancel(t *testing.T) {
 	f.Start()
 
 	gomock.InOrder(
-		f.w1.EXPECT().Do(gomock.Eq(f.req1)).Do(func(r interface{}) {
+		f.w1.EXPECT().Do(f.req1).Do(func(r interface{}) {
 			t.Log("w1 run")
 		}),
-		f.w1.EXPECT().Do(gomock.Eq(f.req2)).Do(func(r interface{}) {
+		f.w1.EXPECT().Do(f.req2).Do(func(r interface{}) {
 			t.Log("w1 begin 2")
 			f.wp.Cancel()
 			close(f.w2CanStart)
