@@ -131,3 +131,31 @@ func TestWorkerPoolCancelWithoutAdd(t *testing.T) {
 	f.wp.Cancel()
 	<-f.done
 }
+
+func TestWorkerPoolAbort(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	f := NewWorkerPoolFixture(ctrl)
+	f.Start(t)
+
+	w1Do := f.w1.EXPECT().Do(f.req1).Do(func(r interface{}) {
+		t.Log("w1 begin")
+		close(f.w2CanStart)
+		t.Log("w1 mid")
+		<-f.w1CanEnd
+		t.Log("w1 end")
+	})
+	f.w1.EXPECT().Abort().After(w1Do).Do(func() {
+		close(f.w1CanEnd)
+	})
+	f.w2.EXPECT().Abort().After(w1Do)
+
+	f.wp.Add(f.w1)
+	f.requests <- f.req1
+	<-f.w2CanStart
+	f.wp.Add(f.w2)
+	f.wp.Abort()
+
+	<-f.done
+}
