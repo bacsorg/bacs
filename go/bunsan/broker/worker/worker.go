@@ -34,14 +34,13 @@ func NewWorker(repository pm.Repository, dir string) Worker {
 	return &worker{repository, dir}
 }
 
-func (w *worker) do(request service.Request) error {
+func (w *worker) do(request service.Request) (broker.Result, error) {
 	err := w.repository.Extract(request.Task().Package, w.dir)
 	if err != nil {
-		return err
+		return broker.Result{}, err
 	}
 	statuses := make(chan broker.Status, numberOfBufferedStatuses)
 	done := make(chan struct{})
-	defer func() { <-done }()
 	go func() {
 		for status := range statuses {
 			err := request.WriteStatus(status)
@@ -51,16 +50,15 @@ func (w *worker) do(request service.Request) error {
 		}
 		close(done)
 	}()
-	result, err := driver.Run(driver.Task{
+	defer func() {
+		close(statuses)
+		<-done
+	}()
+	return driver.Run(driver.Task{
 		BrokerTask:       request.Task(),
 		WorkingDirectory: w.dir,
 		StatusWriter:     statuses,
 	})
-	if err != nil {
-		return err
-	}
-	request.WriteResult(result)
-	return nil
 }
 
 func (w *worker) Do(request service.Request) (err error) {
@@ -83,7 +81,11 @@ func (w *worker) Do(request service.Request) (err error) {
 			request.Ack()
 		}
 	}()
-	err = w.do(request)
+	result, err := w.do(request)
+	if err != nil {
+		return
+	}
+	err = request.WriteResult(result)
 	return
 }
 

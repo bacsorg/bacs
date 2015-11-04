@@ -28,6 +28,8 @@ func (task Task) ReadDriverName() (string, error) {
 }
 
 type Driver interface {
+	// Execute prepared task.
+	// Run does not close task.StatusWriter.
 	Run(task Task) (broker.Result, error)
 }
 
