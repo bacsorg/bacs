@@ -6,77 +6,77 @@ package pm
 import "C"
 
 import (
-    "unsafe"
+	"unsafe"
 )
 
 const (
-    errSize = 1024 * 1024
+	errSize = 1024 * 1024
 )
 
 type cRepository struct {
-    repo C.bunsan_pm_repository
+	repo C.bunsan_pm_repository
 }
 
 type cError struct {
-    message string
+	message string
 }
 
 func (e *cError) Error() string {
-    return e.message
+	return e.message
 }
 
 func NewRepository(config string) (Repository, error) {
-    cConfig := C.CString(config)
-    defer C.free(unsafe.Pointer(cConfig))
-    cErr := C.malloc(errSize)
-    defer C.free(cErr)
-    cRepo := C.bunsan_pm_repository_new(cConfig, (*C.char)(cErr), errSize)
-    if cRepo == nil {
-        return nil, &cError{C.GoString((*C.char)(cErr))}
-    }
-    return &cRepository{cRepo}, nil
+	cConfig := C.CString(config)
+	defer C.free(unsafe.Pointer(cConfig))
+	cErr := C.malloc(errSize)
+	defer C.free(cErr)
+	cRepo := C.bunsan_pm_repository_new(cConfig, (*C.char)(cErr), errSize)
+	if cRepo == nil {
+		return nil, &cError{C.GoString((*C.char)(cErr))}
+	}
+	return &cRepository{cRepo}, nil
 }
 
 func (r *cRepository) Close() error {
-    C.bunsan_pm_repository_free(r.repo)
-    r.repo = nil
-    return nil
+	C.bunsan_pm_repository_free(r.repo)
+	r.repo = nil
+	return nil
 }
 
 func (r *cRepository) Create(path string, strip bool) error {
-    cPath := C.CString(path)
-    defer C.free(unsafe.Pointer(cPath))
-    cErr := C.malloc(errSize)
-    defer C.free(cErr)
-    cRet := C.bunsan_pm_repository_create(
-        r.repo, cPath, C.bool(strip), (*C.char)(cErr), errSize)
-    if cRet != 0 {
-        return &cError{C.GoString((*C.char)(cErr))}
-    }
-    return nil
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cErr := C.malloc(errSize)
+	defer C.free(cErr)
+	cRet := C.bunsan_pm_repository_create(
+		r.repo, cPath, C.bool(strip), (*C.char)(cErr), errSize)
+	if cRet != 0 {
+		return &cError{C.GoString((*C.char)(cErr))}
+	}
+	return nil
 }
 
 func (r *cRepository) CleanCache() error {
-    cErr := C.malloc(errSize)
-    defer C.free(unsafe.Pointer(cErr))
-    cRet := C.bunsan_pm_repository_clean_cache(r.repo, (*C.char)(cErr), errSize)
-    if cRet != 0 {
-        return &cError{C.GoString((*C.char)(cErr))}
-    }
-    return nil
+	cErr := C.malloc(errSize)
+	defer C.free(unsafe.Pointer(cErr))
+	cRet := C.bunsan_pm_repository_clean_cache(r.repo, (*C.char)(cErr), errSize)
+	if cRet != 0 {
+		return &cError{C.GoString((*C.char)(cErr))}
+	}
+	return nil
 }
 
 func (r *cRepository) Extract(pkg, destination string) error {
-    cPkg := C.CString(pkg)
-    defer C.free(unsafe.Pointer(cPkg))
-    cDst := C.CString(destination)
-    defer C.free(unsafe.Pointer(cDst))
-    cErr := C.malloc(errSize)
-    defer C.free(cErr)
-    cRet := C.bunsan_pm_repository_extract(
-        r.repo, cPkg, cDst, (*C.char)(cErr), errSize)
-    if cRet != 0 {
-        return &cError{C.GoString((*C.char)(cErr))}
-    }
-    return nil
+	cPkg := C.CString(pkg)
+	defer C.free(unsafe.Pointer(cPkg))
+	cDst := C.CString(destination)
+	defer C.free(unsafe.Pointer(cDst))
+	cErr := C.malloc(errSize)
+	defer C.free(cErr)
+	cRet := C.bunsan_pm_repository_extract(
+		r.repo, cPkg, cDst, (*C.char)(cErr), errSize)
+	if cRet != 0 {
+		return &cError{C.GoString((*C.char)(cErr))}
+	}
+	return nil
 }
