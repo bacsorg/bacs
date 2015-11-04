@@ -1,5 +1,7 @@
 package driver
 
+//go:generate bunsan-mockgen -gofile=$GOFILE
+
 import (
 	"fmt"
 	"sync"
