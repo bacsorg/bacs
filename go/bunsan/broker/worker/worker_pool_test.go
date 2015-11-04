@@ -120,3 +120,14 @@ func TestWorkerPoolCancel(t *testing.T) {
 	<-f.done
 	assert.Equal(t, f.req3, <-f.requests) // was not consumed
 }
+
+func TestWorkerPoolCancelWithoutAdd(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	f := NewWorkerPoolFixture(ctrl)
+	f.Start(t)
+
+	f.wp.Cancel()
+	<-f.done
+}

@@ -119,6 +119,7 @@ func (p *workerPool) DoAll(requests <-chan service.Request) error {
 
 func (p *workerPool) Cancel() error {
 	close(p.canceler)
+	p.closeFirstWorker.Do(func() { close(p.firstWorker) })
 	return nil
 }
 
