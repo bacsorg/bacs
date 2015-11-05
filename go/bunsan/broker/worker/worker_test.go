@@ -15,15 +15,17 @@ import (
 )
 
 const (
-	DriverName        = "test-proxy-driver"
-	WorkerDirectory   = "/some/worker/directory"
-	PackageName       = "bunsan/pm/package/name"
-	RequestData       = "request data"
-	ErrDriverString   = "driver error"
-	PanicDriverString = "driver panic"
+	DriverName          = "test-proxy-driver"
+	WorkerDirectory     = "/some/worker/directory"
+	PackageName         = "bunsan/pm/package/name"
+	RequestData         = "request data"
+	ErrRepositoryString = "repository error"
+	ErrDriverString     = "driver error"
+	PanicDriverString   = "driver panic"
 )
 
 var (
+	ErrRepository  = errors.New(ErrRepositoryString)
 	ErrDriver      = errors.New(ErrDriverString)
 	ErrPanicDriver = errors.New(PanicDriverString)
 )
@@ -215,4 +217,27 @@ func TestWorkerDoPanic(t *testing.T) {
 
 	err := f.worker.Do(f.request)
 	assert.EqualError(t, err, PanicDriverString)
+}
+
+func TestWorkerDoRepositoryErr(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	f := NewWorkerFixture(ctrl)
+	defer f.Close()
+
+	f.result = broker.Result{
+		Status: broker.Result_PACKAGE_ERROR,
+		Reason: ErrRepositoryString,
+	}
+
+	gomock.InOrder(
+		f.repository.EXPECT().Extract(PackageName, WorkerDirectory).
+			Return(ErrRepository),
+		f.request.EXPECT().WriteResult(f.result),
+		f.request.EXPECT().Ack(),
+	)
+
+	err := f.worker.Do(f.request)
+	assert.NoError(t, err)
 }

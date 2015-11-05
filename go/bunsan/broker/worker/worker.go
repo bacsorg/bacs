@@ -37,7 +37,10 @@ func NewWorker(repository pm.Repository, dir string) Worker {
 func (w *worker) do(request service.Request) (broker.Result, error) {
 	err := w.repository.Extract(request.Task().Package, w.dir)
 	if err != nil {
-		return broker.Result{}, err
+		return broker.Result{
+			Status: broker.Result_PACKAGE_ERROR,
+			Reason: err.Error(),
+		}, nil
 	}
 	statuses := make(chan broker.Status, numberOfBufferedStatuses)
 	done := make(chan struct{})
