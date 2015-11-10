@@ -1,17 +1,16 @@
 package driver
 
 import (
-	"bufio"
 	"bytes"
-	"encoding/base64"
 	"fmt"
+	"io"
 	"log"
 	"os/exec"
 	"path"
-	"strings"
 
 	"github.com/bunsanorg/broker/go/bunsan/broker"
-	"github.com/golang/protobuf/proto"
+	"github.com/bunsanorg/broker/go/bunsan/broker/worker/protocol"
+	"github.com/bunsanorg/broker/go/bunsan/broker/worker/protocol/text"
 )
 
 // FIXME should not be placed here
@@ -34,7 +33,6 @@ func (e TextProtocolError) Error() string {
 }
 
 func (d TextDriver) Run(task Task) (result broker.Result, err error) {
-	var status broker.Status
 	var wlog bytes.Buffer
 	executable := path.Join(task.WorkingDirectory, d.executable)
 	cmd := exec.Command(executable)
@@ -59,34 +57,20 @@ func (d TextDriver) Run(task Task) (result broker.Result, err error) {
 		}
 		result.Log = wlog.Bytes()
 	}()
-	scanner := bufio.NewScanner(stdout)
-	for scanner.Scan() {
-		tokens := strings.Split(scanner.Text(), " ")
-		if len(tokens) != 2 {
-			return broker.Result{}, TextProtocolError{
-				fmt.Errorf("invalid number of tokens: "+
-					"expected 2, got %d", len(tokens))}
-		}
-		data, err := base64.StdEncoding.DecodeString(tokens[1])
-		if err != nil {
-			return broker.Result{}, TextProtocolError{err}
-		}
-		switch tokens[0] {
-		case "status":
-			err = proto.Unmarshal(data, &status)
-			if err != nil {
-				return broker.Result{}, TextProtocolError{err}
-			}
-			task.StatusWriter <- status
-		case "result":
-			err = proto.Unmarshal(data, &result)
-			if err != nil {
-				return broker.Result{}, TextProtocolError{err}
-			}
+	reader := text.NewEventReader(stdout)
+	event, err := reader.ReadEvent()
+	for ; err == nil; event, err = reader.ReadEvent() {
+		switch ev := event.Kind.(type) {
+		case *protocol.Event_Status:
+			task.StatusWriter <- *ev.Status
+		case *protocol.Event_Result:
+			result = *ev.Result
+		default:
+			log.Fatal("Unknown event type: %v", event)
 		}
 	}
-	if err := scanner.Err(); err != nil {
-		return broker.Result{}, TextProtocolError{err}
+	if err == io.EOF {
+		err = nil
 	}
 	return
 }
