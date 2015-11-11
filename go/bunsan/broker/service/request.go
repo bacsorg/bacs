@@ -4,6 +4,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/bunsanorg/broker/go/bunsan/broker"
 	"github.com/bunsanorg/broker/go/bunsan/broker/rabbit"
@@ -73,9 +74,12 @@ func (r *rabbitRequest) WriteError(err error) error {
 }
 
 func (r *rabbitRequest) Ack() error {
+	log.Printf("Acknowledging request %q", r.delivery.CorrelationId)
 	return r.delivery.Ack(false)
 }
 
 func (r *rabbitRequest) Nack() error {
+	log.Printf("Negatively acknowledging request %q",
+		r.delivery.CorrelationId)
 	return r.delivery.Nack(false, false)
 }

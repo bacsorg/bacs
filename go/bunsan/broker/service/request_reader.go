@@ -121,6 +121,7 @@ func (r *rabbitRequestReader) Read(
 						log.Printf("Unable to read request: %v", err)
 						continue
 					}
+					log.Printf("Received request %q", delivery.CorrelationId)
 					r.tasks <- request
 				}
 				consumers.Done()
