@@ -34,7 +34,7 @@ func (d *TextDriver) Run(task Task) (broker.Result, error) {
 	cmd.Dir = task.WorkingDirectory
 	cmd.Stdin = bytes.NewReader(task.BrokerTask.Data)
 	cmd.Stderr = &wlog
-	err := d.Runner.Run(cmd, func(stdout io.ReadCloser) error {
+	err := d.Runner.Run(cmd, func(stdout io.Reader) error {
 		reader := text.NewEventReader(stdout)
 		event, err := reader.ReadEvent()
 		for ; err == nil; event, err = reader.ReadEvent() {

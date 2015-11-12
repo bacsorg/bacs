@@ -8,7 +8,7 @@ import (
 	"os/exec"
 )
 
-type StdoutParser func(stdout io.ReadCloser) error
+type StdoutParser func(stdout io.Reader) error
 
 type StdoutRunner interface {
 	Run(cmd *exec.Cmd, p StdoutParser) error
