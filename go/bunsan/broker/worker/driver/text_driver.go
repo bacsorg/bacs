@@ -2,13 +2,13 @@ package driver
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"log"
 	"os/exec"
 	"path"
 
 	"github.com/bunsanorg/broker/go/bunsan/broker"
+	"github.com/bunsanorg/broker/go/bunsan/broker/worker/driver/driverutil"
 	"github.com/bunsanorg/broker/go/bunsan/broker/worker/protocol"
 	"github.com/bunsanorg/broker/go/bunsan/broker/worker/protocol/text"
 )
@@ -16,61 +16,49 @@ import (
 // FIXME should not be placed here
 func init() {
 	Register("bacs_single", TextDriver{
-		executable: path.Join("bin", "bacs_system_single_worker"),
+		Executable: path.Join("bin", "bacs_system_single_worker"),
+		Runner:     driverutil.NewStdoutRunner(),
 	})
 }
 
 type TextDriver struct {
-	executable string
+	Executable string
+	Runner     driverutil.StdoutRunner
 }
 
-type TextProtocolError struct {
-	Err error
-}
-
-func (e TextProtocolError) Error() string {
-	return fmt.Sprintf("worker text protocol error: %v", e.Err)
-}
-
-func (d TextDriver) Run(task Task) (result broker.Result, err error) {
+func (d TextDriver) Run(task Task) (broker.Result, error) {
 	var wlog bytes.Buffer
-	executable := path.Join(task.WorkingDirectory, d.executable)
+	var result broker.Result
+	executable := path.Join(task.WorkingDirectory, d.Executable)
 	cmd := exec.Command(executable)
 	cmd.Dir = task.WorkingDirectory
 	cmd.Stdin = bytes.NewReader(task.BrokerTask.Data)
 	cmd.Stderr = &wlog
-	stdout, err := cmd.StdoutPipe()
+	err := d.Runner.Run(cmd, func(stdout io.ReadCloser) error {
+		reader := text.NewEventReader(stdout)
+		event, err := reader.ReadEvent()
+		for ; err == nil; event, err = reader.ReadEvent() {
+			switch ev := event.Kind.(type) {
+			case *protocol.Event_Status:
+				task.StatusWriter <- *ev.Status
+			case *protocol.Event_Result:
+				result = *ev.Result
+			default:
+				log.Fatal("Unknown event type (oneof extended?): %v", event)
+			}
+		}
+		if err != io.EOF {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
-		return broker.Result{}, err
-	}
-	if err := cmd.Start(); err != nil {
-		return broker.Result{}, nil
-	}
-	defer func() {
-		stdout.Close()
-		werr := cmd.Wait()
-		if err != nil {
-			log.Printf("Unhandled error: %v, during another error: %v",
-				werr, err)
-		} else {
-			err = werr
-		}
-		result.Log = wlog.Bytes()
-	}()
-	reader := text.NewEventReader(stdout)
-	event, err := reader.ReadEvent()
-	for ; err == nil; event, err = reader.ReadEvent() {
-		switch ev := event.Kind.(type) {
-		case *protocol.Event_Status:
-			task.StatusWriter <- *ev.Status
-		case *protocol.Event_Result:
-			result = *ev.Result
-		default:
-			log.Fatal("Unknown event type: %v", event)
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			err = nil
+			result.Status = broker.Result_EXECUTION_ERROR
+			result.Reason = exitErr.Error()
 		}
 	}
-	if err == io.EOF {
-		err = nil
-	}
-	return
+	result.Log = wlog.Bytes()
+	return result, err
 }
