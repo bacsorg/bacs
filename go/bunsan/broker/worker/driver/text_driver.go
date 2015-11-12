@@ -15,7 +15,7 @@ import (
 
 // FIXME should not be placed here
 func init() {
-	Register("bacs_single", TextDriver{
+	Register("bacs_single", &TextDriver{
 		Executable: path.Join("bin", "bacs_system_single_worker"),
 		Runner:     driverutil.NewStdoutRunner(),
 	})
@@ -26,7 +26,7 @@ type TextDriver struct {
 	Runner     driverutil.StdoutRunner
 }
 
-func (d TextDriver) Run(task Task) (broker.Result, error) {
+func (d *TextDriver) Run(task Task) (broker.Result, error) {
 	var wlog bytes.Buffer
 	var result broker.Result
 	executable := path.Join(task.WorkingDirectory, d.Executable)
