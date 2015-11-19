@@ -116,20 +116,21 @@ namespace Bunsan.Broker
             {
                 return new Listener(channel, message =>
                 {
-                    using (var stream = new MemoryStream(message.Body))
+                    try
                     {
-                        RabbitResult result;
-                        try
+                        using (var stream = new MemoryStream(message.Body))
                         {
-                            result = Serializer.Deserialize<RabbitResult>(stream);
+                            var result = Serializer.Deserialize<RabbitResult>(stream);
+                            result_callback(result.Identifier, result.Result);
                         }
-                        catch (Exception)
-                        {
-                            // no reason to keep invalid message
-                            channel.BasicNack(message.DeliveryTag, false, false);
-                            throw;
-                        }
-                        result_callback(result.Identifier, result.Result);
+                    }
+                    catch (Exception)
+                    {
+                        // message is either invalid or can't be processed by result_callback
+                        // exception will cause error_callback to be called
+                        // we do not want to requeue message since it may cause infinite try-exception loop
+                        channel.BasicNack(message.DeliveryTag, false, false);
+                        throw;
                     }
                     // commit phase
                     channel.BasicAck(message.DeliveryTag, false);
