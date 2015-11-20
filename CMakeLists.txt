@@ -10,6 +10,9 @@ else()
     find_package(BunsanCMake CONFIG REQUIRED)
 endif()
 
+bunsan_install_module(NAME BacsCommon
+                      DIRECTORIES scripts/)
+
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
     PROTOS
