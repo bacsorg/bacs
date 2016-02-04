@@ -82,7 +82,7 @@ class archive_application : public application {
   }
 
   int main(const variables_map & /*variables*/) override {
-    std::shared_ptr<grpc::Credentials> credentials;
+    std::shared_ptr<grpc::ChannelCredentials> credentials;
     if (use_ssl) {
       grpc::SslCredentialsOptions ssl;
       if (!ssl_pem_root_certs.empty()) {
@@ -97,7 +97,7 @@ class archive_application : public application {
       }
       credentials = grpc::SslCredentials(ssl);
     } else {
-      credentials = grpc::InsecureCredentials();
+      credentials = grpc::InsecureChannelCredentials();
     }
     const auto channel = grpc::CreateChannel(target, credentials);
     ArchiveClient client(channel);
