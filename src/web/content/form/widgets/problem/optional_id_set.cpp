@@ -6,6 +6,7 @@
 #include <boost/algorithm/string/trim.hpp>
 
 #include <algorithm>
+#include <random>
 #include <vector>
 
 namespace bacs {
