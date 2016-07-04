@@ -37,7 +37,7 @@ grpc::Status implement_response(Authorize &&authorize, Response &&response,
 }
 
 }  // namespace detail
-}  // namespace bunsan
+}  // namespace rpc
 }  // namespace bunsan
 
 #define BUNSAN_RPC_IMPLEMENT_STATUS(CONTEXT, REQUEST, RESPONSE, AUTHORIZE, \
