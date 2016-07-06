@@ -2,6 +2,7 @@
 #define BUNSAN_PM_COMPATIBILITY_REPOSITORY_H
 
 #include <stddef.h>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,14 +29,32 @@ int bunsan_pm_extract(cstring config, cstring package, cstring destination,
 bunsan_pm_repository bunsan_pm_repository_new(cstring config, string error_msg,
                                               size_type error_size);
 void bunsan_pm_repository_free(bunsan_pm_repository repo);
+
 int bunsan_pm_repository_create(bunsan_pm_repository repo, cstring path,
                                 bool strip, string error_msg,
                                 size_type error_size);
-int bunsan_pm_repository_clean_cache(bunsan_pm_repository repo,
-                                     string error_msg, size_type error_size);
+int bunsan_pm_repository_create_recursively(bunsan_pm_repository repo,
+                                            cstring root, bool strip,
+                                            string error_msg,
+                                            size_type error_size);
 int bunsan_pm_repository_extract(bunsan_pm_repository repo, cstring package,
                                  cstring destination, string error_msg,
                                  size_type error_size);
+int bunsan_pm_repository_install(bunsan_pm_repository repo, cstring package,
+                                 cstring destination, string error_msg,
+                                 size_type error_size);
+int bunsan_pm_repository_force_update(bunsan_pm_repository repo,
+                                      cstring package, cstring destination,
+                                      string error_msg, size_type error_size);
+int bunsan_pm_repository_update(bunsan_pm_repository repo, cstring package,
+                                cstring destination, time_t lifetime,
+                                string error_msg, size_type error_size);
+int bunsan_pm_repository_need_update(bunsan_pm_repository repo, cstring package,
+                                     cstring destination, time_t lifetime,
+                                     bool *need, string error_msg,
+                                     size_type error_size);
+int bunsan_pm_repository_clean_cache(bunsan_pm_repository repo,
+                                     string error_msg, size_type error_size);
 
 #ifdef __cplusplus
 }  // extern "C"

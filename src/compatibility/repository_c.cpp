@@ -26,10 +26,12 @@ int wrap_repository(
     void (bunsan::pm::compatibility::repository::*mem_fn)(MemFnArgs...),
     cstring config, string error_msg, size_type error_size,
     Args &&... args) noexcept {
-  return wrap_cpp([&] {
-    bunsan::pm::compatibility::repository repo(config);
-    (repo.*mem_fn)(std::forward<Args>(args)...);
-  }, error_msg, error_size);
+  return wrap_cpp(
+      [&] {
+        bunsan::pm::compatibility::repository repo(config);
+        (repo.*mem_fn)(std::forward<Args>(args)...);
+      },
+      error_msg, error_size);
 }
 }  // namespace
 
@@ -63,19 +65,22 @@ void bunsan_pm_repository_free(bunsan_pm_repository repo) {
   delete static_cast<bunsan::pm::compatibility::repository *>(repo);
 }
 
+int bunsan_pm_repository_create_recursively(bunsan_pm_repository repo,
+                                            cstring root, bool strip,
+                                            string error_msg,
+                                            size_type error_size) {
+  const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
+  BOOST_ASSERT(r);
+  return wrap_cpp([&] { r->create_recursively(root, strip); }, error_msg,
+                  error_size);
+}
+
 int bunsan_pm_repository_create(bunsan_pm_repository repo, cstring path,
                                 bool strip, string error_msg,
                                 size_type error_size) {
   const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
   BOOST_ASSERT(r);
   return wrap_cpp([&] { r->create(path, strip); }, error_msg, error_size);
-}
-
-int bunsan_pm_repository_clean_cache(bunsan_pm_repository repo,
-                                     string error_msg, size_type error_size) {
-  const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
-  BOOST_ASSERT(r);
-  return wrap_cpp([&] { r->clean_cache(); }, error_msg, error_size);
 }
 
 int bunsan_pm_repository_extract(bunsan_pm_repository repo, cstring package,
@@ -85,4 +90,50 @@ int bunsan_pm_repository_extract(bunsan_pm_repository repo, cstring package,
   BOOST_ASSERT(r);
   return wrap_cpp([&] { r->extract(package, destination); }, error_msg,
                   error_size);
+}
+
+int bunsan_pm_repository_install(bunsan_pm_repository repo, cstring package,
+                                 cstring destination, string error_msg,
+                                 size_type error_size) {
+  const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
+  BOOST_ASSERT(r);
+  return wrap_cpp([&] { r->install(package, destination); }, error_msg,
+                  error_size);
+}
+
+int bunsan_pm_repository_force_update(bunsan_pm_repository repo,
+                                      cstring package, cstring destination,
+                                      string error_msg, size_type error_size) {
+  const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
+  BOOST_ASSERT(r);
+  return wrap_cpp([&] { r->update(package, destination); }, error_msg,
+                  error_size);
+}
+
+int bunsan_pm_repository_update(bunsan_pm_repository repo, cstring package,
+                                cstring destination, time_t lifetime,
+                                string error_msg, size_type error_size) {
+  const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
+  BOOST_ASSERT(r);
+  return wrap_cpp([&] { r->update(package, destination, lifetime); }, error_msg,
+                  error_size);
+}
+
+int bunsan_pm_repository_need_update(bunsan_pm_repository repo, cstring package,
+                                     cstring destination, time_t lifetime,
+                                     bool *need, string error_msg,
+                                     size_type error_size) {
+  const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
+  BOOST_ASSERT(r);
+  BOOST_ASSERT(need);
+  return wrap_cpp(
+      [&] { *need = r->need_update(package, destination, lifetime); },
+      error_msg, error_size);
+}
+
+int bunsan_pm_repository_clean_cache(bunsan_pm_repository repo,
+                                     string error_msg, size_type error_size) {
+  const auto r = static_cast<bunsan::pm::compatibility::repository *>(repo);
+  BOOST_ASSERT(r);
+  return wrap_cpp([&] { r->clean_cache(); }, error_msg, error_size);
 }
