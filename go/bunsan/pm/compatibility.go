@@ -115,7 +115,8 @@ func (r *cRepository) ForceUpdate(pkg, destination string) error {
 	return nil
 }
 
-func (r *cRepository) Update(pkg, destination string, lifetime time.Time) error {
+func (r *cRepository) Update(pkg, destination string,
+	lifetime time.Duration) error {
 	cPkg := C.CString(pkg)
 	defer C.free(unsafe.Pointer(cPkg))
 	cDst := C.CString(destination)
@@ -123,15 +124,16 @@ func (r *cRepository) Update(pkg, destination string, lifetime time.Time) error 
 	cErr := C.malloc(errSize)
 	defer C.free(cErr)
 	cRet := C.bunsan_pm_repository_update(r.repo, cPkg, cDst,
-		C.time_t(lifetime.Unix()), (*C.char)(cErr), errSize)
+		C.time_t(lifetime.Seconds()+0.5 /*round non-negative*/),
+		(*C.char)(cErr), errSize)
 	if cRet != 0 {
 		return &cError{C.GoString((*C.char)(cErr))}
 	}
 	return nil
 }
 
-func (r *cRepository) NeedUpdate(pkg, destination string, lifetime time.Time) (
-	bool, error) {
+func (r *cRepository) NeedUpdate(pkg, destination string,
+	lifetime time.Duration) (bool, error) {
 
 	cPkg := C.CString(pkg)
 	defer C.free(unsafe.Pointer(cPkg))
@@ -141,7 +143,7 @@ func (r *cRepository) NeedUpdate(pkg, destination string, lifetime time.Time) (
 	defer C.free(cErr)
 	var cNeed C._Bool
 	cRet := C.bunsan_pm_repository_need_update(r.repo, cPkg, cDst,
-		C.time_t(lifetime.Unix()), &cNeed,
+		C.time_t(lifetime.Seconds()+0.5 /*round non-negative*/), &cNeed,
 		(*C.char)(cErr), errSize)
 	if cRet != 0 {
 		return bool(cNeed), &cError{C.GoString((*C.char)(cErr))}

@@ -5,6 +5,7 @@ package mock_pm
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	time "time"
 )
 
 // Mock of Repository interface
@@ -58,6 +59,16 @@ func (_mr *_MockRepositoryRecorder) Create(arg0, arg1 interface{}) *gomock.Call 
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Create", arg0, arg1)
 }
 
+func (_m *MockRepository) CreateRecursively(_param0 string, _param1 bool) error {
+	ret := _m.ctrl.Call(_m, "CreateRecursively", _param0, _param1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockRepositoryRecorder) CreateRecursively(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateRecursively", arg0, arg1)
+}
+
 func (_m *MockRepository) Extract(_param0 string, _param1 string) error {
 	ret := _m.ctrl.Call(_m, "Extract", _param0, _param1)
 	ret0, _ := ret[0].(error)
@@ -66,4 +77,45 @@ func (_m *MockRepository) Extract(_param0 string, _param1 string) error {
 
 func (_mr *_MockRepositoryRecorder) Extract(arg0, arg1 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Extract", arg0, arg1)
+}
+
+func (_m *MockRepository) ForceUpdate(_param0 string, _param1 string) error {
+	ret := _m.ctrl.Call(_m, "ForceUpdate", _param0, _param1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockRepositoryRecorder) ForceUpdate(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "ForceUpdate", arg0, arg1)
+}
+
+func (_m *MockRepository) Install(_param0 string, _param1 string) error {
+	ret := _m.ctrl.Call(_m, "Install", _param0, _param1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockRepositoryRecorder) Install(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Install", arg0, arg1)
+}
+
+func (_m *MockRepository) NeedUpdate(_param0 string, _param1 string, _param2 time.Time) (bool, error) {
+	ret := _m.ctrl.Call(_m, "NeedUpdate", _param0, _param1, _param2)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockRepositoryRecorder) NeedUpdate(arg0, arg1, arg2 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "NeedUpdate", arg0, arg1, arg2)
+}
+
+func (_m *MockRepository) Update(_param0 string, _param1 string, _param2 time.Time) error {
+	ret := _m.ctrl.Call(_m, "Update", _param0, _param1, _param2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockRepositoryRecorder) Update(arg0, arg1, arg2 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Update", arg0, arg1, arg2)
 }

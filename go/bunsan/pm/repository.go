@@ -10,8 +10,8 @@ type Repository interface {
 	Extract(pkg, destination string) error
 	Install(pkg, destination string) error
 	ForceUpdate(pkg, destination string) error
-	Update(pkg, destination string, lifetime time.Time) error
-	NeedUpdate(pkg, destination string, lifetime time.Time) (bool, error)
+	Update(pkg, destination string, lifetime time.Duration) error
+	NeedUpdate(pkg, destination string, lifetime time.Duration) (bool, error)
 	CleanCache() error
 	Close() error
 }
