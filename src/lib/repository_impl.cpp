@@ -219,6 +219,16 @@ problem::StatusMap repository::status_all_(const problem::IdSet &id_set) {
   return status_map;
 }
 
+CachedStatusMap repository::status_all_if_changed(
+    const ArchiveRevision &revision) {
+  CachedStatusMap cached_status_map;
+  const shared_lock_guard lk(m_lock);
+  if (!is_equal_revision_(revision)) {
+    *cached_status_map.mutable_status() = status_all_(existing_());
+  }
+  return cached_status_map;
+}
+
 problem::StatusResult repository::status_result_(const problem::id &id) {
   if (exists(id)) return status_status(status_(id));
   return status_not_found();
@@ -551,6 +561,7 @@ problem::StatusResult repository::import_(
       return status_error("Problem was changed during import");
     }
     write_import_result_(id, import_result);
+    update_archive_revision_();
     if (ok) {
       unset_flag_(id, problem::Flag::IGNORE);
     } else {
@@ -569,6 +580,14 @@ problem::StatusResult repository::import_(
 void repository::pm_create_recursively(const boost::filesystem::path &path) {
   const boost::lock_guard<boost::mutex> lk(m_pm_lock);
   m_repository.create_recursively(path, m_problem.strip);
+}
+
+void repository::update_archive_revision_() {
+  m_revision.update();
+}
+
+bool repository::is_equal_revision_(const ArchiveRevision &revision) {
+  return m_revision.is_equal(revision.value());
 }
 
 }  // namespace archive

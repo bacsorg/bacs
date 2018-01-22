@@ -31,6 +31,18 @@ message ChangeFlagsRequest {
   problem.FlagSet flag = 2;
 }
 
+// Archive revision which changes if any problem is modified.
+// Empty revision is never used by the server and can be safely used
+// as initial value.
+message ArchiveRevision {
+  bytes value = 1;
+}
+
+message CachedStatusMap {
+  problem.StatusMap status = 1;
+  ArchiveRevision revision = 2;
+}
+
 service Archive {
   rpc Upload(stream Chunk) returns (problem.StatusMap);
   rpc Download(DownloadRequest) returns (stream Chunk);
@@ -42,6 +54,8 @@ service Archive {
 
   rpc Status(problem.IdSet) returns (problem.StatusMap);
   rpc StatusAll(google.protobuf.Empty) returns (problem.StatusMap);
+  // Returns CachedStatusMap with empty status if revision is unchanged.
+  rpc StatusAllIfChanged(ArchiveRevision) returns (CachedStatusMap);
 
   rpc ImportResult(problem.IdSet) returns (problem.ImportMap);
 

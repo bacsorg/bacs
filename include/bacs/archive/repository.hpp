@@ -1,8 +1,10 @@
 #pragma once
 
+#include <bacs/archive/archive.pb.h>
 #include <bacs/archive/config.hpp>
 #include <bacs/archive/importer.hpp>
 #include <bacs/archive/problem.hpp>
+#include <bacs/archive/revision.hpp>
 
 #include <bunsan/interprocess/sync/file_guard.hpp>
 #include <bunsan/pm/repository.hpp>
@@ -220,6 +222,14 @@ class repository : private boost::noncopyable {
    * \see repository::status_all
    */
   problem::StatusMap status_all();
+
+  /*!
+   * \brief Cached version of status_all().
+   *
+   * If revision is unchanged returns CachedStatusMap with only revision set.
+   * If revision is changed triggers status_all() execution.
+   */
+  CachedStatusMap status_all_if_changed(const ArchiveRevision &revision);
 
   /*!
    * \brief Check problem for flag.
@@ -547,6 +557,12 @@ class repository : private boost::noncopyable {
 
   void pm_create_recursively(const boost::filesystem::path &path);
 
+  /// \warning requires unique lock
+  void update_archive_revision_();
+
+  /// \warning requires shared lock
+  bool is_equal_revision_(const ArchiveRevision &revision);
+
  private:
   boost::mutex m_import_lock;
   boost::upgrade_mutex m_lock;
@@ -560,6 +576,7 @@ class repository : private boost::noncopyable {
   const problem_config m_problem;
   importer m_importer;
   bunsan::pm::repository m_repository;
+  revision m_revision;
 };
 
 }  // namespace archive

@@ -96,6 +96,14 @@ grpc::Status ArchiveService::StatusAll(grpc::ServerContext *const context,
   })
 }
 
+grpc::Status ArchiveService::StatusAllIfChanged(grpc::ServerContext *context,
+                                                const ArchiveRevision *request,
+                                                CachedStatusMap *response) {
+  BUNSAN_RPC_IMPLEMENT_RESPONSE(context, request, response, authorize, {
+    return m_repository->status_all_if_changed(*request);
+  })
+}
+
 grpc::Status ArchiveService::ImportResult(grpc::ServerContext *const context,
                                           const problem::IdSet *const request,
                                           problem::ImportMap *const response) {

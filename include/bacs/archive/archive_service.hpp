@@ -35,6 +35,9 @@ class ArchiveService : public Archive::Service {
   grpc::Status StatusAll(grpc::ServerContext *context,
                          const google::protobuf::Empty *request,
                          problem::StatusMap *response) override;
+  grpc::Status StatusAllIfChanged(grpc::ServerContext *context,
+                                  const ArchiveRevision *request,
+                                  CachedStatusMap *response) override;
 
   grpc::Status ImportResult(grpc::ServerContext *context,
                             const problem::IdSet *request,
