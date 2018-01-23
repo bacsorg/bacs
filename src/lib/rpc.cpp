@@ -6,7 +6,7 @@ namespace bacs {
 namespace archive {
 namespace rpc {
 
-void recv_file(grpc::ReaderInterface<Chunk> &reader,
+void recv_file(grpc::internal::ReaderInterface<Chunk> &reader,
                const boost::filesystem::path &path, utility::Archiver &format) {
   format.Clear();
   bunsan::filesystem::ofstream fout(path);
@@ -24,7 +24,7 @@ void recv_file(grpc::ReaderInterface<Chunk> &reader,
 
 void send_file(const utility::Archiver &format,
                const boost::filesystem::path &path,
-               grpc::WriterInterface<Chunk> &writer) {
+               grpc::internal::WriterInterface<Chunk> &writer) {
   bunsan::filesystem::ifstream fin(path);
   BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(fin) {
     Chunk chunk;
