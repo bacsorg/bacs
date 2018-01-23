@@ -16,13 +16,19 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <boost/version.hpp>
 
 #include <functional>
 #include <string>
 
 namespace boost {
 namespace asio {
+#if BOOST_VERSION < 106600
 class io_service;
+#else
+class io_context;
+using io_service = io_context;
+#endif
 }  // namespace asio
 }  // namespace boost
 
