@@ -1,0 +1,16 @@
+/*!
+\mainpage bunsan pm library
+\brief package management system part of bunsan project
+
+This library provides implementation of package management system, that
+    - does not require installation of packages for using them
+    - does not require any type of root access
+    - does not require dynamic server part, static file access is enough (like static read-only http or ftp server)
+    - implicitly can support encryption of data downloading and authentification/authorization mechanisms
+    - does not download excess information (such as full list of packages or precalculated dependencies lists)
+    - provides caching support
+    - does not provide parallel package building (may be in the future), but implicitly provides parallel make
+
+*/
+
+// vim:syntax=doxygen

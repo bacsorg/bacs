@@ -1,0 +1,5 @@
+/*!
+\page configuration_page Configuration
+*/
+
+// vim:syntax=doxygen
