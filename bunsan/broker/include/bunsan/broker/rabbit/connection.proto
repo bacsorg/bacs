@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package bunsan.broker.rabbit;
+option go_package = "rabbit";
+
+import "bunsan/broker/connection.proto";
+import "bunsan/broker/protocol.proto";
+
+message RabbitTask {
+  string identifier = 1;
+  Task task = 2;
+  Constraints constraints = 3;
+  string status_queue = 4;
+  string result_queue = 5;
+  string error_queue = 6;
+}
+
+message RabbitStatus {
+  string identifier = 1;
+  Status status = 2;
+}
+
+message RabbitResult {
+  string identifier = 1;
+  Result result = 2;
+}

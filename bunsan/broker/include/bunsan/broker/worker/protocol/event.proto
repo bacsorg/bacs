@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package bunsan.broker.worker.protocol;
+option go_package = "protocol";
+
+import "bunsan/broker/protocol.proto";
+
+message Event {
+  oneof Kind {
+    Status status = 1;
+    Result result = 2;
+  }
+}
