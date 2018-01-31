@@ -1,0 +1,27 @@
+include(@BunsanCMake_MODULE_ROOT@/scripts/configure_file_common.cmake)
+include(@BunsanCMake_MODULE_ROOT@/scripts/static_initializer_common.cmake)
+
+set(calls)
+foreach(source @BUNSAN_STATIC_INITIALIZER_SOURCES@)
+    file(STRINGS ${source} initializers REGEX ${BUNSAN_STATIC_INITIALIZER_REGEX})
+    foreach(initializer ${initializers})
+        string(REGEX REPLACE "^${BUNSAN_STATIC_INITIALIZER_REGEX}$" "\\1"
+                             call ${initializer})
+        bunsan_static_initializer_name(${call} call)
+        list(APPEND calls ${call})
+    endforeach()
+endforeach()
+
+bunsan_initializer_configure_common(
+    OUTPUT @BUNSAN_STATIC_INITIALIZER_OUTPUT@
+    MODIFIER "extern \"C\""
+    FUNCTION @BUNSAN_STATIC_INITIALIZER_FUNCTION@
+    EXTERNAL_INCLUDE @BUNSAN_STATIC_INITIALIZER_EXTERNAL_HEADER@
+    EXTERN_CALLS ${calls}
+    CALLS @BUNSAN_STATIC_INITIALIZER_EXTERNAL_CALL@
+)
+bunsan_configure_file(
+    @BunsanCMake_MODULE_ROOT@/StaticInitializer.cpp.in
+    ${ARG_OUTPUT}
+    @ONLY
+)
