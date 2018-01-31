@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package bunsan.protobuf.test;
+
+message Message {
+  required string required_field = 1;
+  optional string optional_field = 2;
+  repeated string repeated_field = 3;
+}
+
+message MessageClone {
+  required string required_field = 1;
+  optional string optional_field = 2;
+  repeated string repeated_field = 3;
+}
+
+message SimilarMessage {
+  optional string required_field = 1;
+  optional string optional_field = 2;
+  optional string repeated_field = 3;
+}
+
+message OtherMessage {
+  optional string field = 1;
+}
