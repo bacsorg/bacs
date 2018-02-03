@@ -97,7 +97,7 @@ class basic_stream : public Fstream {
       // note: if we don't call flush before close(),
       // close() will override errno
       // note: flush is only enabled for output streams
-      detail::flusher<BaseOpenmode & std::ios_base::out>::call(*this);
+      detail::flusher<bool(BaseOpenmode & std::ios_base::out)>::call(*this);
 
       // note: close() sets failbit on any error
       const std::ios_base::iostate state = exceptions();
