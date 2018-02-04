@@ -1,5 +1,6 @@
 subdir('test')
 subdir('common')
+subdir('common_python')
 subdir('crypto')
 subdir('curl')
 subdir('process')
