@@ -62,4 +62,8 @@ pkg.generate(
     version : meson.project_version(),
 )
 
+# FIXME use elide_directory
+install_subdir('include/bunsan',
+               install_dir : get_option('includedir'))
+
 subdir('tests')
