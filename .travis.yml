@@ -1,0 +1,32 @@
+dist: trusty
+language: cpp
+sudo: required
+
+addons:
+  apt:
+    sources:
+      - deadsnakes  # python3.6
+      - ubuntu-toolchain-r-test  # gcc
+      - llvm-toolchain-trusty-5.0 # clang-5.0
+    packages:
+      - python3.6
+      - python3.6-dev
+      - gcc-7
+      - g++-7
+      - clang-5.0
+
+env:
+  - MATRIX_EVAL="CC=gcc-7 CXX=g++-7"
+  - MATRIX_EVAL="CC=clang-5.0 CXX=clang++-5.0"
+
+before_install:
+  - eval "$MATRIX_EVAL"
+  - $CC --version
+  - $CXX --version
+  # Sanity check before long compilation
+  - $CXX -std=c++17 ./ci/travis/cpp/cpp17.cpp -o cpp17
+  - ./cpp17
+
+install: ./ci/travis/install.sh
+
+script: ./ci/travis/test.sh
