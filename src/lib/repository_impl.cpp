@@ -223,6 +223,7 @@ CachedStatusMap repository::status_all_if_changed(
     const ArchiveRevision &revision) {
   CachedStatusMap cached_status_map;
   const shared_lock_guard lk(m_lock);
+  cached_status_map.mutable_revision()->set_value(m_revision.get());
   if (!is_equal_revision_(revision)) {
     *cached_status_map.mutable_status() = status_all_(existing_());
   }
