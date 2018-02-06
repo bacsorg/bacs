@@ -59,8 +59,9 @@ pkg.generate(
 )
 
 if get_option('install-bunsan-test')
-  # FIXME use elide_directory
-  install_subdir('include/bunsan', install_dir : get_option('includedir'))
+  install_subdir('include',
+                 install_dir : get_option('includedir'),
+                 strip_directory : true)
 endif
 
 subdir('tests')
