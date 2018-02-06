@@ -32,7 +32,7 @@ class myapplication : public ba::application {
  public:
   using ba::application::application;
 
-  void initialize_argument_parser(ba::argument_parser &parser) {
+  void initialize_argument_parser(ba::argument_parser &parser) override {
     parser.add_options()("option1", "help 1")(
         "option2", ba::value<std::string>(&option2), "help 2");
     parser.add_positional("positional", 1, ba::value<std::string>(&positional),
