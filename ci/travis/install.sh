@@ -53,7 +53,7 @@ function install_boost() (
   run tar xzf "$(basename "$boost_src")"
   cd "$boost_dir"
   run ./bootstrap.sh --prefix=/usr
-  run ./b2 link=shared threading=multi variant=release
+  run ./b2 link=shared threading=multi variant=release -j"$JOBS"
   # Reduce verbosity of installation
   run sudo ./b2 install | egrep -v '^common\.copy'
 )
@@ -73,7 +73,7 @@ function install_botan() (
   run tar xzf "$(basename "$botan_src")"
   cd "$botan_dir"
   run ./configure.py --prefix=/usr
-  run make
+  run make -j"$JOBS"
   run sudo make install
 )
 
