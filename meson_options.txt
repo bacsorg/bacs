@@ -1,1 +1,2 @@
 option('enable-curl', type : 'boolean', value : false)
+option('install-bunsan-test', type : 'boolean', value : false)

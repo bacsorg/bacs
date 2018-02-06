@@ -39,7 +39,7 @@ include = include_directories('include')
 lib = library('bunsan_test', srcs,
     dependencies : deps,
     include_directories : include,
-    install : true,
+    install : get_option('install-bunsan-test'),
     version : meson.project_version(),
 )
 
@@ -58,7 +58,9 @@ pkg.generate(
     version : meson.project_version(),
 )
 
-# FIXME use elide_directory
-install_subdir('include/bunsan', install_dir : get_option('includedir'))
+if get_option('install-bunsan-test')
+  # FIXME use elide_directory
+  install_subdir('include/bunsan', install_dir : get_option('includedir'))
+endif
 
 subdir('tests')
