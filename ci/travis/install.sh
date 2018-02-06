@@ -72,7 +72,7 @@ function install_botan() (
   run gpg --trust-model always --verify "$(basename "$botan_sig")"
   run tar xzf "$(basename "$botan_src")"
   cd "$botan_dir"
-  run ./configure.py
+  run ./configure.py --prefix=/usr
   run make
   run sudo make install
 )
