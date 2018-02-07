@@ -57,6 +57,33 @@ function install_boost() (
   run sudo ./b2 install | egrep -v '^common\.copy'
 )
 
+function unpack() {
+  local name="$1"
+  local fname="$(basename "$name")"
+  wget "$name"
+  ar x "$fname"
+  sudo tar xf "data.tar.xz" -C /
+}
+
+function install_boost_bin() (
+  mkdir boost
+  cd boost
+  repo="http://cz.archive.ubuntu.com/ubuntu/pool/main/b/boost1.65.1"
+  prefix="$repo/libboost-"
+  binsuffix="1.65.1_1.65.1+dfsg-0ubuntu4_amd64.deb"
+  devsuffix="1.65-dev_1.65.1+dfsg-0ubuntu4_amd64.deb"
+  for i in atomic chrono date-time filesystem program-options serialization system thread
+  do
+    unpack "$prefix$i$binsuffix"
+    unpack "$prefix$i$devsuffix"
+  done
+  for i in context coroutine iostreams python random regex
+  do
+    unpack "$prefix$i$binsuffix"
+  done
+  unpack "$repo/libboost$devsuffix"
+)
+
 function install_turtle() (
   run wget "$turtle_src"
   run sha256verify "$(basename "$turtle_src")" "$turtle_sha256"
@@ -76,6 +103,7 @@ function install_botan() (
 
 fold install_meson
 fold install_ninja
-fold install_boost
+#fold install_boost
+fold install_boost_bin
 fold install_turtle
 fold install_botan
