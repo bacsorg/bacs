@@ -22,8 +22,7 @@ turtle_sha256='1f0a8f7b7862e0f99f3849d60b488b1ce6546f1f7cfeb4d8f6c0261f1e3dcbe0'
 
 botan_ver='2.4.0'
 botan_src="https://botan.randombit.net/releases/Botan-${botan_ver}.tgz"
-botan_sig="https://botan.randombit.net/releases/Botan-${botan_ver}.tgz.asc"
-botan_key_fp='621D AF64 11E1 851C 4CF9  A2E1 6211 EBF1 EFBA DFBC'
+botan_sha256='ed9464e2a5cfee4cd3d9bd7a8f80673b45c8a0718db2181a73f5465a606608a5'
 botan_dir="$(basename "$botan_src" .tgz)"
 
 function sha256verify {
@@ -67,9 +66,7 @@ function install_turtle() (
 function install_botan() (
   # TODO cache this
   run wget "$botan_src"
-  run wget "$botan_sig"
-  run gpg --recv-keys "$botan_key_fp"
-  run gpg --trust-model always --verify "$(basename "$botan_sig")"
+  run sha256verify "$(basename "$botan_src")" "$botan_sha256"
   run tar xzf "$(basename "$botan_src")"
   cd "$botan_dir"
   run ./configure.py --prefix=/usr
