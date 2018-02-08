@@ -1,5 +1,5 @@
 dist: trusty
-language: cpp
+language: generic
 sudo: required
 
 addons:
