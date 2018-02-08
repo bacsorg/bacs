@@ -52,9 +52,14 @@ function install_boost() (
   run tar xzf "$(basename "$boost_src")"
   cd "$boost_dir"
   run ./bootstrap.sh --prefix=/usr
-  run ./b2 link=shared threading=multi variant=release -j"$JOBS"
+  b2opts=(
+      link=shared
+      threading=multi
+      variant=release
+  )
+  run ./b2 "${b2opts[@]}" -j"$JOBS"
   # Reduce verbosity of installation
-  run sudo ./b2 install | egrep -v '^common\.copy'
+  run sudo ./b2 "${b2opts[@]}" install | egrep -v '^common\.copy'
 )
 
 function install_turtle() (
