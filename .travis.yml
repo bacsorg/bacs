@@ -1,6 +1,6 @@
 dist: trusty
 language: cpp
-sudo: required
+sudo: false
 
 addons:
   apt:
@@ -16,6 +16,15 @@ addons:
       - clang-5.0
 
 env:
+  global:
+    - HOME_PREFIX="$HOME/prefix"
+    - LD_LIBRARY_PATH="$HOME_PREFIX/lib"
+    # Boost
+    - BOOST_ROOT="$HOME_PREFIX"
+    - BOOST_INCLUDEDIR="$HOME_PREFIX/include"
+    - BOOST_LIBRARYDIR="$HOME_PREFIX/lib"
+    # Python
+    - PYTHONPATH="$HOME_PREFIX/lib/python3.6"
   - MATRIX_EVAL="CC=gcc-7 CXX=g++-7"
   - MATRIX_EVAL="CC=clang-5.0 CXX=clang++-5.0"
 

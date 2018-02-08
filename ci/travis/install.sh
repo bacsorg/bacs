@@ -35,14 +35,14 @@ function install_meson() (
   run git clone "$meson_git"
   cd meson
   run "$python3" setup.py build_scripts --executable="$python3"
-  run sudo "$python3" setup.py install --prefix=/usr
+  run "$python3" setup.py install --prefix="$HOME_PREFIX"
 )
 
 function install_ninja() (
   run wget "$ninja_bin"
   run sha256verify "$(basename "$ninja_bin")" "$ninja_sha256"
   run unzip "$(basename "$ninja_bin")"
-  run sudo install -Dm755 ninja /usr/bin/ninja
+  run install -Dm755 ninja "$HOME_PREFIX/bin/ninja"
 )
 
 function install_boost() (
@@ -51,16 +51,16 @@ function install_boost() (
   run sha256verify "$(basename "$boost_src")" "$boost_sha256"
   run tar xzf "$(basename "$boost_src")"
   cd "$boost_dir"
-  run ./bootstrap.sh --prefix=/usr
+  run ./bootstrap.sh --prefix="$HOME_PREFIX"
   run ./b2 link=shared threading=multi variant=release -j"$JOBS"
   # Reduce verbosity of installation
-  run sudo ./b2 install | egrep -v '^common\.copy'
+  run ./b2 install | egrep -v '^common\.copy'
 )
 
 function install_turtle() (
   run wget "$turtle_src"
   run sha256verify "$(basename "$turtle_src")" "$turtle_sha256"
-  run sudo tar xjf turtle-1.3.0.tar.bz2 -C /usr include
+  run tar xjf turtle-1.3.0.tar.bz2 -C "$HOME_PREFIX" include
 )
 
 function install_botan() (
@@ -69,9 +69,9 @@ function install_botan() (
   run sha256verify "$(basename "$botan_src")" "$botan_sha256"
   run tar xzf "$(basename "$botan_src")"
   cd "$botan_dir"
-  run ./configure.py --prefix=/usr
+  run ./configure.py --prefix="$HOME_PREFIX"
   run make -j"$JOBS"
-  run sudo make install
+  run make install
 )
 
 fold install_meson
