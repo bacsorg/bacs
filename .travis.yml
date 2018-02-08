@@ -1,6 +1,6 @@
 dist: trusty
 language: generic
-sudo: required
+sudo: false
 
 addons:
   apt:
@@ -20,6 +20,17 @@ env:
   - MATRIX_EVAL="export CC=clang-5.0 CXX=clang++-5.0"
 
 before_install:
+  # General overrides
+  - export HOME_PREFIX="$HOME/prefix"
+  - export PATH="$HOME_PREFIX/bin:$PATH"
+  - export LD_LIBRARY_PATH="$HOME_PREFIX/lib"
+  - export PKG_CONFIG_PATH="$HOME_PREFIX/lib/pkgconfig"
+  # Boost
+  - export BOOST_ROOT="$HOME_PREFIX"
+  - export BOOST_INCLUDEDIR="$HOME_PREFIX/include"
+  - export BOOST_LIBRARYDIR="$HOME_PREFIX/lib"
+  # Python
+  - export PYTHONPATH="$HOME_PREFIX/lib/python3.6"
   - eval "$MATRIX_EVAL"
   - $CC --version
   - $CXX --version
