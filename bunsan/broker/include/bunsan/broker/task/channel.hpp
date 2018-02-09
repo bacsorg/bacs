@@ -4,9 +4,7 @@
 
 #include <boost/noncopyable.hpp>
 
-namespace bunsan {
-namespace broker {
-namespace task {
+namespace bunsan::broker::task {
 
 class channel : private boost::noncopyable {
  public:
@@ -16,6 +14,4 @@ class channel : private boost::noncopyable {
   virtual void send_result(const Result &result) = 0;
 };
 
-}  // namespace task
-}  // namespace broker
-}  // namespace bunsan
+}  // namespace bunsan::broker::task

@@ -8,9 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 class header {
  private:
@@ -94,6 +92,4 @@ header merge_headers(Arg &&arg, Args &&... args) {
 
 std::ostream &operator<<(std::ostream &out, const header &h);
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

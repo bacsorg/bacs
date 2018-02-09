@@ -2,10 +2,8 @@
 
 #include <bunsan/stream_enum.hpp>
 
-namespace bunsan {
-namespace log {
+namespace bunsan::log {
 
 BUNSAN_STREAM_ENUM_CLASS(severity, (trace, debug, info, warning, error, fatal))
 
-}  // namespace log
-}  // namespace bunsan
+}  // namespace bunsan::log

@@ -2,8 +2,7 @@
 
 #include <stdlib.h>
 
-namespace bunsan {
-namespace test {
+namespace bunsan::test {
 
 int setenv(const char *const key, const char *const value,
            const bool overwrite) {
@@ -12,5 +11,4 @@ int setenv(const char *const key, const char *const value,
 
 int unsetenv(const char *const key) { return ::unsetenv(key); }
 
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test

@@ -5,10 +5,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
-namespace info {
-namespace wrapper {
+namespace bunsan::curl::info::wrapper {
 
 template <typename T, CURLINFO Info>
 struct primitive : basic_wrapper<T, Info> {
@@ -33,7 +30,4 @@ using long_ = primitive<long, Info>;
 template <CURLINFO Info>
 using slist_ptr = primitive<::curl_slist *, Info>;
 
-}  // namespace wrapper
-}  // namespace info
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::info::wrapper

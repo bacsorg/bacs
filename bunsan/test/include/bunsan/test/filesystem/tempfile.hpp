@@ -2,9 +2,7 @@
 
 #include <bunsan/test/filesystem/tempfiles.hpp>
 
-namespace bunsan {
-namespace test {
-namespace filesystem {
+namespace bunsan::test::filesystem {
 
 struct tempfile : private tempfiles {
   tempfile();
@@ -12,6 +10,4 @@ struct tempfile : private tempfiles {
   boost::filesystem::path path;
 };
 
-}  // namespace filesystem
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test::filesystem

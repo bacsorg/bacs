@@ -10,9 +10,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace bunsan {
-namespace utility {
-namespace makers {
+namespace bunsan::utility::makers {
 
 class make : public maker {
  public:
@@ -47,6 +45,4 @@ class make : public maker {
   config m_config;
 };
 
-}  // namespace makers
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility::makers

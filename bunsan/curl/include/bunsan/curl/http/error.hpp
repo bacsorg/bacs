@@ -3,9 +3,7 @@
 #include <bunsan/curl/error.hpp>
 #include <bunsan/curl/http_version.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 struct error : virtual curl::error {};
 
@@ -35,6 +33,4 @@ struct not_ok_status_error : virtual error {
       boost::error_info<struct tag_status_reason, std::string>;
 };
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

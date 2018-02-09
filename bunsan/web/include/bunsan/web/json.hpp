@@ -6,9 +6,7 @@
 
 #include <boost/filesystem/path.hpp>
 
-namespace bunsan {
-namespace web {
-namespace json {
+namespace bunsan::web::json {
 
 struct error : virtual web::error {
   using line_number = boost::error_info<struct tag_line_number, int>;
@@ -23,5 +21,4 @@ void save_file(const cppcms::json::value &value,
                int how = cppcms::json::compact);
 }
 
-}  // namespace web
-}  // namespace bunsan
+}  // namespace bunsan::web::json

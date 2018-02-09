@@ -10,8 +10,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace bunsan {
-namespace asio {
+namespace bunsan::asio {
 
 struct invalid_data_error : virtual error {
   using data = boost::error_info<struct tag_data, std::string>;
@@ -94,5 +93,4 @@ template <typename Connection>
 const char line_connection<Connection>::eoln[1] = {
     line_connection<Connection>::delimiter};
 
-}  // namespace asio
-}  // namespace bunsan
+}  // namespace bunsan::asio

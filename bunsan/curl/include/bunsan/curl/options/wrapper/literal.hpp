@@ -6,10 +6,7 @@
 
 #include <type_traits>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 namespace detail {
 template <typename T, T Value, typename CopyPolicy>
@@ -44,7 +41,4 @@ class string_literal {
   const char m_data[sizeof...(Chars) + 1] = {Chars..., '\0'};
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

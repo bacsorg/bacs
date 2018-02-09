@@ -4,8 +4,7 @@
 
 #include <bunsan/stream_enum.hpp>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 BUNSAN_TYPED_STREAM_ENUM_CLASS_INITIALIZED(ipresolve, long, (
   (whatever, CURL_IPRESOLVE_WHATEVER),
@@ -13,5 +12,4 @@ BUNSAN_TYPED_STREAM_ENUM_CLASS_INITIALIZED(ipresolve, long, (
   (v6, CURL_IPRESOLVE_V6)
 ))
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

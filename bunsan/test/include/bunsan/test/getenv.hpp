@@ -1,9 +1,7 @@
 #pragma once
 
-namespace bunsan {
-namespace test {
+namespace bunsan::test {
 
 const char *getenv(const char *key);
 
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test

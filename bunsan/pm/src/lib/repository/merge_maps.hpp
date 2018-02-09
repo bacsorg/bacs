@@ -2,8 +2,7 @@
 
 #include <map>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 /// merges first and second map into the first one checking contradictions
 template <typename Key, typename Value>
@@ -17,5 +16,4 @@ void merge_maps(std::map<Key, Value> &a, const std::map<Key, Value> &b) {
   }
 }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

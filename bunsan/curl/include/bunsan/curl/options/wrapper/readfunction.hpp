@@ -9,10 +9,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 struct readfunction_traits {
   using wrapper_type = basic_function<readfunction_traits>;
@@ -29,7 +26,4 @@ struct readfunction_traits {
 
 using readfunction = readfunction_traits::wrapper_type;
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

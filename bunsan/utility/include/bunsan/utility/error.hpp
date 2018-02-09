@@ -2,13 +2,11 @@
 
 #include <bunsan/error.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 struct error : virtual bunsan::error {
   error() = default;
   explicit error(const std::string &message_);
 };
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

@@ -1,9 +1,6 @@
 #pragma once
 
-namespace bunsan {
-namespace curl {
-namespace info {
-namespace wrapper {
+namespace bunsan::curl::info::wrapper {
 
 template <typename T, CURLINFO Info>
 struct basic_wrapper {
@@ -14,7 +11,4 @@ struct basic_wrapper {
 template <typename T, CURLINFO Info>
 constexpr CURLINFO basic_wrapper<T, Info>::info;
 
-}  // namespace wrapper
-}  // namespace info
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::info::wrapper

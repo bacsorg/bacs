@@ -9,8 +9,7 @@
 #include <system_error>
 #include <type_traits>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 class easy {
  public:
@@ -83,5 +82,4 @@ class easy {
 
 inline void swap(easy &a, easy &b) noexcept { a.swap(b); }
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

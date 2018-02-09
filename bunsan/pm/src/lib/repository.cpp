@@ -28,8 +28,7 @@
 
 #include <cstdlib>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 repository::repository(const pm::config &config_) : m_config(config_) {
   // note: repository reference is stored,
@@ -382,5 +381,4 @@ BUNSAN_PM_GETTER(extractor, "extract")
 
 #undef BUNSAN_PM_GETTER
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

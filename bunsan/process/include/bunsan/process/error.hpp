@@ -10,8 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 struct error : virtual bunsan::error {
   using context = boost::error_info<struct tag_context, process::context>;
@@ -48,8 +47,7 @@ struct no_environment_path_error : virtual environment_path_error {};
 struct empty_environment_path_error : virtual environment_path_error {};
 struct no_executable_in_path_error : virtual find_executable_in_path_error {};
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process
 
 namespace boost {
 std::string to_string(const bunsan::process::error::context &context);

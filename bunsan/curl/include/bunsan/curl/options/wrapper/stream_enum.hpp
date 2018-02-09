@@ -7,10 +7,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <typename Enum>
 class stream_enum : public string {
@@ -27,7 +24,4 @@ class stream_enum_optional : public stream_enum<Enum> {
   stream_enum_optional() : stream_enum<Enum>(Default) {}
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

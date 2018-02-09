@@ -10,10 +10,7 @@
 
 #include <type_traits>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 namespace detail {
 template <typename RetentionPolicy>
@@ -58,10 +55,7 @@ class wrapped_option : private Wrapper {
   }
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper
 
 #define BUNSAN_CURL_OPTION_WRAPPED(NAME, CODE, ...)              \
   using NAME = ::bunsan::curl::options::wrapper::wrapped_option< \

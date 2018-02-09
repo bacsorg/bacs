@@ -5,9 +5,7 @@
 
 #include <string>
 
-namespace bunsan {
-namespace process {
-namespace file {
+namespace bunsan::process::file {
 
 enum do_default_type { do_default };
 enum inherit_type { inherit };
@@ -23,6 +21,4 @@ using stderr_data_type =
     boost::variant<do_default_type, inherit_type, suppress_type,
                    redirect_to_stdout_type, boost::filesystem::path>;
 
-}  // namespace file
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::file

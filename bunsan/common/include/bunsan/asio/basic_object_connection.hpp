@@ -8,8 +8,7 @@
 
 #include <sstream>
 
-namespace bunsan {
-namespace asio {
+namespace bunsan::asio {
 
 template <typename IArchive, typename OArchive, typename Connection>
 class basic_object_connection : private boost::noncopyable {
@@ -77,5 +76,4 @@ class basic_object_connection : private boost::noncopyable {
   std::string m_outbound_data;
 };
 
-}  // namespace asio
-}  // namespace bunsan
+}  // namespace bunsan::asio

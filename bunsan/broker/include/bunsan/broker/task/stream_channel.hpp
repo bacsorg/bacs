@@ -4,9 +4,7 @@
 
 #include <ostream>
 
-namespace bunsan {
-namespace broker {
-namespace task {
+namespace bunsan::broker::task {
 
 class stream_channel : public channel {
  public:
@@ -19,6 +17,4 @@ class stream_channel : public channel {
   std::ostream &m_out;
 };
 
-}  // namespace task
-}  // namespace broker
-}  // namespace bunsan
+}  // namespace bunsan::broker::task

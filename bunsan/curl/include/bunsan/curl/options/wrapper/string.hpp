@@ -8,10 +8,7 @@
 
 #include <string>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 class string {
  public:
@@ -36,7 +33,4 @@ class string {
   boost::optional<std::string> m_data;
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

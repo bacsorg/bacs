@@ -16,8 +16,7 @@
 #include <psapi.h>
 #include <windows.h>
 
-namespace bunsan {
-namespace runtime {
+namespace bunsan::runtime {
 
 std::ostream &operator<<(std::ostream &out, const stacktrace &trace) {
   struct msvc_context {
@@ -52,5 +51,4 @@ std::ostream &operator<<(std::ostream &out, const stacktrace &trace) {
   return out;
 }
 
-}  // namespace runtime
-}  // namespace bunsan
+}  // namespace bunsan::runtime

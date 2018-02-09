@@ -4,9 +4,7 @@
 
 #include <memory>
 
-namespace bunsan {
-namespace curl {
-namespace detail {
+namespace bunsan::curl::detail {
 
 namespace slist {
 struct deleter {
@@ -26,6 +24,4 @@ inline void append(ptr &list, const std::string &data) {
 
 using slist_ptr = slist::ptr;
 
-}  // namespace detail
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::detail

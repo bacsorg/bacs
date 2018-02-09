@@ -2,13 +2,9 @@
 
 #include <boost/filesystem/path.hpp>
 
-namespace bunsan {
-namespace process {
-namespace detail {
+namespace bunsan::process::detail {
 
 boost::filesystem::path find_executable_in_path(
     const boost::filesystem::path &executable);
 
-}  // namespace detail
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::detail

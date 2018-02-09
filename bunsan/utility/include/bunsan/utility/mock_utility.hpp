@@ -4,12 +4,10 @@
 
 #include <turtle/mock.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 MOCK_BASE_CLASS(mock_utility, utility) {
   MOCK_METHOD(setup, 1, void(const boost::property_tree::ptree &ptree))
 };
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

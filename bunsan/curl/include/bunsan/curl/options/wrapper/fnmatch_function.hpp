@@ -10,10 +10,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 struct fnmatch_function_traits {
   using wrapper_type = basic_function<fnmatch_function_traits>;
@@ -30,7 +27,4 @@ struct fnmatch_function_traits {
 
 using fnmatch_function = fnmatch_function_traits::wrapper_type;
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

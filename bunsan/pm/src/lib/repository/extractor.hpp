@@ -6,8 +6,7 @@
 
 #include <boost/noncopyable.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 class repository::extractor : private boost::noncopyable {
  public:
@@ -51,5 +50,4 @@ class repository::extractor : private boost::noncopyable {
   extract_config m_config;
 };
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

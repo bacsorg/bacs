@@ -4,8 +4,7 @@
 
 #include <bunsan/stream_enum.hpp>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 BUNSAN_TYPED_STREAM_ENUM_CLASS_INITIALIZED(ioerr, long, (
   (ok, CURLIOE_OK),
@@ -15,5 +14,4 @@ BUNSAN_TYPED_STREAM_ENUM_CLASS_INITIALIZED(ioerr, long, (
 static_assert(static_cast<long>(ioerr::failrestart) + 1 == CURLIOE_LAST,
               "outdated");
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

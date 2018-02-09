@@ -10,8 +10,7 @@
 
 #include <ctime>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 repository::extractor::extractor(repository &self, const extract_config &config)
     : m_self(self), m_config(config) {}
@@ -199,5 +198,4 @@ repository::local_system &repository::extractor::local_system_() {
   return m_self.local_system_();
 }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

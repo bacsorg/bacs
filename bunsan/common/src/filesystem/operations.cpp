@@ -6,8 +6,7 @@
 
 #include <deque>
 
-namespace bunsan {
-namespace filesystem {
+namespace bunsan::filesystem {
 
 void reset_dir(const boost::filesystem::path &dir) {
   BUNSAN_EXCEPTIONS_WRAP_BEGIN() {
@@ -133,5 +132,4 @@ void write_data(const boost::filesystem::path &path, const std::string &data) {
   }
 }
 
-}  // namespace filesystem
-}  // namespace bunsan
+}  // namespace bunsan::filesystem

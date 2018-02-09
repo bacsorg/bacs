@@ -5,9 +5,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/assert.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 header_parser::callback_type header_parser::callback() {
   return std::bind(&header_parser::parse_header_callback, this,
@@ -58,6 +56,4 @@ std::size_t header_parser::parse_header_callback(const char *ptr,
   return size;
 }
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

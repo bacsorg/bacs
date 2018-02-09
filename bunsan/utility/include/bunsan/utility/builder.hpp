@@ -7,8 +7,7 @@
 
 #include <bunsan/factory_helper.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 struct builder_error : virtual error {
   using src = boost::error_info<struct tag_src, boost::filesystem::path>;
@@ -50,5 +49,4 @@ class builder : public utility {
 };
 BUNSAN_FACTORY_TYPES(builder)
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

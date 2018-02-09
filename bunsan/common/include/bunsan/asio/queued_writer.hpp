@@ -8,8 +8,7 @@
 #include <deque>
 #include <utility>
 
-namespace bunsan {
-namespace asio {
+namespace bunsan::asio {
 
 template <typename T, typename Connection>
 class queued_writer : private boost::noncopyable {
@@ -91,5 +90,4 @@ class queued_writer : private boost::noncopyable {
   write_handler m_handle_write_custom;
 };
 
-}  // namespace asio
-}  // namespace bunsan
+}  // namespace bunsan::asio

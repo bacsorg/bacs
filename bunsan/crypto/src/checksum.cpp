@@ -12,9 +12,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace bunsan {
-namespace crypto {
-namespace checksum {
+namespace bunsan::crypto::checksum {
 
 template <typename Checksum>
 std::string checksum_(const boost::filesystem::path &path) {
@@ -70,6 +68,4 @@ std::string sha512(const boost::filesystem::path &path) {
   return checksum_<Botan::SHA_512>(path);
 }
 
-}  // namespace checksum
-}  // namespace crypto
-}  // namespace bunsan
+}  // namespace bunsan::crypto::checksum

@@ -2,9 +2,7 @@
 
 #include <bunsan/system_error.hpp>
 
-namespace bunsan {
-namespace process {
-namespace detail {
+namespace bunsan::process::detail {
 
 executor::executor(const boost::filesystem::path &executable,
                    const std::vector<std::string> &arguments)
@@ -20,6 +18,4 @@ void executor::exec() {
   BOOST_THROW_EXCEPTION(system_error("execv"));
 }
 
-}  // namespace detail
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::detail

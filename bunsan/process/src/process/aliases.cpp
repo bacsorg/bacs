@@ -8,8 +8,7 @@
 
 #include <cstdlib>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 namespace {
 template <typename Error>
@@ -89,5 +88,4 @@ void check_sync_execute_with_output(context ctx) {
   check_sync_execute_with_optional_output(std::move(ctx), true);
 }
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

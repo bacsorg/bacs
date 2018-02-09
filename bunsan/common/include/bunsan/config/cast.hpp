@@ -3,8 +3,7 @@
 #include <bunsan/config/input_archive.hpp>
 #include <bunsan/config/output_archive.hpp>
 
-namespace bunsan {
-namespace config {
+namespace bunsan::config {
 
 template <typename T, typename Ptree>
 T load(const Ptree &ptree) {
@@ -22,5 +21,4 @@ Ptree save(const T &obj) {
   return ptree;
 }
 
-}  // namespace config
-}  // namespace bunsan
+}  // namespace bunsan::config

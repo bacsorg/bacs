@@ -10,8 +10,7 @@
 
 #include <mutex>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 class repository::cache : private boost::noncopyable {
  public:
@@ -105,5 +104,4 @@ class repository::cache : private boost::noncopyable {
   utility::archiver_ptr m_archiver;
 };
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

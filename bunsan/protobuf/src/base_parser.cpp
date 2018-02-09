@@ -7,8 +7,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 void base_parser::merge_raw(google::protobuf::Message &message,
                             google::protobuf::io::ZeroCopyInputStream &input,
@@ -45,5 +44,4 @@ void base_parser::merge_raw(google::protobuf::Message &message,
   fin.close();
 }
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

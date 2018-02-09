@@ -9,10 +9,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 struct closesocketfunction_traits {
   using wrapper_type = basic_function<closesocketfunction_traits>;
@@ -28,7 +25,4 @@ struct closesocketfunction_traits {
 
 using closesocketfunction = closesocketfunction_traits::wrapper_type;
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

@@ -10,9 +10,7 @@
 
 #include <set>
 
-namespace bunsan {
-namespace utility {
-namespace archivers {
+namespace bunsan::utility::archivers {
 
 class tar : public cwd_split {
  public:
@@ -52,6 +50,4 @@ class tar : public cwd_split {
   config m_config;
 };
 
-}  // namespace archivers
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility::archivers

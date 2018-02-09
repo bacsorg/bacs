@@ -10,9 +10,7 @@
 #include <boost/log/trivial.hpp>
 #include <boost/thread/shared_mutex.hpp>
 
-namespace bunsan {
-namespace log {
-namespace trivial {
+namespace bunsan::log::trivial {
 
 template <typename Level = int>
 class logger
@@ -27,9 +25,7 @@ struct global {
   static void remove_default_sink();
 };
 
-}  // namespace trivial
-}  // namespace log
-}  // namespace bunsan
+}  // namespace bunsan::log::trivial
 
 #define BUNSAN_LOG_TRIVIAL(SEV)                                          \
   BOOST_LOG_STREAM_WITH_PARAMS(                                          \

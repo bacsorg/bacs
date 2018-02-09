@@ -5,8 +5,7 @@
 
 #include <bunsan/config/cast.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 custom_resolver::custom_resolver()
     : m_back_resolver(std::make_unique<system_resolver>()) {}
@@ -99,5 +98,4 @@ std::unique_ptr<resolver> custom_resolver::clone() const {
   }
 }
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

@@ -7,16 +7,12 @@
 
 #include <algorithm>
 
-namespace bunsan {
-
-namespace config {
-namespace traits {
+namespace bunsan::config::traits {
 template <>
 struct is_direct_assignable<pm::entry> : std::integral_constant<bool, true> {};
-}  // namespace traits
-}  // namespace config
+}  // namespace bunsan::config::traits
 
-namespace pm {
+namespace bunsan::pm {
 
 bool package_stage::empty() const {
   return self.empty() && import.package.empty() && import.source.empty();
@@ -79,5 +75,4 @@ void index::make_absolute(const entry &root) {
   for (auto &i : package.import.package) i.package.make_absolute(root);
 }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

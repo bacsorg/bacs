@@ -6,9 +6,7 @@
 #include <algorithm>
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace detail {
+namespace bunsan::curl::detail {
 
 class string_list {
  public:
@@ -73,6 +71,4 @@ inline string_list::const_iterator end(const string_list &list) {
   return list.end();
 }
 
-}  // namespace detail
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::detail

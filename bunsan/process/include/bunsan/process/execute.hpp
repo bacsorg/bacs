@@ -10,8 +10,7 @@
 #include <utility>
 #include <vector>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 int sync_execute(context ctx);
 int sync_execute_with_output(context ctx, std::string &output);
@@ -41,5 +40,4 @@ inline void check_sync_execute_with_output(Args &&... args) {
       context().arguments(std::forward<Args>(args)...));
 }
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

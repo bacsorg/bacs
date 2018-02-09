@@ -10,10 +10,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 struct opensocketfunction_traits {
   using wrapper_type = basic_function<opensocketfunction_traits>;
@@ -31,7 +28,4 @@ struct opensocketfunction_traits {
 
 using opensocketfunction = opensocketfunction_traits::wrapper_type;
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

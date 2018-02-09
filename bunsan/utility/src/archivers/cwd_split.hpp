@@ -2,9 +2,7 @@
 
 #include <bunsan/utility/archiver.hpp>
 
-namespace bunsan {
-namespace utility {
-namespace archivers {
+namespace bunsan::utility::archivers {
 
 struct cwd_split_error : virtual archiver_error {};
 struct cwd_split_pack_from_error : virtual cwd_split_error {
@@ -25,6 +23,4 @@ class cwd_split : public archiver {
                          const boost::filesystem::path &file) = 0;
 };
 
-}  // namespace archivers
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility::archivers

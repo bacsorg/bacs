@@ -6,9 +6,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
-namespace bunsan {
-namespace utility {
-namespace archivers {
+namespace bunsan::utility::archivers {
 
 class _7z : public cwd_split {
  public:
@@ -42,6 +40,4 @@ class _7z : public cwd_split {
   config m_config;
 };
 
-}  // namespace archivers
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility::archivers

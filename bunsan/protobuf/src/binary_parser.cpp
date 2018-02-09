@@ -4,8 +4,7 @@
 
 #include <google/protobuf/io/coded_stream.h>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 void binary_parser::merge_raw(
     google::protobuf::Message &message,
     google::protobuf::io::ZeroCopyInputStream &input) {
@@ -14,6 +13,4 @@ void binary_parser::merge_raw(
     BOOST_THROW_EXCEPTION(parse_error()
                           << parse_error::type_name(message.GetTypeName()));
 }
-
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

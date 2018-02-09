@@ -11,9 +11,7 @@
 
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 class client : private boost::noncopyable {
  public:
@@ -69,6 +67,4 @@ class client : private boost::noncopyable {
   header_parser m_header_parser;
 };
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

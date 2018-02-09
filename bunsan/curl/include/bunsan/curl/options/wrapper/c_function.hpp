@@ -4,10 +4,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <typename Signature>
 class c_function;
@@ -30,7 +27,4 @@ class c_function<Result(Args...)> {
   function_ptr m_data = nullptr;
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

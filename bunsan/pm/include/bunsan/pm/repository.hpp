@@ -17,8 +17,7 @@
 
 #include <ctime>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 /*!
  * \brief Class represents bunsan repository
@@ -151,5 +150,4 @@ class repository : private boost::noncopyable {
   std::unique_ptr<extractor> m_extractor;
 };
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

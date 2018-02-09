@@ -3,9 +3,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 
-namespace bunsan {
-namespace test {
-namespace filesystem {
+namespace bunsan::test::filesystem {
 
 struct tempdir : private boost::noncopyable {
   tempdir();
@@ -14,6 +12,4 @@ struct tempdir : private boost::noncopyable {
   boost::filesystem::path path;
 };
 
-}  // namespace filesystem
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test::filesystem

@@ -7,9 +7,7 @@
 #include <bunsan/curl/info/wrapper/string.hpp>
 #include <bunsan/curl/info/wrapper/string_range.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace info {
+namespace bunsan::curl::info {
 
 BUNSAN_CURL_GETINFO(effective_url, CURLINFO_EFFECTIVE_URL, string)
 BUNSAN_CURL_GETINFO(response_code, CURLINFO_RESPONSE_CODE, long_)
@@ -54,6 +52,4 @@ BUNSAN_CURL_GETINFO(ftp_entry_path, CURLINFO_FTP_ENTRY_PATH, optional_string)
 
 BUNSAN_CURL_GETINFO(condition_unmet, CURLINFO_CONDITION_UNMET, bool_)
 
-}  // namespace info
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::info

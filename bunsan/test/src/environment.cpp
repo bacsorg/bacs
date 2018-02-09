@@ -1,9 +1,7 @@
 #include <bunsan/test/environment.hpp>
 #include <bunsan/test/getenv.hpp>
 
-namespace bunsan {
-namespace test {
-namespace dir {
+namespace bunsan::test::dir {
 
 #define BUNSAN_STATIC_PATH(NAME, EXPR)                \
   const boost::filesystem::path &NAME() {             \
@@ -23,6 +21,4 @@ BUNSAN_STATIC_PATH(binary, tests::binary() / "resources")
 }  // namespace resources
 }  // namespace tests
 
-}  // namespace dir
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test::dir

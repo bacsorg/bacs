@@ -8,8 +8,7 @@
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/include/qi.hpp>
 
-namespace bunsan {
-namespace web {
+namespace bunsan::web {
 
 void mime_file::swap(mime_file &m) noexcept {
   using std::swap;
@@ -26,16 +25,14 @@ struct mime_file_line {
 };
 }  // namespace
 
-}  // namespace web
-}  // namespace bunsan
+}  // namespace bunsan::web
 
 BOOST_FUSION_ADAPT_STRUCT(bunsan::web::mime_file_line,
   (std::string, mime_type)
   (std::vector<std::string>, extensions)
 )
 
-namespace bunsan {
-namespace web {
+namespace bunsan::web {
 
 void mime_file::load(std::istream &in) {
   mime_file data;
@@ -140,5 +137,4 @@ mime_file load_mime_file(const boost::filesystem::path &path) {
   return data;
 }
 
-}  // namespace web
-}  // namespace bunsan
+}  // namespace bunsan::web

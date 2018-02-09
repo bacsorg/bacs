@@ -6,8 +6,7 @@
 #include <boost/log/core.hpp>
 #include <boost/phoenix/bind.hpp>
 
-namespace bunsan {
-namespace log {
+namespace bunsan::log {
 
 bool set_enabled(bool enabled) {
   return boost::log::core::get()->set_logging_enabled(enabled);
@@ -23,5 +22,4 @@ void set_minimum_severity(const severity minimum_severity) {
       boost::phoenix::bind(filter, expressions::severity.or_none()));
 }
 
-}  // namespace log
-}  // namespace bunsan
+}  // namespace bunsan::log

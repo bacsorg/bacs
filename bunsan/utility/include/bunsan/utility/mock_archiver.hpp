@@ -4,8 +4,7 @@
 
 #include <turtle/mock.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 MOCK_BASE_CLASS(mock_archiver, archiver) {
   MOCK_METHOD(pack, 2, void(const boost::filesystem::path &archive,
@@ -17,5 +16,4 @@ MOCK_BASE_CLASS(mock_archiver, archiver) {
                               const boost::filesystem::path &dir))
 };
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

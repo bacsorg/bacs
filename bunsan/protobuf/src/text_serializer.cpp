@@ -4,8 +4,7 @@
 
 #include <google/protobuf/text_format.h>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 void text_serializer::serialize_raw(
     const google::protobuf::Message &message,
@@ -16,5 +15,4 @@ void text_serializer::serialize_raw(
                           << serialize_error::type_name(message.GetTypeName()));
 }
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

@@ -2,9 +2,7 @@
 
 #include <bunsan/utility/builder.hpp>
 
-namespace bunsan {
-namespace utility {
-namespace builders {
+namespace bunsan::utility::builders {
 
 struct conf_make_install_error : virtual builder_install_error {};
 struct conf_make_install_configure_error : virtual conf_make_install_error {};
@@ -29,6 +27,4 @@ class conf_make_install : public builder {
                         const boost::filesystem::path &root) = 0;
 };
 
-}  // namespace builders
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility::builders

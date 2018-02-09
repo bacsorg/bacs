@@ -8,10 +8,7 @@
 
 #include <type_traits>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 namespace detail {
 template <typename T>
@@ -59,7 +56,4 @@ class bitmask_optional : public bitmask<T> {
   bitmask_optional() : bitmask<T>(Default) {}
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

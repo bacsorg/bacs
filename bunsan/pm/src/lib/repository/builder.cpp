@@ -12,8 +12,7 @@
 
 #include <boost/filesystem/operations.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 repository::builder::builder(repository &self, const build_config &config)
     : m_self(self), m_config(config) {
@@ -165,5 +164,4 @@ repository::local_system &repository::builder::local_system_() {
   return m_self.local_system_();
 }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

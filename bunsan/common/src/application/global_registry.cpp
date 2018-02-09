@@ -2,8 +2,7 @@
 
 #include <boost/assert.hpp>
 
-namespace bunsan {
-namespace application {
+namespace bunsan::application {
 
 global_state::global_state() {}
 global_state::~global_state() {}
@@ -37,5 +36,4 @@ bool global_registry::register_state_factory(
 global_lazy_ptr<global_registry::global_instance_storage>
     global_registry::global_instance;
 
-}  // namespace application
-}  // namespace bunsan
+}  // namespace bunsan::application

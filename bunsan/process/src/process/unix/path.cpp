@@ -8,8 +8,7 @@
 
 #include <cstdlib>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 boost::filesystem::path find_executable_in_path(
     const boost::filesystem::path &executable) {
@@ -62,5 +61,4 @@ boost::filesystem::path find_executable_in_path(
   }
 }
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

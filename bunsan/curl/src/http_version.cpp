@@ -2,8 +2,7 @@
 
 #include <initializer_list>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 http_version_pair::http_version_pair(const http_version version) {
   switch (version) {
@@ -51,5 +50,4 @@ std::ostream &operator<<(std::ostream &out, const http_version_pair &version) {
   return out << version.version_major << "." << version.version_minor;
 }
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

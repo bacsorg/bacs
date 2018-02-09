@@ -6,8 +6,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/system_error.hpp>
 
-namespace bunsan {
-namespace filesystem {
+namespace bunsan::filesystem {
 
 /*!
  * \brief recreate directory
@@ -54,5 +53,4 @@ std::string read_data(const boost::filesystem::path &path,
 
 void write_data(const boost::filesystem::path &path, const std::string &data);
 
-}  // namespace filesystem
-}  // namespace bunsan
+}  // namespace bunsan::filesystem

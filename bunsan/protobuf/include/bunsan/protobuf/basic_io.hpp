@@ -4,8 +4,7 @@
 
 #include <utility>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 template <typename Parser, typename Serializer>
 class basic_io {
@@ -112,5 +111,4 @@ class basic_io {
   }
 };
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

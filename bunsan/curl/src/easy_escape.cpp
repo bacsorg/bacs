@@ -5,8 +5,7 @@
 
 #include <memory>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 std::string easy::escape(const std::string &url) {
   if (url.empty()) {
@@ -35,5 +34,4 @@ std::string easy::unescape(const std::string &url) {
   }
 }
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

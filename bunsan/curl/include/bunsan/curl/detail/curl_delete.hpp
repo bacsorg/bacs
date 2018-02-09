@@ -1,8 +1,6 @@
 #pragma once
 
-namespace bunsan {
-namespace curl {
-namespace detail {
+namespace bunsan::curl::detail {
 
 struct curl_delete {
   constexpr curl_delete() noexcept = default;
@@ -10,6 +8,4 @@ struct curl_delete {
   void operator()(void *const ptr) const;
 };
 
-}  // namespace detail
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::detail

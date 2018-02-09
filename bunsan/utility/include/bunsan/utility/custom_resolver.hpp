@@ -9,8 +9,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 class custom_resolver : public resolver {
  public:
@@ -64,5 +63,4 @@ class custom_resolver : public resolver {
   std::unique_ptr<resolver> m_back_resolver;
 };
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

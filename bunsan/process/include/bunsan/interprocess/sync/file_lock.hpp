@@ -14,8 +14,7 @@
 #include <atomic>
 #include <memory>
 
-namespace bunsan {
-namespace interprocess {
+namespace bunsan::interprocess {
 
 class file_lock;
 
@@ -116,5 +115,4 @@ class file_lock {
 
 inline void swap(file_lock &a, file_lock &b) noexcept { a.swap(b); }
 
-}  // namespace interprocess
-}  // namespace bunsan
+}  // namespace bunsan::interprocess

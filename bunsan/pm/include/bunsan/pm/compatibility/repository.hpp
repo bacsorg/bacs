@@ -6,8 +6,7 @@
 
 #include <ctime>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 class repository;
 
@@ -36,5 +35,4 @@ class repository : private boost::noncopyable {
 };
 }  // namespace compatibility
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

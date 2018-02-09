@@ -2,8 +2,7 @@
 
 #include <bunsan/process/path.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 boost::filesystem::path system_resolver::find_executable(
     const boost::filesystem::path &exe) {
@@ -20,5 +19,4 @@ std::unique_ptr<resolver> system_resolver::clone() const {
   return std::make_unique<system_resolver>();
 }
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

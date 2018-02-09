@@ -7,8 +7,7 @@
 
 #include <boost/noncopyable.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 class repository::distributor : private boost::noncopyable {
  public:
@@ -46,5 +45,4 @@ class repository::distributor : private boost::noncopyable {
   utility::fetcher_ptr m_fetcher;
 };
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

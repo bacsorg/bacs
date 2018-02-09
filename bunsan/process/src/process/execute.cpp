@@ -3,8 +3,7 @@
 #include <bunsan/process/error.hpp>
 #include <bunsan/process/executor.hpp>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 int sync_execute(bunsan::process::context ctx) {
   try {
@@ -16,5 +15,4 @@ int sync_execute(bunsan::process::context ctx) {
   }
 }
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process {

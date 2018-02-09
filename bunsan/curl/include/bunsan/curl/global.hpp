@@ -4,8 +4,7 @@
 
 #include <boost/noncopyable.hpp>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 /// \warning This class is not thread-safe.
 class global : private boost::noncopyable {
@@ -30,5 +29,4 @@ class global : private boost::noncopyable {
   static const global static_instance;
 };
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

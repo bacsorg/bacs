@@ -7,8 +7,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 struct error : virtual bunsan::error {};
 
@@ -37,8 +36,7 @@ struct share_error : basic_error<CURLSHcode, &share_category> {
   using basic_error::basic_error;
 };
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl
 
 inline std::error_code make_error_code(const CURLcode e) {
   return std::error_code(e, bunsan::curl::easy_category());

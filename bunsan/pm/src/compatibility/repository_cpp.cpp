@@ -5,9 +5,7 @@
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-namespace bunsan {
-namespace pm {
-namespace compatibility {
+namespace bunsan::pm::compatibility {
 
 repository::repository(const std::string &config) : m_repo(nullptr) {
   boost::property_tree::ptree cfg;
@@ -60,6 +58,4 @@ void repository::initialize_cache(const std::string &config) {
   bunsan::pm::repository::initialize_cache(cfg);
 }
 
-}  // namespace compatibility
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm::compatibility

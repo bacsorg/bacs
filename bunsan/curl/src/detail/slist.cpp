@@ -2,9 +2,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
-namespace detail {
+namespace bunsan::curl::detail {
 
 void slist::deleter::operator()(void *const ptr) const {
   curl_slist_free_all(static_cast<struct ::curl_slist *>(ptr));
@@ -22,6 +20,4 @@ void slist::append(ptr &list, const char *const data) {
   }
 }
 
-}  // namespace detail
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::detail

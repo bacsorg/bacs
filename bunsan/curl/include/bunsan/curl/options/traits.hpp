@@ -2,9 +2,7 @@
 
 #include <type_traits>
 
-namespace bunsan {
-namespace curl {
-namespace options {
+namespace bunsan::curl::options {
 
 namespace detail {
 template <typename Option>
@@ -36,6 +34,4 @@ struct option_traits {
   using is_function = detail::is_function<option_type>;
 };
 
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options

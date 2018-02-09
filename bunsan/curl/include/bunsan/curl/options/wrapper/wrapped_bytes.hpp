@@ -9,10 +9,7 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/scope_exit.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <CURLoption DataId, CURLoption SizeId, typename Wrapper>
 class wrapped_bytes : public Wrapper {
@@ -47,10 +44,7 @@ class wrapped_bytes : public Wrapper {
   }
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper
 
 #define BUNSAN_CURL_BYTES_WRAPPED(NAME, DATA, SIZE, ...)        \
   using NAME = ::bunsan::curl::options::wrapper::wrapped_bytes< \

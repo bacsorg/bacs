@@ -5,8 +5,7 @@
 
 #include <cxxabi.h>
 
-namespace bunsan {
-namespace runtime {
+namespace bunsan::runtime {
 
 std::string demangle(const char *const name) {
   char *realname = nullptr;
@@ -27,14 +26,11 @@ std::string demangle(const char *const name) {
 
 std::string demangle(const std::string &name) { return demangle(name.c_str()); }
 
-}  // namespace runtime
-}  // namespace bunsan
+}  // namespace bunsan::runtime
 
 #else
-namespace bunsan {
-namespace runtime {
+namespace bunsan::runtime {
 std::string demangle(const char *const name) { return name; }
 std::string demangle(const std::string &name) { return name; }
-}  // namespace runtime
-}  // namespace bunsan
+}  // namespace bunsan::runtime
 #endif

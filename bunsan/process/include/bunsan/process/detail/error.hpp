@@ -2,12 +2,8 @@
 
 #include <bunsan/process/error.hpp>
 
-namespace bunsan {
-namespace process {
-namespace detail {
+namespace bunsan::process::detail {
 
 struct error : virtual process::error {};
 
-}  // namespace detail
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::detail

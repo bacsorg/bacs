@@ -2,8 +2,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 enum class redir_post : long {
   http301 = CURL_REDIR_POST_301,
@@ -12,5 +11,4 @@ enum class redir_post : long {
   all = CURL_REDIR_POST_ALL
 };
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

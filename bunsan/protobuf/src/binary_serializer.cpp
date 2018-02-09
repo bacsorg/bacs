@@ -2,8 +2,7 @@
 
 #include <bunsan/protobuf/error.hpp>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 void binary_serializer::serialize_raw(
     const google::protobuf::Message &message,
@@ -13,5 +12,4 @@ void binary_serializer::serialize_raw(
                           << serialize_error::type_name(message.GetTypeName()));
 }
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

@@ -1,11 +1,7 @@
 #include <bunsan/test/filesystem/tempfile.hpp>
 
-namespace bunsan {
-namespace test {
-namespace filesystem {
+namespace bunsan::test::filesystem {
 
 tempfile::tempfile() : path(allocate()) {}
 
-}  // namespace filesystem
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test::filesystem

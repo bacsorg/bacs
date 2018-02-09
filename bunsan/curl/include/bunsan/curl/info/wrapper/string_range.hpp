@@ -7,10 +7,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
-namespace info {
-namespace wrapper {
+namespace bunsan::curl::info::wrapper {
 
 template <CURLINFO Info>
 struct string_range : basic_wrapper<detail::slist_string_range, Info> {
@@ -20,7 +17,4 @@ struct string_range : basic_wrapper<detail::slist_string_range, Info> {
   }
 };
 
-}  // namespace wrapper
-}  // namespace info
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::info::wrapper

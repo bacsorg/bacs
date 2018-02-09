@@ -5,9 +5,7 @@
 #include <ostream>
 #include <utility>
 
-namespace bunsan {
-namespace log {
-namespace fallback {
+namespace bunsan::log::fallback {
 
 class logger {
  public:
@@ -25,9 +23,7 @@ class logger {
   std::ostream &m_out;
 };
 
-}  // namespace fallback
-}  // namespace log
-}  // namespace bunsan
+}  // namespace bunsan::log::fallback
 
 #define BUNSAN_LOG_SEV_INTO(SEV, STREAM)                                 \
   ::bunsan::log::fallback::logger(STREAM)                                \

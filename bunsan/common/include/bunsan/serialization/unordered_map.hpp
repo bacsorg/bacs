@@ -14,8 +14,7 @@
 
 #include <unordered_map>
 
-namespace boost {
-namespace serialization {
+namespace boost::serialization {
 
 template <typename Archive, typename Key, typename Tp, typename Hash,
           typename Pred, typename Alloc>
@@ -44,7 +43,6 @@ void load(Archive &ar, std::unordered_map<Key, Tp, Hash, Pred, Alloc> &map,
                                                                            map);
 }
 
-}  // namespace serialization
-}  // namespace boost
+}  // namespace boost::serialization
 
 #endif

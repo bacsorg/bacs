@@ -1,7 +1,6 @@
 #include <bunsan/process/executor.hpp>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 class native_executor : public executor {
  public:
@@ -13,5 +12,4 @@ class native_executor : public executor {
   int sync_execute_impl(const context &ctx);
 };
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

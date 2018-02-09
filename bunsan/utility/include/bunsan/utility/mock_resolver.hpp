@@ -4,8 +4,7 @@
 
 #include <turtle/mock.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 MOCK_BASE_CLASS(mock_resolver, resolver) {
   MOCK_METHOD(find_executable, 1,
@@ -15,5 +14,4 @@ MOCK_BASE_CLASS(mock_resolver, resolver) {
   MOCK_METHOD(clone, 0, std::unique_ptr<resolver>())
 };
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

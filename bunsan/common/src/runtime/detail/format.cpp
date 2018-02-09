@@ -4,9 +4,8 @@
 
 #include <iomanip>
 
-namespace bunsan {
-namespace runtime {
-namespace detail {
+namespace bunsan::runtime::detail {
+
 void format_fallback(std::ostream &out, void *const addr) {
   out << std::showbase << std::hex << addr << '\n';
 }
@@ -42,6 +41,4 @@ void format(std::ostream &out, const char *const fname, const void *const fbase,
   if (saddr) out << " {saddr = " << std::showbase << std::hex << saddr << "}\n";
 }
 
-}  // namespace detail
-}  // namespace runtime
-}  // namespace bunsan
+}  // namespace bunsan::runtime::detail

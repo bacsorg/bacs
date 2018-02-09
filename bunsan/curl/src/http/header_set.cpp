@@ -1,8 +1,6 @@
 #include <bunsan/curl/http/header_set.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 void header_set::merge_insert(const header &h) {
   const auto iter = index().find(h.name());
@@ -32,6 +30,4 @@ std::ostream &operator<<(std::ostream &out, const header_set &h) {
   return out;
 }
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

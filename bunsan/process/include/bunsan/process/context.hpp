@@ -12,8 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 class context : public boost::equality_comparable<context> {
  public:
@@ -250,5 +249,4 @@ class context : public boost::equality_comparable<context> {
 
 inline void swap(context &a, context &b) noexcept { a.swap(b); }
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

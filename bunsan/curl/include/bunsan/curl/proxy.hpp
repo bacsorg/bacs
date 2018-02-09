@@ -2,8 +2,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 enum class proxy : long {
   http = CURLPROXY_HTTP,
@@ -14,5 +13,4 @@ enum class proxy : long {
   socks5_hostname = CURLPROXY_SOCKS5_HOSTNAME
 };
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

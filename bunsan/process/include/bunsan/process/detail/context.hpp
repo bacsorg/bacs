@@ -8,9 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace bunsan {
-namespace process {
-namespace detail {
+namespace bunsan::process::detail {
 
 struct context {
   boost::filesystem::path executable;
@@ -19,6 +17,4 @@ struct context {
   file::handle stdin_file, stdout_file, stderr_file;
 };
 
-}  // namespace detail
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::detail

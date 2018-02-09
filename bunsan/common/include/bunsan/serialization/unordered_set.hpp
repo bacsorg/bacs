@@ -14,8 +14,7 @@
 
 #include <unordered_set>
 
-namespace boost {
-namespace serialization {
+namespace boost::serialization {
 
 template <typename Archive, typename Value, typename Hash, typename Pred,
           typename Alloc>
@@ -43,7 +42,6 @@ void load(Archive &ar, std::unordered_set<Value, Hash, Pred, Alloc> &set,
                                                                          set);
 }
 
-}  // namespace serialization
-}  // namespace boost
+}  // namespace boost::serialization
 
 #endif

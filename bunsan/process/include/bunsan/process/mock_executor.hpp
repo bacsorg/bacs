@@ -2,8 +2,7 @@
 
 #include <turtle/mock.hpp>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 MOCK_BASE_CLASS(mock_executor, executor) {
   MOCK_METHOD(sync_execute, 1, int(context ctx))
@@ -25,5 +24,4 @@ class mock_executor_fixture {
   executor_ptr m_previous_executor;
 };
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

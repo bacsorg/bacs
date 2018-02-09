@@ -6,10 +6,7 @@
 
 #include <boost/optional.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <typename Wrapper,
           decltype(static_cast<Wrapper *>(nullptr)->data()) Default>
@@ -36,10 +33,7 @@ class wrapped_option_default {
   boost::optional<Wrapper> m_wrapper;
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper
 
 #define BUNSAN_CURL_OPTION_DEFAULT_WRAPPED(NAME, CODE, ...)           \
   using NAME = ::bunsan::curl::options::wrapper::wrapped_option<      \

@@ -7,8 +7,7 @@
 
 #include <cstdio>
 
-namespace bunsan {
-namespace interprocess {
+namespace bunsan::interprocess {
 
 file_guard::file_guard(const boost::filesystem::path &path) : m_path(path) {
   try {
@@ -64,5 +63,4 @@ file_guard::~file_guard() {
   }
 }
 
-}  // namespace interprocess
-}  // namespace bunsan
+}  // namespace bunsan::interprocess

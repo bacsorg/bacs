@@ -16,9 +16,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-namespace bunsan {
-namespace process {
-namespace detail {
+namespace bunsan::process::detail {
 
 int sync_execute(context ctx) {
   executor exec_(ctx.executable, ctx.arguments);
@@ -72,6 +70,4 @@ int sync_execute(context ctx) {
   }
 }
 
-}  // namespace detail
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::detail

@@ -6,9 +6,7 @@
 
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace detail {
+namespace bunsan::curl::detail {
 
 template <typename T>
 class one_step_iterator
@@ -48,6 +46,4 @@ one_step_range<T> make_one_step_range(T value) {
                            one_step_iterator<T>()};
 }
 
-}  // namespace detail
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::detail

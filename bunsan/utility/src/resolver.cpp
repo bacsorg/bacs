@@ -1,9 +1,7 @@
 #include <bunsan/utility/resolver.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 resolver::~resolver() {}
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

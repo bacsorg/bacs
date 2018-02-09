@@ -9,9 +9,7 @@
 
 #include <iterator>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 class header_set {
  private:
@@ -127,6 +125,4 @@ class header_set::plain_const_iterator
 
 std::ostream &operator<<(std::ostream &out, const header_set &h);
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

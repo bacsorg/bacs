@@ -4,8 +4,7 @@
 
 #include <memory>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 class executor : private boost::noncopyable {
  public:
@@ -22,5 +21,4 @@ class executor : private boost::noncopyable {
 
 using executor_ptr = executor::executor_ptr;
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

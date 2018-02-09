@@ -2,9 +2,7 @@
 
 #include <bunsan/utility/fetcher.hpp>
 
-namespace bunsan {
-namespace utility {
-namespace fetchers {
+namespace bunsan::utility::fetchers {
 
 class copy : public fetcher {
  public:
@@ -13,6 +11,4 @@ class copy : public fetcher {
              const boost::filesystem::path &dst) override;
 };
 
-}  // namespace fetchers
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility::fetchers

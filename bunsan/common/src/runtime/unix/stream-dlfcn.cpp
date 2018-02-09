@@ -9,8 +9,7 @@
 
 #include <dlfcn.h>
 
-namespace bunsan {
-namespace runtime {
+namespace bunsan::runtime {
 
 std::ostream &operator<<(std::ostream &out, const stacktrace &trace) {
   for (void *const function : trace) {
@@ -25,5 +24,4 @@ std::ostream &operator<<(std::ostream &out, const stacktrace &trace) {
   return out;
 }
 
-}  // namespace runtime
-}  // namespace bunsan
+}  // namespace bunsan::runtime

@@ -4,8 +4,7 @@
 
 #include <bunsan/stream_enum.hpp>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 BUNSAN_TYPED_STREAM_ENUM_CLASS_INITIALIZED(socktype, long, (
   (ipcxn, CURLSOCKTYPE_IPCXN),
@@ -14,5 +13,4 @@ BUNSAN_TYPED_STREAM_ENUM_CLASS_INITIALIZED(socktype, long, (
 static_assert(static_cast<long>(socktype::accept) + 1 == CURLSOCKTYPE_LAST,
               "outdated");
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

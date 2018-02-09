@@ -4,8 +4,7 @@
 
 #include <cstdlib>
 
-namespace bunsan {
-namespace test {
+namespace bunsan::test {
 
 const char *getenv(const char *const key) {
   BOOST_REQUIRE(key);
@@ -14,5 +13,4 @@ const char *getenv(const char *const key) {
   return value;
 }
 
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test

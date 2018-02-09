@@ -8,9 +8,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 client::client() {
   set(m_header_parser.option());
@@ -107,6 +105,4 @@ void client::check_perform() {
     BOOST_THROW_EXCEPTION(fill_status_error(not_ok_status_error(), s));
 }
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

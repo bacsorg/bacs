@@ -18,8 +18,7 @@
 
 #include <unordered_set>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 repository::distributor::distributor(repository &self,
                                      const remote_config &config)
@@ -210,5 +209,4 @@ repository::local_system &repository::distributor::local_system_() {
 
 repository::cache &repository::distributor::cache_() { return m_self.cache_(); }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

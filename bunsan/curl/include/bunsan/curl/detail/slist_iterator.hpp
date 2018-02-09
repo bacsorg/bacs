@@ -8,9 +8,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/range/iterator_range.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace detail {
+namespace bunsan::curl::detail {
 
 class slist_iterator
     : public boost::iterator_facade<slist_iterator, const char *const,
@@ -85,6 +83,4 @@ inline slist_string_range make_slist_string_range(const slist_ptr &list) {
   return make_slist_string_range(list.get());
 }
 
-}  // namespace detail
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::detail

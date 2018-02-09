@@ -3,8 +3,7 @@
 #include <ostream>
 #include <vector>
 
-namespace bunsan {
-namespace runtime {
+namespace bunsan::runtime {
 
 class stacktrace : public std::vector<void *> {
  public:
@@ -31,5 +30,4 @@ class stacktrace : public std::vector<void *> {
 
 std::ostream &operator<<(std::ostream &out, const stacktrace &trace);
 
-}  // namespace runtime
-}  // namespace bunsan
+}  // namespace bunsan::runtime

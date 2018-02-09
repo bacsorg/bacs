@@ -2,8 +2,7 @@
 
 #include <bunsan/error.hpp>
 
-namespace bunsan {
-namespace config {
+namespace bunsan::config {
 
 struct error : virtual bunsan::error {};
 
@@ -23,5 +22,4 @@ struct variant_load_no_key_error : virtual variant_load_key_error {};
 
 struct variant_load_multiple_keys_error : virtual variant_load_key_error {};
 
-}  // namespace config
-}  // namespace bunsan
+}  // namespace bunsan::config

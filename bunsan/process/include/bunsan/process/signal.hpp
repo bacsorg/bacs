@@ -1,10 +1,8 @@
 #pragma once
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 // Clears inherited signal settings.
 void reset_signals();
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

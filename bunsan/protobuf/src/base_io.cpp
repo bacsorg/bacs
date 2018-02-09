@@ -1,10 +1,8 @@
 #include <bunsan/protobuf/base_io.hpp>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 base_io::base_io() {}
 base_io::~base_io() {}
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

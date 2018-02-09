@@ -6,8 +6,7 @@
 
 #include <boost/assert.hpp>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 static std::mutex global_lock;
 static executor_ptr global_instance;
@@ -37,5 +36,4 @@ executor_ptr executor::instance() {
   return global_instance;
 }
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

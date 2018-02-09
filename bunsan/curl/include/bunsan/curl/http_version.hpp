@@ -4,8 +4,7 @@
 
 #include <bunsan/stream_enum.hpp>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 BUNSAN_TYPED_STREAM_ENUM_CLASS_INITIALIZED(http_version, long, (
   (http_none, CURL_HTTP_VERSION_NONE),
@@ -52,5 +51,4 @@ http_version_pair make_http_version_pair(const http_version version);
 
 std::ostream &operator<<(std::ostream &out, const http_version_pair &version);
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

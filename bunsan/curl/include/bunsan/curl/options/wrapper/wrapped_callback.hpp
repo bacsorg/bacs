@@ -7,10 +7,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <CURLoption CallbackId, CURLoption DataId, typename Wrapper>
 class wrapped_callback : private Wrapper {
@@ -44,10 +41,7 @@ class wrapped_callback : private Wrapper {
   }
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper
 
 #define BUNSAN_CURL_CALLBACK_WRAPPED(NAME, CALLBACK_ID, DATA_ID, ...) \
   using NAME = ::bunsan::curl::options::wrapper::wrapped_callback<    \

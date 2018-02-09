@@ -1,9 +1,7 @@
 #pragma once
 
-namespace bunsan {
-namespace crypto {
+namespace bunsan::crypto {
 
 using byte = unsigned char;
 
-}  // namespace crypto
-}  // namespace bunsan
+}  // namespace bunsan::crypto

@@ -2,8 +2,7 @@
 
 #include <bunsan/log/severity.hpp>
 
-namespace bunsan {
-namespace log {
+namespace bunsan::log {
 
 bool set_enabled(bool enabled);
 
@@ -14,5 +13,4 @@ void remove_default_sink();
 
 void set_minimum_severity(const severity minimum_severity);
 
-}  // namespace log
-}  // namespace bunsan
+}  // namespace bunsan::log

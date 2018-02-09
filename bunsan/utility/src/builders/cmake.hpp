@@ -13,9 +13,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace bunsan {
-namespace utility {
-namespace builders {
+namespace bunsan::utility::builders {
 
 class cmake : public conf_make_install {
  public:
@@ -102,6 +100,4 @@ struct cmake_unknown_generator_name_error
 struct cmake_unknown_platform_generator_error
     : virtual cmake_unknown_generator_error {};
 
-}  // namespace builders
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility::builders

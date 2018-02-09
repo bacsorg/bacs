@@ -8,8 +8,7 @@
 #include <deque>
 #include <string>
 
-namespace bunsan {
-namespace asio {
+namespace bunsan::asio {
 
 template <typename Source, typename Sink>
 class buffer_connection {
@@ -194,5 +193,4 @@ class buffer_connection {
   bool m_discard_on_sink_error = false;
 };
 
-}  // namespace asio
-}  // namespace bunsan
+}  // namespace bunsan::asio

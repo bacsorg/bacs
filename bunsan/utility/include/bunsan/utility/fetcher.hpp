@@ -6,8 +6,7 @@
 
 #include <bunsan/factory_helper.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 struct fetcher_error : virtual error {};
 struct fetcher_fetch_error : virtual fetcher_error {
@@ -24,5 +23,4 @@ class fetcher : public utility {
 };
 BUNSAN_FACTORY_TYPES(fetcher)
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

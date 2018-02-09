@@ -2,8 +2,7 @@
 
 #include <boost/filesystem/operations.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 repository::local_system::local_system(repository &self,
                                        const local_system_config &config)
@@ -28,5 +27,4 @@ bunsan::tempfile repository::local_system::small_tempfile() {
              : tempfile::regular_file_in_tempdir();
 }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

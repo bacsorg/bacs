@@ -5,8 +5,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 executor::executor(const std::string &command)
     : positional(0), next_positional(0) {
@@ -179,5 +178,4 @@ int executor::sync() const {
   return bunsan::process::sync_execute(context());
 }
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

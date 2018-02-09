@@ -3,9 +3,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 
-namespace bunsan {
-namespace test {
-namespace filesystem {
+namespace bunsan::test::filesystem {
 
 class tempfiles : private boost::noncopyable {
  public:
@@ -18,6 +16,4 @@ class tempfiles : private boost::noncopyable {
   std::vector<boost::filesystem::path> m_files;
 };
 
-}  // namespace filesystem
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test::filesystem

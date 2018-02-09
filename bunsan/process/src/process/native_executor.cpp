@@ -15,8 +15,7 @@
 
 #include <sstream>  // for logging
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 namespace {
 class file_action_visitor : boost::static_visitor<file::handle>,
@@ -110,5 +109,4 @@ int native_executor::sync_execute_impl(const context &ctx) {
   return detail::sync_execute(std::move(ctx_));
 }
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

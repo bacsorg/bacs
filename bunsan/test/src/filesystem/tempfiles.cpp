@@ -3,9 +3,7 @@
 
 #include <boost/filesystem/operations.hpp>
 
-namespace bunsan {
-namespace test {
-namespace filesystem {
+namespace bunsan::test::filesystem {
 
 tempfiles::tempfiles() {}
 
@@ -21,6 +19,4 @@ boost::filesystem::path tempfiles::allocate() {
   return m_files.back();
 }
 
-}  // namespace filesystem
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test::filesystem

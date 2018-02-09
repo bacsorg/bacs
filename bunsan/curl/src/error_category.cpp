@@ -2,8 +2,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 namespace {
 class easy_category_ : public std::error_category {
@@ -49,5 +48,4 @@ const std::error_category &share_category() noexcept {
   return impl;
 }
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

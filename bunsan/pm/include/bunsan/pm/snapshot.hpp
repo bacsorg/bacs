@@ -8,8 +8,7 @@
 #include <map>
 #include <string>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 using source_name_type = std::string;
 using checksum_type = std::string;
@@ -24,5 +23,4 @@ snapshot read_snapshot(const boost::filesystem::path &path);
 void write_snapshot(const boost::filesystem::path &path,
                     const snapshot &snapshot_);
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

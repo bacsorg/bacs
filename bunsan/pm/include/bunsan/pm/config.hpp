@@ -13,8 +13,7 @@
 
 #include <string>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 struct format_config {
   template <typename Archive>
@@ -200,5 +199,4 @@ struct config {
   boost::optional<extract_config> extract;
 };
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

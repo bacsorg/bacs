@@ -1,8 +1,6 @@
 #include <bunsan/curl/http/response_head.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 response_head::response_head(const http::status &s) : m_status(s) {}
 
@@ -12,6 +10,4 @@ std::ostream &operator<<(std::ostream &out, const response_head &r) {
   return out;
 }
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

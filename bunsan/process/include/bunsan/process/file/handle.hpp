@@ -7,9 +7,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/optional.hpp>
 
-namespace bunsan {
-namespace process {
-namespace file {
+namespace bunsan::process::file {
 
 class handle {
  public:
@@ -72,6 +70,4 @@ class handle {
 
 inline void swap(handle &a, handle &b) noexcept { a.swap(b); }
 
-}  // namespace file
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::file

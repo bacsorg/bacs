@@ -5,8 +5,7 @@
 
 BUNSAN_FACTORY_DEFINE(bunsan::utility::builder)
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 void builder::pack(const boost::filesystem::path &src,
                    const boost::filesystem::path &bin,
@@ -25,5 +24,4 @@ void builder::pack(const boost::filesystem::path &src,
   archiver_->pack_contents(archive, root_.path());
 }
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

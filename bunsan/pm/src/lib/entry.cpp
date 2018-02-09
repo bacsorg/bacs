@@ -7,8 +7,7 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/assert.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 bool entry::is_allowed_symbol(char c) {
   return ('0' <= c && c <= '9') || ('a' <= c && c <= 'z') ||
@@ -141,5 +140,4 @@ boost::filesystem::path entry::local_resource(
   return dir / location() / name_;
 }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

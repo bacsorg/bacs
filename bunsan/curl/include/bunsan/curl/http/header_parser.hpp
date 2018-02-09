@@ -9,9 +9,7 @@
 #include <functional>
 #include <vector>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 class header_parser {
  private:
@@ -66,6 +64,4 @@ inline header_parser::const_iterator end(const header_parser &p) {
   return p.end();
 }
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

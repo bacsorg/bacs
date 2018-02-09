@@ -10,9 +10,7 @@
 #include <bunsan/curl/options/wrapper/wrapped_option.hpp>
 #include <bunsan/curl/usessl.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace options {
+namespace bunsan::curl::options {
 
 BUNSAN_CURL_OPTION_WRAPPED(timeout, CURLOPT_TIMEOUT_MS, milliseconds)
 BUNSAN_CURL_OPTION_WRAPPED(low_speed_limit, CURLOPT_LOW_SPEED_LIMIT, long_)
@@ -36,6 +34,4 @@ BUNSAN_CURL_OPTION_WRAPPED(dns_servers, CURLOPT_DNS_SERVERS,
 BUNSAN_CURL_OPTION_WRAPPED(accepttimeout, CURLOPT_ACCEPTTIMEOUT_MS,
                            milliseconds)
 
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options

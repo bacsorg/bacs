@@ -2,8 +2,7 @@
 
 #include <bunsan/protobuf/base_serializer.hpp>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 class binary_serializer : public base_serializer {
  protected:
@@ -12,5 +11,4 @@ class binary_serializer : public base_serializer {
       google::protobuf::io::ZeroCopyOutputStream &output) override;
 };
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

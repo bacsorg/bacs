@@ -6,10 +6,7 @@
 
 #include <type_traits>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <typename T>
 class integer {
@@ -28,7 +25,4 @@ using long_ = integer<long>;
 using curl_off_t_ = integer<::curl_off_t>;
 using time_t_ = integer<time_t>;
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

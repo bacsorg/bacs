@@ -7,8 +7,7 @@
 
 #include <boost/noncopyable.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 class repository::local_system : private boost::noncopyable {
  public:
@@ -28,5 +27,4 @@ class repository::local_system : private boost::noncopyable {
   utility::custom_resolver m_resolver;
 };
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

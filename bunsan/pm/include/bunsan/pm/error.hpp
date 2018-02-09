@@ -5,8 +5,7 @@
 #include <bunsan/error.hpp>
 #include <bunsan/filesystem/error.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 struct error : virtual bunsan::error {
   using package = boost::error_info<struct tag_package, entry>;
@@ -154,5 +153,4 @@ struct extractor_extract_build_error : virtual extractor_error {};
 struct extractor_extract_installation_error : virtual extractor_error {};
 struct extractor_merge_directories_error : virtual extractor_error {};
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

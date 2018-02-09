@@ -8,8 +8,7 @@
 
 #include <execinfo.h>
 
-namespace bunsan {
-namespace runtime {
+namespace bunsan::runtime {
 
 stacktrace stacktrace::get(const std::size_t skip_,
                            const std::size_t max_size) {
@@ -27,5 +26,4 @@ stacktrace stacktrace::get(const std::size_t skip_,
   return trace;
 }
 
-}  // namespace runtime
-}  // namespace bunsan
+}  // namespace bunsan::runtime

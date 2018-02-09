@@ -11,8 +11,7 @@
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 repository::cache::cache(repository &self, const cache_config &config)
     : m_self(self), m_config(config), m_flock(m_config.get_lock()) {
@@ -357,5 +356,4 @@ repository::distributor &repository::cache::distributor_() {
   return m_self.distributor_();
 }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

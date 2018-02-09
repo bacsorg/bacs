@@ -2,8 +2,7 @@
 
 #include <bunsan/error.hpp>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 struct error : virtual bunsan::error {
   typedef boost::error_info<struct tag_type_name, std::string> type_name;
@@ -21,5 +20,4 @@ struct serialize_error : virtual error {};
 struct serialize_initialization_error : virtual serialize_error,
                                         virtual initialization_error {};
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

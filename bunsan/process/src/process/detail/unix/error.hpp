@@ -6,9 +6,7 @@
 
 #include <sys/types.h>
 
-namespace bunsan {
-namespace process {
-namespace detail {
+namespace bunsan::process::detail {
 
 struct system_error : bunsan::filesystem::system_error, virtual error {
   using bunsan::filesystem::system_error::system_error;
@@ -16,6 +14,4 @@ struct system_error : bunsan::filesystem::system_error, virtual error {
   using pid = boost::error_info<struct tag_pid, pid_t>;
 };
 
-}  // namespace detail
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::detail

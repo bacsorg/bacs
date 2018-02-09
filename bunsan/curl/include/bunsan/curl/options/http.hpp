@@ -17,9 +17,7 @@
 #include <bunsan/curl/options/wrapper/wrapped_option.hpp>
 #include <bunsan/curl/redir_post.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace options {
+namespace bunsan::curl::options {
 
 BUNSAN_CURL_OPTION_WRAPPED(autoreferer, CURLOPT_AUTOREFERER, bool_01)
 BUNSAN_CURL_OPTION_WRAPPED(accept_encoding, CURLOPT_ACCEPT_ENCODING,
@@ -65,6 +63,4 @@ BUNSAN_CURL_OPTION_WRAPPED(http_content_decoding, CURLOPT_HTTP_CONTENT_DECODING,
 BUNSAN_CURL_OPTION_WRAPPED(http_transfer_decoding,
                            CURLOPT_HTTP_TRANSFER_DECODING, bool_01)
 
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options

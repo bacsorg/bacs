@@ -2,9 +2,7 @@
 
 #include <boost/filesystem/path.hpp>
 
-namespace bunsan {
-namespace test {
-namespace dir {
+namespace bunsan::test::dir {
 
 const boost::filesystem::path &source();
 const boost::filesystem::path &binary();
@@ -18,6 +16,4 @@ const boost::filesystem::path &binary();
 }  // namespace resources
 }  // namespace tests
 
-}  // namespace dir
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test::dir

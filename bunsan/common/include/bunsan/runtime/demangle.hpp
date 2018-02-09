@@ -3,8 +3,7 @@
 #include <string>
 #include <typeinfo>
 
-namespace bunsan {
-namespace runtime {
+namespace bunsan::runtime {
 
 std::string demangle(const char *const name);
 std::string demangle(const std::string &name);
@@ -14,5 +13,4 @@ std::string type_name(const T &obj) {
   return demangle(typeid(obj).name());
 }
 
-}  // namespace runtime
-}  // namespace bunsan
+}  // namespace bunsan::runtime

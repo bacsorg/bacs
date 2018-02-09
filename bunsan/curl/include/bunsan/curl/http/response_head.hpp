@@ -6,9 +6,7 @@
 #include <ostream>
 #include <string>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 class response_head {
  public:
@@ -35,6 +33,4 @@ class response_head {
 
 std::ostream &operator<<(std::ostream &out, const response_head &r);
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

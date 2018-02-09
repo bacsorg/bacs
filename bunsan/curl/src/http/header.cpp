@@ -7,9 +7,7 @@
 #include <boost/io/detail/quoted_manip.hpp>
 #include <boost/regex.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 std::string header::merger::operator()(const std::string &value) const {
   BOOST_ASSERT(m_name);
@@ -97,6 +95,4 @@ std::ostream &operator<<(std::ostream &out, const header &h) {
   return out;
 }
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

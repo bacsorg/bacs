@@ -13,9 +13,7 @@
 #include <unordered_set>
 #include <vector>
 
-namespace bunsan {
-namespace config {
-namespace traits {
+namespace bunsan::config::traits {
 /*!
  * \brief We assume that enum is declared using stream_enum.
  *
@@ -69,13 +67,7 @@ struct serializer {
     const_cast<T &>(obj).serialize(ar, version);
   }
 };
-}
-}
-}
 
-namespace bunsan {
-namespace config {
-namespace traits {
 template <typename Char, typename Traits, typename Alloc>
 struct is_direct_assignable<std::basic_string<Char, Traits, Alloc>>
     : std::integral_constant<bool, true> {};
@@ -144,18 +136,12 @@ template <typename Key, typename Tp, typename Hash, typename Pred,
 struct is_map<boost::unordered_multimap<Key, Tp, Hash, Pred, Alloc>>
     : std::integral_constant<bool, true> {};
 
-}  // namespace traits
-}  // namespace config
-}  // namespace bunsan
+}  // namespace bunsan::config::traits
 
 #define BUNSAN_CONFIG_EXPORT(PARENT, DERIVED, FIELD)      \
-  namespace bunsan {                                      \
-  namespace config {                                      \
-  namespace traits {                                      \
+  namespace bunsan::config::traits {                      \
   template <>                                             \
   struct type_key<PARENT, DERIVED> {                      \
     static constexpr const char *call() { return FIELD; } \
   };                                                      \
-  }                                                       \
-  }                                                       \
   }

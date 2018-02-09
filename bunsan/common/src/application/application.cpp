@@ -7,8 +7,7 @@
 
 #include <iostream>
 
-namespace bunsan {
-namespace application {
+namespace bunsan::application {
 
 application::application(const int argc, const char *const argv[])
     : m_argc(argc),
@@ -71,5 +70,4 @@ void application::initialize_argument_parser(argument_parser &parser) {
   parser.add_options()("help,h", "Print help")("version", "Print version");
 }
 
-}  // namespace application
-}  // namespace bunsan
+}  // namespace bunsan::application

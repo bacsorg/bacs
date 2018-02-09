@@ -8,8 +8,7 @@
 #include <memory>
 #include <vector>
 
-namespace bunsan {
-namespace application {
+namespace bunsan::application {
 
 class global_state : private boost::noncopyable {
  public:
@@ -86,5 +85,4 @@ class global_registry : private boost::noncopyable {
 
 using global_registry_ptr = global_registry::global_registry_ptr;
 
-}  // namespace application
-}  // namespace bunsan
+}  // namespace bunsan::application

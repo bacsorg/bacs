@@ -2,12 +2,10 @@
 
 #include <bunsan/crypto/checksum.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 std::string checksum(const boost::filesystem::path &file) {
   return crypto::checksum::sha512(file);
 }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

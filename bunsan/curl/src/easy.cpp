@@ -6,8 +6,7 @@
 
 #include <boost/assert.hpp>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 easy::easy(std::nullptr_t) noexcept : m_curl(nullptr) {}
 
@@ -136,5 +135,4 @@ easy *easy::get_(CURL *const curl) noexcept {
   return reinterpret_cast<easy *>(obj);
 }
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

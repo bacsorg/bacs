@@ -4,9 +4,7 @@
 
 #include <string>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 struct status {
   status() = default;
@@ -32,6 +30,4 @@ struct status {
 
 std::ostream &operator<<(std::ostream &out, const status &s);
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

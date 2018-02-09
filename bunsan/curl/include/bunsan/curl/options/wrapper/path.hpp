@@ -4,10 +4,7 @@
 
 #include <boost/filesystem/path.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 class path : public string {
  public:
@@ -22,7 +19,4 @@ class path : public string {
   explicit path(const boost::filesystem::path &path) : string(path.string()) {}
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

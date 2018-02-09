@@ -6,8 +6,7 @@
 
 #include <string>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 namespace detail {
 template <typename Factory>
@@ -81,5 +80,4 @@ struct factory_options {
   boost::property_tree::ptree config;
 };
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

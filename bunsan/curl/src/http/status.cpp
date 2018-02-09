@@ -6,9 +6,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace http {
+namespace bunsan::curl::http {
 
 status status::parse(const std::string &header) {
   static const boost::regex status_header(
@@ -64,6 +62,4 @@ std::ostream &operator<<(std::ostream &out, const status &s) {
   return out;
 }
 
-}  // namespace http
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::http

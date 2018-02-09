@@ -4,8 +4,7 @@
 
 #include <google/protobuf/message.h>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 template <typename Error>
 const Error &fill_initialization_error(
@@ -22,5 +21,4 @@ void check_initialized(const google::protobuf::Message &message) {
     BOOST_THROW_EXCEPTION(fill_initialization_error(Error(), message));
 }
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

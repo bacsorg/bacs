@@ -2,9 +2,7 @@
 
 #include <bunsan/utility/fetcher.hpp>
 
-namespace bunsan {
-namespace utility {
-namespace fetchers {
+namespace bunsan::utility::fetchers {
 
 class curl : public fetcher {
  public:
@@ -17,6 +15,4 @@ class curl : public fetcher {
   const boost::filesystem::path m_exe;
 };
 
-}  // namespace fetchers
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility::fetchers

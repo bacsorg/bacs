@@ -4,8 +4,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 /*!
  * \brief Abstract class that specifies the way
@@ -31,5 +30,4 @@ class utility {
   virtual ~utility();
 };
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

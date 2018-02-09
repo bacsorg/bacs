@@ -16,8 +16,7 @@
 #include <chrono>
 #include <memory>
 
-namespace bunsan {
-namespace config {
+namespace bunsan::config {
 
 template <typename Ptree>
 class output_archive {
@@ -160,5 +159,4 @@ void output_archive<Ptree>::save(
   boost::apply_visitor(visitor, obj);
 }
 
-}  // namespace config
-}  // namespace bunsan
+}  // namespace bunsan::config

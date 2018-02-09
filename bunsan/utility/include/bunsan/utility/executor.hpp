@@ -11,8 +11,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 struct executor_error : virtual error {};
 
@@ -152,5 +151,4 @@ class executor {
                const boost::property_tree::ptree::value_type &arg_value);
 };
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

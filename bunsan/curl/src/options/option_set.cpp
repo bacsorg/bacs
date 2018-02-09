@@ -4,9 +4,7 @@
 
 #include <set>
 
-namespace bunsan {
-namespace curl {
-namespace options {
+namespace bunsan::curl::options {
 
 namespace detail {
 option_base::~option_base() {}
@@ -78,6 +76,4 @@ void option_set::unsetopt(CURL *const curl, const CURLoption id) {
   BOOST_ASSERT(!m_options[id_]);
 }
 
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options

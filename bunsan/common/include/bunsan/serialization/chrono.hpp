@@ -4,8 +4,7 @@
 
 #include <chrono>
 
-namespace boost {
-namespace serialization {
+namespace boost::serialization {
 
 template <typename Archive, typename Rep, typename Period>
 inline void serialize(Archive &ar,
@@ -29,5 +28,4 @@ void load(Archive &ar, typename std::chrono::duration<Rep, Period> &dur,
   dur = typename std::chrono::duration<Rep, Period>(rp);
 }
 
-}  // namespace serialization
-}  // namespace boost
+}  // namespace boost::serialization

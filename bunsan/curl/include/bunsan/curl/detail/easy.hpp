@@ -6,10 +6,7 @@
 
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace detail {
-namespace easy {
+namespace bunsan::curl::detail::easy {
 
 template <typename T>
 void setopt(CURL *const curl, const CURLoption id, T &&data) {
@@ -17,7 +14,4 @@ void setopt(CURL *const curl, const CURLoption id, T &&data) {
   if (ret) BOOST_THROW_EXCEPTION(easy_error(ret, "curl_easy_setopt"));
 }
 
-}  // namespace easy
-}  // namespace detail
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::detail::easy

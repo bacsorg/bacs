@@ -2,8 +2,7 @@
 
 #include <bunsan/utility/resolver.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 class system_resolver : public resolver {
  public:
@@ -18,5 +17,4 @@ class system_resolver : public resolver {
   std::unique_ptr<resolver> clone() const override;
 };
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

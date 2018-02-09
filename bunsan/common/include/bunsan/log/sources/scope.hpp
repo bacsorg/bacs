@@ -9,9 +9,7 @@
 #include <boost/scope_exit.hpp>
 #include <boost/thread/lock_guard.hpp>
 
-namespace bunsan {
-namespace log {
-namespace sources {
+namespace bunsan::log::sources {
 
 namespace detail {
 template <typename T>
@@ -84,6 +82,4 @@ class scope_feature : public BaseT {
 
 struct scope : boost::mpl::quote1<scope_feature> {};
 
-}  // namespace sources
-}  // namespace log
-}  // namespace bunsan
+}  // namespace bunsan::log::sources

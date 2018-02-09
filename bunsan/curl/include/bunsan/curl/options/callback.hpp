@@ -17,9 +17,7 @@
 #include <bunsan/curl/options/wrapper/wrapped_option.hpp>
 #include <bunsan/curl/options/wrapper/writefunction.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace options {
+namespace bunsan::curl::options {
 
 BUNSAN_CURL_CALLBACK_WRAPPED_SIMPLE(writefunction, CURLOPT_WRITEFUNCTION,
                                     CURLOPT_WRITEDATA)
@@ -74,6 +72,4 @@ BUNSAN_CURL_CALLBACK_PAIR_WRAPPED(
 BUNSAN_CURL_CALLBACK_WRAPPED_SIMPLE(fnmatch_function, CURLOPT_FNMATCH_FUNCTION,
                                     CURLOPT_FNMATCH_DATA)
 
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options

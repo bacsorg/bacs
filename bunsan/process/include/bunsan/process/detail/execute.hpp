@@ -2,9 +2,7 @@
 
 #include <bunsan/process/detail/context.hpp>
 
-namespace bunsan {
-namespace process {
-namespace detail {
+namespace bunsan::process::detail {
 
 /*!
  * \return Non-negative value if program successfully exited,
@@ -13,6 +11,4 @@ namespace detail {
  */
 int sync_execute(context ctx);
 
-}  // namespace detail
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::detail

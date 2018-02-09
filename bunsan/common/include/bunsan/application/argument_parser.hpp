@@ -5,8 +5,7 @@
 #include <functional>
 #include <utility>
 
-namespace bunsan {
-namespace application {
+namespace bunsan::application {
 
 using boost::program_options::bool_switch;
 using boost::program_options::value;
@@ -62,5 +61,4 @@ class argument_parser {
       m_positional_description;
 };
 
-}  // namespace application
-}  // namespace bunsan
+}  // namespace bunsan::application

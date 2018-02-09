@@ -7,10 +7,7 @@
 
 #include <boost/optional.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace info {
-namespace wrapper {
+namespace bunsan::curl::info::wrapper {
 
 template <CURLINFO Info>
 struct optional_string : basic_wrapper<boost::optional<std::string>, Info> {
@@ -21,7 +18,4 @@ struct optional_string : basic_wrapper<boost::optional<std::string>, Info> {
   }
 };
 
-}  // namespace wrapper
-}  // namespace info
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::info::wrapper

@@ -9,10 +9,7 @@
 
 #include <initializer_list>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 class string_list {
  public:
@@ -34,7 +31,4 @@ class string_list {
   curl::detail::string_list m_data;
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

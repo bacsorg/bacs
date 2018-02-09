@@ -5,8 +5,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/scope_exit.hpp>
 
-namespace bunsan {
-namespace filesystem {
+namespace bunsan::filesystem {
 
 template <typename Fstream, std::ios_base::openmode BaseOpenmode>
 class basic_stream;
@@ -180,5 +179,4 @@ using wfstream = basic_fstream<wchar_t>;
                ::bunsan::filesystem::detail::openmode(FSTREAM)));            \
   }
 
-}  // namespace filesystem
-}  // namespace bunsan
+}  // namespace bunsan::filesystem

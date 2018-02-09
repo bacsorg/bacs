@@ -4,10 +4,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <typename Traits>
 class basic_function {
@@ -63,7 +60,4 @@ class basic_function {
   function_type m_function;
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

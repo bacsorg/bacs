@@ -7,8 +7,7 @@
 
 #include <memory>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 struct resolver_error : virtual error {};
 struct resolver_find_error : virtual resolver_error {};
@@ -35,5 +34,4 @@ class resolver : private boost::noncopyable {
   virtual std::unique_ptr<resolver> clone() const = 0;
 };
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

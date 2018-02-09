@@ -2,9 +2,7 @@
 
 #include <bunsan/filesystem/fstream.hpp>
 
-namespace bunsan {
-namespace web {
-namespace json {
+namespace bunsan::web::json {
 
 cppcms::json::value load_file(const boost::filesystem::path &path) {
   try {
@@ -34,6 +32,4 @@ void save_file(const cppcms::json::value &value,
   }
 }
 
-}  // namespace json
-}  // namespace web
-}  // namespace bunsan
+}  // namespace bunsan::web::json

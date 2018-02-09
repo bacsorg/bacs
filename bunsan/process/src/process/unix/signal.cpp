@@ -2,8 +2,7 @@
 
 #include <signal.h>
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 void reset_signals() {
   // clear parent's sigprocmask
@@ -12,5 +11,4 @@ void reset_signals() {
   pthread_sigmask(SIG_SETMASK, &sset, nullptr);
 }
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

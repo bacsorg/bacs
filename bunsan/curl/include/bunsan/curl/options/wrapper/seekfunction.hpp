@@ -10,10 +10,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 struct seekfunction_traits {
   using wrapper_type = basic_function<seekfunction_traits>;
@@ -29,7 +26,4 @@ struct seekfunction_traits {
 
 using seekfunction = seekfunction_traits::wrapper_type;
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

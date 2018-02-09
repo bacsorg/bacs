@@ -10,9 +10,7 @@
 #include <array>
 #include <memory>
 
-namespace bunsan {
-namespace curl {
-namespace options {
+namespace bunsan::curl::options {
 
 namespace detail {
 class option_base : private boost::noncopyable {
@@ -115,6 +113,4 @@ class option_set {
 
 inline void swap(option_set &a, option_set &b) noexcept { a.swap(b); }
 
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options

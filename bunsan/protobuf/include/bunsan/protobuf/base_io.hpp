@@ -2,8 +2,7 @@
 
 #include <boost/noncopyable.hpp>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 class base_io : private boost::noncopyable {
  public:
@@ -20,5 +19,4 @@ class base_io : private boost::noncopyable {
   bool m_allow_partial = false;
 };
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

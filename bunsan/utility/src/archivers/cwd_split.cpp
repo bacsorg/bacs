@@ -2,9 +2,7 @@
 
 #include <boost/filesystem/operations.hpp>
 
-namespace bunsan {
-namespace utility {
-namespace archivers {
+namespace bunsan::utility::archivers {
 
 void cwd_split::pack(const boost::filesystem::path &archive,
                      const boost::filesystem::path &file) {
@@ -36,6 +34,4 @@ void cwd_split::pack_contents(const boost::filesystem::path &archive,
   }
 }
 
-}  // namespace archivers
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility::archivers

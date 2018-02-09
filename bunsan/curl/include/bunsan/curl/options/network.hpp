@@ -14,9 +14,7 @@
 #include <bunsan/curl/proto.hpp>
 #include <bunsan/curl/proxy.hpp>
 
-namespace bunsan {
-namespace curl {
-namespace options {
+namespace bunsan::curl::options {
 
 BUNSAN_CURL_OPTION_WRAPPED(url, CURLOPT_URL, string)
 BUNSAN_CURL_OPTION_WRAPPED(protocols, CURLOPT_PROTOCOLS, bitmask<proto>)
@@ -51,6 +49,4 @@ BUNSAN_CURL_OPTION_WRAPPED(tcp_keepalive, CURLOPT_TCP_KEEPALIVE, bool_01)
 BUNSAN_CURL_OPTION_WRAPPED(tcp_keepidle, CURLOPT_TCP_KEEPIDLE, seconds)
 BUNSAN_CURL_OPTION_WRAPPED(tcp_keepintvl, CURLOPT_TCP_KEEPINTVL, seconds)
 
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options

@@ -6,8 +6,7 @@
 #include <boost/assert.hpp>
 #include <boost/thread/lock_types.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 namespace {
 const boost::filesystem::path installation_subdir = ".install";
@@ -79,5 +78,4 @@ void cache::entry::unlock() {
   m_lock = nullptr;
 }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

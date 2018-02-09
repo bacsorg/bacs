@@ -7,9 +7,7 @@
 #include <sys/types.h>
 #endif
 
-namespace bunsan {
-namespace process {
-namespace file {
+namespace bunsan::process::file {
 
 struct error : virtual process::error {
   using handle =
@@ -29,6 +27,4 @@ struct system_error : process::system_error, virtual error {
 struct handle_error : virtual error {};
 struct handle_is_closed_error : virtual error {};
 
-}  // namespace file
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::file

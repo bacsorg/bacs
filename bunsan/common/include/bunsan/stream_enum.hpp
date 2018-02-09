@@ -20,8 +20,7 @@
 
 #include <cstdint>
 
-namespace bunsan {
-namespace stream_enum {
+namespace bunsan::stream_enum {
 
 /// Base exception class for stream_enum errors.
 struct invalid_value_error : virtual error {};
@@ -36,8 +35,7 @@ struct invalid_enum_representation_error : virtual invalid_value_error {
   using enum_value = boost::error_info<struct tag_enum_value, std::intmax_t>;
 };
 
-}  // namespace stream_enum
-}  // namespace bunsan
+}  // namespace bunsan::stream_enum
 
 /*!
  * \brief Macro repeats a macro for each element in a tuple.

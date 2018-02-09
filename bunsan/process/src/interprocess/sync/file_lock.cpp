@@ -4,8 +4,7 @@
 #include <boost/scope_exit.hpp>
 #include <boost/thread/locks.hpp>
 
-namespace bunsan {
-namespace interprocess {
+namespace bunsan::interprocess {
 
 file_lock_factory &file_lock_factory::instance() {
   // singleton
@@ -166,5 +165,4 @@ void file_lock::unlock_sharable() {
   BOOST_ASSERT_MSG(false, "is not implemented");
 }
 
-}  // namespace interprocess
-}  // namespace bunsan
+}  // namespace bunsan::interprocess

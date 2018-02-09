@@ -10,8 +10,7 @@
 #include <set>
 #include <unordered_set>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 struct tree_import {
   template <typename Archive>
@@ -99,5 +98,4 @@ struct index {
   package_stage source, package;
 };
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

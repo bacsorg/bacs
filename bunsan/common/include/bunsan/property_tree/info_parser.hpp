@@ -9,8 +9,7 @@
 #include <locale>
 #include <string>
 
-namespace bunsan {
-namespace property_tree {
+namespace bunsan::property_tree {
 
 /*!
  * \brief Read info from filename with relative path bug fix
@@ -34,5 +33,4 @@ void read_info(const std::string &filename, Ptree &pt,
       boost::filesystem::path(filename).filename().string(), pt, loc);
 }
 
-}  // namespace property_tree
-}  // namespace bunsan
+}  // namespace bunsan::property_tree

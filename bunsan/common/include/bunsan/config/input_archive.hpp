@@ -15,8 +15,7 @@
 #include <chrono>
 #include <memory>
 
-namespace bunsan {
-namespace config {
+namespace bunsan::config {
 
 template <typename Ptree>
 class input_archive : private boost::noncopyable {
@@ -264,5 +263,4 @@ void input_archive<Ptree>::load(
       type_name, ar, obj);
 }
 
-}  // namespace config
-}  // namespace bunsan
+}  // namespace bunsan::config

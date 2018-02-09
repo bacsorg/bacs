@@ -4,9 +4,7 @@
 
 #include <ostream>
 
-namespace bunsan {
-namespace runtime {
-namespace detail {
+namespace bunsan::runtime::detail {
 
 void format_fallback(std::ostream &out, void *const addr);
 void format_all_fallback(std::ostream &out, const stacktrace &trace);
@@ -15,6 +13,4 @@ void format(std::ostream &out, const char *const fname, const void *const fbase,
             const void *const saddr, std::ptrdiff_t offset,
             const void *const addr);
 
-}  // namespace detail
-}  // namespace runtime
-}  // namespace bunsan
+}  // namespace bunsan::runtime::detail

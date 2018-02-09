@@ -2,8 +2,7 @@
 
 #include <bunsan/protobuf/base_parser.hpp>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 class binary_parser : public base_parser {
  protected:
@@ -11,5 +10,4 @@ class binary_parser : public base_parser {
                  google::protobuf::io::ZeroCopyInputStream &input) override;
 };
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

@@ -6,9 +6,7 @@
 
 #include <system_error>
 
-namespace bunsan {
-namespace test {
-namespace filesystem {
+namespace bunsan::test::filesystem {
 
 std::string read_data(const boost::filesystem::path &path) {
   BOOST_TEST_CHECKPOINT(BOOST_CURRENT_FUNCTION);
@@ -25,6 +23,4 @@ std::string read_data(const boost::filesystem::path &path) {
   return rdata;
 }
 
-}  // namespace filesystem
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test::filesystem

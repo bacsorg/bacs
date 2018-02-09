@@ -5,8 +5,7 @@
 
 #include <boost/filesystem/path.hpp>
 
-namespace bunsan {
-namespace filesystem {
+namespace bunsan::filesystem {
 
 struct error : virtual bunsan::error {
   using path = boost::error_info<struct tag_path, boost::filesystem::path>;
@@ -32,8 +31,7 @@ struct read_data_size_limit_exceeded_error : virtual read_data_error {
 
 struct write_data_error : virtual error {};
 
-}  // namespace filesystem
-}  // namespace bunsan
+}  // namespace bunsan::filesystem
 
 namespace boost {
 std::string to_string(const bunsan::filesystem::error::openmode &openmode);

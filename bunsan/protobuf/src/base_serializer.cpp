@@ -7,8 +7,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 void base_serializer::serialize_raw(const google::protobuf::Message &message,
                                     std::ostream &output) {
@@ -32,5 +31,4 @@ void base_serializer::serialize_raw(const google::protobuf::Message &message,
   fout.close();
 }
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

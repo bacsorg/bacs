@@ -45,8 +45,7 @@ std::string to_string(const bunsan::process::context &context) {
 }
 }  // namespace boost
 
-namespace bunsan {
-namespace process {
+namespace bunsan::process {
 
 void bunsan::process::context::build_() {
   try {
@@ -81,5 +80,4 @@ void bunsan::process::context::build_() {
   }
 }
 
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process

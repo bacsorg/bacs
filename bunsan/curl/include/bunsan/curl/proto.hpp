@@ -2,8 +2,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 enum class proto : long {
   http = CURLPROTO_HTTP,
@@ -35,5 +34,4 @@ enum class proto : long {
   all = CURLPROTO_ALL
 };
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

@@ -1,7 +1,6 @@
 #include <bunsan/protobuf/comparator.hpp>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 bool equal(const google::protobuf::Message &a,
            const google::protobuf::Message &b) {
@@ -12,5 +11,4 @@ bool equal(const google::protobuf::Message &a,
   return a_data == b_data;
 }
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

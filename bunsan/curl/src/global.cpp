@@ -2,8 +2,7 @@
 
 #include <bunsan/curl/error.hpp>
 
-namespace bunsan {
-namespace curl {
+namespace bunsan::curl {
 
 global::global(const long flags) {
   const CURLcode ret = ::curl_global_init(flags);
@@ -21,5 +20,4 @@ global::~global() { ::curl_global_cleanup(); }
 
 const global global::static_instance;
 
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl

@@ -4,8 +4,7 @@
 
 #include <google/protobuf/text_format.h>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 void text_parser::merge_raw(google::protobuf::Message &message,
                             google::protobuf::io::ZeroCopyInputStream &input) {
@@ -16,5 +15,4 @@ void text_parser::merge_raw(google::protobuf::Message &message,
                           << parse_error::type_name(message.GetTypeName()));
 }
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

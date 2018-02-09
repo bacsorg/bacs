@@ -4,9 +4,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/test/unit_test.hpp>
 
-namespace bunsan {
-namespace test {
-namespace filesystem {
+namespace bunsan::test::filesystem {
 
 void write_data(const boost::filesystem::path &path, const std::string &data) {
   BOOST_TEST_CHECKPOINT(BOOST_CURRENT_FUNCTION);
@@ -19,6 +17,4 @@ void write_data(const boost::filesystem::path &path, const std::string &data) {
   BOOST_REQUIRE(fout);
 }
 
-}  // namespace filesystem
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test::filesystem

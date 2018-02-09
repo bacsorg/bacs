@@ -8,10 +8,7 @@
 
 #include <chrono>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <typename Duration>
 class duration;
@@ -38,7 +35,4 @@ class duration<std::chrono::duration<Rep, Period>> {
 using seconds = duration<std::chrono::seconds>;
 using milliseconds = duration<std::chrono::milliseconds>;
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

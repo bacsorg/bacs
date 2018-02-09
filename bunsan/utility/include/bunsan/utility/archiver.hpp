@@ -6,8 +6,7 @@
 
 #include <bunsan/factory_helper.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 
 struct archiver_error : virtual error {
   using archive =
@@ -32,5 +31,4 @@ class archiver : public utility {
 };
 BUNSAN_FACTORY_TYPES(archiver)
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility

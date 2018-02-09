@@ -6,9 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace bunsan {
-namespace process {
-namespace detail {
+namespace bunsan::process::detail {
 
 class executor : private boost::noncopyable {
  public:
@@ -23,6 +21,4 @@ class executor : private boost::noncopyable {
   std::vector<char *> m_char_arguments;
 };
 
-}  // namespace detail
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::detail

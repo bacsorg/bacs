@@ -3,9 +3,7 @@
 #include <bunsan/crypto/base64.hpp>
 #include <bunsan/protobuf/binary.hpp>
 
-namespace bunsan {
-namespace broker {
-namespace task {
+namespace bunsan::broker::task {
 
 stream_channel::stream_channel(std::ostream &out) : m_out(out) {}
 
@@ -21,6 +19,4 @@ void stream_channel::send_result(const Result &result) {
         << std::endl;
 }
 
-}  // namespace task
-}  // namespace broker
-}  // namespace bunsan
+}  // namespace bunsan::broker::task

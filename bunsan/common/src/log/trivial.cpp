@@ -10,9 +10,7 @@
 #include <iostream>
 #include <mutex>
 
-namespace bunsan {
-namespace log {
-namespace trivial {
+namespace bunsan::log::trivial {
 
 namespace blog = boost::log;
 
@@ -59,6 +57,4 @@ void global::remove_default_sink() {
   });
 }
 
-}  // namespace trivial
-}  // namespace log
-}  // namespace bunsan
+}  // namespace bunsan::log::trivial

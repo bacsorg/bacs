@@ -9,10 +9,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <typename T>
 struct basic_progressfunction_traits {
@@ -36,7 +33,4 @@ using basic_progressfunction =
 using progressfunction = basic_progressfunction<double>;
 using xferinfofunction = basic_progressfunction<curl_off_t>;
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

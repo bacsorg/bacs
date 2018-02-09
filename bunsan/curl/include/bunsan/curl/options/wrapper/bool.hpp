@@ -4,10 +4,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <long False, long True>
 class bool_ {
@@ -28,7 +25,4 @@ class bool_ {
 using bool_01 = bool_<0, 1>;
 using bool_02 = bool_<0, 2>;
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

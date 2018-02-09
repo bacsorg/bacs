@@ -10,8 +10,7 @@
 #include <unordered_map>
 #include <utility>
 
-namespace bunsan {
-namespace web {
+namespace bunsan::web {
 
 struct mime_file_error : virtual error {
   using mime_type = boost::error_info<struct tag_mime_type, std::string>;
@@ -101,5 +100,4 @@ inline void swap(mime_file &a, mime_file &b) noexcept { a.swap(b); }
 
 mime_file load_mime_file(const boost::filesystem::path &path);
 
-}  // namespace web
-}  // namespace bunsan
+}  // namespace bunsan::web

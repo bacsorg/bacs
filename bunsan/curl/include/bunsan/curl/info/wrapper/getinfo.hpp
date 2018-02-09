@@ -4,10 +4,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
-namespace info {
-namespace wrapper {
+namespace bunsan::curl::info::wrapper {
 
 template <typename Wrapper>
 struct info_getter {
@@ -20,10 +17,7 @@ struct info_getter {
   }
 };
 
-}  // namespace wrapper
-}  // namespace info
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::info::wrapper
 
 #define BUNSAN_CURL_GETINFO_WRAPPER(WRAPPER, INFO) \
   ::bunsan::curl::info::wrapper::WRAPPER<INFO>

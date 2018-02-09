@@ -5,8 +5,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/optional.hpp>
 
-namespace bunsan {
-namespace interprocess {
+namespace bunsan::interprocess {
 
 struct file_guard_error : virtual bunsan::error {
   using lock_path =
@@ -52,5 +51,4 @@ class file_guard {
 
 inline void swap(file_guard &a, file_guard &b) noexcept { a.swap(b); }
 
-}  // namespace interprocess
-}  // namespace bunsan
+}  // namespace bunsan::interprocess

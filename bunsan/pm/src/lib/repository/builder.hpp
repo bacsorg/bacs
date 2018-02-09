@@ -4,8 +4,7 @@
 
 #include <boost/noncopyable.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 class repository::builder : private boost::noncopyable {
  public:
@@ -37,5 +36,4 @@ class repository::builder : private boost::noncopyable {
   utility::builder_ptr m_builder;
 };
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

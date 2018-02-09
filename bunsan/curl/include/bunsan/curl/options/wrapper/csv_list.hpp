@@ -7,10 +7,7 @@
 #include <initializer_list>
 #include <sstream>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 namespace detail {
 template <char Separator, char... Separators>
@@ -58,7 +55,4 @@ class csv_list : public string {
   }
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

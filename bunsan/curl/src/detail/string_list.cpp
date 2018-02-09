@@ -2,9 +2,7 @@
 
 #include <cstring>
 
-namespace bunsan {
-namespace curl {
-namespace detail {
+namespace bunsan::curl::detail {
 
 string_list::string_list(const string_list &list) {
   for (const char *const obj : list) append(obj);
@@ -23,6 +21,4 @@ bool operator==(const string_list &a, const string_list &b) {
   return i == a.end() && j == b.end();
 }
 
-}  // namespace detail
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::detail

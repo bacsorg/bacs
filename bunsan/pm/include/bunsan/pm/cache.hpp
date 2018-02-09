@@ -8,8 +8,7 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/thread/shared_mutex.hpp>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 class cache : private boost::noncopyable {
  public:
@@ -100,5 +99,4 @@ class cache::entry {
 
 inline void swap(cache::entry &a, cache::entry &b) noexcept { a.swap(b); }
 
-}  // namespace pm
-}  // namespace bunsan
+}  // namespace bunsan::pm

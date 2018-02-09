@@ -6,8 +6,7 @@
 
 BOOST_SERIALIZATION_SPLIT_FREE(boost::filesystem::path)
 
-namespace boost {
-namespace serialization {
+namespace boost::serialization {
 
 template <typename Archive>
 void save(Archive &ar, const boost::filesystem::path &path,
@@ -23,5 +22,4 @@ void load(Archive &ar, boost::filesystem::path &path,
   path = str;
 }
 
-}  // namespace serialization
-}  // namespace boost
+}  // namespace boost::serialization

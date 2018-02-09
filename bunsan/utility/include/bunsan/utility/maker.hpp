@@ -6,8 +6,7 @@
 
 #include <bunsan/factory_helper.hpp>
 
-namespace bunsan {
-namespace utility {
+namespace bunsan::utility {
 struct maker_error : virtual error {
   using cwd = boost::error_info<struct tag_cwd, boost::filesystem::path>;
   using targets =
@@ -23,8 +22,7 @@ class maker : public utility {
 };
 BUNSAN_FACTORY_TYPES(maker)
 
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility
 
 namespace boost {
 std::string to_string(const bunsan::utility::maker_error::targets &targets);

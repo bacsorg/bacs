@@ -6,10 +6,7 @@
 
 #include <curl/curl.h>
 
-namespace bunsan {
-namespace curl {
-namespace info {
-namespace wrapper {
+namespace bunsan::curl::info::wrapper {
 
 struct nullptr_info_error : virtual error {};
 
@@ -22,7 +19,4 @@ struct string : basic_wrapper<std::string, Info> {
   }
 };
 
-}  // namespace wrapper
-}  // namespace info
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::info::wrapper

@@ -8,10 +8,7 @@
 
 #include <type_traits>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 template <typename Enum>
 class enum_ {
@@ -37,7 +34,4 @@ class enum_optional : public enum_<Enum> {
   enum_optional() : enum_<Enum>(Default) {}
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper {

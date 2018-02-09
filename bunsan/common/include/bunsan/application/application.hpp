@@ -8,8 +8,7 @@
 #include <functional>
 #include <utility>
 
-namespace bunsan {
-namespace application {
+namespace bunsan::application {
 
 enum exit_code {
   exit_success = 0,
@@ -53,5 +52,4 @@ class application {
   global_registry_ptr m_global_registry;
 };
 
-}  // namespace application
-}  // namespace bunsan
+}  // namespace bunsan::application

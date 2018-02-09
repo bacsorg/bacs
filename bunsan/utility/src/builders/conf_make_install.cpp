@@ -1,8 +1,6 @@
 #include "conf_make_install.hpp"
 
-namespace bunsan {
-namespace utility {
-namespace builders {
+namespace bunsan::utility::builders {
 
 void conf_make_install::install(const boost::filesystem::path &src,
                                 const boost::filesystem::path &bin,
@@ -19,6 +17,4 @@ void conf_make_install::install(const boost::filesystem::path &src,
   }
 }
 
-}  // namespace builders
-}  // namespace utility
-}  // namespace bunsan
+}  // namespace bunsan::utility::builders

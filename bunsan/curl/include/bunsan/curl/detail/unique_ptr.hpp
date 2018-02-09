@@ -4,13 +4,9 @@
 
 #include <memory>
 
-namespace bunsan {
-namespace curl {
-namespace detail {
+namespace bunsan::curl::detail {
 
 template <typename T>
 using unique_ptr = std::unique_ptr<T, curl_delete>;
 
-}  // namespace detail
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::detail

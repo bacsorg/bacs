@@ -10,8 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace bunsan {
-namespace pm {
+namespace bunsan::pm {
 
 /// Represents \ref package_page "package" reference in repository.
 class entry {
@@ -86,10 +85,9 @@ inline std::basic_ostream<Char, Traits> &operator<<(
   return out << e.name();
 }
 
-}  // namespace pm
+}  // namespace bunsan::pm
 
-namespace config {
-namespace traits {
+namespace bunsan::config::traits {
 template <>
 struct serializer<bunsan::pm::entry> {
   template <typename Archive>
@@ -105,7 +103,4 @@ struct serializer<bunsan::pm::entry> {
     ar << obj.name();
   }
 };
-}  // namespace traits
-}  // namespace config
-
-}  // namespace bunsan
+}  // namespace bunsan::config::traits

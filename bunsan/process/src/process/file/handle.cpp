@@ -15,9 +15,7 @@
 #include <windows.h>
 #endif
 
-namespace bunsan {
-namespace process {
-namespace file {
+namespace bunsan::process::file {
 
 handle::~handle() {
   if (m_close) close_no_except();
@@ -253,6 +251,4 @@ handle handle::std_error() {
 #endif
 }
 
-}  // namespace file
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::file

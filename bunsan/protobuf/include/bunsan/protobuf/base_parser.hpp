@@ -10,8 +10,7 @@
 
 #include <utility>
 
-namespace bunsan {
-namespace protobuf {
+namespace bunsan::protobuf {
 
 class base_parser : public base_io {
  public:
@@ -62,5 +61,4 @@ class base_parser : public base_io {
                          const boost::filesystem::path &path);
 };
 
-}  // namespace protobuf
-}  // namespace bunsan
+}  // namespace bunsan::protobuf

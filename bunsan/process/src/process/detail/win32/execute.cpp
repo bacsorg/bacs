@@ -10,9 +10,7 @@
 
 using boost::nowide::widen;
 
-namespace bunsan {
-namespace process {
-namespace detail {
+namespace bunsan::process::detail {
 
 namespace {
 std::string win32_escape_argument(const std::string &arg) {
@@ -68,6 +66,4 @@ int sync_execute(context ctx) {
   return exit_code;
 }
 
-}  // namespace detail
-}  // namespace process
-}  // namespace bunsan
+}  // namespace bunsan::process::detail

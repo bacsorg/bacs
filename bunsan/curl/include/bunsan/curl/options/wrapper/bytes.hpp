@@ -6,10 +6,7 @@
 
 #include <string>
 
-namespace bunsan {
-namespace curl {
-namespace options {
-namespace wrapper {
+namespace bunsan::curl::options::wrapper {
 
 class bytes {
  public:
@@ -28,7 +25,4 @@ class bytes {
   std::string m_data;
 };
 
-}  // namespace wrapper
-}  // namespace options
-}  // namespace curl
-}  // namespace bunsan
+}  // namespace bunsan::curl::options::wrapper

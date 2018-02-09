@@ -4,9 +4,7 @@
 
 #include <type_traits>
 
-namespace bunsan {
-namespace rpc {
-namespace detail {
+namespace bunsan::rpc::detail {
 
 template <typename Authorize, typename F>
 grpc::Status implement_status(Authorize &&authorize, F &&f) {
@@ -36,9 +34,7 @@ grpc::Status implement_response(Authorize &&authorize, Response &&response,
   });
 }
 
-}  // namespace detail
-}  // namespace rpc
-}  // namespace bunsan
+}  // namespace bunsan::rpc::detail
 
 #define BUNSAN_RPC_IMPLEMENT_STATUS(CONTEXT, REQUEST, RESPONSE, AUTHORIZE, \
                                     BODY)                                  \

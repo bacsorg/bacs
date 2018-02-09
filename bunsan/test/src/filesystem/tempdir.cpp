@@ -3,9 +3,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/test/test_tools.hpp>
 
-namespace bunsan {
-namespace test {
-namespace filesystem {
+namespace bunsan::test::filesystem {
 
 tempdir::tempdir()
     : path(boost::filesystem::temp_directory_path() /
@@ -23,6 +21,4 @@ tempdir::~tempdir() {
                        << path << ": " << ec.message() << ".");
 }
 
-}  // namespace filesystem
-}  // namespace test
-}  // namespace bunsan
+}  // namespace bunsan::test::filesystem

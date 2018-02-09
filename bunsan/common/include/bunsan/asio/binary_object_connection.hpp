@@ -5,13 +5,11 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
-namespace bunsan {
-namespace asio {
+namespace bunsan::asio {
 
 template <typename Connection>
 using binary_object_connection =
     basic_object_connection<boost::archive::binary_iarchive,
                             boost::archive::binary_oarchive, Connection>;
 
-}  // namespace asio
-}  // namespace bunsan
+}  // namespace bunsan::asio

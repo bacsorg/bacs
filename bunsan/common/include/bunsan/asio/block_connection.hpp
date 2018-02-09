@@ -9,8 +9,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace bunsan {
-namespace asio {
+namespace bunsan::asio {
 
 template <typename Connection>
 class block_connection : private boost::noncopyable {
@@ -116,5 +115,4 @@ class block_connection : private boost::noncopyable {
   std::string m_outbound_header;
 };
 
-}  // namespace asio
-}  // namespace bunsan
+}  // namespace bunsan::asio
