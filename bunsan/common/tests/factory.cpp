@@ -82,7 +82,10 @@ class fact : public base {
 BUNSAN_FACTORY_TYPES(fact)
 
 class fact2 {
-  BUNSAN_FACTORY_BODY(fact2) public : virtual int code() = 0;
+  BUNSAN_FACTORY_BODY(fact2)
+ public:
+  virtual ~fact2() {}
+  virtual int code() = 0;
 };
 BUNSAN_FACTORY_TYPES(fact2)
 
