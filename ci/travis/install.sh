@@ -11,6 +11,7 @@ ninja_ver='1.8.2'
 ninja_bin="http://github.com/ninja-build/ninja/releases/download/v${ninja_ver}/ninja-linux.zip"
 ninja_fname='ninja.zip'
 ninja_sha256='d2fea9ff33b3ef353161ed906f260d565ca55b8ca0568fa07b1d2cab90a84a07'
+ninja_cache_check="$HOME_PREFIX/bin/ninja"
 
 boost_ver='1.66.0'
 boost_src="https://dl.bintray.com/boostorg/release/${boost_ver}/source/boost_$(echo "$boost_ver" | tr . _).tar.gz"
@@ -23,6 +24,7 @@ turtle_ver='1.3.0'
 turtle_src="http://downloads.sourceforge.net/project/turtle/turtle/$turtle_ver/turtle-${turtle_ver}.tar.bz2"
 turtle_fname='turtle.tar.bz2'
 turtle_sha256='1f0a8f7b7862e0f99f3849d60b488b1ce6546f1f7cfeb4d8f6c0261f1e3dcbe0'
+turtle_cache_check="$HOME_PREFIX/include/turtle/config.hpp"
 
 botan_ver='2.4.0'
 botan_src="https://botan.randombit.net/releases/Botan-${botan_ver}.tgz"
@@ -66,6 +68,7 @@ function install_meson() (
 )
 
 function install_ninja() (
+  use_cache ninja "$ninja_cache_check"
   run fetch "$ninja_bin" "$ninja_fname"
   run sha256verify "$ninja_fname" "$ninja_sha256"
   run unzip "$ninja_fname"
@@ -90,6 +93,7 @@ function install_boost() (
 )
 
 function install_turtle() (
+  use_cache turtle "$turtle_cache_check"
   run fetch "$turtle_src" "$turtle_fname"
   run sha256verify "$turtle_fname" "$turtle_sha256"
   run tar xjf "$turtle_fname" -C "$HOME_PREFIX" include
