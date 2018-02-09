@@ -123,7 +123,7 @@ const bool init::factory_reg_hook = test::fact::register_new(
     "init", [](const std::string &data_, const std::string data2_) {
       return fact::make_shared<init>(data_, data2_);
     });
-}
+}  // namespace facts
 
 namespace facts2 {
 class init : public test::fact2 {
@@ -138,7 +138,7 @@ class init : public test::fact2 {
 
 const bool init::factory_reg_hook = test::fact2::register_new(
     "init", []() { return fact2::make_shared<init>(); });
-}  // namespace facts
+}  // namespace facts2
 }  // namespace test
 
 BOOST_AUTO_TEST_CASE(all) {
