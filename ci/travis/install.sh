@@ -9,23 +9,39 @@ meson_git='https://github.com/mesonbuild/meson'
 
 ninja_ver='1.8.2'
 ninja_bin="http://github.com/ninja-build/ninja/releases/download/v${ninja_ver}/ninja-linux.zip"
+ninja_fname='ninja.zip'
 ninja_sha256='d2fea9ff33b3ef353161ed906f260d565ca55b8ca0568fa07b1d2cab90a84a07'
 
 boost_ver='1.66.0'
 boost_src="https://dl.bintray.com/boostorg/release/${boost_ver}/source/boost_$(echo "$boost_ver" | tr . _).tar.gz"
+boost_fname='boost.tar.gz'
 boost_sha256='bd0df411efd9a585e5a2212275f8762079fed8842264954675a4fddc46cfcf60'
 boost_dir="$(basename "$boost_src" .tar.gz)"
 boost_cache_check="$HOME_PREFIX/lib/libboost_filesystem.so.$boost_ver"
 
 turtle_ver='1.3.0'
 turtle_src="http://downloads.sourceforge.net/project/turtle/turtle/$turtle_ver/turtle-${turtle_ver}.tar.bz2"
+turtle_fname='turtle.tar.bz2'
 turtle_sha256='1f0a8f7b7862e0f99f3849d60b488b1ce6546f1f7cfeb4d8f6c0261f1e3dcbe0'
 
 botan_ver='2.4.0'
 botan_src="https://botan.randombit.net/releases/Botan-${botan_ver}.tgz"
+botan_fname='botan.tgz'
 botan_sha256='ed9464e2a5cfee4cd3d9bd7a8f80673b45c8a0718db2181a73f5465a606608a5'
 botan_dir="$(basename "$botan_src" .tgz)"
 botan_cache_check="$HOME_PREFIX/lib/libbotan-2.so.4.4.0"
+
+function fetch {
+  local url="$1"
+  local output="$2"
+  # Timeout is 5min, less than 10min travis-ci timeout
+  wget \
+      --retry-connrefused \
+      --tries=inf \
+      --timeout=300 \
+      "$url" \
+      --output-document="$output"
+}
 
 function sha256verify {
   local file="$1"
@@ -50,17 +66,17 @@ function install_meson() (
 )
 
 function install_ninja() (
-  run wget "$ninja_bin"
-  run sha256verify "$(basename "$ninja_bin")" "$ninja_sha256"
-  run unzip "$(basename "$ninja_bin")"
+  run fetch "$ninja_bin" "$ninja_fname"
+  run sha256verify "$ninja_fname" "$ninja_sha256"
+  run unzip "$ninja_fname"
   run install -Dm755 ninja "$HOME_PREFIX/bin/ninja"
 )
 
 function install_boost() (
   use_cache boost "$boost_cache_check"
-  run wget "$boost_src"
-  run sha256verify "$(basename "$boost_src")" "$boost_sha256"
-  run tar xzf "$(basename "$boost_src")"
+  run fetch "$boost_src" "$boost_fname"
+  run sha256verify "$boost_fname" "$boost_sha256"
+  run tar xzf "$boost_fname"
   cd "$boost_dir"
   run ./bootstrap.sh --prefix="$HOME_PREFIX"
   b2opts=(
@@ -74,16 +90,16 @@ function install_boost() (
 )
 
 function install_turtle() (
-  run wget "$turtle_src"
-  run sha256verify "$(basename "$turtle_src")" "$turtle_sha256"
-  run tar xjf turtle-1.3.0.tar.bz2 -C "$HOME_PREFIX" include
+  run fetch "$turtle_src" "$turtle_fname"
+  run sha256verify "$turtle_fname" "$turtle_sha256"
+  run tar xjf "$turtle_fname" -C "$HOME_PREFIX" include
 )
 
 function install_botan() (
   use_cache botan "$botan_cache_check"
-  run wget "$botan_src"
-  run sha256verify "$(basename "$botan_src")" "$botan_sha256"
-  run tar xzf "$(basename "$botan_src")"
+  run fetch "$botan_src" "$botan_fname"
+  run sha256verify "$botan_fname" "$botan_sha256"
+  run tar xzf "$botan_fname"
   cd "$botan_dir"
   run ./configure.py --prefix="$HOME_PREFIX"
   run make -j"$JOBS"
