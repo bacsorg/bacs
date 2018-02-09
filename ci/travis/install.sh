@@ -51,24 +51,35 @@ function sha256verify {
   echo "$hash $file" | sha256sum -c
 }
 
+# Use when file checked is versioned already.
 function use_cache {
   local name="$1"
   local check="$2"
-  if [[ -f $check ]]; then
-    echo "Will not rebuild $name, found $check"
-    exit 0  # assuming caller is a subshell
+  if [[ ! -f $check ]]; then
+    echo "Will rebuild $name, $check not found"
+    return
   fi
+  echo "Will not rebuild $name, found $check"
+  exit 0  # assuming caller is a subshell
 }
 
+# Use when you need to run custom code to parse version.
 function use_cache_ver {
   local name="$1"
-  local ver="$2"
-  shift 2
+  local check="$2"
+  local ver="$3"
+  shift 3
   local cache_ver="$("$@")"
-  if [[ $ver == $cache_ver ]]; then
-    echo "Will not rebuild $name, found same version $ver"
-    exit 0
+  if [[ ! -f $check ]]; then
+    echo "Will rebuild $name, $check not found"
+    return
   fi
+  if [[ $ver != $cache_ver ]]; then
+    echo "Will rebuild $name, version want $ver, cached $cache_ver"
+    return
+  fi
+  echo "Will not rebuild $name, version matched"
+  exit 0
 }
 
 function install_meson() (
@@ -79,8 +90,8 @@ function install_meson() (
 )
 
 function install_ninja() (
-  use_cache ninja "$ninja_cache_check"
-  use_cache_ver ninja "$ninja_ver" ninja --version
+  use_cache_ver ninja "$ninja_ver" "$ninja_cache_check" \
+      "$ninja_cache_check" --version
   run fetch "$ninja_bin" "$ninja_fname"
   run sha256verify "$ninja_fname" "$ninja_sha256"
   run unzip "$ninja_fname"
@@ -105,9 +116,8 @@ function install_boost() (
 )
 
 function install_turtle() (
-  use_cache turtle "$turtle_cache_check"
-  use_cache_ver turtle "$turtle_ver" \
-      sed -rn 's|.*MOCK_VERSION +([^ ]+)$|\1|p' "$turtle_cache_check"
+  use_cache_ver turtle "$turtle_ver" "$turtle_cache_check" \
+      sed -rn 's|^.*MOCK_VERSION +([^ ]+)$|\1|p' "$turtle_cache_check"
   run fetch "$turtle_src" "$turtle_fname"
   run sha256verify "$turtle_fname" "$turtle_sha256"
   run tar xjf "$turtle_fname" -C "$HOME_PREFIX" include
