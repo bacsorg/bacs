@@ -15,6 +15,7 @@ boost_ver='1.66.0'
 boost_src="https://dl.bintray.com/boostorg/release/${boost_ver}/source/boost_$(echo "$boost_ver" | tr . _).tar.gz"
 boost_sha256='bd0df411efd9a585e5a2212275f8762079fed8842264954675a4fddc46cfcf60'
 boost_dir="$(basename "$boost_src" .tar.gz)"
+boost_cache_check="$HOME_PREFIX/lib/libboost_filesystem.so.$boost_ver"
 
 turtle_ver='1.3.0'
 turtle_src="http://downloads.sourceforge.net/project/turtle/turtle/$turtle_ver/turtle-${turtle_ver}.tar.bz2"
@@ -24,11 +25,21 @@ botan_ver='2.4.0'
 botan_src="https://botan.randombit.net/releases/Botan-${botan_ver}.tgz"
 botan_sha256='ed9464e2a5cfee4cd3d9bd7a8f80673b45c8a0718db2181a73f5465a606608a5'
 botan_dir="$(basename "$botan_src" .tgz)"
+botan_cache_check="$HOME_PREFIX/lib/libbotan-2.so.4.4.0"
 
 function sha256verify {
   local file="$1"
   local hash="$2"
   echo "$hash $file" | sha256sum -c
+}
+
+function use_cache {
+  local name="$1"
+  local check="$2"
+  if [[ -f $check ]]; then
+    echo "Will not rebuild $name, found $check"
+    exit 0  # assuming caller is a subshell
+  fi
 }
 
 function install_meson() (
@@ -46,7 +57,7 @@ function install_ninja() (
 )
 
 function install_boost() (
-  # TODO cache this
+  use_cache boost "$boost_cache_check"
   run wget "$boost_src"
   run sha256verify "$(basename "$boost_src")" "$boost_sha256"
   run tar xzf "$(basename "$boost_src")"
@@ -69,7 +80,7 @@ function install_turtle() (
 )
 
 function install_botan() (
-  # TODO cache this
+  use_cache botan "$botan_cache_check"
   run wget "$botan_src"
   run sha256verify "$(basename "$botan_src")" "$botan_sha256"
   run tar xzf "$(basename "$botan_src")"

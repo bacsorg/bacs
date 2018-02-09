@@ -15,6 +15,10 @@ addons:
       - g++-7
       - clang-5.0
 
+cache:
+  directories:
+    - $HOME/prefix
+
 env:
   - MATRIX_EVAL="export CC=gcc-7 CXX=g++-7"
   - MATRIX_EVAL="export CC=clang-5.0 CXX=clang++-5.0"
