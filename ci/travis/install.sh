@@ -73,8 +73,8 @@ function use_cache {
 # Use when you need to run custom code to parse version.
 function use_cache_ver {
   local name="$1"
-  local check="$2"
-  local ver="$3"
+  local ver="$2"
+  local check="$3"
   shift 3
   local cache_ver="$("$@")"
   if [[ ! -f $check ]]; then
