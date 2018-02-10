@@ -40,6 +40,20 @@ protobuf_sha256='56b5d9e1ab2bf4f5736c4cfba9f4981fbc6976246721e7ded5602fbaee6d686
 protobuf_dir="protobuf-$protobuf_ver"
 protobuf_cache_check="$HOME_PREFIX/lib/libprotobuf.so.15.0.1"
 
+cares_ver='1.13.0'
+cares_src="https://c-ares.haxx.se/download/c-ares-${cares_ver}.tar.gz"
+cares_fname='cares.tar.gz'
+cares_sha256='03f708f1b14a26ab26c38abd51137640cb444d3ec72380b21b20f1a8d2861da7'
+cares_dir="c-ares-$cares_ver"
+cares_cache_check="$HOME_PREFIX/lib/libcares.so.2.2.0"
+
+grpc_ver='1.9.1'
+grpc_src="https://github.com/grpc/grpc/archive/v${grpc_ver}.tar.gz"
+grpc_fname="grpc.tar.gz"
+grpc_sha256='fac236d49fb3e89399b68a5aa944fc69221769bcedd099d47eb6f93e59035c40'
+grpc_dir="grpc-$grpc_ver"
+grpc_cache_check="$HOME_PREFIX/lib/libgrpc++.so.$grpc_ver"
+
 function fetch {
   local url="$1"
   local output="$2"
@@ -87,6 +101,13 @@ function use_cache_ver {
   fi
   echo "Will not rebuild $name, version matched"
   exit 0
+}
+
+function install_dir {
+  local src="$1"
+  local dst="$2"
+  mkdir -p "$dst"
+  (cd "$src" && tar cf - .) | (cd "$dst" && tar xf -)
 }
 
 function install_meson() (
@@ -153,9 +174,35 @@ function install_protobuf() (
   run make install
 )
 
+function install_cares() (
+  use_cache cares "$cares_cache_check"
+  run fetch "$cares_src" "$cares_fname"
+  run sha256verify "$cares_fname" "$cares_sha256"
+  run tar xzf "$cares_fname"
+  cd "$cares_dir"
+  run ./configure --prefix="$HOME_PREFIX"
+  run make -j"$JOBS"
+  run make install
+)
+
+function install_grpc() (
+  use_cache grpc "$grpc_cache_check"
+  run fetch "$grpc_src" "$grpc_fname"
+  run sha256verify "$grpc_fname" "$grpc_sha256"
+  run tar xzf "$grpc_fname"
+  cd "$grpc_dir"
+  sed -r 's|-Werror||g' -i Makefile
+  run make -j"$JOBS" prefix="$HOME_PREFIX"
+  run install_dir bins/opt "$HOME_PREFIX/bin"
+  run install_dir include "$HOME_PREFIX/include"
+  run install_dir libs/opt "$HOME_PREFIX/lib"
+)
+
 fold install_meson
 fold install_ninja
 fold install_boost
 fold install_turtle
 fold install_botan
 fold install_protobuf
+fold install_cares
+fold install_grpc
