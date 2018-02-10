@@ -8,3 +8,4 @@ endif
 subdir('process')
 subdir('utility')
 subdir('pm')
+subdir('protobuf')
