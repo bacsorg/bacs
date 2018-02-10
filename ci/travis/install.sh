@@ -33,6 +33,13 @@ botan_sha256='ed9464e2a5cfee4cd3d9bd7a8f80673b45c8a0718db2181a73f5465a606608a5'
 botan_dir="$(basename "$botan_src" .tgz)"
 botan_cache_check="$HOME_PREFIX/lib/libbotan-2.so.4.4.0"
 
+protobuf_ver='3.5.1.1'
+protobuf_src="https://github.com/google/protobuf/archive/v${protobuf_ver}.tar.gz"
+protobuf_fname='protobuf.tar.gz'
+protobuf_sha256='56b5d9e1ab2bf4f5736c4cfba9f4981fbc6976246721e7ded5602fbaee6d6869'
+protobuf_dir="protobuf-$protobuf_ver"
+protobuf_cache_check="$HOME_PREFIX/lib/libprotobuf.so.15.0.1"
+
 function fetch {
   local url="$1"
   local output="$2"
@@ -134,8 +141,21 @@ function install_botan() (
   run make install
 )
 
+function install_protobuf() (
+  use_cache protobuf "$protobuf_cache_check"
+  run fetch "$protobuf_src" "$protobuf_fname"
+  run sha256verify "$protobuf_fname" "$protobuf_sha256"
+  run tar xzf "$protobuf_fname"
+  cd "$protobuf_dir"
+  run ./autogen.sh
+  run ./configure --prefix="$HOME_PREFIX"
+  run make -j"$JOBS"
+  run make install
+)
+
 fold install_meson
 fold install_ninja
 fold install_boost
 fold install_turtle
 fold install_botan
+fold install_protobuf
