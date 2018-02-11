@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package bacs.external;
+option go_package = "external";
+
+import "bacs/external/language.proto";
+import "bacs/external/contest.proto";
+
+message Submit {
+  message Id {
+    uint64 value = 1;
+  }
+  message IdList {
+    repeated Id entry = 1;
+  }
+  message Author {
+    oneof author {
+      string user_login = 1;
+    }
+  }
+  message Source {
+    bytes data = 1;
+    Language.Id language = 2;
+  }
+  Id id = 1;  // should not be set by client
+  Author author = 2;
+  Problem.Id problem = 3;
+  Source source = 4;
+}
+
+message SubmitList {
+  repeated Submit entry = 1;
+}

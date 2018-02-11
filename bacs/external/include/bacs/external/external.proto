@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package bacs.external;
+option go_package = "external";
+
+import "bacs/external/contest.proto";
+import "bacs/external/language.proto";
+import "bacs/external/result.proto";
+import "bacs/external/submit.proto";
+
+import "google/protobuf/empty.proto";
+
+service Judge {
+  rpc GetAllContestIds(google.protobuf.Empty) returns (Contest.IdList);
+  rpc GetAllContests(google.protobuf.Empty) returns (ContestList);
+  rpc GetContest(Contest.Id) returns (Contest);
+  rpc GetProblem(Problem.Id) returns (Problem);
+
+  rpc GetAllLanguages(google.protobuf.Empty) returns (LanguageList);
+
+  rpc GetStatementUrl(Problem.Statement.Request)
+      returns (Problem.Statement.Url);
+
+  rpc Send(Submit) returns (SubmitResult.Id);
+  rpc SendAll(SubmitList) returns (SubmitResult.IdList);
+
+  // revision is not used
+  rpc Rejudge(Submit.Id) returns (SubmitResult.Id);
+  rpc RejudgeAll(Submit.IdList) returns (SubmitResult.IdList);
+
+  rpc FetchResult(SubmitResult.Id) returns (SubmitResult);
+  rpc FetchResultAll(SubmitResult.IdList) returns (SubmitResultList);
+
+  rpc FetchLatestResult(Submit.Id) returns (SubmitResult);
+  rpc FetchLatestResultAll(Submit.IdList) returns (SubmitResultList);
+
+  rpc GetResultRevisions(Submit.Id) returns (SubmitResult.MultipleId);
+  rpc GetResultRevisionsAll(Submit.IdList)
+      returns (SubmitResult.MultipleIdList);
+}

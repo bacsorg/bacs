@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package bacs.external;
+option go_package = "external";
+
+import "bacs/external/submit.proto";
+
+message SystemResult {
+  enum Status {
+    OK = 0;
+    FAIL = 1;
+
+    PENDING = 100;
+    RUNNING = 101;
+  }
+  Status status = 1;
+}
+
+message BuildResult {
+  enum Status {
+    OK = 0;
+    FAIL = 1;
+  }
+  Status status = 1;
+  string output = 2;
+}
+
+message TestResult {
+  enum Status {
+    OK = 0;
+    ABNORMAL_EXIT = 1;
+    TIME_LIMIT_EXCEEDED = 2;
+    REAL_TIME_LIMIT_EXCEEDED = 3;
+    MEMORY_LIMIT_EXCEEDED = 4;
+    OUTPUT_LIMIT_EXCEEDED = 5;
+    QUERIES_LIMIT_EXCEEDED = 6;
+
+    WRONG_ANSWER = 100;
+    PRESENTATION_ERROR = 101;
+    INCORRECT_REQUEST = 102;
+    INSUFFICIENT_DATA = 103;
+    EXCESS_DATA = 104;
+
+    FAIL_TEST = 1000;
+    SKIPPED = 2000;
+  }
+  string id = 1;
+  Status status = 2;
+  string judge_message = 3;
+  ResourceUsage resource_usage = 4;
+}
+
+message TestGroupResult {
+  string id = 1;
+  bool executed = 2;
+  repeated TestResult test = 3;
+}
+
+message ResourceUsage {
+  uint64 memory_usage_bytes = 1;
+  uint64 time_usage_millis = 2;
+}
+
+message SubmitResult {
+  message Id {
+    external.Submit.Id submit = 1;
+    uint64 revision = 2;
+  }
+  message IdList {
+    repeated Id entry = 1;
+  }
+  message MultipleId {
+    external.Submit.Id submit = 1;
+    // ordered by result timestamp descending
+    repeated uint64 revision = 2;
+  }
+  message MultipleIdList {
+    repeated MultipleId entry = 1;
+  }
+  Id id = 1;
+  SystemResult system = 2;
+  BuildResult build = 3;
+  repeated TestGroupResult test_group = 4;
+}
+
+message SubmitResultList {
+  repeated SubmitResult entry = 1;
+}

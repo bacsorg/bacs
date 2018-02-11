@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package bacs.external;
+option go_package = "external";
+
+message Language {
+  message Id {
+    string value = 1;
+  }
+  message Info {
+    string name = 1;
+    string description = 2;
+  }
+  Id id = 1;
+  map<string /* language */, Info> info = 2;
+}
+
+message LanguageList {
+  repeated Language entry = 1;
+}
