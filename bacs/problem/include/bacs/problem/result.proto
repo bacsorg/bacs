@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package bacs.problem;
+option go_package = "problem";
+
+message SystemResult {
+  enum Status {
+    OK = 0;
+    INVALID_REVISION = 1;
+  }
+  Status status = 1;
+}
