@@ -14,13 +14,47 @@ srcs = [
 
     'src/statement_versions/copy.cpp',
     'src/statement_versions/pdflatex.cpp',
+
+    'src/single/driver.cpp',
+    'src/single/generator.cpp',
+
+    'src/single/test/list_storage.cpp',
+    'src/single/test/matcher.cpp',
+    'src/single/test/storage.cpp',
+
+    'src/single/drivers/simple0/driver.cpp',
+    'src/single/drivers/simple0/tests.cpp',
+
+    'src/single/drivers/polygon_codeforces_com/driver.cpp',
+    'src/single/drivers/polygon_codeforces_com/statement.cpp',
+    'src/single/drivers/polygon_codeforces_com/tests.cpp',
+
+    'src/single/generators/internal0.cpp',
+
+    'src/single/importer.cpp',
 ]
 
 protos = [
     'include/bacs/problem/problem.proto',
     'include/bacs/problem/result.proto',
+
+    'include/bacs/problem/single/testing.proto',
+    'include/bacs/problem/single/process/file.proto',
+    'include/bacs/problem/single/process/settings.proto',
+    'include/bacs/problem/single/process/execution.proto',
+    'include/bacs/problem/single/task.proto',
+    'include/bacs/problem/single/problem.proto',
+    'include/bacs/problem/single/intermediate.proto',
+    'include/bacs/problem/single/result.proto',
 ]
 
+# FIXME use better dependency mechanism
+protoc_cpp_gen = generator(protoc,
+    output    : ['@BASENAME@.pb.cc',
+                 '@BASENAME@.pb.h'],
+    arguments : ['--proto_path=@CURRENT_SOURCE_DIR@/../common/include',
+                 '--proto_path=@CURRENT_SOURCE_DIR@/include',
+                 '--cpp_out=@BUILD_DIR@', '@INPUT@'])
 bacs_problem_pb_srcs = protoc_cpp_gen.process(
     protos,
     preserve_path_from : join_paths(meson.current_source_dir(),
@@ -28,10 +62,17 @@ bacs_problem_pb_srcs = protoc_cpp_gen.process(
 )
 bacs_problem_pb = static_library(
     'bacs_problem_pb', bacs_problem_pb_srcs,
-    dependencies : dependency('protobuf'))
+    dependencies : [
+        dependency('protobuf'),
+        bacs_common_pb_dep,
+    ],
+)
 bacs_problem_pb_dep = declare_dependency(
     link_with : bacs_problem_pb,
-    dependencies : [dependency('protobuf')],
+    dependencies : [
+        dependency('protobuf'),
+        bacs_common_pb_dep,
+    ],
     include_directories : [include, bacs_problem_pb.private_dir_include()],
 )
 
@@ -39,6 +80,7 @@ deps = [
     bunsan_common_dep,
     bunsan_pm_dep,
     bunsan_protobuf_dep,
+    bacs_common_dep,
     bacs_problem_pb_dep,
 ]
 
