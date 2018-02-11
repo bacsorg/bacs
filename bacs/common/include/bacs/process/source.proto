@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package bacs.process;
+option go_package = "process";
+
+import "bacs/process/resource.proto";
+import "bacs/utility/archiver.proto";
+
+message Source {
+  bytes data = 1;
+  utility.Archiver archiver = 2;
+}
+
+message Buildable {
+  Source source = 1;
+  BuildSettings build_settings = 2;
+}
+
+message BuildSettings {
+  /*required*/ BuilderConfig config = 1;
+  /// Constraints for build system
+  ResourceLimits resource_limits = 2;
+}
+
+/*!
+ * One of implemented build systems.
+ * For simple cases it may be compiler name with options,
+ * e.g. {type = "gcc", arguments = ["-O2"]}.
+ */
+message BuilderConfig {
+  /*required*/ string type = 1;
+  repeated string argument = 2;
+}
+
+message BuildResult {
+  enum Status {
+    OK = 0;
+    FAILED = 1;
+  }
+  Status status = 1;
+  ExecutionResult execution = 2;
+  bytes output = 3;
+}
+
+message ExecutionResult {
+  enum Status {
+    OK = 0;
+    ABNORMAL_EXIT = 1;
+    MEMORY_LIMIT_EXCEEDED = 2;
+    TIME_LIMIT_EXCEEDED = 3;
+    OUTPUT_LIMIT_EXCEEDED = 4;
+    REAL_TIME_LIMIT_EXCEEDED = 5;
+    TERMINATED_BY_SYSTEM = 6;
+    FAILED = 7;
+  }
+  Status status = 1;
+  oneof termination {
+    int32 exit_status = 2;
+    int32 term_sig = 3;
+  }
+  ResourceUsage resource_usage = 4;
+  bytes full = 5;
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package bacs.file;
+option go_package = "file";
+
+/// Filesystem path.
+message Path {
+  /// If specified, path is absolute, otherwise -- relative.
+  string root = 1;
+  /// Path elements, will be concatenated using OS-specific delimiter.
+  repeated string element = 2;
+}

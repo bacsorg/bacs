@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package bacs.utility;
+option go_package = "utility";
+
+message Archiver {
+  /*required*/ string type = 1;
+  string format = 2;
+}
