@@ -13,3 +13,4 @@ subdir('rpc')
 if get_option('enable-web')
   subdir('web')
 endif
+subdir('broker')
