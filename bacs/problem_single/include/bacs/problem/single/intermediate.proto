@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package bacs.problem.single;
+option go_package = "single";
+
+message IntermediateResult {
+  enum State {
+    UNKNOWN = 0;
+    INITIALIZED = 1;
+    BUILDING = 2;
+    TESTING = 3;
+  }
+  State state = 1;
+  string test_group_id = 2;
+  string test_id = 3;
+}

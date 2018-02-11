@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package bacs.problem.single;
+option go_package = "single";
+
+import "bacs/problem/result.proto";
+import "bacs/process/resource.proto";
+import "bacs/process/source.proto";
+
+message Result {
+  SystemResult system = 1;
+  process.BuildResult build = 2;
+  repeated TestGroupResult test_group = 3;
+}
+
+message TestGroupResult {
+  string id = 1;
+  bool executed = 2;
+  repeated TestResult test = 3;
+  int64 score = 4;
+}
+
+message TestResult {
+  enum Status {
+    OK = 0;
+    FAILED = 1;
+    SKIPPED = 2;
+  }
+  string id = 1;
+  Status status = 2;
+  process.ExecutionResult execution = 3;
+  JudgeResult judge = 4;
+  repeated FileResult file = 5;
+}
+
+message JudgeResult {
+  enum Status {
+    OK = 0;
+    WRONG_ANSWER = 1;
+    PRESENTATION_ERROR = 2;
+    QUERIES_LIMIT_EXCEEDED = 3;
+    INCORRECT_REQUEST = 4;
+    INSUFFICIENT_DATA = 5;
+    EXCESS_DATA = 6;
+    OUTPUT_LIMIT_EXCEEDED = 7;
+    TERMINATION_REAL_TIME_LIMIT_EXCEEDED = 8;
+
+    // special verdicts
+    CUSTOM_FAILURE = 500;
+
+    // system failure verdicts
+    FAIL_TEST = 999;
+    FAILED = 1000;
+
+    // judge status is meaningless
+    SKIPPED = 2000;
+  }
+  message Utility {
+    process.ExecutionResult execution = 1;
+    bytes output = 2;
+  }
+  message AuxiliaryUtility {
+    string name = 1;
+    Utility utility = 2;
+  }
+  message Utilities {
+    Utility interactor = 1;
+    Utility checker = 2;
+    repeated AuxiliaryUtility auxiliary = 1000;
+  }
+  Status status = 1;
+  string message = 2;
+  Utilities utilities = 3;
+}
+
+message FileResult {
+  string id = 1;
+  bytes data = 2;
+}

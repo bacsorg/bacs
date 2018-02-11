@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package bacs.problem.single;
+option go_package = "single";
+
+import "bacs/problem/problem.proto";
+import "bacs/process/source.proto";
+
+/*!
+ * \brief Task for testing system
+ */
+message Task {
+  /*!
+   * \brief Problem hash.
+   *
+   * If is not the same as worker's, task is rejected.
+   */
+  System system = 1;
+  process.Buildable solution = 2;
+  bacs.problem.Profile profile = 3;
+}
