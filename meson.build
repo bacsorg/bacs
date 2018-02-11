@@ -20,3 +20,4 @@ if default_library == 'shared'
 endif
 
 subdir('bunsan')
+subdir('bacs')
