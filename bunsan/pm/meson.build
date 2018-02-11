@@ -68,18 +68,13 @@ bin = executable('bunsan_pm_cli', bin_srcs,
 )
 
 python3 = import('python3')
-# FIXME this is workaround,
-# see https://github.com/mesonbuild/meson/issues/3009
-python_include_path = join_paths('/usr',
-                                 python3.sysconfig_path('include'))
-python_include = [
-    include,
-    include_directories(python_include_path, is_system : true),
-]
 
 python3.extension_module('bunsan_pm_python', python_srcs,
-    dependencies : bunsan_pm_compat_dep,
-    include_directories : python_include,
+    dependencies : [
+        dependency('python3'),
+        bunsan_pm_compat_dep,
+    ],
+    include_directories : include,
     install : true,
     install_dir : join_paths(bunsan_python_root, 'pm'),
 )
