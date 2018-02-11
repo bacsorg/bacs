@@ -101,42 +101,6 @@ BUNSAN_FACTORY_TYPES(factory_base)
   using unknown_##CLASS##_error = CLASS::unknown_##CLASS##_error;
 
 /*!
- * \def BUNSAN_FACTORY_BEGIN(CLASS, ...)
- *
- * \param CLASS class name
- * \param ... constructor argument types
- *
- * should be used after class name declaration,
- * for example
- *
-\code
-namespace bunsan {
-class factory_base
-BUNSAN_FACTORY_BEGIN(factory_base, const std::string &arg)
- public:
-  virtual void f()=0;
-BUNSAN_FACTORY_END(factory_base)
-}  // namespace bunsan
-\endcode
- */
-#define BUNSAN_FACTORY_BEGIN(...) \
-  {                               \
-   BUNSAN_FACTORY_BODY(__VA_ARGS__)
-
-/*!
- * \def BUNSAN_FACTORY_END(CLASS)
- *
- * \param CLASS class name
- *
- * should be used after class members declarations
- *
- * \see BUNSAN_FACTORY_BEGIN
- */
-#define BUNSAN_FACTORY_END(CLASS) \
-  };                              \
-  BUNSAN_FACTORY_TYPES(CLASS)
-
-/*!
  * \def BUNSAN_FACTORY_DEFINE(CLASS)
  *
  * \param CLASS class name
