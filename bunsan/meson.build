@@ -10,3 +10,6 @@ subdir('utility')
 subdir('pm')
 subdir('protobuf')
 subdir('rpc')
+if get_option('enable-web')
+  subdir('web')
+endif
