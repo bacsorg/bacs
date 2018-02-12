@@ -123,10 +123,9 @@ namespace bunsan {
 #define BUNSAN_FACTORY_DEFINE(CLASS) \
   typename CLASS::bunsan_factory::map_ptr_type CLASS::factories;
 
+// VAR is unused
 #define BUNSAN_FACTORY_REGISTER(VAR, FACTORY, NAME, CODE)       \
-  static const bool BOOST_PP_CAT(bunsan_factory_register_,      \
-                                 BOOST_PP_CAT(VAR, __LINE__)) = \
-      FACTORY::register_new(NAME, CODE);
+  FACTORY::register_new(NAME, CODE);
 
 #define BUNSAN_FACTORY_REGISTER_TOKEN(FACTORY, TOKEN, CODE) \
   BUNSAN_FACTORY_REGISTER(TOKEN, FACTORY, #TOKEN, CODE)
