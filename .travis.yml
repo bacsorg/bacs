@@ -37,6 +37,7 @@ before_install:
   - export BOOST_INCLUDEDIR="$HOME_PREFIX/include"
   - export BOOST_LIBRARYDIR="$HOME_PREFIX/lib"
   # Python
+  - export PYTHON3="/usr/bin/python3.6"
   - export PYTHONPATH="$HOME_PREFIX/lib/python3.6/site-packages"
   # Build version
   - eval "$MATRIX_EVAL"

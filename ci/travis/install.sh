@@ -2,8 +2,6 @@
 
 source "$(dirname "$0")/travis.sh"
 
-python3=/usr/bin/python3.6
-
 # TODO migrate to stable version once it's ready
 meson_git='https://github.com/mesonbuild/meson'
 
@@ -113,8 +111,8 @@ function install_dir {
 function install_meson() (
   run git clone "$meson_git"
   cd meson
-  run "$python3" setup.py build_scripts --executable="$python3"
-  run "$python3" setup.py install --prefix="$HOME_PREFIX"
+  run "$PYTHON3" setup.py build_scripts --executable="$PYTHON3"
+  run "$PYTHON3" setup.py install --prefix="$HOME_PREFIX"
 )
 
 function install_ninja() (
