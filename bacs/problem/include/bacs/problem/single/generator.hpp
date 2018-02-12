@@ -40,6 +40,7 @@ class generator : private boost::noncopyable {
 
  public:
   virtual Problem generate(const options &options_) = 0;
+  virtual ~generator() {}
 };
 BUNSAN_FACTORY_TYPES(generator)
 

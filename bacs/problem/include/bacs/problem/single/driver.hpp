@@ -41,6 +41,8 @@ class driver : private boost::noncopyable {
   virtual utility_ptr interactor() const = 0;
 
   virtual statement_ptr statement() const = 0;
+
+  virtual ~driver() {}
 };
 BUNSAN_FACTORY_TYPES(driver)
 
