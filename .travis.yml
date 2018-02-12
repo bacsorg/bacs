@@ -28,6 +28,7 @@ env:
 
 before_install:
   # General overrides
+  - export JOBS=3
   - export HOME_PREFIX="$HOME/prefix"
   - export PATH="$HOME_PREFIX/bin:$PATH"
   - export LD_LIBRARY_PATH="$HOME_PREFIX/lib"
