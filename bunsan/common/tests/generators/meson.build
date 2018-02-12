@@ -6,4 +6,4 @@ stream_enum_src = custom_target('stream_enum_cpp',
 test_stream_enum = executable('test_stream_enum',
                               stream_enum_src,
                               dependencies : test_deps)
-test('stream_enum', test_stream_enum, env : testenv)
+test('bunsan_common_test_stream_enum', test_stream_enum, env : testenv)
