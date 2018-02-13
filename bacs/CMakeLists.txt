@@ -1,0 +1,5 @@
+add_subdirectory(common)
+if(ENABLE_CURL)
+    add_subdirectory(external)
+endif()
+add_subdirectory(problem)

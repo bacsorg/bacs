@@ -16,6 +16,15 @@ bunsan_add_protobuf_cxx_library(
     PROTOS
         bacs/problem/problem.proto
         bacs/problem/result.proto
+
+        bacs/problem/single/testing.proto
+        bacs/problem/single/process/file.proto
+        bacs/problem/single/process/settings.proto
+        bacs/problem/single/process/execution.proto
+        bacs/problem/single/task.proto
+        bacs/problem/single/problem.proto
+        bacs/problem/single/intermediate.proto
+        bacs/problem/single/result.proto
     LIBRARIES ${bacs_common_LIBRARIES}
     INCLUDE_DIRECTORIES ${bacs_common_INCLUDE_DIRS}
     INSTALL
@@ -37,6 +46,24 @@ bunsan_add_library(${PROJECT_NAME}
 
     src/statement_versions/copy.cpp
     src/statement_versions/pdflatex.cpp
+
+    src/single/driver.cpp
+    src/single/generator.cpp
+
+    src/single/test/list_storage.cpp
+    src/single/test/matcher.cpp
+    src/single/test/storage.cpp
+
+    src/single/drivers/simple0/driver.cpp
+    src/single/drivers/simple0/tests.cpp
+
+    src/single/drivers/polygon_codeforces_com/driver.cpp
+    src/single/drivers/polygon_codeforces_com/statement.cpp
+    src/single/drivers/polygon_codeforces_com/tests.cpp
+
+    src/single/generators/internal0.cpp
+
+    src/single/importer.cpp
 )
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_pm bunsan_pm)
 bunsan_use_bunsan_package(${PROJECT_NAME} bunsan_protobuf bunsan_protobuf)
