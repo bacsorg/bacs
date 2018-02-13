@@ -3,3 +3,4 @@ if get_option('enable-curl')
   subdir('external')
 endif
 subdir('problem')
+subdir('archive')

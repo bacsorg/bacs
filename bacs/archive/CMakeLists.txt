@@ -20,7 +20,7 @@ if(ENABLE_WEB)
     endif()
 endif()
 
-bunsan_find_bunsan_package(bacs_problems bacs_problems)
+bunsan_find_bunsan_package(bacs_problem bacs_problem)
 
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}_pb
@@ -31,9 +31,9 @@ bunsan_add_protobuf_cxx_library(
         bacs/archive/problem/id.proto
         bacs/archive/problem/import.proto
         bacs/archive/problem/status.proto
-    LIBRARIES ${bacs_problems_LIBRARIES}
+    LIBRARIES ${bacs_problem_LIBRARIES}
     GRPC
-    INCLUDE_DIRECTORIES ${bacs_problems_INCLUDE_DIRS}
+    INCLUDE_DIRECTORIES ${bacs_problem_INCLUDE_DIRS}
     INSTALL
 )
 
