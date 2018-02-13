@@ -25,4 +25,8 @@ case "$BUILD" in
       run ninja -C build -j"$JOBS"
       run ninja -C build test
     ;;
+  *)
+      echo "Invalid BUILD=$BUILD"
+      exit 1
+    ;;
 esac
