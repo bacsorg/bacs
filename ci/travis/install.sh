@@ -88,11 +88,11 @@ function use_cache_ver {
   local ver="$2"
   local check="$3"
   shift 3
-  local cache_ver="$("$@" | tr -d '[:space:]')"
   if [[ ! -f $check ]]; then
     echo "Will rebuild $name, $check not found"
     return
   fi
+  local cache_ver="$("$@" | tr -d '[:space:]')"
   if [[ $ver != $cache_ver ]]; then
     echo "Will rebuild $name, version want $ver, cached $cache_ver"
     return
