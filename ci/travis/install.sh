@@ -19,7 +19,7 @@ boost_dir="$(basename "$boost_src" .tar.gz)"
 boost_cache_check="$HOME_PREFIX/lib/libboost_filesystem.so.$boost_ver"
 
 turtle_ver='1.3.0'
-turtle_src="http://downloads.sourceforge.net/project/turtle/turtle/$turtle_ver/turtle-${turtle_ver}.tar.bz2"
+turtle_src="https://github.com/bacsorg/turtle/releases/download/v0.0.1/turtle-${turtle_ver}.tar.bz2"
 turtle_fname='turtle.tar.bz2'
 turtle_sha256='1f0a8f7b7862e0f99f3849d60b488b1ce6546f1f7cfeb4d8f6c0261f1e3dcbe0'
 turtle_cache_check="$HOME_PREFIX/include/turtle/version.hpp"
