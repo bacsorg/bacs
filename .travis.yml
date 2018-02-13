@@ -23,8 +23,10 @@ cache:
     - $HOME/prefix
 
 env:
-  - MATRIX_EVAL="export CC=gcc-7 CXX=g++-7"
-  - MATRIX_EVAL="export CC=clang-5.0 CXX=clang++-5.0"
+  - MATRIX_EVAL="export BUILD=meson CC=gcc-7 CXX=g++-7"
+  - MATRIX_EVAL="export BUILD=meson CC=clang-5.0 CXX=clang++-5.0"
+  - MATRIX_EVAL="export BUILD=cmake CC=gcc-7 CXX=g++-7"
+  - MATRIX_EVAL="export BUILD=cmake CC=clang-5.0 CXX=clang++-5.0"
 
 before_install:
   # General overrides
