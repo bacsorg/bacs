@@ -34,16 +34,20 @@ before_install:
   # General overrides
   - export JOBS=3
   - export HOME_PREFIX="$HOME/prefix"
-  - export PATH="$HOME_PREFIX/bin:$PATH"
-  - export LD_LIBRARY_PATH="$HOME_PREFIX/lib"
-  - export PKG_CONFIG_PATH="$HOME_PREFIX/lib/pkgconfig"
+  - export HOME_TMP_PREFIX="$HOME/temp_prefix"
+  - export PATH="$HOME_TMP_PREFIX/bin:$HOME_PREFIX/bin:$PATH"
+  - export LD_LIBRARY_PATH="$HOME_PREFIX/lib:$LD_LIBRARY_PATH"
+  - export LD_LIBRARY_PATH="$HOME_TMP_PREFIX/lib:$LD_LIBRARY_PATH"
+  - export PKG_CONFIG_PATH="$HOME_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
+  - export PKG_CONFIG_PATH="$HOME_TMP_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
   # Boost
   - export BOOST_ROOT="$HOME_PREFIX"
   - export BOOST_INCLUDEDIR="$HOME_PREFIX/include"
   - export BOOST_LIBRARYDIR="$HOME_PREFIX/lib"
   # Python
   - export PYTHON3="/usr/bin/python3.6"
-  - export PYTHONPATH="$HOME_PREFIX/lib/python3.6/site-packages"
+  - export PYTHONPATH="$HOME_PREFIX/lib/python3.6/site-packages:$PYTHONPATH"
+  - export PYTHONPATH="$HOME_TMP_PREFIX/lib/python3.6/site-packages:$PYTHONPATH"
   # Build version
   - eval "$MATRIX_EVAL"
   - $CC --version

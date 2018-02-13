@@ -112,7 +112,7 @@ function install_meson() (
   run git clone "$meson_git"
   cd meson
   run "$PYTHON3" setup.py build_scripts --executable="$PYTHON3"
-  run "$PYTHON3" setup.py install --prefix="$HOME_PREFIX"
+  run "$PYTHON3" setup.py install --prefix="$HOME_TMP_PREFIX"
 )
 
 function install_ninja() (
