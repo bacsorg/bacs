@@ -6,3 +6,4 @@ project(bacs NONE)
 
 add_subdirectory(bunsan)
 add_subdirectory(bacs)
+bunsan_enable_testing()

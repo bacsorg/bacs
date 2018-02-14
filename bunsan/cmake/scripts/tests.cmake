@@ -1,3 +1,9 @@
+macro(bunsan_enable_testing)
+    if(ENABLE_TESTS)
+        enable_testing()
+    endif()
+endmacro()
+
 macro(bunsan_include_tests)
     if(ENABLE_TESTS)
         enable_testing()
