@@ -130,7 +130,9 @@ function install_boost() (
   run sha256verify "$boost_fname" "$boost_sha256"
   run tar xzf "$boost_fname"
   cd "$boost_dir"
-  run ./bootstrap.sh --prefix="$HOME_PREFIX"
+  run ./bootstrap.sh \
+      --prefix="$HOME_PREFIX" \
+      --with-python="$PYTHON3"
   b2opts=(
       link=shared
       threading=multi
