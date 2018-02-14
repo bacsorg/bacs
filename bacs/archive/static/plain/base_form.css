@@ -1,0 +1,8 @@
+ul.problem_ids {
+    list-style: circle;
+}
+
+span.action {
+    text-decoration: underline;
+    cursor: pointer;
+}

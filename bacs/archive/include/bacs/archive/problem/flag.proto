@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package bacs.archive.problem;
+option go_package = "problem";
+
+message FlagSet {
+  repeated Flag flag = 1;
+}
+
+// It is OK to specify reserved flag as custom.
+message Flag {
+  enum Reserved {
+    // Reserved default value, should not be used.
+    NONE = 0;
+    // This flag will exclude problem from non-flags and non-status functions.
+    // It is set automatically if problem can't be imported.
+    IGNORE = 1;
+    // Exclude problem from operations that
+    // can alter problem's archive or problem id, i.e. user
+    // will not be able to re-upload problem, rename or remove it.
+    // But it is still possible to change problem's flags and import it.
+    LOCKED = 2;
+    // Harder version of LOCKED.
+    // It does not allow to edit flags.
+    // Only administrator can remove this flag manually.
+    READ_ONLY = 3;
+    // Import is planned and will be done soon.
+    PENDING_IMPORT = 4;
+  }
+  oneof flag {
+    Reserved reserved = 1;
+    string custom = 2;
+  }
+}
