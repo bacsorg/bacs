@@ -17,7 +17,6 @@ addons:
       # gRPC
       - openssl
       - libssl-dev
-
 cache:
   directories:
     - $HOME/prefix
@@ -48,14 +47,26 @@ before_install:
   - export PYTHON3="/usr/bin/python3.6"
   - export PYTHONPATH="$HOME_PREFIX/lib/python3.6/site-packages:$PYTHONPATH"
   - export PYTHONPATH="$HOME_TMP_PREFIX/lib/python3.6/site-packages:$PYTHONPATH"
-  # Build version
-  - eval "$MATRIX_EVAL"
-  - $CC --version
-  - $CXX --version
-  # Sanity check before long compilation
-  - $CXX -std=c++17 ./ci/travis/cpp/cpp17.cpp -o cpp17
-  - ./cpp17
+
 
 install: ./ci/travis/install.sh
 
-script: ./ci/travis/test.sh
+stages:
+  - dependencies
+  - test
+
+jobs:
+  include:
+    - stage: dependencies
+      script: true
+    - stage: test
+      script:
+        # Build version
+        - eval "$MATRIX_EVAL"
+        - $CC --version
+        - $CXX --version
+        # Sanity check before long compilation
+        - $CXX -std=c++17 ./ci/travis/cpp/cpp17.cpp -o cpp17
+        - ./cpp17
+        - ./ci/travis/test.sh
+
