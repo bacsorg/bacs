@@ -96,7 +96,9 @@ problem::IdSet get_all_set(repository *const this_,
   for (const problem::id &id : id_set.id())
     if ((this_->*get)(id, std::forward<Args>(args)...)) set.insert(id);
   problem::IdSet pset;
-  *pset.mutable_id() = {set.begin(), set.end()};
+  // Can't use initializer list, https://bugs.llvm.org/show_bug.cgi?id=30689
+  *pset.mutable_id() =
+      google::protobuf::RepeatedPtrField<problem::id>(set.begin(), set.end());
   return pset;
 }
 }  // namespace
