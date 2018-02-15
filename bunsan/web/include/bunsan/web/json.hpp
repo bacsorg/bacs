@@ -19,6 +19,5 @@ cppcms::json::value load_file(const boost::filesystem::path &path);
 void save_file(const cppcms::json::value &value,
                const boost::filesystem::path &path,
                int how = cppcms::json::compact);
-}
 
 }  // namespace bunsan::web::json
