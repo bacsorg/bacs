@@ -16,14 +16,14 @@ else()
     find_package(BunsanWeb CONFIG REQUIRED)
 endif()
 
-bunsan_find_bunsan_package(bacs_problems bacs_problems)
+bunsan_find_bunsan_package(bacs_problem bacs_problem)
 
 bunsan_add_protobuf_cxx_library(
     TARGET ${PROJECT_NAME}
     PROTOS
         bacs/statement_provider/request.proto
-    LIBRARIES ${bacs_problems_LIBRARIES}
-    INCLUDE_DIRECTORIES ${bacs_problems_INCLUDE_DIRS}
+    LIBRARIES ${bacs_problem_LIBRARIES}
+    INCLUDE_DIRECTORIES ${bacs_problem_INCLUDE_DIRS}
     INSTALL
 )
 

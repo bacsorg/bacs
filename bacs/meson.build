@@ -4,3 +4,6 @@ if get_option('enable-curl')
 endif
 subdir('problem')
 subdir('archive')
+if get_option('enable-web')
+  subdir('statement_provider')
+endif
