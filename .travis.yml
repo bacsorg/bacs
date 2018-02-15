@@ -25,10 +25,6 @@ cache:
 env:
   - MATRIX_EVAL="export BUILD=meson CC=gcc-7 CXX=g++-7"
   - MATRIX_EVAL="export BUILD=meson CC=clang-5.0 CXX=clang++-5.0"
-  - MATRIX_EVAL="export BUILD=cmake-make CC=gcc-7 CXX=g++-7"
-  - MATRIX_EVAL="export BUILD=cmake-make CC=clang-5.0 CXX=clang++-5.0"
-  - MATRIX_EVAL="export BUILD=cmake-ninja CC=gcc-7 CXX=g++-7"
-  - MATRIX_EVAL="export BUILD=cmake-ninja CC=clang-5.0 CXX=clang++-5.0"
 
 before_install:
   # General overrides
