@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package bacs.statement_provider;
+option go_package = "statement_provider";
+
+import "bacs/problem/problem.proto";
+
+message Request {
+  string package = 1;
+  problem.Revision revision = 2;
+}
