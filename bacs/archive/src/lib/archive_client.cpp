@@ -5,8 +5,7 @@
 
 #include <bunsan/rpc/overload.hpp>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 ArchiveClient::ArchiveClient(std::shared_ptr<grpc::Channel> channel)
     : m_stub(Archive::NewStub(channel)) {}
@@ -150,5 +149,4 @@ grpc::Status ArchiveClient::ClearFlags(const problem::IdSet &request,
   return grpc::Status::CANCELLED;
 }
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

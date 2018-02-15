@@ -4,10 +4,7 @@
 
 #include <boost/regex.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace test {
+namespace bacs::problem::single::test {
 
 class matcher::impl {
  public:
@@ -105,7 +102,4 @@ std::shared_ptr<const matcher::impl> matcher::make_query(
   }
 }
 
-}  // namespace test
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::test

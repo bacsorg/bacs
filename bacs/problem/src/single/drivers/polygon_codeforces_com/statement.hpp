@@ -7,11 +7,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace drivers {
-namespace polygon_codeforces_com {
+namespace bacs::problem::single::drivers::polygon_codeforces_com {
 
 struct invalid_statement_version_path_error : virtual statement_error {};
 
@@ -39,8 +35,4 @@ class statement : public problem::statement {
       const std::string &prefix, const boost::property_tree::ptree &config);
 };
 
-}  // namespace polygon_codeforces_com
-}  // namespace drivers
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::drivers::polygon_codeforces_com

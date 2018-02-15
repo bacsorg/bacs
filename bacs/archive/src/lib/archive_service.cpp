@@ -8,8 +8,7 @@
 
 #include <algorithm>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 ArchiveService::ArchiveService(
     const ArchiveServiceConfig &config,
@@ -178,5 +177,4 @@ grpc::Status ArchiveService::authorize(grpc::ServerContext *const context,
   return grpc::Status(grpc::PERMISSION_DENIED, "User not found");
 }
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

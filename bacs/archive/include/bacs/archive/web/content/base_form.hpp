@@ -2,15 +2,9 @@
 
 #include <bacs/archive/web/content/base.hpp>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
+namespace bacs::archive::web::content {
 
 struct base_form : base {};
 struct base_response : base {};
 
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content

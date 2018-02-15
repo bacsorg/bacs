@@ -19,10 +19,7 @@
 
 #include <bunsan/forward_constructor.hpp>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
+namespace bacs::archive::web::content {
 
 template <typename Form, typename Response>
 struct basic_form : base_form {
@@ -70,7 +67,4 @@ struct import_result : basic_form<form::list_query, import_map_response> {
 
 using import = basic_form<form::import, status_map_response>;
 
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content

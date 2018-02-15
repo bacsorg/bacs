@@ -5,9 +5,7 @@
 
 #include <string>
 
-namespace bacs {
-namespace problem {
-namespace statement_versions {
+namespace bacs::problem::statement_versions {
 
 class pdflatex : public statement::version {
  public:
@@ -25,6 +23,4 @@ class pdflatex : public statement::version {
   const boost::filesystem::path m_target;
 };
 
-}  // namespace statement_versions
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::statement_versions

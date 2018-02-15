@@ -1,10 +1,6 @@
 #include <bacs/archive/web/content/form/unset_flags.hpp>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
+namespace bacs::archive::web::content::form {
 
 unset_flags::unset_flags() {
   ids.name("ids");
@@ -17,8 +13,4 @@ unset_flags::unset_flags() {
   add(submit);
 }
 
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form

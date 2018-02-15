@@ -3,10 +3,7 @@
 #include <boost/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace generators {
+namespace bacs::problem::single::generators {
 
 class internal0 : public generator {
  public:
@@ -15,7 +12,4 @@ class internal0 : public generator {
   Problem generate(const options &options_) override;
 };
 
-}  // namespace generators
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::generators

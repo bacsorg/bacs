@@ -8,8 +8,7 @@
 
 #include <boost/property_tree/ini_parser.hpp>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 BUNSAN_FACTORY_DEFINE(statement::version)
 
@@ -148,5 +147,4 @@ bool statement::make_package(const boost::filesystem::path &destination,
 
 const Statement &statement::info() const { return m_info; }
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem

@@ -5,8 +5,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/thread/tss.hpp>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 class importer : public bacs::problem::importer {
  public:
@@ -20,5 +19,4 @@ class importer : public bacs::problem::importer {
   boost::thread_specific_ptr<bacs::problem::importer_ptr> m_impl;
 };
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

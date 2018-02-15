@@ -8,10 +8,7 @@
 
 #include <unordered_set>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace test {
+namespace bacs::problem::single::test {
 
 class storage : public utility {
   BUNSAN_FACTORY_BODY(storage, const boost::filesystem::path & /*location*/,
@@ -30,7 +27,4 @@ class storage : public utility {
 };
 BUNSAN_FACTORY_TYPES(storage)
 
-}  // namespace test
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::test

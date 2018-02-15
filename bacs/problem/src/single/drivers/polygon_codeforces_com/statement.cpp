@@ -6,11 +6,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace drivers {
-namespace polygon_codeforces_com {
+namespace bacs::problem::single::drivers::polygon_codeforces_com {
 
 statement::statement(const boost::filesystem::path &location,
                      const boost::property_tree::ptree &config)
@@ -86,8 +82,4 @@ void statement::version::make_package(
   }
 }
 
-}  // namespace polygon_codeforces_com
-}  // namespace drivers
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::drivers::polygon_codeforces_com

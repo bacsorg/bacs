@@ -1,10 +1,6 @@
 #include <bacs/archive/web/content/form/rename.hpp>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
+namespace bacs::archive::web::content::form {
 
 rename::rename() {
   current.name("current_id");
@@ -17,8 +13,4 @@ rename::rename() {
   add(submit);
 }
 
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form

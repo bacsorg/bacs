@@ -2,8 +2,7 @@
 
 #include <bacs/archive/error.hpp>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 importer::importer(const boost::property_tree::ptree &config)
     : m_config(config) {}
@@ -22,5 +21,4 @@ bacs::problem::Problem importer::convert(const options &options_) {
   }
 }
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

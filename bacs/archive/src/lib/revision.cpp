@@ -3,8 +3,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 void revision::update() {
   m_uuid = m_generator();
@@ -18,5 +17,4 @@ bool revision::is_equal(const std::string &revision) const {
   return get() == revision;
 }
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

@@ -17,8 +17,7 @@
 
 #include <cstdio>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 repository::repository(boost::asio::io_service &io_service,
                        const config &config_)
@@ -210,5 +209,4 @@ problem::StatusMap repository::schedule_import_all() {
   return schedule_import_all(existing());
 }
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

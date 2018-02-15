@@ -4,11 +4,7 @@
 #include <bacs/archive/web/content/form/widgets/archiver_config.hpp>
 #include <bacs/archive/web/content/form/widgets/problem/id_set.hpp>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
+namespace bacs::archive::web::content::form {
 
 struct download : base {
   download();
@@ -18,8 +14,4 @@ struct download : base {
   cppcms::widgets::submit submit;
 };
 
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form

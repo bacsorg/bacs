@@ -11,8 +11,7 @@
 
 #include <unordered_set>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 struct statement_error : virtual buildable_error {};
 struct statement_version_error : virtual statement_error {};
@@ -121,5 +120,4 @@ class statement : public buildable {
 
 using statement_ptr = statement::statement_ptr;
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem

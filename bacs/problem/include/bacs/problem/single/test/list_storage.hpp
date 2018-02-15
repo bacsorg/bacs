@@ -7,10 +7,7 @@
 
 #include <unordered_map>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace test {
+namespace bacs::problem::single::test {
 
 struct inconsistent_test_data_error : virtual error {};
 struct inconsistent_test_data_set_error : virtual inconsistent_test_data_error {
@@ -51,7 +48,4 @@ class list_storage : public storage {
   std::unordered_set<std::string> m_text_data_set;
 };
 
-}  // namespace test
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::test

@@ -4,8 +4,7 @@
 
 #include <string>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 /// problem id
 using id = std::string;
@@ -19,5 +18,4 @@ struct invalid_id_error : virtual error {
 /// \throws invalid_id_error if !is_allowed_id(id_)
 void validate_id(const id &id_);
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem

@@ -11,11 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace drivers {
-namespace simple0 {
+namespace bacs::problem::single::drivers::simple0 {
 
 struct invalid_group_id_error : virtual error {};
 struct empty_group_id_error : virtual invalid_group_id_error {};
@@ -63,8 +59,4 @@ class driver : public single::driver {
   std::map<std::string, TestGroup> m_test_groups;
 };
 
-}  // namespace simple0
-}  // namespace drivers
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::drivers::simple0

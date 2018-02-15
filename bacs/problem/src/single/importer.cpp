@@ -4,9 +4,7 @@
 
 #include <bunsan/static_initializer.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
+namespace bacs::problem::single {
 
 static const char problem_type[] = "bacs/problem/single";
 
@@ -43,6 +41,4 @@ Problem importer::convert(const options &options_) {
   }
 }
 
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single

@@ -3,10 +3,7 @@
 #include <bacs/problem/single/error.hpp>
 #include <bacs/problem/utility.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace test {
+namespace bacs::problem::single::test {
 
 struct error : virtual single::error {
   using test_id = boost::error_info<struct tag_test_id, std::string>;
@@ -19,7 +16,4 @@ struct data_format_error : virtual format_error {};
 struct make_package_error : virtual utility_make_package_error,
                             virtual error {};
 
-}  // namespace test
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::test

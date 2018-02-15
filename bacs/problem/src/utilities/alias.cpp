@@ -6,9 +6,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
-namespace bacs {
-namespace problem {
-namespace utilities {
+namespace bacs::problem::utilities {
 
 class alias : public utility {
  public:
@@ -72,6 +70,5 @@ bool alias::make_package(const boost::filesystem::path &destination,
         << bunsan::enable_nested_current());
   }
 }
-}  // namespace utilities
-}  // namespace problem
-}  // namespace bacs
+
+}  // namespace bacs::problem::utilities

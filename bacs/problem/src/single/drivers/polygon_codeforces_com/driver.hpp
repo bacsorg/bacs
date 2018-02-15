@@ -11,11 +11,7 @@
 #include <boost/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace drivers {
-namespace polygon_codeforces_com {
+namespace bacs::problem::single::drivers::polygon_codeforces_com {
 
 class driver : public single::driver {
  public:
@@ -49,8 +45,4 @@ class driver : public single::driver {
   statement_ptr m_statement;
 };
 
-}  // namespace polygon_codeforces_com
-}  // namespace drivers
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::drivers::polygon_codeforces_com

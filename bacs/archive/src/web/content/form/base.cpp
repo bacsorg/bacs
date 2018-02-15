@@ -2,11 +2,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
+namespace bacs::archive::web::content::form {
 
 base::base() {
   response_.name("response");
@@ -24,8 +20,4 @@ base::response_type base::response() {
   return boost::lexical_cast<response_type>(response_.selected_id());
 }
 
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form

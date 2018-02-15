@@ -2,12 +2,8 @@
 
 #include <bacs/problem/error.hpp>
 
-namespace bacs {
-namespace problem {
-namespace resource {
+namespace bacs::problem::resource {
 
 struct error : virtual problem::error {};
 
-}  // namespace resource
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::resource

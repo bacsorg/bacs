@@ -1,9 +1,7 @@
 #include <bacs/problem/buildable.hpp>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 buildable::~buildable() {}
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem

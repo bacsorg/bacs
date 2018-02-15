@@ -8,13 +8,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
-namespace widgets {
-namespace problem {
+namespace bacs::archive::web::content::form::widgets::problem {
 
 archive::problem::id id::value() { return text::value(); }
 
@@ -26,10 +20,4 @@ bool id::validate() {
   return valid();
 }
 
-}  // namespace problem
-}  // namespace widgets
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form::widgets::problem

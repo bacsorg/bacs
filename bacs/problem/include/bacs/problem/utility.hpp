@@ -7,8 +7,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 struct utility_error : virtual buildable_error {};
 struct utility_make_package_error : virtual buildable_make_package_error {};
@@ -51,5 +50,4 @@ class utility : public buildable {
 };
 BUNSAN_FACTORY_TYPES(utility)
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem

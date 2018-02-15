@@ -4,9 +4,7 @@
 
 #include <bacs/problem/importer.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
+namespace bacs::problem::single {
 
 class importer : public bacs::problem::importer {
  public:
@@ -18,6 +16,4 @@ class importer : public bacs::problem::importer {
   const generator_ptr m_generator;
 };
 
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single

@@ -11,8 +11,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 namespace importer_detail {
 struct options {
@@ -101,8 +100,7 @@ class importer : private boost::noncopyable {
 };
 BUNSAN_FACTORY_TYPES(importer)
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem
 
 namespace boost {
 std::string to_string(

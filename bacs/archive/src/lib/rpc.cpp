@@ -2,9 +2,7 @@
 
 #include <bunsan/filesystem/fstream.hpp>
 
-namespace bacs {
-namespace archive {
-namespace rpc {
+namespace bacs::archive::rpc {
 
 void recv_file(grpc::internal::ReaderInterface<Chunk> &reader,
                const boost::filesystem::path &path, utility::Archiver &format) {
@@ -42,6 +40,4 @@ void send_file(const utility::Archiver &format,
   fin.close();
 }
 
-}  // namespace rpc
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::rpc

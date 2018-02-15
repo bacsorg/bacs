@@ -5,8 +5,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 BUNSAN_FACTORY_DEFINE(utility)
 
@@ -71,5 +70,4 @@ boost::filesystem::path utility::target() const {
   return m_target;
 }
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem

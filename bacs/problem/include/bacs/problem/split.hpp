@@ -8,9 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace bacs {
-namespace problem {
-namespace split {
+namespace bacs::problem::split {
 
 template <typename Ptree>
 std::vector<std::string> get_vector(const Ptree &config,
@@ -32,6 +30,4 @@ void parse_repeated(google::protobuf::RepeatedPtrField<std::string> &vec,
   for (const std::string &s : get_vector(config, name)) *vec.Add() = s;
 }
 
-}  // namespace split
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::split {

@@ -10,9 +10,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
+namespace bacs::problem::single {
 
 namespace generator_detail {
 struct options {
@@ -44,9 +42,7 @@ class generator : private boost::noncopyable {
 };
 BUNSAN_FACTORY_TYPES(generator)
 
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single
 
 namespace boost {
 std::string to_string(

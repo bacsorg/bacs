@@ -8,8 +8,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 struct buildable_error : virtual error {};
 struct buildable_make_package_error : virtual buildable_error {
@@ -34,5 +33,4 @@ class buildable : private boost::noncopyable {
                             const Revision &revision) const = 0;
 };
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem

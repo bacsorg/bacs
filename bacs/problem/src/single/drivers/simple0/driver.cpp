@@ -23,11 +23,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace drivers {
-namespace simple0 {
+namespace bacs::problem::single::drivers::simple0 {
 
 BUNSAN_STATIC_INITIALIZER(bacs_problem_single_drivers_simple0, {
   BUNSAN_FACTORY_REGISTER_TOKEN(driver, simple0,
@@ -292,8 +288,4 @@ void driver::read_interactor() {
   }
 }
 
-}  // namespace simple0
-}  // namespace drivers
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::drivers::simple0

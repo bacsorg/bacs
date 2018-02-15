@@ -7,9 +7,7 @@
 
 #include <memory>
 
-namespace bacs {
-namespace archive {
-namespace web {
+namespace bacs::archive::web {
 
 class repository : public cppcms::application {
  public:
@@ -61,6 +59,4 @@ class repository : public cppcms::application {
   const boost::filesystem::path m_upload_directory;
 };
 
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web

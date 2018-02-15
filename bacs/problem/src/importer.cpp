@@ -9,8 +9,7 @@
 #include <iterator>
 #include <sstream>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 BUNSAN_FACTORY_DEFINE(importer)
 
@@ -90,8 +89,7 @@ importer_ptr importer::instance(const boost::property_tree::ptree &config) {
   return tmp;
 }
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem
 
 namespace boost {
 std::string to_string(

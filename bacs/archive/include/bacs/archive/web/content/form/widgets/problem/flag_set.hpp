@@ -4,13 +4,7 @@
 
 #include <cppcms/form.h>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
-namespace widgets {
-namespace problem {
+namespace bacs::archive::web::content::form::widgets::problem {
 
 class flag_set : public cppcms::widgets::text {
  public:
@@ -20,10 +14,4 @@ class flag_set : public cppcms::widgets::text {
   bool validate() override;
 };
 
-}  // namespace problem
-}  // namespace widgets
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form::widgets::problem

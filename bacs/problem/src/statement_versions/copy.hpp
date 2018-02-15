@@ -5,9 +5,7 @@
 
 #include <string>
 
-namespace bacs {
-namespace problem {
-namespace statement_versions {
+namespace bacs::problem::statement_versions {
 
 struct copy_error : virtual error {};
 
@@ -30,6 +28,4 @@ class copy : public statement::version {
   const boost::filesystem::path m_source;
 };
 
-}  // namespace statement_versions
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::statement_versions

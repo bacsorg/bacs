@@ -14,11 +14,7 @@
 
 #include <unordered_map>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace drivers {
-namespace simple0 {
+namespace bacs::problem::single::drivers::simple0 {
 
 BUNSAN_STATIC_INITIALIZER(bacs_problem_single_drivers_simple0_tests, {
   BUNSAN_FACTORY_REGISTER_TOKEN(tests, simple0_embedded,
@@ -90,8 +86,4 @@ tests::tests(const boost::filesystem::path &location,
   }
 }
 
-}  // namespace simple0
-}  // namespace drivers
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::drivers::simple0

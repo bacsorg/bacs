@@ -7,9 +7,7 @@
 
 #include <iterator>
 
-namespace bacs {
-namespace problem {
-namespace single {
+namespace bacs::problem::single {
 
 BUNSAN_FACTORY_DEFINE(driver)
 
@@ -35,6 +33,4 @@ driver_ptr driver::instance(const boost::filesystem::path &location) {
   }
 }
 
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single

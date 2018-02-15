@@ -2,12 +2,7 @@
 
 #include <boost/algorithm/string/trim.hpp>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
-namespace widgets {
+namespace bacs::archive::web::content::form::widgets {
 
 archiver_config::archiver_config() {
   type.name("archiver_type");
@@ -28,9 +23,4 @@ archiver_options archiver_config::value() {
   return config;
 }
 
-}  // namespace widgets
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form::widgets

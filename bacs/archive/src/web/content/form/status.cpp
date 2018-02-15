@@ -1,10 +1,6 @@
 #include <bacs/archive/web/content/form/status.hpp>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
+namespace bacs::archive::web::content::form {
 
 status::status()
     : ids(cppcms::locale::translate("All"),
@@ -14,8 +10,4 @@ status::status()
   add(submit);
 }
 
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form

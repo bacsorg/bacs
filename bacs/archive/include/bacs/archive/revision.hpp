@@ -4,8 +4,7 @@
 
 #include <string>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 class revision: private boost::noncopyable {
  public:
@@ -22,5 +21,4 @@ class revision: private boost::noncopyable {
   boost::uuids::uuid m_uuid;
 };
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

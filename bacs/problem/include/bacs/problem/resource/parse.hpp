@@ -4,10 +4,7 @@
 
 #include <string>
 
-namespace bacs {
-namespace problem {
-namespace resource {
-namespace parse {
+namespace bacs::problem::resource::parse {
 
 struct error : virtual resource::error {
   using value = boost::error_info<struct tag_value, std::string>;
@@ -20,7 +17,4 @@ struct memory_error : virtual error {};
 std::uint64_t time_millis(const std::string &time);
 std::uint64_t memory_bytes(const std::string &memory);
 
-}  // namespace parse
-}  // namespace resource
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::resource::parse

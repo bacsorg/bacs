@@ -1,9 +1,6 @@
 #include <bacs/archive/web/content/form.hpp>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
+namespace bacs::archive::web::content {
 
 clear_flags::clear_flags()
     : basic_form(cppcms::locale::translate("Clear flags")) {}
@@ -11,7 +8,4 @@ clear_flags::clear_flags()
 import_result::import_result()
     : basic_form(cppcms::locale::translate("Get import result")) {}
 
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content

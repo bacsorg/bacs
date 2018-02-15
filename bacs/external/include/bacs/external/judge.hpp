@@ -6,8 +6,7 @@
 
 #include <memory>
 
-namespace bacs {
-namespace external {
+namespace bacs::external {
 
 class Judge : private boost::noncopyable {
  public:
@@ -38,5 +37,4 @@ class Judge : private boost::noncopyable {
   std::unique_ptr<impl> pimpl;
 };
 
-}  // namespace external
-}  // namespace bacs
+}  // namespace bacs::external

@@ -18,9 +18,7 @@
 #include <cppcms/http_response.h>
 #include <cppcms/service.h>
 
-namespace bacs {
-namespace statement_provider {
-namespace web {
+namespace bacs::statement_provider::web {
 
 #define BACS_STATEMENT_GETTERS "get|text_get"
 #define BACS_STATEMENT_REQUEST \
@@ -208,6 +206,4 @@ bool server::parse_text(const std::string &coded_request, Request &request) {
   return true;
 }
 
-}  // namespace web
-}  // namespace statement_provider
-}  // namespace bacs
+}  // namespace bacs::statement_provider::web

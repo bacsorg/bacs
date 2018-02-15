@@ -9,13 +9,7 @@
 #include <random>
 #include <vector>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
-namespace widgets {
-namespace problem {
+namespace bacs::archive::web::content::form::widgets::problem {
 
 optional_id_set::optional_id_set(const std::string &flag_,
                                  const flag_type_enum flag_type_)
@@ -106,10 +100,4 @@ void optional_id_set::render(cppcms::form_context &context) {
   form::render(context);
 }
 
-}  // namespace problem
-}  // namespace widgets
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form::widgets::problem

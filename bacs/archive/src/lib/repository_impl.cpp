@@ -13,8 +13,7 @@
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_lock_guard.hpp>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 using lock_guard = boost::lock_guard<boost::upgrade_mutex>;
 using shared_lock_guard = boost::shared_lock_guard<boost::upgrade_mutex>;
@@ -591,5 +590,4 @@ bool repository::is_equal_revision_(const ArchiveRevision &revision) {
   return m_revision.is_equal(revision.value());
 }
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

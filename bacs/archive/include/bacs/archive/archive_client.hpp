@@ -7,8 +7,7 @@
 
 #include <boost/filesystem/path.hpp>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 class ArchiveClient {
  public:
@@ -104,5 +103,4 @@ class ArchiveClient {
   std::unique_ptr<Archive::Stub> m_stub;
 };
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

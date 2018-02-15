@@ -17,9 +17,7 @@
 
 #include <functional>
 
-namespace bacs {
-namespace archive {
-namespace web {
+namespace bacs::archive::web {
 
 repository::repository(cppcms::service &srv,
                        const std::shared_ptr<archive::repository> &repository_)
@@ -275,6 +273,4 @@ void repository::send_tempfile(bunsan::tempfile &&tmpfile,
   send_file(tmpfile.path(), filename);
 }
 
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web

@@ -5,8 +5,7 @@
 #include <bunsan/pm/index.hpp>
 #include <bunsan/protobuf/binary.hpp>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 bool system_verifier::make_package(const boost::filesystem::path &destination,
                                    const bunsan::pm::entry & /*package*/,
@@ -76,5 +75,4 @@ bool system_verifier::make_package(const boost::filesystem::path &destination,
   return true;
 }
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem

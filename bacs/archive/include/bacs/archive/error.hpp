@@ -5,8 +5,7 @@
 #include <bunsan/error.hpp>
 #include <bunsan/rpc/error.hpp>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 struct error : virtual bunsan::error {};
 struct rpc_error : virtual error, virtual bunsan::rpc::error {};
@@ -26,7 +25,9 @@ struct unknown_archiver_error : virtual error {
       boost::error_info<struct tag_archiver_type, std::string>;
 };
 
-namespace problem {
+}  // namespace bacs::archive
+
+namespace bacs::archive::problem {
 struct error : virtual archive::error {};
 
 struct flag_error : virtual error {
@@ -34,8 +35,4 @@ struct flag_error : virtual error {
 };
 struct invalid_flag_error : virtual flag_error {};
 struct flag_cant_be_set_error : virtual flag_error {};
-
-}  // namespace problem
-
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::problem

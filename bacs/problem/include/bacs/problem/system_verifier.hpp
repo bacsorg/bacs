@@ -3,8 +3,7 @@
 #include <bacs/problem/buildable.hpp>
 #include <bacs/problem/problem.pb.h>
 
-namespace bacs {
-namespace problem {
+namespace bacs::problem {
 
 class system_verifier : public buildable {
  public:
@@ -17,5 +16,4 @@ class system_verifier : public buildable {
   System m_system;
 };
 
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem

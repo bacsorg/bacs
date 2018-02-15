@@ -9,10 +9,7 @@
 
 #include <cmath>
 
-namespace bacs {
-namespace problem {
-namespace resource {
-namespace parse {
+namespace bacs::problem::resource::parse {
 
 namespace qi = boost::spirit::qi;
 
@@ -115,7 +112,4 @@ std::uint64_t memory_bytes(const std::string &memory) {
   return boost::numeric_cast<std::uint64_t>(std::round(result));
 }
 
-}  // namespace parse
-}  // namespace resource
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::resource::parse

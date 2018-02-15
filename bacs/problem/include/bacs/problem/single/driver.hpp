@@ -11,9 +11,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
+namespace bacs::problem::single {
 
 class driver : private boost::noncopyable {
   BUNSAN_FACTORY_BODY(driver, const boost::filesystem::path &location)
@@ -46,6 +44,4 @@ class driver : private boost::noncopyable {
 };
 BUNSAN_FACTORY_TYPES(driver)
 
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single

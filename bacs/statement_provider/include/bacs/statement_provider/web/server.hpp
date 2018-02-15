@@ -16,9 +16,7 @@
 
 #include <ctime>
 
-namespace bacs {
-namespace statement_provider {
-namespace web {
+namespace bacs::statement_provider::web {
 
 class server : public cppcms::application {
  public:
@@ -48,6 +46,4 @@ class server : public cppcms::application {
   std::unordered_map<std::string, std::unique_ptr<Botan::Public_Key>> m_keys;
 };
 
-}  // namespace web
-}  // namespace statement_provider
-}  // namespace bacs
+}  // namespace bacs::statement_provider::web

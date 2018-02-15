@@ -11,9 +11,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
-namespace bacs {
-namespace problem {
-namespace utilities {
+namespace bacs::problem::utilities {
 
 BUNSAN_STATIC_INITIALIZER(bacs_problem_utilities_single, {
   BUNSAN_FACTORY_REGISTER_TOKEN(
@@ -101,6 +99,4 @@ bool single::make_package(const boost::filesystem::path &destination,
   }
 }
 
-}  // namespace utilities
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::utilities

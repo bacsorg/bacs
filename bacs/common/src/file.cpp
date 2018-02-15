@@ -1,7 +1,6 @@
 #include <bacs/file.hpp>
 
-namespace bacs {
-namespace file {
+namespace bacs::file {
 
 Path path_cast(const boost::filesystem::path &path) {
   Path tmp;
@@ -28,5 +27,4 @@ void path_convert(const Path &proto_path, boost::filesystem::path &path) {
   for (const std::string &element : proto_path.element()) path /= element;
 }
 
-}  // namespace file
-}  // namespace bacs
+}  // namespace bacs::file

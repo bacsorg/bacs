@@ -6,8 +6,7 @@
 #include <bunsan/curl/options/network.hpp>
 #include <bunsan/protobuf/binary.hpp>
 
-namespace bacs {
-namespace external {
+namespace bacs::external {
 
 namespace curl = bunsan::curl;
 
@@ -58,5 +57,4 @@ std::string Judge::Call(const std::string &method, const std::string &message) {
   return response;
 }
 
-}  // namespace external
-}  // namespace bacs
+}  // namespace bacs::external

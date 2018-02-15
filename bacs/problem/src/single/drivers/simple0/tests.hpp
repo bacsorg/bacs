@@ -3,11 +3,7 @@
 #include <bacs/problem/single/test/error.hpp>
 #include <bacs/problem/single/test/list_storage.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace drivers {
-namespace simple0 {
+namespace bacs::problem::single::drivers::simple0 {
 
 struct test_no_in_data_error : virtual test::data_format_error {};
 struct test_unknown_data_error : virtual test::data_format_error {};
@@ -43,8 +39,4 @@ class tests : public test::storage {
   test::list_storage m_tests;
 };
 
-}  // namespace simple0
-}  // namespace drivers
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::drivers::simple0

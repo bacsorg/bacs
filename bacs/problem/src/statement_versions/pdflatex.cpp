@@ -6,9 +6,7 @@
 #include <bunsan/protobuf/binary.hpp>
 #include <bunsan/static_initializer.hpp>
 
-namespace bacs {
-namespace problem {
-namespace statement_versions {
+namespace bacs::problem::statement_versions {
 
 BUNSAN_STATIC_INITIALIZER(bacs_problem_statement_versions_pdflatex, {
   BUNSAN_FACTORY_REGISTER_TOKEN(
@@ -78,6 +76,4 @@ void pdflatex::make_package(const boost::filesystem::path &destination,
   }
 }
 
-}  // namespace statement_versions
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::statement_versions

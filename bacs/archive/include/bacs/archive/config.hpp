@@ -10,8 +10,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 struct location_config {
   template <typename Archive>
@@ -71,5 +70,4 @@ struct config {
   bunsan::pm::config pm;
 };
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

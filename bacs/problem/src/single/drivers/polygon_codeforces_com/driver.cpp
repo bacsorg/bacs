@@ -13,11 +13,7 @@
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace drivers {
-namespace polygon_codeforces_com {
+namespace bacs::problem::single::drivers::polygon_codeforces_com {
 
 BUNSAN_STATIC_INITIALIZER(bacs_problem_single_drivers_polygon_codeforces_com, {
   BUNSAN_FACTORY_REGISTER(polygon_codeforces_com, single::driver,
@@ -208,8 +204,4 @@ void driver::read_checker() {
   (*m_overview.mutable_utility())["checker"] = m_checker->info();
 }
 
-}  // namespace polygon_codeforces_com
-}  // namespace drivers
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::drivers::polygon_codeforces_com

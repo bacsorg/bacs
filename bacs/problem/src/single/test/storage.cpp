@@ -2,10 +2,7 @@
 
 #include <boost/property_tree/ini_parser.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace test {
+namespace bacs::problem::single::test {
 
 BUNSAN_FACTORY_DEFINE(storage)
 
@@ -22,7 +19,4 @@ Tests storage::test_set_info() const {
   return info;
 }
 
-}  // namespace test
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::test

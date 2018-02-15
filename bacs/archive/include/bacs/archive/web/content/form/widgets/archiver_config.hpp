@@ -4,12 +4,7 @@
 
 #include <cppcms/form.h>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
-namespace widgets {
+namespace bacs::archive::web::content::form::widgets {
 
 struct archiver_config : cppcms::form {
   archiver_config();
@@ -20,9 +15,4 @@ struct archiver_config : cppcms::form {
   cppcms::widgets::text format;
 };
 
-}  // namespace widgets
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form::widgets

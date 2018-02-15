@@ -5,9 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace bacs {
-namespace problem {
-namespace utilities {
+namespace bacs::problem::utilities {
 
 class dot_net_solution : public utility {
  public:
@@ -24,6 +22,4 @@ class dot_net_solution : public utility {
   const std::vector<std::string> m_libs;
 };
 
-}  // namespace utilities
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::utilities

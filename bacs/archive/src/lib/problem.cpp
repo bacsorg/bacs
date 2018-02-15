@@ -4,9 +4,7 @@
 
 #include <bunsan/pm/entry.hpp>
 
-namespace bacs {
-namespace archive {
-namespace problem {
+namespace bacs::archive::problem {
 
 const std::string &flag_cast(const problem::Flag &flag) {
   switch (flag.flag_case()) {
@@ -73,6 +71,4 @@ void validate_flag_set(const FlagSet &flags) {
   for (const Flag &flag : flags.flag()) validate_flag(flag);
 }
 
-}  // namespace problem
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::problem

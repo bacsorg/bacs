@@ -23,19 +23,16 @@
 #include <functional>
 #include <string>
 
-namespace boost {
-namespace asio {
+namespace boost::asio {
 #if BOOST_VERSION < 106600
 class io_service;
 #else
 class io_context;
 using io_service = io_context;
 #endif
-}  // namespace asio
-}  // namespace boost
+}  // namespace boost::asio
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 /*!
  * \brief Problems repository.
@@ -579,5 +576,4 @@ class repository : private boost::noncopyable {
   revision m_revision;
 };
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

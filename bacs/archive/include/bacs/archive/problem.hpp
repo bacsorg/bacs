@@ -15,9 +15,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace bacs {
-namespace archive {
-namespace problem {
+namespace bacs::archive::problem {
 
 using bacs::problem::id;
 using bacs::problem::is_allowed_id;
@@ -54,6 +52,4 @@ void validate_flag(const flag &flag_);
 void validate_flag(const Flag &flag);
 void validate_flag_set(const FlagSet &flags);
 
-}  // namespace problem
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::problem

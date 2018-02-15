@@ -3,8 +3,7 @@
 #include <bacs/archive/archive.grpc.pb.h>
 #include <bacs/archive/repository.hpp>
 
-namespace bacs {
-namespace archive {
+namespace bacs::archive {
 
 class ArchiveService : public Archive::Service {
  public:
@@ -77,5 +76,4 @@ class ArchiveService : public Archive::Service {
   const std::shared_ptr<archive::repository> m_repository;
 };
 
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive

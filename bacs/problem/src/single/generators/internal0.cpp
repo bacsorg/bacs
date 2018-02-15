@@ -6,10 +6,7 @@
 #include <bunsan/pm/index.hpp>
 #include <bunsan/static_initializer.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace generators {
+namespace bacs::problem::single::generators {
 
 BUNSAN_STATIC_INITIALIZER(bacs_problem_single_generators_internal0, {
   BUNSAN_FACTORY_REGISTER_TOKEN(
@@ -139,7 +136,4 @@ Problem internal0::generate(const options &options_) {
   }
 }
 
-}  // namespace generators
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::generators

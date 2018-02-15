@@ -11,10 +11,7 @@
 #include <boost/range/iterator_range.hpp>
 #include <bunsan/serialization/unordered_set.hpp>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace test {
+namespace bacs::problem::single::test {
 
 namespace {
 boost::property_tree::ptree get_config(const std::string &builder_name) {
@@ -143,7 +140,4 @@ bool list_storage::make_package(const boost::filesystem::path &destination,
   }
 }
 
-}  // namespace test
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::test

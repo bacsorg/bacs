@@ -5,10 +5,7 @@
 
 #include <memory>
 
-namespace bacs {
-namespace problem {
-namespace single {
-namespace test {
+namespace bacs::problem::single::test {
 
 struct matcher_error : virtual error {};
 struct matcher_not_set_error : virtual matcher_error {};
@@ -32,7 +29,4 @@ class matcher {
   std::shared_ptr<const impl> m_impl;
 };
 
-}  // namespace test
-}  // namespace single
-}  // namespace problem
-}  // namespace bacs
+}  // namespace bacs::problem::single::test

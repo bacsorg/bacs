@@ -1,10 +1,6 @@
 #include <bacs/archive/web/content/form/download.hpp>
 
-namespace bacs {
-namespace archive {
-namespace web {
-namespace content {
-namespace form {
+namespace bacs::archive::web::content::form {
 
 download::download() {
   ids.name("ids");
@@ -15,8 +11,4 @@ download::download() {
   add(submit);
 }
 
-}  // namespace form
-}  // namespace content
-}  // namespace web
-}  // namespace archive
-}  // namespace bacs
+}  // namespace bacs::archive::web::content::form
