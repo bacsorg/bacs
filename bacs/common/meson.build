@@ -19,7 +19,9 @@ bacs_common_pb_srcs = protoc_cpp_gen.process(
 )
 bacs_common_pb = static_library(
     'bacs_common_pb', bacs_common_pb_srcs,
-    dependencies : dependency('protobuf'))
+    dependencies : dependency('protobuf'),
+    override_options : ['warning_level=1'],
+)
 bacs_common_pb_dep = declare_dependency(
     link_with : bacs_common_pb,
     dependencies : [dependency('protobuf')],

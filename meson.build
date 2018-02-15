@@ -11,6 +11,9 @@ if (meson.get_compiler('cpp').get_id() == 'gcc' or
   # plugins and backtrace
   add_global_link_arguments('-rdynamic', language : 'cpp')
   add_global_link_arguments('-Wl,--no-as-needed', language : 'cpp')
+  # Noisy protobuf workaround
+  # TODO remove once meson supports warning suppression for generated code
+  add_global_arguments('-Wno-unused-parameter', language : 'cpp')
 endif
 
 # Boost configuration

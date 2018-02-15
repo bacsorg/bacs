@@ -76,6 +76,7 @@ bacs_archive_pb = static_library(
         dependency('grpc++'),
         bacs_problem_pb_dep,
     ],
+    override_options : ['warning_level=1'],
 )
 bacs_archive_pb_dep = declare_dependency(
     link_with : bacs_archive_pb,
