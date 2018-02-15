@@ -1,6 +1,11 @@
 #include <boost/system/api_config.hpp>
 
 #if defined(BOOST_POSIX_API)
+
+// boost::coroutines is a dependency of boost::asio::spawn
+// and should not trigger warnings here.
+#define BOOST_COROUTINES_NO_DEPRECATION_WARNING 1
+
 #define BOOST_TEST_MODULE asio
 #include <boost/test/unit_test.hpp>
 
