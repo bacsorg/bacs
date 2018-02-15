@@ -43,6 +43,8 @@ deps = [
     cppcms_dep,
     bunsan_common_dep,
     bunsan_pm_dep,
+    bunsan_web_dep,
+    bacs_problem_dep,
     bacs_statement_provider_pb_dep,
 ]
 
