@@ -13,7 +13,6 @@ test_deps = [
 prefix = 'bunsan_utility_test_'
 tests = [
     'archiver',
-    'executor',
     'fetcher',
     'maker',
     'mocks',

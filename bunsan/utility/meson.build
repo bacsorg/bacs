@@ -1,7 +1,6 @@
 srcs = [
     'src/error.cpp',
     'src/utility.cpp',
-    'src/executor.cpp',
 
     'src/resolver.cpp',
     'src/custom_resolver.cpp',
