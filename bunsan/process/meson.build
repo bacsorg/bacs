@@ -7,7 +7,7 @@ deps = [
 if (host_machine.system() == 'linux' or
     host_machine.system() == 'bsd' or
     host_machine.system() == 'cygwin')
-  platform_tests = 'unix'
+  test_platform = 'unix'
   platform_srcs = [
       'src/process/unix/path.cpp',
       'src/process/unix/signal.cpp',
@@ -16,7 +16,7 @@ if (host_machine.system() == 'linux' or
       'src/process/detail/unix/executor.cpp',
   ]
 elif host_machine.system() == 'windows'
-  platform_tests = 'win32'
+  test_platform = 'win32'
   platform_srcs = [
       'src/process/win32/path.cpp',
 

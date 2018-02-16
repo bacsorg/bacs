@@ -12,6 +12,11 @@ test_deps = [
 
 prefix = 'bunsan_crypto_test_'
 tests = [
+    'execute',
+    'file_guard',
+    'process',
+]
+platform_tests = [
     'process',
 ]
 
@@ -20,4 +25,11 @@ foreach t : tests
                  t + '.cpp',
                  dependencies : test_deps)
   test(prefix + t, e, env : testenv)
+endforeach
+
+foreach t : platform_tests
+  e = executable(prefix + test_platform + t,
+                 join_paths(test_platform, t + '.cpp'),
+                 dependencies : test_deps)
+  test(prefix + test_platform + t, e, env : testenv)
 endforeach
