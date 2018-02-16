@@ -10,7 +10,8 @@ namespace bacs::external {
 
 namespace curl = bunsan::curl;
 
-struct Judge::impl {
+class Judge::impl {
+ public:
   explicit impl(const std::string &address) : root(address) {}
 
   std::string root;
