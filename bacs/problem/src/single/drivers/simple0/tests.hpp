@@ -31,7 +31,7 @@ class tests : public test::storage {
 
   bool make_package(const boost::filesystem::path &destination,
                     const bunsan::pm::entry &package,
-                    const Revision &revision) const {
+                    const Revision &revision) const override {
     return m_tests.make_package(destination, package, revision);
   }
 
