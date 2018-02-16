@@ -96,7 +96,7 @@ class context {
     }
   }
 
-  grpc::Status unwrap() const { return m_status; }
+  [[nodiscard]] grpc::Status unwrap() const { return m_status; }
 
  private:
   template <typename F>
