@@ -102,6 +102,11 @@ deps = [
     bacs_archive_pb_dep,
 ]
 
+if get_option('enable-web')
+  deps += [bunsan_web_dep]
+  srcs += web_srcs
+endif
+
 include = include_directories('include')
 
 lib = library('bacs_archive', srcs,
@@ -140,5 +145,12 @@ pkg.generate(
 install_subdir('include',
                install_dir : get_option('includedir'),
                strip_directory : true)
+
+if get_option('enable-web')
+  subdir('view')
+  install_subdir('static',
+      install_dir : join_paths(get_option('datadir'), 'bacs_archive'),
+  )
+endif
 
 subdir('tests')
