@@ -5,8 +5,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/bunsanorg/broker/go/bunsan/broker"
-	"github.com/bunsanorg/broker/go/bunsan/broker/worker/protocol"
+	"github.com/bacsorg/bacs/go/bunsan/broker"
+	"github.com/bacsorg/bacs/go/bunsan/broker/worker/protocol"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -4,7 +4,7 @@ import (
     "flag"
     "log"
 
-    "github.com/bunsanorg/pm/go/bunsan/pm"
+    "github.com/bacsorg/bacs/go/bunsan/pm"
 )
 
 var config = flag.String("config", "pm.rc", "Repository configuration file")

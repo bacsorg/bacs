@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/bunsanorg/broker/go/bunsan/broker"
-	"github.com/bunsanorg/broker/go/bunsan/broker/rabbit"
+	"github.com/bacsorg/bacs/go/bunsan/broker"
+	"github.com/bacsorg/bacs/go/bunsan/broker/rabbit"
 	"github.com/streadway/amqp"
 )
 

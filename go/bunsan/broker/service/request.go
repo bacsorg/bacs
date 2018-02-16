@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/bunsanorg/broker/go/bunsan/broker"
-	"github.com/bunsanorg/broker/go/bunsan/broker/rabbit"
+	"github.com/bacsorg/bacs/go/bunsan/broker"
+	"github.com/bacsorg/bacs/go/bunsan/broker/rabbit"
 	"github.com/golang/protobuf/proto"
 	"github.com/streadway/amqp"
 )

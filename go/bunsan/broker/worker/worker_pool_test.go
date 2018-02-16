@@ -3,9 +3,9 @@ package worker
 import (
 	"testing"
 
-	"github.com/bunsanorg/broker/go/bunsan/broker/service"
-	"github.com/bunsanorg/broker/go/bunsan/broker/service/mock"
-	"github.com/bunsanorg/broker/go/bunsan/broker/worker/mock"
+	"github.com/bacsorg/bacs/go/bunsan/broker/service"
+	"github.com/bacsorg/bacs/go/bunsan/broker/service/mock"
+	"github.com/bacsorg/bacs/go/bunsan/broker/worker/mock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
