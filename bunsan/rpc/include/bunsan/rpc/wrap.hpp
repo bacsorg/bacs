@@ -137,8 +137,8 @@ class context {
 }  // namespace detail
 
 template <typename Request, typename Response>
-detail::context<const Request, Response, false, false> wrap(
-    grpc::ServerContext *ctx, const Request *request, Response *response) {
+auto wrap(grpc::ServerContext *ctx, const Request *request,
+          Response *response) {
   static_assert(std::is_convertible_v<Request *, google::protobuf::Message *>);
   static_assert(std::is_convertible_v<Response *, google::protobuf::Message *>);
   return detail::context<const Request, Response, false, false>(ctx, request,
@@ -146,18 +146,16 @@ detail::context<const Request, Response, false, false> wrap(
 }
 
 template <typename Request, typename Response>
-detail::context<const Request, grpc::ServerWriter<Response>, false, true> wrap(
-    grpc::ServerContext *ctx, const Request *request,
-    grpc::ServerWriter<Response> *writer) {
+auto wrap(grpc::ServerContext *ctx, const Request *request,
+          grpc::ServerWriter<Response> *writer) {
   static_assert(std::is_convertible_v<Request *, google::protobuf::Message *>);
   return detail::context<const Request, grpc::ServerWriter<Response>, false,
                          true>(ctx, request, writer);
 }
 
 template <typename Request, typename Response>
-detail::context<grpc::ServerReader<Request>, Response, true, false> wrap(
-    grpc::ServerContext *ctx, grpc::ServerReader<Request> *reader,
-    Response *response) {
+auto wrap(grpc::ServerContext *ctx, grpc::ServerReader<Request> *reader,
+          Response *response) {
   static_assert(std::is_convertible_v<Response *, google::protobuf::Message *>);
   return detail::context<grpc::ServerReader<Request>, Response, true, false>(
       ctx, reader, response);
