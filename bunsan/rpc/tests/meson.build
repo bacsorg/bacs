@@ -2,9 +2,12 @@ testenv = environment()
 testenv.set('BUNSAN_SOURCE_DIR', meson.current_source_dir() + '/..')
 testenv.set('BUNSAN_BINARY_DIR', meson.current_build_dir() + '/..')
 
+subdir('generators')
+
 test_deps = [
     bunsan_test_dep,
     bunsan_rpc_dep,
+    bunsan_rpc_test_pb_dep,
     dependency('boost', modules : [
         'unit_test_framework',
     ]),
@@ -13,9 +16,9 @@ test_deps = [
 prefix = 'bunsan_rpc_test_'
 tests = [
     'error',
-    'implement',
     'overload',
     'status',
+    'wrap',
 ]
 
 foreach t : tests

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package bunsan.rpc.test;
+
+message Request {
+  int32 value = 1;
+}
+
+message Response {
+  int32 value = 1;
+}
+
+service TestService {
+  rpc DoRpc(Request) returns (Response);
+  rpc DoRpcRStream(Request) returns (stream Response);
+  rpc DoRpcWStream(stream Request) returns (Response);
+  // Bidirectional streaming is not supported yet
+}

@@ -67,9 +67,7 @@ class ArchiveService : public Archive::Service {
                           problem::StatusMap *response) override;
 
  private:
-  template <typename Request, typename Response>
-  grpc::Status authorize(grpc::ServerContext *context, Request *request,
-                         Response *response) const;
+  grpc::Status authorize(grpc::ServerContext *context) const;
 
   const boost::filesystem::path m_upload_directory;
   const ArchiveServiceConfig::Permissions m_permissions;
