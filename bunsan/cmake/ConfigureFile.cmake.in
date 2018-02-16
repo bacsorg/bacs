@@ -1,9 +1,0 @@
-include(@BunsanCMake_MODULE_ROOT@/scripts/configure_file_common.cmake)
-
-@BUNSAN_CONFIGURE_FILE_VARIABLES@
-
-bunsan_configure_file(
-    ${BUNSAN_CONFIGURE_FILE_INPUT}
-    ${BUNSAN_CONFIGURE_FILE_OUTPUT}
-    @ONLY
-)

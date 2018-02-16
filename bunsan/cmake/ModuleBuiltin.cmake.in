@@ -1,6 +1,0 @@
-set(@MODULE_NAME@Builtin ON CACHE INTERNAL "" FORCE)
-set(@MODULE_NAME@Config ${CMAKE_CURRENT_LIST_DIR}/@MODULE_NAME@Config.cmake CACHE INTERNAL "" FORCE)
-
-macro(@MODULE_NAME@Load)
-    include(${@MODULE_NAME@Config})
-endmacro()
