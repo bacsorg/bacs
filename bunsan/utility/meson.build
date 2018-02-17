@@ -40,7 +40,7 @@ deps = [
 
 include = include_directories('include')
 
-lib = shared_library('bunsan_utility', srcs,
+lib = library('bunsan_utility', srcs,
     dependencies : deps,
     include_directories : include,
     install : true,
