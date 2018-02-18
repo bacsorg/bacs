@@ -16,11 +16,9 @@ if (meson.get_compiler('cpp').get_id() == 'gcc' or
   add_global_arguments('-Wno-unused-parameter', language : 'cpp')
 endif
 
-# Boost configuration
-default_library = get_option('default_library')
-if default_library == 'shared'
-  add_global_arguments('-DBOOST_ALL_DYN_LINK', language : 'cpp')
-endif
+# Boost configuration, currently links dynamically only.
+# FIXME it should probably be set by meson
+add_global_arguments('-DBOOST_ALL_DYN_LINK', language : 'cpp')
 
 subdir('bunsan')
 subdir('bacs')
