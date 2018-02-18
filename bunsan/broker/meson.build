@@ -16,11 +16,15 @@ bunsan_broker_pb_srcs = protoc_cpp_gen.process(
 
 bunsan_broker_pb = static_library(
     'bunsan_broker_pb', bunsan_broker_pb_srcs,
-    dependencies : dependency('protobuf'))
+    dependencies : dependency('protobuf'),
+)
 bunsan_broker_pb_dep = declare_dependency(
     link_with : bunsan_broker_pb,
-    dependencies : [dependency('protobuf')],
-    include_directories : [include, bunsan_broker_pb.private_dir_include()],
+    dependencies : dependency('protobuf'),
+    include_directories : [
+        include,
+        bunsan_broker_pb.private_dir_include()
+    ],
 )
 
 deps = [

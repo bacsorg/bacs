@@ -24,7 +24,7 @@ bacs_common_pb = static_library(
 )
 bacs_common_pb_dep = declare_dependency(
     link_with : bacs_common_pb,
-    dependencies : [dependency('protobuf')],
+    dependencies : dependency('protobuf'),
     include_directories : [include, bacs_common_pb.private_dir_include()],
 )
 

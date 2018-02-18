@@ -48,8 +48,11 @@ bunsan_protobuf_test_pb = static_library(
 )
 bunsan_protobuf_test_pb_dep = declare_dependency(
     link_with : bunsan_protobuf_test_pb,
-    dependencies : [dependency('protobuf')],
-    include_directories : [include, bunsan_protobuf_test_pb.private_dir_include()],
+    dependencies : dependency('protobuf'),
+    include_directories : [
+        include,
+        bunsan_protobuf_test_pb.private_dir_include()
+    ],
 )
 
 pkg = import('pkgconfig')

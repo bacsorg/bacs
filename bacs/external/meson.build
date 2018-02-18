@@ -22,10 +22,11 @@ bacs_external_pb_srcs = protoc_cpp_gen.process(
 )
 bacs_external_pb = static_library(
     'bacs_external_pb', bacs_external_pb_srcs,
-    dependencies : dependency('protobuf'))
+    dependencies : dependency('protobuf'),
+)
 bacs_external_pb_dep = declare_dependency(
     link_with : bacs_external_pb,
-    dependencies : [dependency('protobuf')],
+    dependencies : dependency('protobuf'),
     include_directories : [include, bacs_external_pb.private_dir_include()],
 )
 
