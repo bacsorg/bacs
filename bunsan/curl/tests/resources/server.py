@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from http.server import *
+import os
 import subprocess
 import sys
 import threading
@@ -77,21 +78,29 @@ class Handler(BaseHTTPRequestHandler):
             self._404()
 
 
-def server(ready, host, port):
-    server_address = (host, port)
-    httpd = HTTPServer(server_address, Handler)
-    ready.set()
-    httpd.serve_forever()
+class Server(threading.Thread):
+
+    def __init__(self):
+        super(Server, self).__init__()
+        self._httpd = HTTPServer(('', 0), Handler)
+
+    @property
+    def port(self):
+        return self._httpd.server_port
+
+    def run(self):
+        self._httpd.serve_forever()
 
 
 if __name__ == '__main__':
-    ready = threading.Event()
-    srv = threading.Thread(target=lambda: server(ready, '', 8090))
+    srv = Server()
     srv.daemon = True
     srv.start()
-    ready.wait()
+    env = os.environ.copy()
+    env['BUNSAN_PORT'] = str(srv.port)
     sys.exit(subprocess.call(
         sys.argv[1:],
+        env=env,
         stdin=sys.stdin,
         stdout=sys.stdout,
         stderr=sys.stderr

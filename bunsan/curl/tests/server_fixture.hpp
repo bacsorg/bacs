@@ -1,5 +1,9 @@
 #pragma once
 
+#include <bunsan/test/getenv.hpp>
+
+#include <boost/assert.hpp>
+#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <algorithm>
@@ -7,9 +11,11 @@
 #include <string>
 
 struct server_fixture {
-  const std::string url_root = "http://localhost:8090";
+  const std::string url_root;
   std::string wdata;
   std::string rdata;
+
+  server_fixture() : url_root(get_url_root()) {}
 
   std::function<std::size_t(const char *, std::size_t)> writer =
       [this](const char *const ptr, const std::size_t size) {
@@ -24,4 +30,16 @@ struct server_fixture {
         rdata.erase(rdata.begin(), rdata.begin() + size);
         return size;
       };
+
+ private:
+  static std::string get_url_root() {
+    return str(boost::format("http://localhost:%d") % get_port());
+  }
+
+  static int get_port() {
+    const int port =
+        boost::lexical_cast<int>(bunsan::test::getenv("BUNSAN_PORT"));
+    BOOST_ASSERT(port > 0);
+    return port;
+  }
 };
