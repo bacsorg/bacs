@@ -102,9 +102,11 @@ deps = [
     bacs_archive_pb_dep,
 ]
 
+cpp_args = []
 if get_option('enable-web')
   deps += [bunsan_web_dep]
   srcs += web_srcs
+  cpp_args += ['-DBUNSAN_ARCHIVE_USE_WEB']
 endif
 
 include = include_directories('include')
@@ -123,6 +125,7 @@ bacs_archive_dep = declare_dependency(
 )
 
 bacs_archive_server = executable('bacs_archive_server', server_srcs,
+    cpp_args : cpp_args,
     dependencies : bacs_archive_dep,
     install : true,
 )
