@@ -2,6 +2,8 @@ testenv = environment()
 testenv.set('BUNSAN_SOURCE_DIR', meson.current_source_dir() + '/..')
 testenv.set('BUNSAN_BINARY_DIR', meson.current_build_dir() + '/..')
 
+subdir('generators')
+
 test_deps = [
     bunsan_test_dep,
     bunsan_protobuf_dep,
