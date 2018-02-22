@@ -11,6 +11,9 @@ deps = [
     bunsan_common_dep,
     cppcms_dep,
 ]
+deps_str = [
+    'bunsan_common',
+]
 
 lib = library('bunsan_web', srcs,
     dependencies : deps,
@@ -31,7 +34,7 @@ pkg.generate(
     name : 'bunsan_web',
     description : 'bunsan web helpers',
     libraries : [lib] + deps,
-    requires : 'bunsan_common',
+    requires : deps_str,
     version : meson.project_version(),
 )
 

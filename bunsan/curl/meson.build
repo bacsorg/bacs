@@ -22,13 +22,19 @@ srcs = [
 deps = [
     bunsan_common_dep,
     dependency('libcurl'),
-    dependency('boost', modules : ['regex']),
+]
+deps_str = [
+    'bunsan_common',
+    # 'libcurl',
 ]
 
 include = include_directories('include')
 
 lib = library('bunsan_curl', srcs,
-    dependencies : deps,
+    dependencies : [
+        deps,
+        dependency('boost', modules : ['regex']),
+    ],
     include_directories : include,
     install : true,
     version : meson.project_version(),
@@ -46,7 +52,7 @@ pkg.generate(
     name : 'bunsan_curl',
     description : 'bunsan curl helpers',
     libraries : [lib] + deps,
-    requires : 'bunsan_common',
+    requires : deps_str,
     version : meson.project_version(),
 )
 

@@ -48,6 +48,19 @@ protos = [
     'include/bacs/problem/single/result.proto',
 ]
 
+deps = [
+    bunsan_common_dep,
+    bunsan_pm_dep,
+    bunsan_protobuf_dep,
+    bacs_common_dep,
+]
+deps_str = [
+    'bunsan_common',
+    'bunsan_pm',
+    'bunsan_protobuf',
+    'bacs_common',
+]
+
 # FIXME use better dependency mechanism
 protoc_cpp_gen = generator(protoc,
     output    : ['@BASENAME@.pb.cc',
@@ -76,14 +89,7 @@ bacs_problem_pb_dep = declare_dependency(
     ],
     include_directories : [include, bacs_problem_pb.private_dir_include()],
 )
-
-deps = [
-    bunsan_common_dep,
-    bunsan_pm_dep,
-    bunsan_protobuf_dep,
-    bacs_common_dep,
-    bacs_problem_pb_dep,
-]
+deps += bacs_problem_pb_dep
 
 include = include_directories('include')
 
@@ -106,12 +112,7 @@ pkg.generate(
     name : 'bacs_problem',
     description : 'bacs problem helpers',
     libraries : [lib] + deps,
-    requires : [
-        'bunsan_common',
-        'bunsan_pm',
-        'bunsan_protobuf',
-        'bacs_common',
-    ],
+    requires : deps_str,
     version : meson.project_version(),
 )
 

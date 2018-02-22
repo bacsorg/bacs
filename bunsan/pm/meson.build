@@ -32,6 +32,11 @@ deps = [
     bunsan_crypto_dep,
     bunsan_utility_dep,
 ]
+deps_str = [
+    'bunsan_common',
+    'bunsan_crypto',
+    'bunsan_utility',
+]
 
 include = include_directories('include')
 
@@ -88,11 +93,7 @@ pkg.generate(
     name : 'bunsan_pm',
     description : 'bunsan package manager',
     libraries : [lib] + deps,
-    requires : [
-        'bunsan_common',
-        'bunsan_crypto',
-        'bunsan_utility'
-    ],
+    requires : deps_str,
     version : meson.project_version(),
 )
 
@@ -100,7 +101,7 @@ pkg.generate(
     name : 'bunsan_pm_compatibility',
     description : 'bunsan package manager compatibility layer',
     libraries : [compat_lib, bunsan_pm_dep],
-    requires : 'bunsan_pm',
+    requires : deps_str + ['bunsan_pm'],
     version : meson.project_version(),
 )
 

@@ -37,6 +37,10 @@ deps = [
     bunsan_common_dep,
     bunsan_process_dep,
 ]
+deps_str = [
+    'bunsan_common',
+    'bunsan_process',
+]
 
 include = include_directories('include')
 
@@ -59,7 +63,7 @@ pkg.generate(
     name : 'bunsan_utility',
     description : 'bunsan utility helpers',
     libraries : [lib] + deps,
-    requires : ['bunsan_common', 'bunsan_process'],
+    requires : deps_str,
     version : meson.project_version(),
 )
 

@@ -9,6 +9,11 @@ deps = [
     dependency('grpc'),
     dependency('grpc++'),
 ]
+deps_str = [
+    'bunsan_common',
+    'bunsan_protobuf',
+    # 'grpc', 'grpc++',
+]
 
 include = include_directories('include')
 
@@ -31,7 +36,7 @@ pkg.generate(
     name : 'bunsan_rpc',
     description : 'bunsan rpc helpers',
     libraries : [lib] + deps,
-    requires : ['bunsan_common', 'bunsan_protobuf'],
+    requires : deps_str,
     version : meson.project_version(),
 )
 

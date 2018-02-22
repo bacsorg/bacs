@@ -13,6 +13,10 @@ deps = [
     bunsan_common_dep,
     dependency('protobuf'),
 ]
+deps_str = [
+    'bunsan_common',
+    # 'protobuf',
+]
 
 include = include_directories('include')
 
@@ -61,7 +65,7 @@ pkg.generate(
     name : 'bunsan_protobuf',
     description : 'bunsan protobuf helpers',
     libraries : [lib] + deps,
-    requires : 'bunsan_common',
+    requires : deps_str,
     version : meson.project_version(),
 )
 

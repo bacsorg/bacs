@@ -12,6 +12,13 @@ protos = [
     'include/bacs/utility/archiver.proto',
 ]
 
+deps = [
+    bunsan_common_dep,
+]
+deps_str = [
+    'bunsan_common',
+]
+
 bacs_common_pb_srcs = protoc_cpp_gen.process(
     protos,
     preserve_path_from : join_paths(meson.current_source_dir(),
@@ -27,11 +34,7 @@ bacs_common_pb_dep = declare_dependency(
     dependencies : dependency('protobuf'),
     include_directories : [include, bacs_common_pb.private_dir_include()],
 )
-
-deps = [
-    bunsan_common_dep,
-    bacs_common_pb_dep,
-]
+deps += bacs_common_pb_dep
 
 include = include_directories('include')
 
@@ -54,7 +57,7 @@ pkg.generate(
     name : 'bacs_common',
     description : 'bacs helpers',
     libraries : [lib] + deps,
-    requires : 'bunsan_common',
+    requires : deps_str,
     version : meson.project_version(),
 )
 

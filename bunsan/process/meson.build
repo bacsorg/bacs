@@ -3,6 +3,9 @@ include = include_directories('include')
 deps = [
     bunsan_common_dep,
 ]
+deps_str = [
+    'bunsan_common',
+]
 
 if (host_machine.system() == 'linux' or
     host_machine.system() == 'bsd' or
@@ -58,7 +61,7 @@ pkg.generate(
     name : 'bunsan_process',
     description : 'bunsan::process library',
     libraries : [lib] + deps,
-    requires : 'bunsan_common',
+    requires : deps_str,
     version : meson.project_version(),
 )
 

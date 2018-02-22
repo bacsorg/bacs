@@ -5,13 +5,18 @@ srcs = [
 
 deps = [
     bunsan_common_dep,
-    dependency('botan-2'),
+]
+deps_str = [
+    'bunsan_common',
 ]
 
 include = include_directories('include')
 
 lib = library('bunsan_crypto', srcs,
-    dependencies : deps,
+    dependencies : [
+        deps,
+        dependency('botan-2'),
+    ],
     include_directories : include,
     install : true,
     version : meson.project_version(),
@@ -29,7 +34,7 @@ pkg.generate(
     name : 'bunsan_crypto',
     description : 'bunsan crypto helpers',
     libraries : [lib] + deps,
-    requires : 'bunsan_common',
+    requires : deps_str,
     version : meson.project_version(),
 )
 

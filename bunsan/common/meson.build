@@ -45,6 +45,7 @@ srcs = [
 ]
 
 deps = [
+    compiler.find_library('dl', required : false), # boost::dll
     dependency('boost', modules : [
         'system',
         'filesystem',
@@ -69,7 +70,7 @@ lib = library('bunsan_common', srcs + runtime_srcs,
 bunsan_common_dep = declare_dependency(
     link_with : lib,
     include_directories : include,
-    dependencies : deps + runtime_deps,
+    dependencies : deps,
 )
 
 pkg = import('pkgconfig')
@@ -77,7 +78,7 @@ pkg = import('pkgconfig')
 pkg.generate(
     name : 'bunsan_common',
     description : 'bunsan common helpers',
-    libraries : [lib] + deps + runtime_deps,
+    libraries : [lib] + deps,
     version : meson.project_version(),
 )
 

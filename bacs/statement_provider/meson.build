@@ -4,6 +4,15 @@ protos = [
     'include/bacs/statement_provider/request.proto',
 ]
 
+deps = [
+    dependency('botan-2'),
+    cppcms_dep,
+    bunsan_common_dep,
+    bunsan_pm_dep,
+    bunsan_web_dep,
+    bacs_problem_dep,
+]
+
 # FIXME use better dependency mechanism
 protoc_cpp_gen = generator(protoc,
     output    : ['@BASENAME@.pb.cc',
@@ -37,16 +46,7 @@ bacs_statement_provider_pb_dep = declare_dependency(
         bacs_statement_provider_pb.private_dir_include(),
     ],
 )
-
-deps = [
-    dependency('botan-2'),
-    cppcms_dep,
-    bunsan_common_dep,
-    bunsan_pm_dep,
-    bunsan_web_dep,
-    bacs_problem_dep,
-    bacs_statement_provider_pb_dep,
-]
+deps += bacs_statement_provider_pb_dep
 
 include = include_directories('include')
 

@@ -40,6 +40,34 @@ protos = [
     'include/bacs/archive/problem/status.proto',
 ]
 
+deps = [
+    dependency('protobuf'),
+    dependency('grpc++'),
+    bunsan_common_dep,
+    bunsan_crypto_dep,
+    bunsan_pm_dep,
+    bunsan_protobuf_dep,
+    bunsan_rpc_dep,
+    bacs_problem_dep,
+]
+dep_str = [
+    'bunsan_common',
+    'bunsan_crypto',
+    'bunsan_pm',
+    'bunsan_protobuf',
+    'bunsan_rpc',
+    'bacs_problem',
+]
+private_deps = []
+cpp_args = []
+
+if get_option('enable-web')
+  deps += cppcms_dep
+  private_deps += bunsan_web_dep
+  srcs += web_srcs
+  cpp_args += ['-DBACS_ARCHIVE_USE_WEB=1']
+endif
+
 # FIXME use better dependency mechanism
 protoc_cpp_gen = generator(protoc,
     output    : ['@BASENAME@.pb.cc',
@@ -91,28 +119,15 @@ bacs_archive_pb_dep = declare_dependency(
         bacs_archive_pb.private_dir_include(),
     ],
 )
-
-deps = [
-    bunsan_common_dep,
-    bunsan_crypto_dep,
-    bunsan_pm_dep,
-    bunsan_protobuf_dep,
-    bunsan_rpc_dep,
-    bacs_problem_dep,
-    bacs_archive_pb_dep,
-]
-
-cpp_args = []
-if get_option('enable-web')
-  deps += [bunsan_web_dep]
-  srcs += web_srcs
-  cpp_args += ['-DBUNSAN_ARCHIVE_USE_WEB']
-endif
+deps += bacs_archive_pb_dep
 
 include = include_directories('include')
 
 lib = library('bacs_archive', srcs,
-    dependencies : deps,
+    dependencies : [
+        deps,
+        private_deps,
+    ],
     include_directories : include,
     install : true,
     version : meson.project_version(),
@@ -126,7 +141,10 @@ bacs_archive_dep = declare_dependency(
 
 bacs_archive_server = executable('bacs_archive_server', server_srcs,
     cpp_args : cpp_args,
-    dependencies : bacs_archive_dep,
+    dependencies : [
+        bacs_archive_dep,
+        private_deps,
+    ],
     install : true,
 )
 
@@ -141,7 +159,7 @@ pkg.generate(
     name : 'bacs_archive',
     description : 'bacs archive',
     libraries : [lib] + deps,
-    requires : ['bacs_common', 'bacs_problem'],
+    requires : deps_str,
     version : meson.project_version(),
 )
 
