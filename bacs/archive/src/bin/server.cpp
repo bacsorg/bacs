@@ -103,7 +103,7 @@ class archive_application : public application {
     auto srv = std::make_unique<cppcms::service>(web_config);
     srv->applications_pool().mount(
         cppcms::applications_factory<web::repository>(repository));
-    return std::move(srv);
+    return srv;
   }
 #endif
 
