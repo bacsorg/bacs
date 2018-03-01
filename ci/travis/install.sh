@@ -45,10 +45,10 @@ cares_sha256='03f708f1b14a26ab26c38abd51137640cb444d3ec72380b21b20f1a8d2861da7'
 cares_dir="c-ares-$cares_ver"
 cares_cache_check="$HOME_PREFIX/lib/libcares.so.2.2.0"
 
-grpc_ver='1.9.1'
+grpc_ver='1.10.0'
 grpc_src="https://github.com/grpc/grpc/archive/v${grpc_ver}.tar.gz"
 grpc_fname="grpc.tar.gz"
-grpc_sha256='fac236d49fb3e89399b68a5aa944fc69221769bcedd099d47eb6f93e59035c40'
+grpc_sha256='39a73de6fa2a03bdb9c43c89a4283e09880833b3c1976ef3ce3edf45c8cacf72'
 grpc_dir="grpc-$grpc_ver"
 grpc_cache_check="$HOME_PREFIX/lib/libgrpc++.so.$grpc_ver"
 
