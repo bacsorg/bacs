@@ -2,33 +2,26 @@
 
 #include <bunsan/process/error.hpp>
 
-#include <windows.h>
-
-#include <cstdlib>
+#include <boost/process/search_path.hpp>
 
 namespace bunsan::process {
 
 boost::filesystem::path find_executable_in_path(
     const boost::filesystem::path &executable) {
   try {
-    if (executable != executable.filename())
+    if (executable != executable.filename()) {
       BOOST_THROW_EXCEPTION(
           non_basename_executable_error()
           << non_basename_executable_error::executable(executable));
-
-    const boost::filesystem::path exts[] = {"", ".exe", ".com", ".bat"};
-    for (const auto &ext : exts) {
-      wchar_t buf[MAX_PATH];
-      LPWSTR dummy;
-      const DWORD size = ::SearchPathW(nullptr, executable.c_str(), ext.c_str(),
-                                       MAX_PATH, buf, &dummy);
-      BOOST_ASSERT(size < MAX_PATH);
-      if (size > 0) return buf;
     }
-
-    BOOST_THROW_EXCEPTION(
-        no_executable_in_path_error()
-        << no_executable_in_path_error::executable(executable));
+    const boost::filesystem::path path =
+        boost::process::search_path(executable);
+    if (path.empty()) {
+      BOOST_THROW_EXCEPTION(
+          no_executable_in_path_error()
+          << no_executable_in_path_error::executable(executable));
+    }
+    return path;
   } catch (find_executable_in_path_error &) {
     throw;
   } catch (std::exception &) {

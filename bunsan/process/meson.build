@@ -2,6 +2,7 @@ include = include_directories('include')
 
 deps = [
     bunsan_common_dep,
+    dependency('boost'),  # 'process'
 ]
 deps_str = [
     'bunsan_common',
@@ -12,7 +13,6 @@ if (host_machine.system() == 'linux' or
     host_machine.system() == 'cygwin')
   test_platform = 'unix'
   platform_srcs = [
-      'src/process/unix/path.cpp',
       'src/process/unix/signal.cpp',
 
       'src/process/detail/unix/execute.cpp',
@@ -21,8 +21,6 @@ if (host_machine.system() == 'linux' or
 elif host_machine.system() == 'windows'
   test_platform = 'win32'
   platform_srcs = [
-      'src/process/win32/path.cpp',
-
       'src/process/detail/win32/execute.cpp',
   ]
 else
@@ -36,6 +34,7 @@ srcs = [
     'src/process/executor.cpp',
     'src/process/native_executor.cpp',
     'src/process/aliases.cpp',
+    'src/process/path.cpp',
 
     'src/process/file/handle.cpp',
 
