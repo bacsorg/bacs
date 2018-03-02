@@ -24,3 +24,11 @@ add_global_arguments('-DBOOST_ALL_DYN_LINK', language : 'cpp')
 
 subdir('bunsan')
 subdir('bacs')
+
+# FIXME this is workaround until generator can install files
+meson.add_install_script('install-protos-workaround.py',
+    'bunsan/broker/bunsan_broker_pb',
+    'bacs/common/bacs_common_pb',
+    'bacs/problem/bacs_problem_pb',
+    'bacs/archive/bacs_archive_pb',
+)
