@@ -150,6 +150,16 @@ BOOST_FIXTURE_TEST_CASE(with_output_inherit, bunsan_process_inherit_setter) {
                         });
 }
 
+BOOST_AUTO_TEST_CASE(with_output_stderr) {
+  std::string output;
+  BOOST_CHECK_EQUAL(
+      bp::sync_execute_with_output(bp::context().executable("sh").stdin_data(
+                                       "echo Hello && echo World >&2"),
+                                   output),
+      0);
+  BOOST_CHECK_EQUAL(output, "Hello\nWorld");
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // sync_execute
 
 BOOST_AUTO_TEST_SUITE_END()  // unix
