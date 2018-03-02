@@ -33,6 +33,7 @@ srcs = [
     'src/process/execute.cpp',
     'src/process/executor.cpp',
     'src/process/native_executor.cpp',
+    'src/process/boost_executor.cpp',
     'src/process/aliases.cpp',
     'src/process/path.cpp',
 
