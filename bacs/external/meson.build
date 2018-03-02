@@ -44,6 +44,7 @@ lib = library('bacs_external', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bacs_external_dep = declare_dependency(

@@ -41,6 +41,7 @@ lib = library('bunsan_test', srcs,
     include_directories : include,
     install : get_option('install-bunsan-test'),
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bunsan_test_dep = declare_dependency(

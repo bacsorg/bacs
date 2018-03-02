@@ -131,6 +131,7 @@ lib = library('bacs_archive', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bacs_archive_dep = declare_dependency(

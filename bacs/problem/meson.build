@@ -98,6 +98,7 @@ lib = library('bacs_problem', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bacs_problem_dep = declare_dependency(

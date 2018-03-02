@@ -45,6 +45,7 @@ lib = library('bunsan_common', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bunsan_common_dep = declare_dependency(

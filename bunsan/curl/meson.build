@@ -38,6 +38,7 @@ lib = library('bunsan_curl', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bunsan_curl_dep = declare_dependency(

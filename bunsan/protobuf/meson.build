@@ -25,6 +25,7 @@ lib = library('bunsan_protobuf', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bunsan_protobuf_dep = declare_dependency(

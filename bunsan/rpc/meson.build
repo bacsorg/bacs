@@ -22,6 +22,7 @@ lib = library('bunsan_rpc', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bunsan_rpc_dep = declare_dependency(

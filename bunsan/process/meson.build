@@ -47,6 +47,8 @@ lib = library('bunsan_process', srcs + platform_srcs,
     include_directories : include,
     dependencies : deps,
     install : true,
+    version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bunsan_process_dep = declare_dependency(

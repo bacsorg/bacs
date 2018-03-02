@@ -45,6 +45,7 @@ lib = library('bunsan_pm', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bunsan_pm_dep = declare_dependency(
@@ -58,6 +59,7 @@ compat_lib = library('bunsan_pm_compatibility', compat_srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bunsan_pm_compat_dep = declare_dependency(

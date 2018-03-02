@@ -20,6 +20,7 @@ lib = library('bunsan_web', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bunsan_web_dep = declare_dependency(

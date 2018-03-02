@@ -20,6 +20,7 @@ lib = library('bunsan_crypto', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bunsan_crypto_dep = declare_dependency(

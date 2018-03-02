@@ -55,6 +55,7 @@ lib = static_library('bacs_statement_provider', srcs,
     include_directories : include,
     install : true,
     version : meson.project_version(),
+    soversion : meson.project_version(),
 )
 
 bacs_statement_provider_dep = declare_dependency(
