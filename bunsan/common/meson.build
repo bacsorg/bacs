@@ -21,7 +21,7 @@ srcs = [
 ]
 
 deps = [
-    compiler.find_library('dl', required : false), # boost::dll
+    compiler.find_library('dl', required : false), # boost: dll and stacktrace
     dependency('boost', modules : [
         'system',
         'filesystem',
@@ -30,13 +30,17 @@ deps = [
         'program_options',
         'regex',
         'serialization',
+        'stacktrace_basic',
         'thread',
     ]),
 ]
 
+cpp_args = ['-DBOOST_STACKTRACE_LINK']
+
 include = include_directories('include')
 
 lib = library('bunsan_common', srcs,
+    cpp_args : cpp_args,
     dependencies : deps,
     include_directories : include,
     install : true,
@@ -44,6 +48,7 @@ lib = library('bunsan_common', srcs,
 )
 
 bunsan_common_dep = declare_dependency(
+    compile_args : cpp_args,
     link_with : lib,
     include_directories : include,
     dependencies : deps,
@@ -56,6 +61,7 @@ pkg.generate(
     description : 'bunsan common helpers',
     libraries : [lib] + deps,
     version : meson.project_version(),
+    extra_cflags : cpp_args,
 )
 
 install_subdir('include',
