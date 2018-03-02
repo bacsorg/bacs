@@ -88,14 +88,14 @@ BOOST_AUTO_TEST_CASE(stderr_file) {
 
 BOOST_FIXTURE_TEST_CASE(std_out_err_file, bunsan::test::filesystem::tempfiles) {
   const auto path_out = allocate(), path_err = allocate();
-  BOOST_CHECK_EQUAL(bp::sync_execute(bp::context()
-                                         .executable("sh")
-                                         .stdin_data(
-                                              "echo \"Hello, out world\"\n"
-                                              "echo \"Hello, err world\" >&2")
-                                         .stdout_file(path_out)
-                                         .stderr_file(path_err)),
-                    0);
+  BOOST_CHECK_EQUAL(
+      bp::sync_execute(bp::context()
+                           .executable("sh")
+                           .stdin_data("echo \"Hello, out world\"\n"
+                                       "echo \"Hello, err world\" >&2")
+                           .stdout_file(path_out)
+                           .stderr_file(path_err)),
+      0);
   BOOST_CHECK_EQUAL(bunsan::test::filesystem::read_data(path_out),
                     "Hello, out world\n");
   BOOST_CHECK_EQUAL(bunsan::test::filesystem::read_data(path_err),
