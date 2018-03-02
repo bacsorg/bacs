@@ -10,7 +10,7 @@ test_deps = [
     ]),
 ]
 
-prefix = 'bunsan_crypto_test_'
+prefix = 'bunsan_process_test_'
 tests = [
     'execute',
     'file_guard',
