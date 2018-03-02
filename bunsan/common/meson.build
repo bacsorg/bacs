@@ -1,29 +1,5 @@
 compiler = meson.get_compiler('cpp')
 
-if (host_machine.system() == 'linux' or
-    host_machine.system() == 'bsd' or
-    host_machine.system() == 'cygwin')
-  runtime_srcs = ['src/runtime/unix/stacktrace.cpp']
-  runtime_deps = [compiler.find_library('dl')]
-  if compiler.has_header('dlfcn.h')
-    runtime_srcs += ['src/runtime/unix/stream-dlfcn.cpp']
-  else
-    runtime_srcs += ['src/runtime/unix/stream-fallback.cpp']
-  endif
-elif host_machine.system() == 'windows'
-  runtime_srcs = ['src/runtime/win32/stacktrace.cpp']
-  if compiler.get_id() == 'msvc'
-    runtime_deps = [dependency('dbghelp')]
-    runtime_srcs = ['src/runtime/win32/stream-msvc.cpp']
-  else
-    runtime_deps = [dependency('psapi')]
-    runtime_srcs = ['src/runtime/win32/stream-fallback.cpp']
-  endif
-else
-  runtime_srcs = ['src/runtime/fallback/stacktrace.cpp']
-  runtime_deps = []
-endif
-
 srcs = [
     'src/tempfile.cpp',
     'src/error.cpp',
@@ -35,7 +11,7 @@ srcs = [
     'src/application/global_registry.cpp',
 
     'src/runtime/demangle.cpp',
-    'src/runtime/detail/format.cpp',
+    'src/runtime/stacktrace.cpp',
 
     'src/filesystem/error.cpp',
     'src/filesystem/operations.cpp',
@@ -60,8 +36,8 @@ deps = [
 
 include = include_directories('include')
 
-lib = library('bunsan_common', srcs + runtime_srcs,
-    dependencies : deps + runtime_deps,
+lib = library('bunsan_common', srcs,
+    dependencies : deps,
     include_directories : include,
     install : true,
     version : meson.project_version(),

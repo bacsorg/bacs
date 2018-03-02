@@ -11,7 +11,7 @@ struct X {
 
   template <typename... Args>
   static bunsan::runtime::stacktrace f(Args &&... args) {
-    return bunsan::runtime::stacktrace::get(std::forward<Args>(args)...);
+    return bunsan::runtime::get_stacktrace(std::forward<Args>(args)...);
   }
 };
 

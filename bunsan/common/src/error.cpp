@@ -12,7 +12,7 @@ const char *error::what() const noexcept {
 
 void enable_stacktrace::operator()(const boost::exception &e) const {
   if (!boost::get_error_info<error::stacktrace>(e))
-    e << error::stacktrace(runtime::stacktrace::get(m_skip + 1));
+    e << error::stacktrace(runtime::get_stacktrace(m_skip + 1));
 }
 
 void enable_nested::operator()(const boost::exception &e) const {

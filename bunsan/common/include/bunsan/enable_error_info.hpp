@@ -25,7 +25,7 @@ template <typename T>
 struct error_info_injector : T, boost::exception {
   explicit error_info_injector(const T &e, const std::size_t skip = 0) : T(e) {
     // +1 for current function
-    (*this) << error::stacktrace(runtime::stacktrace::get(skip + 1));
+    (*this) << error::stacktrace(runtime::get_stacktrace(skip + 1));
     (*this) << original_exception(boost::current_exception());
   }
 
@@ -76,30 +76,30 @@ enable_error_info(const T &obj) {
     BOOST_THROW_EXCEPTION(::bunsan::enable_error_info(e) ERROR_INFO); \
   }
 
-#define BUNSAN_EXCEPTIONS_WRAP_END_(ERROR_INFO, ...)                          \
-  catch (::boost::exception & e) {                                            \
-    if (!::boost::get_error_info<::bunsan::error::stacktrace>(e))             \
-      e << ::bunsan::error::stacktrace(::bunsan::runtime::stacktrace::get()); \
-    if (!::boost::get_error_info<::boost::throw_function>(e))                 \
-      e << ::boost::throw_function(BOOST_CURRENT_FUNCTION);                   \
-    if (!::boost::get_error_info<::boost::throw_file>(e))                     \
-      e << ::boost::throw_file(__FILE__);                                     \
-    if (!::boost::get_error_info<::boost::throw_line>(e))                     \
-      e << ::boost::throw_line(__LINE__);                                     \
-    (void)(e ERROR_INFO);                                                     \
-    throw;                                                                    \
-  }                                                                           \
-  catch (::std::ios_base::failure & e) {                                      \
-    /* note: BUNSAN_FILESYSTEM_FSTREAM_WRAP is used to wrap that type */      \
-    /* TODO: should be removed when std::ios_base::failure is derived from    \
-     * std::system_error */                                                   \
-    throw;                                                                    \
-  }                                                                           \
-  catch (::std::bad_alloc &) {                                                \
-    /* should not be wrapped, there are no enough memory */                   \
-    throw;                                                                    \
-  }                                                                           \
-  BOOST_PP_SEQ_FOR_EACH(BUNSAN_EXCEPTIONS_WRAP_WRAPPER, ERROR_INFO,           \
+#define BUNSAN_EXCEPTIONS_WRAP_END_(ERROR_INFO, ...)                         \
+  catch (::boost::exception & e) {                                           \
+    if (!::boost::get_error_info<::bunsan::error::stacktrace>(e))            \
+      e << ::bunsan::error::stacktrace(::bunsan::runtime::get_stacktrace()); \
+    if (!::boost::get_error_info<::boost::throw_function>(e))                \
+      e << ::boost::throw_function(BOOST_CURRENT_FUNCTION);                  \
+    if (!::boost::get_error_info<::boost::throw_file>(e))                    \
+      e << ::boost::throw_file(__FILE__);                                    \
+    if (!::boost::get_error_info<::boost::throw_line>(e))                    \
+      e << ::boost::throw_line(__LINE__);                                    \
+    (void)(e ERROR_INFO);                                                    \
+    throw;                                                                   \
+  }                                                                          \
+  catch (::std::ios_base::failure & e) {                                     \
+    /* note: BUNSAN_FILESYSTEM_FSTREAM_WRAP is used to wrap that type */     \
+    /* TODO: should be removed when std::ios_base::failure is derived from   \
+     * std::system_error */                                                  \
+    throw;                                                                   \
+  }                                                                          \
+  catch (::std::bad_alloc &) {                                               \
+    /* should not be wrapped, there are no enough memory */                  \
+    throw;                                                                   \
+  }                                                                          \
+  BOOST_PP_SEQ_FOR_EACH(BUNSAN_EXCEPTIONS_WRAP_WRAPPER, ERROR_INFO,          \
                         BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))
 
 /// Predefined list of exceptions.
