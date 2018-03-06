@@ -82,7 +82,7 @@ bacs_problem_pb = static_library(
     override_options : ['warning_level=1'],
 )
 bacs_problem_pb_dep = declare_dependency(
-    link_with : bacs_problem_pb,
+    link_whole : bacs_problem_pb,
     dependencies : [
         dependency('protobuf'),
         bacs_common_pb_dep,

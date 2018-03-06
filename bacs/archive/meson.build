@@ -107,7 +107,7 @@ bacs_archive_pb = static_library(
     override_options : ['warning_level=1'],
 )
 bacs_archive_pb_dep = declare_dependency(
-    link_with : bacs_archive_pb,
+    link_whole : bacs_archive_pb,
     dependencies : [
         dependency('protobuf'),
         dependency('grpc++'),

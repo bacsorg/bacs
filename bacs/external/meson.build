@@ -25,7 +25,7 @@ bacs_external_pb = static_library(
     dependencies : dependency('protobuf'),
 )
 bacs_external_pb_dep = declare_dependency(
-    link_with : bacs_external_pb,
+    link_whole : bacs_external_pb,
     dependencies : dependency('protobuf'),
     include_directories : [include, bacs_external_pb.private_dir_include()],
 )

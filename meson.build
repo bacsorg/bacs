@@ -1,7 +1,7 @@
 project('bacs', 'cpp',
         version : '0.1.0',
         license : 'apache2',
-        meson_version : '>=0.45',
+        meson_version : '>=0.46',
         default_options : [
             'cpp_std=c++17',
             'warning_level=3',

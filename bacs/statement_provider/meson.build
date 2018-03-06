@@ -35,7 +35,7 @@ bacs_statement_provider_pb = static_library(
     ],
 )
 bacs_statement_provider_pb_dep = declare_dependency(
-    link_with : bacs_statement_provider_pb,
+    link_whole : bacs_statement_provider_pb,
     dependencies : [
         dependency('protobuf'),
         bacs_common_pb_dep,

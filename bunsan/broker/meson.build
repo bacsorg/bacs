@@ -30,7 +30,7 @@ bunsan_broker_pb = static_library(
     dependencies : dependency('protobuf'),
 )
 bunsan_broker_pb_dep = declare_dependency(
-    link_with : bunsan_broker_pb,
+    link_whole : bunsan_broker_pb,
     dependencies : dependency('protobuf'),
     include_directories : [
         include,
