@@ -62,7 +62,7 @@ struct child_visitor : boost::static_visitor<boost::process::child>,
       static_assert(std::is_same_v<T, boost::filesystem::path>);
       return boost::process::std_in = stdin_data;
     }
-  };
+  }
 
   template <typename T>
   auto apply_stdout(const T &stdout_data) {
@@ -76,7 +76,7 @@ struct child_visitor : boost::static_visitor<boost::process::child>,
       static_assert(std::is_same_v<T, boost::filesystem::path>);
       return boost::process::std_out = stdout_data;
     }
-  };
+  }
 
   template <typename T>
   auto apply_stderr(const T &stderr_data) {
@@ -92,7 +92,7 @@ struct child_visitor : boost::static_visitor<boost::process::child>,
       static_assert(std::is_same_v<T, boost::filesystem::path>);
       return boost::process::std_err = stderr_data;
     }
-  };
+  }
 };
 }  // namespace
 
