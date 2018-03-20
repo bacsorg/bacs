@@ -31,6 +31,8 @@ srcs = [
     'src/maker.cpp',
     'src/makers/make.cpp',
     'src/makers/make.hpp',
+    'src/makers/ninja.cpp',
+    'src/makers/ninja.hpp',
 ]
 
 deps = [
