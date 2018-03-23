@@ -28,6 +28,7 @@ struct child_visitor : boost::static_visitor<boost::process::child>,
                        private boost::noncopyable {
   boost::filesystem::path exe, start_dir;
   std::vector<std::string> args;
+  boost::process::environment env;
   tempfile tmp;
 
   template <typename StdIn, typename StdOut, typename StdErr>
@@ -38,6 +39,7 @@ struct child_visitor : boost::static_visitor<boost::process::child>,
         // FIXME https://github.com/boostorg/process/issues/32
         boost::process::exe = exe.native(),
         boost::process::start_dir = start_dir, boost::process::args = args,
+        boost::process::env = env,
         apply_stdin(stdin_data), apply_stdout(stdout_data),
         apply_stderr(stderr_data));
   }
@@ -113,6 +115,9 @@ int boost_executor::sync_execute(context ctx) {
   if (!child_vis.args.empty()) {
     // boost::process does not support setting argv[0]
     child_vis.args.erase(child_vis.args.begin());
+  }
+  for (const auto &entry : ctx.environment()) {
+    child_vis.env.emplace(entry.first, entry.second);
   }
 
   {  // begin logging section

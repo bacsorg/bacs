@@ -3,6 +3,7 @@
 #include <bunsan/process/error.hpp>
 
 #include <boost/filesystem/operations.hpp>
+#include <boost/process/environment.hpp>
 
 #include <sstream>
 
@@ -57,6 +58,20 @@ void bunsan::process::context::build_() {
       m_arguments.push_back(m_executable->string());
     else if (!m_arguments.empty() && !m_executable)
       m_executable = m_arguments[0];
+
+    {
+      std::unordered_map<std::string, std::string> env;
+      if (m_environment_inherit) {
+        for (const auto &entry : boost::this_process::environment()) {
+          env[entry.get_name()] = entry.to_string();
+        }
+      }
+      for (const auto &entry : m_environment) {
+        env[entry.first] = entry.second;
+      }
+      m_environment_inherit = false;
+      m_environment = std::move(env);
+    }
 
     if (!m_current_path) m_current_path = boost::filesystem::current_path();
 

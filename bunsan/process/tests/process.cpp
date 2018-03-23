@@ -2,6 +2,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <bunsan/process/context.hpp>
+#include <bunsan/test/setenv.hpp>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -82,6 +83,30 @@ BOOST_AUTO_TEST_CASE(arguments_append) {
     BOOST_CHECK_EQUAL(ctx.arguments()[2], "2");
     BOOST_CHECK_EQUAL(ctx.arguments()[3], "3");
   }
+}
+
+BOOST_AUTO_TEST_CASE(environment_reset) {
+  bunsan::process::context ctx;
+  ctx.executable("stub")
+      .environment_reset()
+      .environment_set("hello", "world")
+      .build();
+  BOOST_CHECK_EQUAL(ctx.environment().size(), 1);
+  BOOST_CHECK_EQUAL(ctx.environment().at("hello"), "world");
+}
+
+BOOST_AUTO_TEST_CASE(environment_inherit) {
+  bunsan::process::context ctx;
+  bunsan::test::setenv("foo", "bar", true);
+  bunsan::test::setenv("baz", "boo", true);
+  ctx.executable("stub")
+      .environment_inherit()
+      .environment_set("hello", "world")
+      .environment_set("foo", "not bar")
+      .build();
+  BOOST_CHECK_EQUAL(ctx.environment().at("hello"), "world");
+  BOOST_CHECK_EQUAL(ctx.environment().at("foo"), "not bar");
+  BOOST_CHECK_EQUAL(ctx.environment().at("baz"), "boo");
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // context

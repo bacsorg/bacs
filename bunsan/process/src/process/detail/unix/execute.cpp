@@ -19,7 +19,7 @@
 namespace bunsan::process::detail {
 
 int sync_execute(context ctx) {
-  executor exec_(ctx.executable, ctx.arguments);
+  executor exec_(ctx.executable, ctx.arguments, ctx.environment);
 
   const pid_t pid = ::fork();
   if (pid < 0) {

@@ -160,6 +160,18 @@ BOOST_AUTO_TEST_CASE(with_output_stderr) {
   BOOST_CHECK_EQUAL(output, "Hello\nWorld");
 }
 
+BOOST_AUTO_TEST_CASE(environment) {
+  std::string output;
+  BOOST_CHECK_EQUAL(bp::sync_execute_with_output(
+                        bp::context()
+                            .executable("sh")
+                            .environment_set("BUNSAN_PROCESS_ENV1", "foobar")
+                            .stdin_data("echo $BUNSAN_PROCESS_ENV1"),
+                        output),
+                    0);
+  BOOST_CHECK_EQUAL(output, "foobar");
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // sync_execute
 
 BOOST_AUTO_TEST_SUITE_END()  // unix

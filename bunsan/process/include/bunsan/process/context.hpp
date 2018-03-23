@@ -39,7 +39,9 @@ class context : public boost::equality_comparable<context> {
   bool operator==(const context &ctx) const {
     return m_current_path == ctx.m_current_path &&
            m_executable == ctx.m_executable && m_arguments == ctx.m_arguments &&
-           m_use_path == ctx.m_use_path && m_stdin_data == ctx.m_stdin_data &&
+           m_environment_inherit == ctx.m_environment_inherit &&
+           m_environment == ctx.m_environment && m_use_path == ctx.m_use_path &&
+           m_stdin_data == ctx.m_stdin_data &&
            m_stdout_data == ctx.m_stdout_data &&
            m_stderr_data == ctx.m_stderr_data;
   }
@@ -48,6 +50,8 @@ class context : public boost::equality_comparable<context> {
     m_current_path.reset();
     m_executable.reset();
     m_arguments.clear();
+    m_environment_inherit = true;
+    m_environment.clear();
     m_use_path.reset();
     m_stdin_data = file::do_default;
     m_stdout_data = file::do_default;
@@ -59,6 +63,8 @@ class context : public boost::equality_comparable<context> {
     swap(m_current_path, ctx.m_current_path);
     swap(m_executable, ctx.m_executable);
     swap(m_arguments, ctx.m_arguments);
+    swap(m_environment_inherit, ctx.m_environment_inherit);
+    swap(m_environment, ctx.m_environment);
     swap(m_use_path, ctx.m_use_path);
     swap(m_stdin_data, ctx.m_stdin_data);
     swap(m_stdout_data, ctx.m_stdout_data);
@@ -153,6 +159,25 @@ class context : public boost::equality_comparable<context> {
   const std::vector<std::string> &arguments() const { return m_arguments; }
   std::vector<std::string> &arguments() { return m_arguments; }
 
+  // environment
+  context &environment_inherit() {
+    m_environment_inherit = true;
+    m_environment.clear();
+    return *this;
+  }
+  context &environment_reset() {
+    m_environment_inherit = false;
+    m_environment.clear();
+    return *this;
+  }
+  context &environment_set(const std::string &key, const std::string &value) {
+    m_environment[key] = value;
+    return *this;
+  }
+  const std::unordered_map<std::string, std::string> &environment() const {
+    return m_environment;
+  }
+
   // use path
   context &use_path(bool use_path_) {
     m_use_path = use_path_;
@@ -241,6 +266,8 @@ class context : public boost::equality_comparable<context> {
   boost::optional<boost::filesystem::path> m_current_path;
   boost::optional<boost::filesystem::path> m_executable;
   std::vector<std::string> m_arguments;
+  bool m_environment_inherit = true;
+  std::unordered_map<std::string, std::string> m_environment;
   boost::optional<bool> m_use_path;
   file::stdin_data_type m_stdin_data = file::do_default;
   file::stdout_data_type m_stdout_data = file::do_default;

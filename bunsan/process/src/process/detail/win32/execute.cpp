@@ -44,6 +44,7 @@ int sync_execute(context ctx) {
   const std::wstring cmdlinew = widen(cmdline);
   std::vector<wchar_t> cmdlinewm(cmdlinew.begin(), cmdlinew.end());
   cmdlinewm.push_back(L'\0');
+  // TODO environment
   if (!::CreateProcessW(ctx.executable.c_str(), cmdlinewm.data(), nullptr,
                         nullptr, true, 0, nullptr, ctx.current_path.c_str(),
                         &si, &pi))

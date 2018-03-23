@@ -80,6 +80,7 @@ int native_executor::sync_execute_impl(const context &ctx) {
 
   ctx_.current_path = ctx.current_path();
   ctx_.arguments = ctx.arguments();
+  ctx_.environment = ctx.environment();
 
   file_action_visitor stdin_visitor(&file::handle::open_null,
                                     &file::handle::std_input,
@@ -102,7 +103,11 @@ int native_executor::sync_execute_impl(const context &ctx) {
       if (i) sout << ", ";
       sout << boost::io::quoted(ctx_.arguments[i]);
     }
-    sout << ']';
+    sout << "] environment = [";
+    for (const auto &entry : ctx_.environment) {
+      sout << ' ' << entry.first << '=' << entry.second;
+    }
+    sout << " ]";
     BUNSAN_LOG_TRACE << sout.str();
   }  // end logging section
 
