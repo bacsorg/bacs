@@ -24,9 +24,10 @@ void builders::cmake::set_default_generator() {
   set_generator("NMake Makefiles");
 #else
 #warning unknown platform, unknown default generator
-  BOOST_THROW_EXCEPTION(cmake_unknown_platform_generator_error()
-                        << cmake_unknown_platform_generator_error::message(
-                            "Unknown platform, you have to specify generator"));
+  BOOST_THROW_EXCEPTION(
+      cmake_unknown_platform_generator_error()
+      << cmake_unknown_platform_generator_error::message(
+             "Unknown platform, you have to specify generator"));
 #endif
 }
 
@@ -113,7 +114,7 @@ void builders::cmake::make_(const boost::filesystem::path & /*src*/,
       case generator_type::MAKEFILE: {
         const maker_ptr ptr = maker::instance("make", *m_resolver);
         ptr->setup(m_config.make_maker);
-        ptr->exec(bin, {});
+        ptr->exec(bin, {}, {});
       } break;
       case generator_type::NMAKEFILE:
       case generator_type::VISUAL_STUDIO:
@@ -139,13 +140,9 @@ void builders::cmake::install_(const boost::filesystem::path & /*src*/,
     switch (type) {
       case generator_type::MAKEFILE: {
         maker_ptr ptr = maker::instance("make", *m_resolver);
-        makers::make::config make_config =
-            bunsan::config::load<makers::make::config>(m_config.install_maker);
-        make_config.defines["DESTDIR"] =
-            boost::filesystem::absolute(root).string();
-        ptr->setup(
-            bunsan::config::save<boost::property_tree::ptree>(make_config));
-        ptr->exec(bin, {"install"});
+        ptr->setup(m_config.install_maker);
+        ptr->exec(bin, {"install"},
+                  {{"DESTDIR", boost::filesystem::absolute(root).string()}});
       } break;
       case generator_type::NMAKEFILE:
       case generator_type::VISUAL_STUDIO:

@@ -18,11 +18,16 @@ BUNSAN_STATIC_INITIALIZER(bunsan_utility_makers_make, {
 makers::make::make(const boost::filesystem::path &exe) : m_exe(exe) {}
 
 std::vector<std::string> makers::make::arguments_(
-    const std::vector<std::string> &targets) const {
+    const std::vector<std::string> &targets,
+    const std::unordered_map<std::string, std::string> &flags) const {
   std::vector<std::string> arguments;
   arguments.push_back(m_exe.filename().string());
   for (const auto &i : m_config.defines) {
     // TODO arguments check
+    if (flags.find(i.first) != flags.end()) continue;
+    arguments.push_back(i.first + "=" + i.second);
+  }
+  for (const auto &i : flags) {
     arguments.push_back(i.first + "=" + i.second);
   }
   if (m_config.jobs)
@@ -34,18 +39,20 @@ std::vector<std::string> makers::make::arguments_(
   return arguments;
 }
 
-void makers::make::exec(const boost::filesystem::path &cwd,
-                        const std::vector<std::string> &targets) {
+void makers::make::exec(
+    const boost::filesystem::path &cwd, const std::vector<std::string> &targets,
+    const std::unordered_map<std::string, std::string> &flags) {
   try {
     bunsan::process::context ctx;
     ctx.executable(m_exe);
     ctx.current_path(cwd);
-    ctx.arguments(arguments_(targets));
+    ctx.arguments(arguments_(targets, flags));
     check_sync_execute_with_output(ctx);
   } catch (std::exception &) {
     BOOST_THROW_EXCEPTION(maker_exec_error()
                           << maker_exec_error::cwd(cwd)
                           << maker_exec_error::targets(targets)
+                          << maker_exec_error::flags(flags)
                           << enable_nested_current());
   }
 }

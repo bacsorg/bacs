@@ -17,4 +17,20 @@ std::string to_string(const bunsan::utility::maker_error::targets &targets) {
   sout << "}\n";
   return sout.str();
 }
+
+std::string to_string(const bunsan::utility::maker_error::flags &flags) {
+  std::ostringstream sout;
+  sout << "[" << bunsan::error::info_name(flags) << "] = {";
+  bool first = true;
+  for (const auto &i : flags.value()) {
+    if (first) {
+      first = false;
+    } else {
+      sout << ' ';
+    }
+    sout << boost::io::quoted(i.first) << '=' << boost::io::quoted(i.second);
+  }
+  sout << "}\n";
+  return sout.str();
+}
 }  // namespace boost

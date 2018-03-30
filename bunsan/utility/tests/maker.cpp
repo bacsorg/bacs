@@ -24,7 +24,22 @@ BOOST_AUTO_TEST_CASE(make) {
         }
         return 0;
       });
-  mk->exec("cwd", {"target1", "target2"});
+  mk->exec("cwd", {"target1", "target2"}, {});
+}
+
+BOOST_AUTO_TEST_CASE(make_flags) {
+  MOCK_EXPECT(resolver.find_executable).once().with("make").returns("exe");
+  const auto mk = bu::maker::instance("make", resolver);
+  MOCK_EXPECT(executor->sync_execute)
+      .calls([](const bunsan::process::context &ctx) {
+        BOOST_CHECK_EQUAL(ctx.current_path(), "cwd");
+        BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 2) {
+          BOOST_CHECK_EQUAL(ctx.arguments()[0], "exe");
+          BOOST_CHECK_EQUAL(ctx.arguments()[1], "DESTDIR=/foo/bar");
+        }
+        return 0;
+      });
+  mk->exec("cwd", {}, {{"DESTDIR", "/foo/bar"}});
 }
 
 BOOST_AUTO_TEST_SUITE_END()  // maker
