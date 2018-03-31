@@ -15,8 +15,4 @@ boost::filesystem::path system_resolver::find_library(
   return lib;
 }
 
-std::unique_ptr<resolver> system_resolver::clone() const {
-  return std::make_unique<system_resolver>();
-}
-
 }  // namespace bunsan::utility

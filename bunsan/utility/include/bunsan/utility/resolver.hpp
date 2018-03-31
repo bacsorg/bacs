@@ -30,8 +30,6 @@ class resolver : private boost::noncopyable {
 
   virtual boost::filesystem::path find_library(
       const boost::filesystem::path &lib) = 0;
-
-  virtual std::unique_ptr<resolver> clone() const = 0;
 };
 
 }  // namespace bunsan::utility

@@ -11,7 +11,6 @@ MOCK_BASE_CLASS(mock_resolver, resolver) {
               boost::filesystem::path(const boost::filesystem::path &exe))
   MOCK_METHOD(find_library, 1,
               boost::filesystem::path(const boost::filesystem::path &lib))
-  MOCK_METHOD(clone, 0, std::unique_ptr<resolver>())
 };
 
 }  // namespace bunsan::utility

@@ -50,8 +50,6 @@ class custom_resolver : public resolver {
   boost::filesystem::path find_library(
       const boost::filesystem::path &lib) override;
 
-  std::unique_ptr<resolver> clone() const override;
-
  private:
   void apply_alias(boost::filesystem::path &name) const;
   void apply_absolute(boost::filesystem::path &name) const;

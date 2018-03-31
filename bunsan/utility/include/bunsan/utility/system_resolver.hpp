@@ -13,8 +13,6 @@ class system_resolver : public resolver {
 
   boost::filesystem::path find_library(
       const boost::filesystem::path &lib) override;
-
-  std::unique_ptr<resolver> clone() const override;
 };
 
 }  // namespace bunsan::utility

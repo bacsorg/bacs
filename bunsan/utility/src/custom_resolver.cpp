@@ -88,14 +88,4 @@ boost::filesystem::path custom_resolver::find_library(
   }
 }
 
-std::unique_ptr<resolver> custom_resolver::clone() const {
-  BOOST_ASSERT(m_back_resolver);
-  if (m_config) {
-    return std::make_unique<custom_resolver>(*m_config,
-                                             m_back_resolver->clone());
-  } else {
-    return std::make_unique<custom_resolver>(m_back_resolver->clone());
-  }
-}
-
 }  // namespace bunsan::utility
