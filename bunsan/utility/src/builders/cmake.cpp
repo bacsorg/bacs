@@ -22,9 +22,7 @@ builders::cmake::cmake(const utility_config &ptree, resolver &resolver_)
   const generator_type type = get_generator_type();
   switch (type) {
     case generator_type::MAKEFILE:
-      m_make_maker = maker::instance("make", m_config.make_maker, resolver_);
-      m_install_maker =
-          maker::instance("make", m_config.install_maker, resolver_);
+      m_maker = maker::instance("make", m_config.maker, resolver_);
       break;
     default:
       BOOST_THROW_EXCEPTION(
@@ -66,7 +64,7 @@ void builders::cmake::configure_(const boost::filesystem::path &src,
 void builders::cmake::make_(const boost::filesystem::path & /*src*/,
                             const boost::filesystem::path &bin) {
   try {
-    m_make_maker->exec(bin, {}, {});
+    m_maker->exec(bin, {}, {});
   } catch (std::exception &) {
     BOOST_THROW_EXCEPTION(conf_make_install_make_error()
                           //<< conf_make_install_make_error::src(src)
@@ -79,9 +77,8 @@ void builders::cmake::install_(const boost::filesystem::path & /*src*/,
                                const boost::filesystem::path &bin,
                                const boost::filesystem::path &root) {
   try {
-    m_install_maker->exec(
-        bin, {"install"},
-        {{"DESTDIR", boost::filesystem::absolute(root).string()}});
+    m_maker->exec(bin, {"install"},
+                  {{"DESTDIR", boost::filesystem::absolute(root).string()}});
   } catch (std::exception &) {
     BOOST_THROW_EXCEPTION(conf_make_install_install_error()
                           //<< conf_make_install_install_error::src(src)

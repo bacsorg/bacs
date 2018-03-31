@@ -54,13 +54,10 @@ build
                         CMAKE_INSTALL_PREFIX /
                     }
                 }
-                make_maker
+                maker
                 {
                     jobs 4
                 }
-                ;install_maker
-                ;{
-                ;}
             }
         }
     }

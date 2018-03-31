@@ -21,8 +21,7 @@ class cmake : public conf_make_install {
     template <typename Archive>
     void serialize(Archive &ar, const unsigned int) {
       ar & BOOST_SERIALIZATION_NVP(cmake);
-      ar & BOOST_SERIALIZATION_NVP(make_maker);
-      ar & BOOST_SERIALIZATION_NVP(install_maker);
+      ar & BOOST_SERIALIZATION_NVP(maker);
     }
 
     struct {
@@ -38,7 +37,7 @@ class cmake : public conf_make_install {
       boost::optional<std::string> generator;
     } cmake;
 
-    boost::property_tree::ptree make_maker, install_maker;
+    boost::property_tree::ptree maker;
   };
 
  public:
@@ -73,7 +72,7 @@ class cmake : public conf_make_install {
  private:
   const config m_config;
   const boost::filesystem::path m_cmake_exe;
-  maker_ptr m_make_maker, m_install_maker;
+  maker_ptr m_maker;
 };
 
 struct cmake_error : virtual error {};
