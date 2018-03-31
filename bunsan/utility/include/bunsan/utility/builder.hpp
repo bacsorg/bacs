@@ -22,7 +22,7 @@ struct builder_pack_error : virtual builder_error {
 };
 
 class builder : public utility {
-  BUNSAN_FACTORY_BODY(builder, resolver &)
+  BUNSAN_FACTORY_BODY(builder, const utility_config &, resolver &)
  public:
   /*!
    * \brief Build and install package

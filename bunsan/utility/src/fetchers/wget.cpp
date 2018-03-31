@@ -8,10 +8,12 @@
 using namespace bunsan::utility;
 
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_wget, {
-  BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, wget, [](resolver &resolver_) {
-    return fetcher::make_shared<fetchers::wget>(
-        resolver_.find_executable("wget"));
-  })
+  BUNSAN_FACTORY_REGISTER_TOKEN(
+      fetcher, wget,
+      [](const utility_config &, resolver &resolver_) {
+        return fetcher::make_shared<fetchers::wget>(
+            resolver_.find_executable("wget"));
+      })
 })
 
 fetchers::wget::wget(const boost::filesystem::path &exe) : m_exe(exe) {}

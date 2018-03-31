@@ -1,9 +1,13 @@
 #pragma once
 
+#include <bunsan/utility/resolver.hpp>
+#include <bunsan/utility/utility.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
+#include <functional>
 #include <string>
 
 namespace bunsan::utility {
@@ -19,30 +23,24 @@ class configured_factory {
 
  public:
   configured_factory(const factory_type &factory_,
-                     const boost::property_tree::ptree &config_)
+                     const utility_config &config_)
       : m_factory(factory_), m_config(config_) {}
 
-  template <typename... Args>
-  typename std::enable_if<arguments_size::value == sizeof...(Args),
-                          result_type>::type
-  operator()(Args &&... args) const {
-    const result_type tmp = m_factory(std::forward<Args>(args)...);
-    tmp->setup(m_config);
-    return tmp;
+  result_type operator()(resolver &res) const {
+    return m_factory(m_config, res);
   }
 
  private:
   factory_type m_factory;
-  boost::property_tree::ptree m_config;
+  utility_config m_config;
 };
 }  // namespace detail
 
 template <typename Factory>
 struct factory_options {
   using factory = Factory;
-  using factory_type = typename factory::factory_type;
   using result_type = typename factory::bunsan_factory::result_type;
-  using arguments_size = typename factory::bunsan_factory::arguments_size;
+  using factory_type = std::function<result_type(resolver &)>;
 
   template <typename Archive>
   void serialize(Archive &ar, const unsigned int) {
@@ -50,26 +48,14 @@ struct factory_options {
     ar & BOOST_SERIALIZATION_NVP(config);
   }
 
-  /// Try to create instance of type using Factory and setup it.
-  template <typename... Args>
-  typename std::enable_if<arguments_size::value == sizeof...(Args),
-                          result_type>::type
-  instance(Args &&... args) const {
-    const result_type tmp =
-        factory::instance(type, std::forward<Args>(args)...);
-    tmp->setup(config);
-    return tmp;
+  /// Try to create instance of type using Factory.
+  result_type instance(resolver &res) const {
+    return factory::instance(type, config, res);
   }
 
-  /// Try to create instance of type using Factory, setup it on success.
-  template <typename... Args>
-  typename std::enable_if<arguments_size::value == sizeof...(Args),
-                          result_type>::type
-  instance_optional(Args &&... args) const {
-    const result_type tmp =
-        factory::instance_optional(type, std::forward<Args>(args)...);
-    if (tmp) tmp->setup(config);
-    return tmp;
+  /// Try to create instance of type using Factory.
+  result_type instance_optional(resolver &res) const {
+    return factory::instance_optional(type, config, res);
   }
 
   factory_type configured_factory() const {
@@ -77,7 +63,7 @@ struct factory_options {
   }
 
   std::string type;
-  boost::property_tree::ptree config;
+  utility_config config;
 };
 
 }  // namespace bunsan::utility

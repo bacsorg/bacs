@@ -19,7 +19,7 @@ struct maker_error : virtual error {
 struct maker_exec_error : virtual maker_error {};
 
 class maker : public utility {
-  BUNSAN_FACTORY_BODY(maker, resolver &)
+  BUNSAN_FACTORY_BODY(maker, const utility_config &, resolver &)
  public:
   virtual void exec(
       const boost::filesystem::path &cwd,

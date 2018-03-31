@@ -12,9 +12,10 @@
 using namespace bunsan::utility;
 
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_builders_cmake, {
-  BUNSAN_FACTORY_REGISTER_TOKEN(builder, cmake, [](resolver &resolver_) {
-    return builder::make_shared<builders::cmake>(resolver_);
-  })
+  BUNSAN_FACTORY_REGISTER_TOKEN(
+    builder, cmake, [](const utility_config &ptree, resolver &resolver_) {
+      return builder::make_shared<builders::cmake>(ptree, resolver_);
+    })
 })
 
 void builders::cmake::set_default_generator() {
@@ -67,10 +68,15 @@ const std::vector<builders::cmake::generator> builders::cmake::generators = {
     {"Visual Studio 9 2008 IA64", generator_type::VISUAL_STUDIO},
     {"Visual Studio 9 2008 Win64", generator_type::VISUAL_STUDIO}};
 
-builders::cmake::cmake(resolver &resolver_)
-    : m_resolver(resolver_.clone()),
+builders::cmake::cmake(const utility_config &ptree, resolver &resolver_)
+    : m_config(bunsan::config::load<config>(ptree)),
+      m_resolver(resolver_.clone()),
       m_cmake_exe(resolver_.find_executable("cmake")) {
-  set_default_generator();
+  if (m_config.cmake.generator) {
+    set_generator(m_config.cmake.generator.get());
+  } else {
+    set_default_generator();
+  }
 }
 
 std::vector<std::string> builders::cmake::arguments_(
@@ -112,8 +118,7 @@ void builders::cmake::make_(const boost::filesystem::path & /*src*/,
     const generator_type type = generators[m_generator.get()].type;
     switch (type) {
       case generator_type::MAKEFILE: {
-        const maker_ptr ptr = maker::instance("make", *m_resolver);
-        ptr->setup(m_config.make_maker);
+        const maker_ptr ptr = maker::instance("make", m_config.make_maker, *m_resolver);
         ptr->exec(bin, {}, {});
       } break;
       case generator_type::NMAKEFILE:
@@ -139,8 +144,7 @@ void builders::cmake::install_(const boost::filesystem::path & /*src*/,
     const generator_type type = generators[m_generator.get()].type;
     switch (type) {
       case generator_type::MAKEFILE: {
-        maker_ptr ptr = maker::instance("make", *m_resolver);
-        ptr->setup(m_config.install_maker);
+        maker_ptr ptr = maker::instance("make", m_config.install_maker, *m_resolver);
         ptr->exec(bin, {"install"},
                   {{"DESTDIR", boost::filesystem::absolute(root).string()}});
       } break;
@@ -176,12 +180,4 @@ void builders::cmake::set_generator(const std::string &generator_name) {
 const builders::cmake::generator &builders::cmake::get_generator() const {
   BOOST_ASSERT(m_generator);
   return generators[m_generator.get()];
-}
-
-void builders::cmake::setup(const boost::property_tree::ptree &ptree) {
-  m_config = bunsan::config::load<config>(ptree);
-  if (m_config.cmake.generator)
-    set_generator(m_config.cmake.generator.get());
-  else
-    set_default_generator();
 }

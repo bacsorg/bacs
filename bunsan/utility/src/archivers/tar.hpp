@@ -29,12 +29,10 @@ class tar : public cwd_split {
   };
 
  public:
-  explicit tar(const boost::filesystem::path &exe);
+  tar(const utility_config &ptree, const boost::filesystem::path &exe);
 
   void unpack(const boost::filesystem::path &archive,
               const boost::filesystem::path &dir) override;
-
-  void setup(const boost::property_tree::ptree &ptree) override;
 
  protected:
   void pack_from(const boost::filesystem::path &cwd,
@@ -46,8 +44,8 @@ class tar : public cwd_split {
   std::vector<std::string> flag_arguments() const;
 
  private:
+  const config m_config;
   const boost::filesystem::path m_exe;
-  config m_config;
 };
 
 }  // namespace bunsan::utility::archivers

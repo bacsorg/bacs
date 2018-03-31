@@ -15,7 +15,7 @@
 BOOST_FIXTURE_TEST_SUITE(fetcher, utility_fixture)
 
 BOOST_AUTO_TEST_CASE(copy) {
-  const auto ft = bu::fetcher::instance("copy", resolver);
+  const auto ft = bu::fetcher::instance("copy", bu::utility_config{}, resolver);
   bunsan::test::filesystem::tempfiles tmp;
   const auto src = tmp.allocate();
   const auto dst = tmp.allocate();
@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(copy) {
 
 BOOST_AUTO_TEST_CASE(curl) {
   MOCK_EXPECT(resolver.find_executable).once().with("curl").returns("exe");
-  const auto ft = bu::fetcher::instance("curl", resolver);
+  const auto ft = bu::fetcher::instance("curl", bu::utility_config{}, resolver);
   MOCK_EXPECT(executor->sync_execute)
       .calls([](const bunsan::process::context &ctx) {
         BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 6) {
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(curl) {
 
 BOOST_AUTO_TEST_CASE(wget) {
   MOCK_EXPECT(resolver.find_executable).once().with("wget").returns("exe");
-  const auto ft = bu::fetcher::instance("wget", resolver);
+  const auto ft = bu::fetcher::instance("wget", bu::utility_config{}, resolver);
   MOCK_EXPECT(executor->sync_execute)
       .calls([](const bunsan::process::context &ctx) {
         BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 4) {

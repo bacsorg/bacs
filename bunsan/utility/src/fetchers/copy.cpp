@@ -1,5 +1,5 @@
-#include <bunsan/config.hpp>
 #include "copy.hpp"
+#include <bunsan/config.hpp>
 
 #include <bunsan/static_initializer.hpp>
 
@@ -7,10 +7,11 @@
 
 using namespace bunsan::utility;
 
-#define BUNSAN_UTILITY_FETCHER_COPY(NAME)                       \
-  BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, NAME, [](resolver &) { \
-    return fetcher::make_shared<fetchers::copy>();              \
-  })
+#define BUNSAN_UTILITY_FETCHER_COPY(NAME)                     \
+  BUNSAN_FACTORY_REGISTER_TOKEN(                              \
+      fetcher, NAME, [](const utility_config &, resolver &) { \
+        return fetcher::make_shared<fetchers::copy>();        \
+      })
 
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_copy, {
   BUNSAN_UTILITY_FETCHER_COPY(cp)

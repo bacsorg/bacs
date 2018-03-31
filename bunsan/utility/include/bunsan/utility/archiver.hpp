@@ -18,7 +18,7 @@ struct archiver_pack_contents_error : virtual archiver_error {};
 struct archiver_unpack_error : virtual archiver_error {};
 
 class archiver : public utility {
-  BUNSAN_FACTORY_BODY(archiver, resolver &)
+  BUNSAN_FACTORY_BODY(archiver, const utility_config &, resolver &)
  public:
   virtual void pack(const boost::filesystem::path &archive,
                     const boost::filesystem::path &file) = 0;

@@ -9,10 +9,12 @@
 using namespace bunsan::utility;
 
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_fetchers_curl, {
-  BUNSAN_FACTORY_REGISTER_TOKEN(fetcher, curl, [](resolver &resolver_) {
-    return fetcher::make_shared<fetchers::curl>(
-        resolver_.find_executable("curl"));
-  })
+  BUNSAN_FACTORY_REGISTER_TOKEN(
+      fetcher, curl,
+      [](const utility_config &, resolver &resolver_) {
+        return fetcher::make_shared<fetchers::curl>(
+            resolver_.find_executable("curl"));
+      })
 })
 
 fetchers::curl::curl(const boost::filesystem::path &exe) : m_exe(exe) {}

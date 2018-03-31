@@ -8,11 +8,12 @@
 
 using namespace bunsan::utility;
 
-#define BUNSAN_UTILITY_ARCHIVER_7Z(EXE)                                   \
-  BUNSAN_FACTORY_REGISTER_TOKEN(archiver, EXE, [](resolver & resolver_) { \
-    return archiver::make_shared<archivers::_7z>(                         \
-        resolver_.find_executable(#EXE));                                 \
-  })
+#define BUNSAN_UTILITY_ARCHIVER_7Z(EXE)                                     \
+  BUNSAN_FACTORY_REGISTER_TOKEN(                                            \
+      archiver, EXE, [](const utility_config &ptree, resolver &resolver_) { \
+        return archiver::make_shared<archivers::_7z>(                       \
+            ptree, resolver_.find_executable(#EXE));                        \
+      })
 
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_archivers_7z, {
   BUNSAN_UTILITY_ARCHIVER_7Z(7z)
@@ -20,7 +21,9 @@ BUNSAN_STATIC_INITIALIZER(bunsan_utility_archivers_7z, {
   BUNSAN_UTILITY_ARCHIVER_7Z(7zr)
 })
 
-archivers::_7z::_7z(const boost::filesystem::path &exe) : m_exe(exe) {}
+archivers::_7z::_7z(const utility_config &ptree,
+                    const boost::filesystem::path &exe)
+    : m_config(bunsan::config::load<config>(ptree)), m_exe(exe) {}
 
 void archivers::_7z::pack_from(const boost::filesystem::path &cwd,
                                const boost::filesystem::path &archive,
@@ -68,8 +71,4 @@ void archivers::_7z::unpack(const boost::filesystem::path &archive,
 boost::optional<std::string> archivers::_7z::format_argument() const {
   if (m_config.format) return "-t" + m_config.format.get();
   return boost::optional<std::string>();
-}
-
-void archivers::_7z::setup(const boost::property_tree::ptree &ptree) {
-  m_config = bunsan::config::load<config>(ptree);
 }

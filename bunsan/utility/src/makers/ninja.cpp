@@ -9,13 +9,16 @@
 using namespace bunsan::utility;
 
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_makers_ninja, {
-  BUNSAN_FACTORY_REGISTER_TOKEN(maker, ninja, [](resolver &resolver_) {
-    return maker::make_shared<makers::ninja>(
-        resolver_.find_executable("ninja"));
-  })
+  BUNSAN_FACTORY_REGISTER_TOKEN(
+      maker, ninja, [](const utility_config &ptree, resolver &resolver_) {
+        return maker::make_shared<makers::ninja>(
+            ptree, resolver_.find_executable("ninja"));
+      })
 })
 
-makers::ninja::ninja(const boost::filesystem::path &exe) : m_exe(exe) {}
+makers::ninja::ninja(const utility_config &ptree,
+                     const boost::filesystem::path &exe)
+    : m_config(bunsan::config::load<config>(ptree)), m_exe(exe) {}
 
 std::vector<std::string> makers::ninja::arguments_(
     const std::vector<std::string> &targets) const {
@@ -54,8 +57,4 @@ void makers::ninja::exec(
                           << maker_exec_error::flags(flags)
                           << enable_nested_current());
   }
-}
-
-void makers::ninja::setup(const boost::property_tree::ptree &ptree) {
-  m_config = bunsan::config::load<config>(ptree);
 }

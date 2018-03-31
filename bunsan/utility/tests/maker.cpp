@@ -13,7 +13,7 @@ BOOST_FIXTURE_TEST_SUITE(maker, utility_fixture)
 
 BOOST_AUTO_TEST_CASE(make) {
   MOCK_EXPECT(resolver.find_executable).once().with("make").returns("exe");
-  const auto mk = bu::maker::instance("make", resolver);
+  const auto mk = bu::maker::instance("make", bu::utility_config{}, resolver);
   MOCK_EXPECT(executor->sync_execute)
       .calls([](const bunsan::process::context &ctx) {
         BOOST_CHECK_EQUAL(ctx.current_path(), "cwd");
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(make) {
 
 BOOST_AUTO_TEST_CASE(make_flags) {
   MOCK_EXPECT(resolver.find_executable).once().with("make").returns("exe");
-  const auto mk = bu::maker::instance("make", resolver);
+  const auto mk = bu::maker::instance("make", bu::utility_config{}, resolver);
   MOCK_EXPECT(executor->sync_execute)
       .calls([](const bunsan::process::context &ctx) {
         BOOST_CHECK_EQUAL(ctx.current_path(), "cwd");

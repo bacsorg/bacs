@@ -29,21 +29,19 @@ class ninja : public maker {
   };
 
  public:
-  explicit ninja(const boost::filesystem::path &exe);
+  ninja(const utility_config &ptree, const boost::filesystem::path &exe);
 
   void exec(const boost::filesystem::path &cwd,
             const std::vector<std::string> &targets,
             const std::unordered_map<std::string, std::string> &flags) override;
-
-  void setup(const boost::property_tree::ptree &ptree) override;
 
  private:
   std::vector<std::string> arguments_(
       const std::vector<std::string> &targets) const;
 
  private:
+  const config m_config;
   const boost::filesystem::path m_exe;
-  config m_config;
 };
 
 }  // namespace bunsan::utility::makers

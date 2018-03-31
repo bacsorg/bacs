@@ -491,7 +491,8 @@ class repository : private boost::noncopyable {
   problem::StatusMap status_all_(const problem::IdSet &id_set);
 
   /// \warning requires at least shared lock and problem existence
-  void download_(const problem::id &id, const boost::filesystem::path &location);
+  void download_(const problem::id &id,
+                 const boost::filesystem::path &location);
 
   /// \warning requires at least shared lock
   problem::StatusResult status_result_(const problem::id &id);
@@ -569,7 +570,7 @@ class repository : private boost::noncopyable {
   bunsan::utility::custom_resolver m_resolver;
   const location_config m_location;
   /// internal problem storage packing
-  const bunsan::utility::archiver::factory_type m_problem_archiver_factory;
+  const archiver_options::factory_type m_problem_archiver_factory;
   const problem_config m_problem;
   importer m_importer;
   bunsan::pm::repository m_repository;

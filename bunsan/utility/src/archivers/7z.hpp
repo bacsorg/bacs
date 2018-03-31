@@ -20,12 +20,10 @@ class _7z : public cwd_split {
   };
 
  public:
-  explicit _7z(const boost::filesystem::path &exe);
+  _7z(const utility_config &ptree, const boost::filesystem::path &exe);
 
   void unpack(const boost::filesystem::path &archive,
               const boost::filesystem::path &dir) override;
-
-  void setup(const boost::property_tree::ptree &ptree) override;
 
  protected:
   void pack_from(const boost::filesystem::path &cwd,
@@ -36,8 +34,8 @@ class _7z : public cwd_split {
   boost::optional<std::string> format_argument() const;
 
  private:
+  const config m_config;
   const boost::filesystem::path m_exe;
-  config m_config;
 };
 
 }  // namespace bunsan::utility::archivers

@@ -42,8 +42,7 @@ class cmake : public conf_make_install {
   };
 
  public:
-  explicit cmake(resolver &resolver_);
-  void setup(const boost::property_tree::ptree &ptree) override;
+  cmake(const utility_config &ptree, resolver &resolver_);
 
  protected:
   void configure_(const boost::filesystem::path &src,
@@ -73,10 +72,10 @@ class cmake : public conf_make_install {
   std::vector<std::string> arguments_(const boost::filesystem::path &src) const;
 
  private:
+  const config m_config;
   const std::unique_ptr<resolver> m_resolver;
   const boost::filesystem::path m_cmake_exe;
   boost::optional<std::size_t> m_generator;
-  config m_config;
 
  private:
   static const std::vector<generator> generators;

@@ -16,7 +16,7 @@ struct fetcher_fetch_error : virtual fetcher_error {
 };
 
 class fetcher : public utility {
-  BUNSAN_FACTORY_BODY(fetcher, resolver &)
+  BUNSAN_FACTORY_BODY(fetcher, const utility_config &, resolver &)
  public:
   virtual void fetch(const std::string &uri,
                      const boost::filesystem::path &dst) = 0;

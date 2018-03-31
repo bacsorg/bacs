@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_SUITE(_7z)
 BOOST_AUTO_TEST_CASE(pack) {
   bunsan::test::filesystem::tempfile tmp;
   MOCK_EXPECT(resolver.find_executable).once().with("7z").returns("exe");
-  const auto ar = bu::archiver::instance("7z", resolver);
+  const auto ar = bu::archiver::instance("7z", bu::utility_config{}, resolver);
   MOCK_EXPECT(executor->sync_execute)
       .calls([&tmp](const bunsan::process::context &ctx) {
         BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 5) {
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(pack) {
 BOOST_AUTO_TEST_CASE(pack_contents) {
   bunsan::test::filesystem::tempfile tmp;
   MOCK_EXPECT(resolver.find_executable).once().with("7z").returns("exe");
-  const auto ar = bu::archiver::instance("7z", resolver);
+  const auto ar = bu::archiver::instance("7z", bu::utility_config{}, resolver);
   MOCK_EXPECT(executor->sync_execute)
       .calls([&tmp](const bunsan::process::context &ctx) {
         BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 5) {
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(pack_contents) {
 
 BOOST_AUTO_TEST_CASE(unpack) {
   MOCK_EXPECT(resolver.find_executable).once().with("7z").returns("exe");
-  const auto ar = bu::archiver::instance("7z", resolver);
+  const auto ar = bu::archiver::instance("7z", bu::utility_config{}, resolver);
   MOCK_EXPECT(executor->sync_execute)
       .calls([](const bunsan::process::context &ctx) {
         BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 5) {
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_SUITE(tar)
 
 BOOST_AUTO_TEST_CASE(pack) {
   MOCK_EXPECT(resolver.find_executable).once().with("tar").returns("exe");
-  const auto ar = bu::archiver::instance("tar", resolver);
+  const auto ar = bu::archiver::instance("tar", bu::utility_config{}, resolver);
   MOCK_EXPECT(executor->sync_execute)
       .calls([](const bunsan::process::context &ctx) {
         BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 8) {
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(pack) {
 
 BOOST_AUTO_TEST_CASE(pack_contents) {
   MOCK_EXPECT(resolver.find_executable).once().with("tar").returns("exe");
-  const auto ar = bu::archiver::instance("tar", resolver);
+  const auto ar = bu::archiver::instance("tar", bu::utility_config{}, resolver);
   MOCK_EXPECT(executor->sync_execute)
       .calls([](const bunsan::process::context &ctx) {
         BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 8) {
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(pack_contents) {
 
 BOOST_AUTO_TEST_CASE(unpack) {
   MOCK_EXPECT(resolver.find_executable).once().with("tar").returns("exe");
-  const auto ar = bu::archiver::instance("tar", resolver);
+  const auto ar = bu::archiver::instance("tar", bu::utility_config{}, resolver);
   MOCK_EXPECT(executor->sync_execute)
       .calls([](const bunsan::process::context &ctx) {
         BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 6) {

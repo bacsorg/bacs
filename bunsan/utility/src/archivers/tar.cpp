@@ -10,13 +10,16 @@
 using namespace bunsan::utility;
 
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_archivers_tar, {
-  BUNSAN_FACTORY_REGISTER_TOKEN(archiver, tar, [](resolver &resolver_) {
-    return archiver::make_shared<archivers::tar>(
-        resolver_.find_executable("tar"));
-  })
+  BUNSAN_FACTORY_REGISTER_TOKEN(
+    archiver, tar, [](const utility_config &ptree, resolver &resolver_) {
+      return archiver::make_shared<archivers::tar>(
+          ptree, resolver_.find_executable("tar"));
+    })
 })
 
-archivers::tar::tar(const boost::filesystem::path &exe) : m_exe(exe) {}
+archivers::tar::tar(const utility_config &ptree,
+                    const boost::filesystem::path &exe)
+    : m_config(bunsan::config::load<config>(ptree)), m_exe(exe) {}
 
 void archivers::tar::pack_from(const boost::filesystem::path &cwd,
                                const boost::filesystem::path &archive,
@@ -67,8 +70,4 @@ std::vector<std::string> archivers::tar::flag_arguments() const {
     argv_.push_back("--" + arg);
   }
   return argv_;
-}
-
-void archivers::tar::setup(const boost::property_tree::ptree &ptree) {
-  m_config = bunsan::config::load<config>(ptree);
 }
