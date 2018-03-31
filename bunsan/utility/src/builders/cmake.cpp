@@ -7,75 +7,29 @@
 
 #include <boost/filesystem/operations.hpp>
 
-#include <algorithm>
-
 using namespace bunsan::utility;
 
 BUNSAN_STATIC_INITIALIZER(bunsan_utility_builders_cmake, {
   BUNSAN_FACTORY_REGISTER_TOKEN(
-    builder, cmake, [](const utility_config &ptree, resolver &resolver_) {
-      return builder::make_shared<builders::cmake>(ptree, resolver_);
-    })
+      builder, cmake, [](const utility_config &ptree, resolver &resolver_) {
+        return builder::make_shared<builders::cmake>(ptree, resolver_);
+      })
 })
-
-void builders::cmake::set_default_generator() {
-#if defined(BOOST_POSIX_API)
-  set_generator("Unix Makefiles");
-#elif defined(BOOST_WINDOWS_API)
-  set_generator("NMake Makefiles");
-#else
-#warning unknown platform, unknown default generator
-  BOOST_THROW_EXCEPTION(
-      cmake_unknown_platform_generator_error()
-      << cmake_unknown_platform_generator_error::message(
-             "Unknown platform, you have to specify generator"));
-#endif
-}
-
-const std::vector<builders::cmake::generator> builders::cmake::generators = {
-    // makefiles
-    {"Unix Makefiles", generator_type::MAKEFILE},
-    {"MinGW Makefiles", generator_type::MAKEFILE},
-    {"MSYS Makefiles", generator_type::MAKEFILE},
-    {"NMake Makefiles", generator_type::MAKEFILE},
-    {"NMake Makefiles JOM", generator_type::MAKEFILE},
-    {"Borland Makefiles", generator_type::MAKEFILE},
-    {"Watcom WMake", generator_type::UNKNOWN},
-    // IDEs
-    // CodeBlocks
-    {"CodeBlocks - Unix Makefiles", generator_type::MAKEFILE},
-    {"CodeBlocks - MinGW Makefiles", generator_type::MAKEFILE},
-    {"CodeBlocks - NMake Makefiles", generator_type::NMAKEFILE},
-    // Eclipse
-    {"Eclipse CDT4 - Unix Makefiles", generator_type::MAKEFILE},
-    {"Eclipse CDT4 - MinGW Makefiles", generator_type::MAKEFILE},
-    {"Eclipse CDT4 - NMake Makefiles", generator_type::NMAKEFILE},
-    // KDevelop
-    {"KDevelop3", generator_type::UNKNOWN},
-    {"KDevelop3 - Unix Makefiles", generator_type::MAKEFILE},
-    // Visual Studio
-    {"Visual Studio 10", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 10 IA64", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 10 Win64", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 11", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 11 Win64", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 6", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 7", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 7 .NET 2003", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 8 2005", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 8 2005 Win64", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 9 2008", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 9 2008 IA64", generator_type::VISUAL_STUDIO},
-    {"Visual Studio 9 2008 Win64", generator_type::VISUAL_STUDIO}};
 
 builders::cmake::cmake(const utility_config &ptree, resolver &resolver_)
     : m_config(bunsan::config::load<config>(ptree)),
-      m_resolver(resolver_.clone()),
       m_cmake_exe(resolver_.find_executable("cmake")) {
-  if (m_config.cmake.generator) {
-    set_generator(m_config.cmake.generator.get());
-  } else {
-    set_default_generator();
+  const generator_type type = get_generator_type();
+  switch (type) {
+    case generator_type::MAKEFILE:
+      m_make_maker = maker::instance("make", m_config.make_maker, resolver_);
+      m_install_maker =
+          maker::instance("make", m_config.install_maker, resolver_);
+      break;
+    default:
+      BOOST_THROW_EXCEPTION(
+          cmake_unknown_generator_type_error()
+          << cmake_unknown_generator_type_error::generator_type(type));
   }
 }
 
@@ -83,10 +37,8 @@ std::vector<std::string> builders::cmake::arguments_(
     const boost::filesystem::path &src) const {
   std::vector<std::string> arguments;
   arguments.push_back(m_cmake_exe.filename().string());
-  if (m_generator) {
-    arguments.push_back("-G");
-    arguments.push_back(get_generator().name);
-  }
+  arguments.push_back("-G");
+  arguments.push_back(get_generator());
   for (const auto &i : m_config.cmake.defines) {
     // TODO arguments check
     arguments.push_back("-D" + i.first + "=" + i.second);
@@ -113,21 +65,8 @@ void builders::cmake::configure_(const boost::filesystem::path &src,
 
 void builders::cmake::make_(const boost::filesystem::path & /*src*/,
                             const boost::filesystem::path &bin) {
-  BOOST_ASSERT(m_generator);
   try {
-    const generator_type type = generators[m_generator.get()].type;
-    switch (type) {
-      case generator_type::MAKEFILE: {
-        const maker_ptr ptr = maker::instance("make", m_config.make_maker, *m_resolver);
-        ptr->exec(bin, {}, {});
-      } break;
-      case generator_type::NMAKEFILE:
-      case generator_type::VISUAL_STUDIO:
-      default:
-        BOOST_THROW_EXCEPTION(
-            cmake_unknown_generator_type_error()
-            << cmake_unknown_generator_type_error::generator_type(type));
-    }
+    m_make_maker->exec(bin, {}, {});
   } catch (std::exception &) {
     BOOST_THROW_EXCEPTION(conf_make_install_make_error()
                           //<< conf_make_install_make_error::src(src)
@@ -139,22 +78,10 @@ void builders::cmake::make_(const boost::filesystem::path & /*src*/,
 void builders::cmake::install_(const boost::filesystem::path & /*src*/,
                                const boost::filesystem::path &bin,
                                const boost::filesystem::path &root) {
-  BOOST_ASSERT(m_generator);
   try {
-    const generator_type type = generators[m_generator.get()].type;
-    switch (type) {
-      case generator_type::MAKEFILE: {
-        maker_ptr ptr = maker::instance("make", m_config.install_maker, *m_resolver);
-        ptr->exec(bin, {"install"},
-                  {{"DESTDIR", boost::filesystem::absolute(root).string()}});
-      } break;
-      case generator_type::NMAKEFILE:
-      case generator_type::VISUAL_STUDIO:
-      default:
-        BOOST_THROW_EXCEPTION(
-            cmake_unknown_generator_type_error()
-            << cmake_unknown_generator_type_error::generator_type(type));
-    }
+    m_install_maker->exec(
+        bin, {"install"},
+        {{"DESTDIR", boost::filesystem::absolute(root).string()}});
   } catch (std::exception &) {
     BOOST_THROW_EXCEPTION(conf_make_install_install_error()
                           //<< conf_make_install_install_error::src(src)
@@ -164,20 +91,36 @@ void builders::cmake::install_(const boost::filesystem::path & /*src*/,
   }
 }
 
-void builders::cmake::set_generator(const std::string &generator_name) {
-  const std::size_t gen = std::find_if(generators.begin(), generators.end(),
-                                       [&generator_name](const generator &gen) {
-                                         return gen.name == generator_name;
-                                       }) -
-                          generators.begin();
-  if (gen >= generators.size())
+std::string builders::cmake::get_generator() const {
+  if (m_config.cmake.generator) {
+    return *m_config.cmake.generator;
+  } else {
+#if defined(BOOST_POSIX_API)
+    return "Unix Makefiles";
+#elif defined(BOOST_WINDOWS_API)
+    return "NMake Makefiles";
+#else
+#warning unknown platform, unknown default generator
     BOOST_THROW_EXCEPTION(
-        cmake_unknown_generator_name_error()
-        << cmake_unknown_generator_name_error::generator_name(generator_name));
-  m_generator = gen;
+        cmake_unknown_platform_generator_error()
+        << cmake_unknown_platform_generator_error::message(
+               "Unknown platform, you have to specify generator"));
+#endif
+  }
 }
 
-const builders::cmake::generator &builders::cmake::get_generator() const {
-  BOOST_ASSERT(m_generator);
-  return generators[m_generator.get()];
+builders::cmake::generator_type builders::cmake::get_generator_type() const {
+  const std::string generator = get_generator();
+  if (generator.find("Makefiles") != std::string::npos) {
+    if (generator.find("NMake Makefiles") != std::string::npos) {
+      return generator_type::NMAKEFILE;
+    }
+    return generator_type::MAKEFILE;
+  } else if (generator.find("Visual Studio") != std::string::npos) {
+    return generator_type::VISUAL_STUDIO;
+  } else {
+    BOOST_THROW_EXCEPTION(
+        cmake_unknown_generator_name_error()
+        << cmake_unknown_generator_name_error::generator_name(generator));
+  }
 }

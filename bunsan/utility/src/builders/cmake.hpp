@@ -57,7 +57,7 @@ class cmake : public conf_make_install {
 
  public:
   BUNSAN_INCLASS_STREAM_ENUM_CLASS(generator_type, (MAKEFILE, NMAKEFILE,
-                                                    VISUAL_STUDIO, UNKNOWN))
+                                                    VISUAL_STUDIO))
 
  private:
   struct generator {
@@ -66,19 +66,14 @@ class cmake : public conf_make_install {
   };
 
  private:
-  void set_default_generator();
-  void set_generator(const std::string &generator_name);
-  const generator &get_generator() const;
+  std::string get_generator() const;
+  generator_type get_generator_type() const;
   std::vector<std::string> arguments_(const boost::filesystem::path &src) const;
 
  private:
   const config m_config;
-  const std::unique_ptr<resolver> m_resolver;
   const boost::filesystem::path m_cmake_exe;
-  boost::optional<std::size_t> m_generator;
-
- private:
-  static const std::vector<generator> generators;
+  maker_ptr m_make_maker, m_install_maker;
 };
 
 struct cmake_error : virtual error {};
