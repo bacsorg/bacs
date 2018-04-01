@@ -61,4 +61,55 @@ BOOST_AUTO_TEST_CASE(cmake) {
   br->install("/foo/src", "/some/bin", "/usr/root");
 }
 
+BOOST_AUTO_TEST_CASE(meson) {
+  MOCK_EXPECT(resolver.find_executable)
+      .once()
+      .with("meson")
+      .returns("meson-exe");
+  MOCK_EXPECT(resolver.find_executable).once().with("ninja").returns("ninja-exe");
+  bu::utility_config cfg;
+  cfg.put("meson.flags.default-library", "static");
+  cfg.put("meson.options.FOO", "bar");
+  cfg.put("maker.jobs", 3);
+  const auto br = bu::builder::instance("meson", cfg, resolver);
+  MOCK_EXPECT(executor->sync_execute)
+      .once()
+      .calls([](const bunsan::process::context &ctx) {
+        BOOST_CHECK_EQUAL(ctx.current_path(), "/some/bin");
+        BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 4) {
+          BOOST_CHECK_EQUAL(ctx.arguments()[0], "meson-exe");
+          BOOST_CHECK_EQUAL(ctx.arguments()[1], "--default-library=static");
+          BOOST_CHECK_EQUAL(ctx.arguments()[2], "-DFOO=bar");
+          BOOST_CHECK_EQUAL(ctx.arguments()[3], "/foo/src");
+        }
+        return 0;
+      });
+  MOCK_EXPECT(executor->sync_execute)
+      .once()
+      .calls([](const bunsan::process::context &ctx) {
+        BOOST_CHECK_EQUAL(ctx.current_path(), "/some/bin");
+        BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 2) {
+          BOOST_CHECK_EQUAL(ctx.arguments()[0], "ninja-exe");
+          BOOST_CHECK_EQUAL(ctx.arguments()[1], "-j3");
+        }
+        return 0;
+      });
+  MOCK_EXPECT(executor->sync_execute)
+      .once()
+      .calls([](const bunsan::process::context &ctx) {
+        BOOST_CHECK_EQUAL(ctx.current_path(), "/some/bin");
+        const auto it = ctx.environment().find("DESTDIR");
+        BUNSAN_IF_CHECK(it != ctx.environment().end()) {
+          BOOST_CHECK_EQUAL(it->second, "/usr/root");
+        }
+        BUNSAN_IF_CHECK_EQUAL(ctx.arguments().size(), 3) {
+          BOOST_CHECK_EQUAL(ctx.arguments()[0], "ninja-exe");
+          BOOST_CHECK_EQUAL(ctx.arguments()[1], "-j3");
+          BOOST_CHECK_EQUAL(ctx.arguments()[2], "install");
+        }
+        return 0;
+      });
+  br->install("/foo/src", "/some/bin", "/usr/root");
+}
+
 BOOST_AUTO_TEST_SUITE_END()  // builder

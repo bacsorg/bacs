@@ -11,6 +11,8 @@ srcs = [
     'src/builders/cmake.cpp',
     'src/builders/conf_make_install.hpp',
     'src/builders/conf_make_install.cpp',
+    'src/builders/meson.hpp',
+    'src/builders/meson.cpp',
 
     'src/fetcher.cpp',
     'src/fetchers/curl.hpp',
