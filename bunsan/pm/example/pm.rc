@@ -11,7 +11,7 @@ remote
 
     format ; TODO implement fetching from server
     {
-        builder cmake0
+        builder meson0
 
         archiver
         {
@@ -52,6 +52,24 @@ build
                     defines
                     {
                         CMAKE_INSTALL_PREFIX /
+                    }
+                }
+                maker
+                {
+                    jobs 4
+                }
+            }
+        }
+        meson0
+        {
+            type meson
+            config
+            {
+                meson
+                {
+                    flags
+                    {
+                        prefix /
                     }
                 }
                 maker
