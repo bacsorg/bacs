@@ -76,7 +76,7 @@ bin = executable('bunsan_pm_cli', bin_srcs,
 
 python3 = import('python3')
 
-python3.extension_module('bunsan_pm_python', python_srcs,
+python3.extension_module('_pm', python_srcs,
     dependencies : [
         dependency('python3'),
         bunsan_pm_compat_dep,
