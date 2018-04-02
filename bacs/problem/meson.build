@@ -50,12 +50,14 @@ protos = [
 
 deps = [
     bunsan_common_dep,
+    bunsan_process_dep,
     bunsan_pm_dep,
     bunsan_protobuf_dep,
     bacs_common_dep,
 ]
 deps_str = [
     'bunsan_common',
+    'bunsan_process',
     'bunsan_pm',
     'bunsan_protobuf',
     'bacs_common',

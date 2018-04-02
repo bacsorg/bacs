@@ -18,9 +18,18 @@ class pdflatex : public statement::version {
                     const Revision &revision) const override;
 
  private:
+  void build(const boost::filesystem::path &destination) const;
+
+ private:
+  const boost::filesystem::path m_location;
   const boost::filesystem::path m_root;
   const boost::filesystem::path m_source;
   const boost::filesystem::path m_target;
+};
+
+struct pdflatex_build_error : virtual statement_version_make_package_error {
+  using destination =
+      boost::error_info<struct tag_destination, boost::filesystem::path>;
 };
 
 }  // namespace bacs::problem::statement_versions
