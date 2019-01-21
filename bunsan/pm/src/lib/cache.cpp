@@ -38,8 +38,10 @@ cache::entry cache::get(const pm::entry &package) {
     switch (status.type()) {
       default:
         clean_();
+        [[fallthrough]];
       case boost::filesystem::file_not_found:
         boost::filesystem::create_directories(root);
+        [[fallthrough]];
       case boost::filesystem::directory_file:
         m_repository.update(package, root, m_config.lifetime);
     }
