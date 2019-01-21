@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/noncopyable.hpp>
 #include <boost/uuid/random_generator.hpp>
 
 #include <string>
