@@ -8,6 +8,7 @@
 #include <bunsan/filesystem/fstream.hpp>
 
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
 #include <vector>
@@ -118,9 +119,7 @@ struct check_my_error {
     boost::algorithm::split(msg, s, boost::algorithm::is_any_of("\n"),
                             boost::algorithm::token_compress_on);
     BOOST_REQUIRE_GE(msg.size(), 2);
-    BOOST_CHECK_EQUAL(msg[1],
-                      "Dynamic exception type: "
-                      "boost::exception_detail::clone_impl<error::my_error>");
+    BOOST_CHECK(boost::algorithm::contains(msg[1], "error::my_error"));
     return true;
   }
 };
