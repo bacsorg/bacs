@@ -88,13 +88,11 @@ protoc_grpc_gen = generator(protoc,
                  '--grpc_out=@BUILD_DIR@', '@INPUT@'])
 bacs_archive_pb_srcs = protoc_cpp_gen.process(
     protos,
-    preserve_path_from : join_paths(meson.current_source_dir(),
-                                    'include'),
+    preserve_path_from : meson.current_source_dir() / 'include',
 )
 bacs_archive_grpc_srcs = protoc_grpc_gen.process(
     protos,
-    preserve_path_from : join_paths(meson.current_source_dir(),
-                                    'include'),
+    preserve_path_from : meson.current_source_dir() / 'include',
 )
 bacs_archive_pb = static_library(
     'bacs_archive_pb',
@@ -171,7 +169,7 @@ install_subdir('include',
 if get_option('enable-web')
   subdir('view')
   install_subdir('static',
-      install_dir : join_paths(get_option('datadir'), 'bacs_archive'),
+      install_dir : get_option('datadir') / 'bacs_archive',
   )
 endif
 

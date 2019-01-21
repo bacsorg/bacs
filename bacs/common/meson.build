@@ -21,8 +21,7 @@ deps_str = [
 
 bacs_common_pb_srcs = protoc_cpp_gen.process(
     protos,
-    preserve_path_from : join_paths(meson.current_source_dir(),
-                                    'include'),
+    preserve_path_from : meson.current_source_dir() / 'include',
 )
 bacs_common_pb = static_library(
     'bacs_common_pb', bacs_common_pb_srcs,

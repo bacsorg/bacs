@@ -72,8 +72,7 @@ protoc_cpp_gen = generator(protoc,
                  '--cpp_out=@BUILD_DIR@', '@INPUT@'])
 bacs_problem_pb_srcs = protoc_cpp_gen.process(
     protos,
-    preserve_path_from : join_paths(meson.current_source_dir(),
-                                    'include'),
+    preserve_path_from : meson.current_source_dir() / 'include',
 )
 bacs_problem_pb = static_library(
     'bacs_problem_pb', bacs_problem_pb_srcs,

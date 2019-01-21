@@ -74,19 +74,19 @@ bin = executable('bunsan_pm_cli', bin_srcs,
     install : true,
 )
 
-python3 = import('python3')
+python3 = import('python').find_installation('python3')
 
 python3.extension_module('_pm', python_srcs,
     dependencies : [
-        dependency('python3'),
+        python3.dependency(),
         bunsan_pm_compat_dep,
     ],
     include_directories : include,
     install : true,
-    install_dir : join_paths(bunsan_python_root, 'pm'),
+    install_dir : bunsan_python_root / 'pm',
 )
 install_data('src/compatibility/__init__.py',
-    install_dir : join_paths(bunsan_python_root, 'pm'),
+    install_dir : bunsan_python_root / 'pm',
 )
 
 pkg = import('pkgconfig')

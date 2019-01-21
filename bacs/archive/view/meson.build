@@ -30,5 +30,5 @@ plain_skin_cpp = custom_target('bacs_archive_skin_plain_src',
 plain_skin_module = shared_module('plain', plain_skin_cpp,
     dependencies : bacs_archive_dep,
     install : true,
-    install_dir : join_paths(get_option('libdir'), 'bacs_archive', 'skins'),
+    install_dir : get_option('libdir') / 'bacs_archive' / 'skins',
 )

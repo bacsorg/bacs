@@ -21,8 +21,7 @@ deps_str = [
 # TODO install headers
 bunsan_broker_pb_srcs = protoc_cpp_gen.process(
     protos,
-    preserve_path_from : join_paths(meson.current_source_dir(),
-                                    'include'),
+    preserve_path_from : meson.current_source_dir() / 'include',
 )
 
 bunsan_broker_pb = static_library(

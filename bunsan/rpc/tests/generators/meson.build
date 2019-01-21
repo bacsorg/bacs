@@ -17,13 +17,11 @@ protoc_grpc_gen = generator(protoc,
                  '--grpc_out=@BUILD_DIR@', '@INPUT@'])
 bunsan_rpc_test_pb_srcs = protoc_cpp_gen.process(
     protos,
-    preserve_path_from : join_paths(meson.current_source_dir(),
-                                    'include'),
+    preserve_path_from : meson.current_source_dir() / 'include',
 )
 bunsan_rpc_test_grpc_srcs = protoc_grpc_gen.process(
     protos,
-    preserve_path_from : join_paths(meson.current_source_dir(),
-                                    'include'),
+    preserve_path_from : meson.current_source_dir() / 'include',
 )
 bunsan_rpc_test_pb = static_library(
     'bunsan_rpc_test_pb',

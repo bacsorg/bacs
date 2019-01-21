@@ -33,7 +33,7 @@ foreach t : tests
   test(prefix + t, e, env : testenv)
 endforeach
 
-python3 = import('python3')
+python3 = import('python').find_installation('python3')
 py3bin = python3.find_python()
 
 foreach t : server_tests
@@ -41,7 +41,7 @@ foreach t : server_tests
                  t + '.cpp',
                  dependencies : test_deps)
   args = [
-      join_paths(meson.current_source_dir(), 'resources', 'server.py'),
+      meson.current_source_dir() / 'resources' / 'server.py',
       e,
   ]
   test(prefix + t, py3bin, args : args, env : testenv)

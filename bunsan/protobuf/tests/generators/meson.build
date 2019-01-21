@@ -1,7 +1,6 @@
 bunsan_protobuf_test_pb_srcs = protoc_cpp_gen.process(
     'include/bunsan/protobuf/test/message.proto',
-    preserve_path_from : join_paths(meson.current_source_dir(),
-                                    'include'),
+    preserve_path_from : meson.current_source_dir() / 'include',
 )
 bunsan_protobuf_test_pb = static_library(
     'bunsan_protobuf_test_pb', bunsan_protobuf_test_pb_srcs,

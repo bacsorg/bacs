@@ -17,8 +17,7 @@ protos = [
 # FIXME generate gRPC also
 bacs_external_pb_srcs = protoc_cpp_gen.process(
     protos,
-    preserve_path_from : join_paths(meson.current_source_dir(),
-                                    'include'),
+    preserve_path_from : meson.current_source_dir() / 'include',
 )
 bacs_external_pb = static_library(
     'bacs_external_pb', bacs_external_pb_srcs,
