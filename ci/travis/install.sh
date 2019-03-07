@@ -18,12 +18,6 @@ boost_sha256='bd0df411efd9a585e5a2212275f8762079fed8842264954675a4fddc46cfcf60'
 boost_dir="$(basename "$boost_src" .tar.gz)"
 boost_cache_check="$HOME_PREFIX/lib/libboost_filesystem.so.$boost_ver"
 
-turtle_ver='1.3.0'
-turtle_src="https://github.com/bacsorg/turtle/releases/download/v0.0.1/turtle-${turtle_ver}.tar.bz2"
-turtle_fname='turtle.tar.bz2'
-turtle_sha256='1f0a8f7b7862e0f99f3849d60b488b1ce6546f1f7cfeb4d8f6c0261f1e3dcbe0'
-turtle_cache_check="$HOME_PREFIX/include/turtle/version.hpp"
-
 botan_ver='2.4.0'
 botan_src="https://botan.randombit.net/releases/Botan-${botan_ver}.tgz"
 botan_fname='botan.tgz'
@@ -143,14 +137,6 @@ function install_boost() (
   run ./b2 "${b2opts[@]}" install | egrep -v '^common\.copy'
 )
 
-function install_turtle() (
-  use_cache_ver turtle "$turtle_ver" "$turtle_cache_check" \
-      sed -rn 's|^.*MOCK_VERSION +([^ ]+)$|\1|p' "$turtle_cache_check"
-  run fetch "$turtle_src" "$turtle_fname"
-  run sha256verify "$turtle_fname" "$turtle_sha256"
-  run tar xjf "$turtle_fname" -C "$HOME_PREFIX" include
-)
-
 function install_botan() (
   use_cache botan "$botan_cache_check"
   run fetch "$botan_src" "$botan_fname"
@@ -201,7 +187,6 @@ function install_grpc() (
 fold install_meson
 fold install_ninja
 fold install_boost
-fold install_turtle
 fold install_botan
 fold install_protobuf
 fold install_cares

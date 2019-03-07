@@ -5,6 +5,7 @@ testenv.set('BUNSAN_BINARY_DIR', meson.current_build_dir() + '/..')
 subdir('generators')
 
 test_deps = [
+    turtle_dep,
     bunsan_test_dep,
     bunsan_rpc_dep,
     bunsan_rpc_test_pb_dep,

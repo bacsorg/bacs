@@ -22,6 +22,9 @@ endif
 # FIXME it should probably be set by meson
 add_global_arguments('-DBOOST_ALL_DYN_LINK', language : 'cpp')
 
+# Common subprojects
+turtle_dep = subproject('turtle').get_variable('turtle_dep')
+
 subdir('bunsan')
 subdir('bacs')
 
