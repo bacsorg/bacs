@@ -1,0 +1,13 @@
+post_install() {
+  if ! getent passwd bacs &>/dev/null; then
+    groupadd -r bacs &>/dev/null
+    useradd -r -g bacs -d /srv/bacs -c 'BACS user' bacs &>/dev/null
+    passwd -l bacs &>/dev/null
+  fi
+
+  post_upgrade
+}
+
+post_upgrade() {
+  chown -R bacs:bacs /srv/bacs
+}

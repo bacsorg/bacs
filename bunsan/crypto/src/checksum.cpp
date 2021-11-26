@@ -1,33 +1,30 @@
 #include <bunsan/crypto/checksum.hpp>
 
-#include <botan/crc24.h>
-#include <botan/crc32.h>
-#include <botan/md5.h>
-#include <botan/sha160.h>
-#include <botan/sha2_32.h>
-#include <botan/sha2_64.h>
+#include <botan/hash.h>
 
 #include <bunsan/filesystem/fstream.hpp>
 
+#include <memory>
 #include <iomanip>
 #include <sstream>
+#include <string_view>
 
 namespace bunsan::crypto::checksum {
 
-template <typename Checksum>
-std::string checksum_(const boost::filesystem::path &path) {
-  Checksum checksum;
+std::string checksum_(const boost::filesystem::path &path, const std::string_view hash) {
+  std::unique_ptr<Botan::HashFunction> checksum(Botan::HashFunction::create(hash.data()));
+
   bunsan::filesystem::ifstream fin(path, std::ios_base::binary);
   BUNSAN_FILESYSTEM_FSTREAM_WRAP_BEGIN(in) {
     char buf[BUFSIZ];
     do {
       fin.read(buf, BUFSIZ);
-      checksum.update(reinterpret_cast<Botan::byte *>(buf), fin.gcount());
+      checksum->update(reinterpret_cast<Botan::byte *>(buf), fin.gcount());
     } while (fin);
   } BUNSAN_FILESYSTEM_FSTREAM_WRAP_END(fin)
   fin.close();
   std::vector<Botan::byte> result;
-  checksum.final(result);
+  checksum->final(result);
   std::stringstream sout;
   for (const byte b : result) {
     sout << std::hex << std::uppercase << std::setw(2) << std::setfill('0')
@@ -37,35 +34,35 @@ std::string checksum_(const boost::filesystem::path &path) {
 }
 
 std::string crc24(const boost::filesystem::path &path) {
-  return checksum_<Botan::CRC24>(path);
+  return checksum_(path, "CRC24");
 }
 
 std::string crc32(const boost::filesystem::path &path) {
-  return checksum_<Botan::CRC32>(path);
+  return checksum_(path, "CRC32");
 }
 
 std::string md5(const boost::filesystem::path &path) {
-  return checksum_<Botan::MD5>(path);
+  return checksum_(path, "MD5");
 }
 
 std::string sha1(const boost::filesystem::path &path) {
-  return checksum_<Botan::SHA_160>(path);
+  return checksum_(path, "SHA-160");
 }
 
 std::string sha224(const boost::filesystem::path &path) {
-  return checksum_<Botan::SHA_224>(path);
+  return checksum_(path, "SHA-224");
 }
 
 std::string sha256(const boost::filesystem::path &path) {
-  return checksum_<Botan::SHA_256>(path);
+  return checksum_(path, "SHA-256");
 }
 
 std::string sha384(const boost::filesystem::path &path) {
-  return checksum_<Botan::SHA_384>(path);
+  return checksum_(path, "SHA-384");
 }
 
 std::string sha512(const boost::filesystem::path &path) {
-  return checksum_<Botan::SHA_512>(path);
+  return checksum_(path, "SHA-512");
 }
 
 }  // namespace bunsan::crypto::checksum

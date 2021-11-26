@@ -44,12 +44,13 @@ class basic_object_connection : private boost::noncopyable {
     BUNSAN_ASIO_INITFN_END(result)
   }
 
-  boost::asio::io_service &get_io_service() {
+  typename Connection::executor_type get_io_service() {
     return m_block_connection.get_io_service();
   }
 
   void close() { m_block_connection.close(); }
-
+ public:
+  using executor_type = typename Connection::executor_type;
  private:
   template <typename T, typename Handler>
   void handle_read(const boost::system::error_code &ec, T &obj,

@@ -1,0 +1,59 @@
+# Maintainer: Aleksey Filippov <sarum9in@gmail.com>
+pkgname=bacs.web.legacy-git
+pkgver=21.8f1eb8f
+pkgrel=1
+pkgdesc="BACS.WEB legacy webapp"
+arch=('any')
+url="http://bacs.cs.istu.ru"
+license=('GPL')
+groups=()
+depends=('php' 'bunsan.pm-git')
+makedepends=('git')
+provides=()
+conflicts=()
+replaces=()
+backup=('etc/webapps/bacs/config.php')
+options=()
+install=
+source=(
+  "$pkgname::git+https://github.com/istu-cs/bacs_web_legacy.git"
+  "contrib::git+https://github.com/istu-cs/bacs_web_legacy_contrib.git"
+  "ads::git+https://github.com/istu-cs/bacs_web_legacy_ads.git"
+  "git+https://github.com/Synchro/PHPMailer.git"
+)
+noextract=()
+md5sums=('SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+prepare() {
+  cd "$srcdir/$pkgname"
+  git submodule init
+  for submodule in contrib ads PHPMailer
+  do
+    git config "submodule.$submodule.url" "$srcdir/$submodule"
+  done
+  git submodule update
+}
+
+package() {
+  cd "$srcdir/$pkgname"
+
+  app="$pkgdir/usr/share/webapps/bacs"
+  cfg="$pkgdir/etc/webapps/bacs"
+
+  install -d "$app" -m 755 -o root -g root
+  tar cf - --exclude-vcs --exclude='/config.php.example' . | (cd "$app" && tar xf -)
+  chown root:root -R "$app"
+  find "$app" -type f -exec chmod 644 '{}' '+'
+  find "$app" -type d -exec chmod 755 '{}' '+'
+
+  install -d "$cfg" -m 755 -o root -g root
+  install config.php.example "$cfg/config.php" -o http -g http -m 400
+  ln -s "/etc/webapps/bacs/config.php" "$app/config.php"
+}
+
+# vim:set ts=2 sw=2 et:

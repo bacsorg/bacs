@@ -31,10 +31,10 @@ bunsan_web_dep = declare_dependency(
 
 pkg = import('pkgconfig')
 
-pkg.generate(
+pkg.generate(lib,
     name : 'bunsan_web',
     description : 'bunsan web helpers',
-    libraries : [lib] + deps,
+    libraries : deps,
     requires : deps_str,
     version : meson.project_version(),
 )

@@ -4,7 +4,7 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/assert.hpp>
-#include <boost/io/detail/quoted_manip.hpp>
+#include <boost/io/quoted.hpp>
 #include <boost/regex.hpp>
 
 namespace bunsan::curl::http {

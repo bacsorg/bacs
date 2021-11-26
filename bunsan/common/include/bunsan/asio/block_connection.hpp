@@ -28,7 +28,7 @@ class block_connection : private boost::noncopyable {
     header_stream << std::setw(HEADER_SIZE) << std::hex << size;
     if (!header_stream || header_stream.str().size() != HEADER_SIZE) {
       boost::system::error_code error(boost::asio::error::invalid_argument);
-      get_io_service().post(std::bind(real_handler, error));
+      boost::asio::post(get_io_service(), std::bind(real_handler, error));
     }
     m_outbound_header = header_stream.str();
 
@@ -58,12 +58,14 @@ class block_connection : private boost::noncopyable {
     BUNSAN_ASIO_INITFN_END(result)
   }
 
-  boost::asio::io_service &get_io_service() {
-    return m_connection.get_io_service();
+  typename Connection::executor_type get_io_service() {
+    return m_connection.get_executor();
   }
 
   void close() { m_connection.close(); }
 
+ public:
+  using executor_type = typename Connection::executor_type;
  private:
   template <typename Handler>
   void handle_read_header(const boost::system::error_code &ec,

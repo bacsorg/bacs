@@ -1,0 +1,8 @@
+common system
+common invoker
+system invoker
+#invoker invoker-compat-common
+#invoker-compat-common invoker-compat-jni
+invoker invoker-flowctl-pipectl
+invoker invoker-flowctl-interactive
+../lxc204 system

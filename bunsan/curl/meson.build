@@ -49,10 +49,10 @@ bunsan_curl_dep = declare_dependency(
 
 pkg = import('pkgconfig')
 
-pkg.generate(
+pkg.generate(lib, 
     name : 'bunsan_curl',
     description : 'bunsan curl helpers',
-    libraries : [lib] + deps,
+    libraries : deps,
     requires : deps_str,
     version : meson.project_version(),
 )

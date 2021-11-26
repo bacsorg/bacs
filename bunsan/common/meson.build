@@ -48,6 +48,8 @@ lib = library('bunsan_common', srcs,
     soversion : meson.project_version(),
 )
 
+pkg.generate(lib)
+
 bunsan_common_dep = declare_dependency(
     compile_args : cpp_args,
     link_with : lib,
@@ -69,4 +71,4 @@ install_subdir('include',
                install_dir : get_option('includedir'),
                strip_directory : true)
 
-subdir('tests')
+#subdir('tests')

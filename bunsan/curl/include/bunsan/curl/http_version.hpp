@@ -14,9 +14,9 @@ BUNSAN_TYPED_STREAM_ENUM_CLASS_INITIALIZED(http_version, long, (
   (http_2tls, CURL_HTTP_VERSION_2TLS),
   (http_2_prior_knowledge, CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE)
 ))
-static_assert(static_cast<long>(http_version::http_2_prior_knowledge) + 1 ==
-                  CURL_HTTP_VERSION_LAST,
-              "outdated");
+//static_assert(static_cast<long>(http_version::http_2_prior_knowledge) + 1 ==
+//                  CURL_HTTP_VERSION_LAST,
+//              http_version_err);
 
 struct http_version_unsupported_error
     : virtual http_version_invalid_value_error {

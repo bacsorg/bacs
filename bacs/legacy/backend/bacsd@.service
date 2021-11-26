@@ -1,0 +1,15 @@
+[Unit]
+Description=BACS: %i
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bacsd
+WorkingDirectory=/srv/bacs/%i
+User=bacs
+Group=bacs
+LimitNPROC=1024
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

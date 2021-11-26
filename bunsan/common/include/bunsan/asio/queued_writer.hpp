@@ -1,7 +1,7 @@
 #pragma once
 
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 
@@ -19,23 +19,22 @@ class queued_writer : private boost::noncopyable {
   queued_writer(Connection &connection,
                 const write_handler &handle_write_custom)
       : m_connection(connection),
-        m_strand(m_connection.get_io_service()),
         m_handle_write_custom(handle_write_custom) {}
 
   explicit queued_writer(Connection &connection)
       : queued_writer(connection, write_handler()) {}
 
   void write(T object) {
-    m_strand.post(boost::bind(&queued_writer<T, Connection>::push, this,
+    /*m_strand.post(*/boost::asio::post(m_connection.get_io_service(),boost::bind(&queued_writer<T, Connection>::push, this,
                               std::move(object)));
   }
 
   void close() {
-    m_strand.post(boost::bind(&queued_writer<T, Connection>::close_, this));
+    /*m_strand.post(*/boost::asio::post(m_connection.get_io_service(),boost::bind(&queued_writer<T, Connection>::close_, this));
   }
 
   void terminate() {
-    m_strand.post(boost::bind(&queued_writer<T, Connection>::terminate_, this));
+    /*m_strand.post(*/boost::asio::post(m_connection.get_io_service(),boost::bind(&queued_writer<T, Connection>::terminate_, this));
   }
 
  private:
@@ -65,7 +64,7 @@ class queued_writer : private boost::noncopyable {
     const T &object = m_queue.front();
     m_connection.async_write(
         object,
-        m_strand.wrap(boost::bind(&queued_writer<T, Connection>::handle_write,
+        /* m_strand.wrap( */boost::asio::bind_executor(m_connection.get_io_service(), boost::bind(&queued_writer<T, Connection>::handle_write,
                                   this, boost::asio::placeholders::error)));
   }
 
@@ -84,7 +83,6 @@ class queued_writer : private boost::noncopyable {
 
  private:
   Connection &m_connection;
-  boost::asio::io_service::strand m_strand;
   std::deque<T> m_queue;
   bool m_last = false;
   write_handler m_handle_write_custom;

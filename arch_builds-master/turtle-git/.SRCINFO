@@ -1,0 +1,16 @@
+pkgbase = turtle-git
+	pkgdesc = A C++ Mock_object library based on Boost with a focus on usability, simplicity and flexibility.
+	pkgver = 672.8c68e7a
+	pkgrel = 1
+	url = https://github.com/mat007/turtle
+	arch = i686
+	arch = x86_64
+	license = Boost
+	makedepends = git
+	provides = turtle
+	conflicts = turtle
+	source = turtle-git::git+https://github.com/mat007/turtle.git
+	md5sums = SKIP
+
+pkgname = turtle-git
+

@@ -52,45 +52,47 @@ deps = [
     bunsan_common_dep,
     bunsan_process_dep,
     bunsan_pm_dep,
-    bunsan_protobuf_dep,
+    #bunsan_protobuf_dep,
     bacs_common_dep,
+    bacs_proto_dep,
 ]
 deps_str = [
     'bunsan_common',
     'bunsan_process',
     'bunsan_pm',
-    'bunsan_protobuf',
+    #'bunsan_protobuf',
     'bacs_common',
+    'bacs_protobuf',
 ]
 
 # FIXME use better dependency mechanism
-protoc_cpp_gen = generator(protoc,
-    output    : ['@BASENAME@.pb.cc',
-                 '@BASENAME@.pb.h'],
-    arguments : ['--proto_path=@CURRENT_SOURCE_DIR@/../common/include',
-                 '--proto_path=@CURRENT_SOURCE_DIR@/include',
-                 '--cpp_out=@BUILD_DIR@', '@INPUT@'])
-bacs_problem_pb_srcs = protoc_cpp_gen.process(
-    protos,
-    preserve_path_from : meson.current_source_dir() / 'include',
-)
-bacs_problem_pb = static_library(
-    'bacs_problem_pb', bacs_problem_pb_srcs,
-    dependencies : [
-        dependency('protobuf'),
-        bacs_common_pb_dep,
-    ],
-    override_options : ['warning_level=1'],
-)
-bacs_problem_pb_dep = declare_dependency(
-    link_whole : bacs_problem_pb,
-    dependencies : [
-        dependency('protobuf'),
-        bacs_common_pb_dep,
-    ],
-    include_directories : [include, bacs_problem_pb.private_dir_include()],
-)
-deps += bacs_problem_pb_dep
+#protoc_cpp_gen = generator(protoc,
+#    output    : ['@BASENAME@.pb.cc',
+#                 '@BASENAME@.pb.h'],
+#    arguments : ['--proto_path=@CURRENT_SOURCE_DIR@/../common/include',
+#                 '--proto_path=@CURRENT_SOURCE_DIR@/include',
+#                 '--cpp_out=@BUILD_DIR@', '@INPUT@'])
+#bacs_problem_pb_srcs = protoc_cpp_gen.process(
+#    protos,
+#    preserve_path_from : meson.current_source_dir() / 'include',
+#)
+#bacs_problem_pb = static_library(
+#    'bacs_problem_pb', bacs_problem_pb_srcs,
+#    dependencies : [
+#        dependency('protobuf'),
+#        bacs_common_pb_dep,
+#    ],
+#    override_options : ['warning_level=1'],
+#)
+#bacs_problem_pb_dep = declare_dependency(
+#    link_whole : bacs_problem_pb,
+#    dependencies : [
+#        dependency('protobuf'),
+#        bacs_common_pb_dep,
+#    ],
+#    include_directories : [include, #bacs_problem_pb.private_dir_include()],
+#)
+#deps += bacs_problem_pb_dep
 
 include = include_directories('include')
 
@@ -101,6 +103,8 @@ lib = library('bacs_problem', srcs,
     version : meson.project_version(),
     soversion : meson.project_version(),
 )
+
+pkg.generate(lib)
 
 bacs_problem_dep = declare_dependency(
     link_with : lib,

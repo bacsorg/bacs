@@ -7,7 +7,7 @@
 #include <bunsan/tempfile.hpp>
 
 #include <boost/assert.hpp>
-#include <boost/io/detail/quoted_manip.hpp>  // for logging
+#include <boost/io/quoted.hpp>  // for logging
 #include <boost/noncopyable.hpp>
 #include <boost/process.hpp>
 #include <boost/variant/multivisitors.hpp>

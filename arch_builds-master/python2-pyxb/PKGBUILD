@@ -1,0 +1,26 @@
+# Maintainer: Aleksey Filippov <sarum9in@gmail.com>
+pkgname=python2-pyxb
+pkgver=1.1.3
+pkgrel=1
+pkgdesc="A pure Python package for generating Python source code from XMLSchema."
+arch=('any')
+url="http://pyxb.sourceforge.net/"
+license=('APACHE')
+groups=()
+depends=('python2')
+makedepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=(!emptydirs)
+install=
+source=("http://downloads.sourceforge.net/sourceforge/pyxb/PyXB-full-${pkgver}.tar.gz")
+md5sums=('62f4e37baa59d9fc9df5f7186e7d63a2')
+
+package() {
+  cd "$srcdir/PyXB-$pkgver"
+  python2 setup.py install --root="$pkgdir/" --optimize=1
+}
+
+# vim:set ts=2 sw=2 et:

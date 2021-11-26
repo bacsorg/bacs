@@ -31,32 +31,34 @@ web_srcs = [
 ]
 client_srcs = ['src/bin/client.cpp']
 server_srcs = ['src/bin/server.cpp']
-protos = [
-    'include/bacs/archive/archive.proto',
-    'include/bacs/archive/problem/error.proto',
-    'include/bacs/archive/problem/flag.proto',
-    'include/bacs/archive/problem/id.proto',
-    'include/bacs/archive/problem/import.proto',
-    'include/bacs/archive/problem/status.proto',
-]
+#protos = [
+#    'include/bacs/archive/archive.proto',
+#    'include/bacs/archive/problem/error.proto',
+#    'include/bacs/archive/problem/flag.proto',
+#    'include/bacs/archive/problem/id.proto',
+#    'include/bacs/archive/problem/import.proto',
+#    'include/bacs/archive/problem/status.proto',
+#]
 
 deps = [
-    dependency('protobuf'),
-    dependency('grpc++'),
+    #dependency('protobuf'),
+    #dependency('grpc++'),
     bunsan_common_dep,
     bunsan_crypto_dep,
     bunsan_pm_dep,
-    bunsan_protobuf_dep,
+    #bunsan_protobuf_dep,
     bunsan_rpc_dep,
     bacs_problem_dep,
+    bacs_proto_dep,
 ]
 dep_str = [
     'bunsan_common',
     'bunsan_crypto',
     'bunsan_pm',
-    'bunsan_protobuf',
+    #'bunsan_protobuf',
     'bunsan_rpc',
     'bacs_problem',
+    'bacs_protobuf',
 ]
 private_deps = []
 cpp_args = []
@@ -69,55 +71,55 @@ if get_option('enable-web')
 endif
 
 # FIXME use better dependency mechanism
-protoc_cpp_gen = generator(protoc,
-    output    : ['@BASENAME@.pb.cc',
-                 '@BASENAME@.pb.h'],
-    arguments : ['--proto_path=@CURRENT_SOURCE_DIR@/../common/include',
-                 '--proto_path=@CURRENT_SOURCE_DIR@/../problem/include',
-                 '--proto_path=@CURRENT_SOURCE_DIR@/include',
-                 '--cpp_out=@BUILD_DIR@', '@INPUT@'])
+#protoc_cpp_gen = generator(protoc,
+#    output    : ['@BASENAME@.pb.cc',
+#                 '@BASENAME@.pb.h'],
+#    arguments : ['--proto_path=@CURRENT_SOURCE_DIR@/../common/include',
+#                 '--proto_path=@CURRENT_SOURCE_DIR@/../problem/include',
+#                 '--proto_path=@CURRENT_SOURCE_DIR@/include',
+#                 '--cpp_out=@BUILD_DIR@', '@INPUT@'])
 # FIXME use better plugin mechanism
-grpc_cpp_plugin = find_program('grpc_cpp_plugin')
-protoc_grpc_gen = generator(protoc,
-    output    : ['@BASENAME@.grpc.pb.cc',
-                 '@BASENAME@.grpc.pb.h'],
-    arguments : ['--proto_path=@CURRENT_SOURCE_DIR@/../common/include',
-                 '--proto_path=@CURRENT_SOURCE_DIR@/../problem/include',
-                 '--proto_path=@CURRENT_SOURCE_DIR@/include',
-                 '--plugin=protoc-gen-grpc=' + grpc_cpp_plugin.path(),
-                 '--grpc_out=@BUILD_DIR@', '@INPUT@'])
-bacs_archive_pb_srcs = protoc_cpp_gen.process(
-    protos,
-    preserve_path_from : meson.current_source_dir() / 'include',
-)
-bacs_archive_grpc_srcs = protoc_grpc_gen.process(
-    protos,
-    preserve_path_from : meson.current_source_dir() / 'include',
-)
-bacs_archive_pb = static_library(
-    'bacs_archive_pb',
-    [bacs_archive_pb_srcs, bacs_archive_grpc_srcs],
-    dependencies : [
-        dependency('protobuf'),
-        dependency('grpc++'),
-        bacs_problem_pb_dep,
-    ],
-    override_options : ['warning_level=1'],
-)
-bacs_archive_pb_dep = declare_dependency(
-    link_whole : bacs_archive_pb,
-    dependencies : [
-        dependency('protobuf'),
-        dependency('grpc++'),
-        bacs_common_pb_dep,
-        bacs_problem_pb_dep,
-    ],
-    include_directories : [
-        include,
-        bacs_archive_pb.private_dir_include(),
-    ],
-)
-deps += bacs_archive_pb_dep
+#grpc_cpp_plugin = find_program('grpc_cpp_plugin')
+#protoc_grpc_gen = generator(protoc,
+#    output    : ['@BASENAME@.grpc.pb.cc',
+#                 '@BASENAME@.grpc.pb.h'],
+#    arguments : ['--proto_path=@CURRENT_SOURCE_DIR@/../common/include',
+#                 '--proto_path=@CURRENT_SOURCE_DIR@/../problem/include',
+#                 '--proto_path=@CURRENT_SOURCE_DIR@/include',
+#                 '--plugin=protoc-gen-grpc=' + #grpc_cpp_plugin.path(),
+#                 '--grpc_out=@BUILD_DIR@', '@INPUT@'])
+#bacs_archive_pb_srcs = protoc_cpp_gen.process(
+#    protos,
+#    preserve_path_from : meson.current_source_dir() / 'include',
+#)
+#bacs_archive_grpc_srcs = protoc_grpc_gen.process(
+#    protos,
+#    preserve_path_from : meson.current_source_dir() / 'include',
+#)
+#bacs_archive_pb = static_library(
+#    'bacs_archive_pb',
+#    [bacs_archive_pb_srcs, bacs_archive_grpc_srcs],
+#    dependencies : [
+#        dependency('protobuf'),
+#        dependency('grpc++'),
+#        bacs_problem_pb_dep,
+#    ],
+#    override_options : ['warning_level=1'],
+#)
+#bacs_archive_pb_dep = declare_dependency(
+#    link_whole : bacs_archive_pb,
+#    dependencies : [
+#        dependency('protobuf'),
+#        dependency('grpc++'),
+#        bacs_common_pb_dep,
+#        bacs_problem_pb_dep,
+#    ],
+#    include_directories : [
+#        include,
+#        bacs_archive_pb.private_dir_include(),
+#    ],
+#)
+#deps += bacs_archive_pb_dep
 
 include = include_directories('include')
 

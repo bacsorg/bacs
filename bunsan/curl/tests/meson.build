@@ -33,8 +33,8 @@ foreach t : tests
   test(prefix + t, e, env : testenv)
 endforeach
 
-python3 = import('python').find_installation('python3')
-py3bin = python3.find_python()
+python3 = import('python').find_installation()
+py3bin = python3
 
 foreach t : server_tests
   e = executable(prefix + t,

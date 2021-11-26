@@ -1,3 +1,6 @@
+
+
+
 srcs = [
     'src/base64.cpp',
     'src/checksum.cpp',
@@ -15,13 +18,15 @@ include = include_directories('include')
 lib = library('bunsan_crypto', srcs,
     dependencies : [
         deps,
-        dependency('botan-2'),
+        dependency('botan-3'),
     ],
     include_directories : include,
     install : true,
     version : meson.project_version(),
     soversion : meson.project_version(),
 )
+
+pkg.generate(lib)
 
 bunsan_crypto_dep = declare_dependency(
     link_with : lib,

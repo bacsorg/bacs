@@ -28,6 +28,8 @@ lib = library('bunsan_protobuf', srcs,
     soversion : meson.project_version(),
 )
 
+pkg.generate(lib)
+
 bunsan_protobuf_dep = declare_dependency(
     link_with : lib,
     include_directories : include,

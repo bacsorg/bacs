@@ -1,0 +1,58 @@
+# Maintainer: Aleksey Filippov <sarum9in@gmail.com>
+pkgname=yandex.contest.invoker-git
+pkgver=0.0.0
+pkgrel=2
+pkgdesc="Yandex.Contest.Invoker"
+arch=('i686' 'x86_64')
+url="https://github.com/bunsanorg/yandex_contest_invoker"
+license=('GPL')
+groups=()
+depends=(
+  'yandex.contest.common-git'
+  'yandex.contest.system-git'
+)
+makedepends=(
+  'bunsan.cmake-git'
+  'bunsan.test-git'
+  'git'
+  'boost'
+)
+provides=()
+conflicts=()
+replaces=()
+backup=('etc/yandex/contest/invoker/lxc.conf')
+options=()
+install=
+source=("$pkgname::git+https://github.com/bunsanorg/yandex_contest_invoker.git"
+        'lxc.conf'
+        'yandex-contest-invoker.sh')
+noextract=()
+md5sums=('SKIP'
+         'c1b7c58496782e4501e307a36472edb1'
+         '035bc83489dbed92e8bed93b2915c002')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+build() {
+  cd "$srcdir/$pkgname"
+  rm -rf build && mkdir build && cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release #-DENABLE_TESTS=no
+  make $MAKEFLAGS
+}
+
+check() {
+  cd "$srcdir/$pkgname/build"
+  #make test ARGS=--output-on-failure
+}
+
+package() {
+  cd "$srcdir/$pkgname/build"
+  make DESTDIR="$pkgdir/" install
+  install -m 644 -D "$srcdir/lxc.conf" "$pkgdir/etc/yandex/contest/invoker/lxc.conf"
+  sed -r "s|__ARCH__|$CARCH|" -i "$pkgdir/etc/yandex/contest/invoker/lxc.conf"
+  install -m 755 -D "$srcdir/yandex-contest-invoker.sh" "$pkgdir/etc/profile.d/yandex-contest-invoker.sh"
+  install -d "$pkgdir/var/lib/yandex/contest/invoker/lxc"
+}

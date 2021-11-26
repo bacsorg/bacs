@@ -66,8 +66,8 @@ BOOST_AUTO_TEST_CASE(block_connection) {
   bool bc2_completed = false;
   std::string bc1_data, bc2_data;
   ba::block_connection<socket> bc1(socket1), bc2(socket2);
-  BOOST_CHECK_EQUAL(&bc1.get_io_service(), &io_service);
-  BOOST_CHECK_EQUAL(&bc2.get_io_service(), &io_service);
+  BOOST_CHECK_EQUAL(&bc1.get_io_service().context(), &io_service);
+  BOOST_CHECK_EQUAL(&bc2.get_io_service().context(), &io_service);
   bc1.async_write("first request", [&](const boost::system::error_code &ec) {
     BOOST_REQUIRE(!ec);
     bc1.async_read(bc1_data, [&](const boost::system::error_code &ec) {
@@ -244,8 +244,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(object_connection_coroutine, ObjectConnection,
   server_session<ObjectConnection> server(socket1);
   client_session<ObjectConnection> client(socket2);
 
-  BOOST_CHECK_EQUAL(&server.oc->get_io_service(), &io_service);
-  BOOST_CHECK_EQUAL(&client.oc->get_io_service(), &io_service);
+  BOOST_CHECK_EQUAL(&server.oc->get_io_service().context(), &io_service);
+  BOOST_CHECK_EQUAL(&client.oc->get_io_service().context(), &io_service);
 
   server();
   client();
@@ -263,16 +263,18 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(object_connection_spawn, ObjectConnection,
     ObjectConnection oc(socket1);
     message<int> msg;
 
-    msg = 10;
-    oc.async_write(msg, yield);
+    boost::system::error_code ec;
 
-    oc.async_read(msg, yield);
+    msg = 10;
+    oc.async_write(msg, yield[ec]);
+
+    oc.async_read(msg, yield[ec]);
     BOOST_CHECK_EQUAL(msg, 100);
 
     msg = 20;
-    oc.async_write(msg, yield);
+    oc.async_write(msg, yield[ec]);
 
-    oc.async_read(msg, yield);
+    oc.async_read(msg, yield[ec]);
     BOOST_CHECK_EQUAL(msg, 200);
 
     oc.close();
@@ -282,20 +284,20 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(object_connection_spawn, ObjectConnection,
   boost::asio::spawn(io_service, [&](boost::asio::yield_context yield) {
     ObjectConnection oc(socket2);
     message<int> msg;
+    boost::system::error_code ec;
 
-    oc.async_read(msg, yield);
+    oc.async_read(msg, yield[ec]);
     BOOST_CHECK_EQUAL(msg, 10);
 
     msg = 100;
-    oc.async_write(msg, yield);
+    oc.async_write(msg, yield[ec]);
 
-    oc.async_read(msg, yield);
+    oc.async_read(msg, yield[ec]);
     BOOST_CHECK_EQUAL(msg, 20);
 
     msg = 200;
-    oc.async_write(msg, yield);
+    oc.async_write(msg, yield[ec]);
 
-    boost::system::error_code ec;
     oc.async_read(msg, yield[ec]);
     BOOST_REQUIRE_EQUAL(ec, boost::asio::error::eof);
     oc2_completed = true;

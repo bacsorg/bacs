@@ -2,6 +2,7 @@
 
 #include <curl/curl.h>
 
+#include <string>
 #include <memory>
 
 namespace bunsan::curl::detail {

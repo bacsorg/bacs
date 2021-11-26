@@ -1,7 +1,7 @@
 #pragma once
 
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 
@@ -21,8 +21,7 @@ class buffer_connection {
  public:
   buffer_connection(Source &source, Sink &sink, const handler &handle_read,
                     const handler &handle_write)
-      : m_strand(source.get_io_service()),
-        m_handle_read(handle_read),
+      : m_handle_read(handle_read),
         m_handle_write(handle_write),
         m_source(source),
         m_sink(sink) {}
@@ -55,7 +54,7 @@ class buffer_connection {
   bool empty() const { return m_queue.empty(); }
 
   void start() {
-    m_strand.dispatch(boost::bind(&buffer_connection::spawn_reader, this));
+    /* m_strand.dispatch( */boost::asio::dispatch(m_source.get_executor(), boost::bind(&buffer_connection::spawn_reader, this));
   }
 
   boost::asio::io_service &get_io_service() {
@@ -63,11 +62,11 @@ class buffer_connection {
   }
 
   void close() {
-    m_strand.dispatch(boost::bind(&buffer_connection::close_, this));
+    /* m_strand.dispatch( */boost::asio::dispatch(m_source.get_executor(), boost::bind(&buffer_connection::close_, this));
   }
 
   void terminate() {
-    m_strand.post(boost::bind(&buffer_connection::terminate_, this));
+    boost::asio::post(m_source.get_executor(),boost::bind(&buffer_connection::terminate_, this));
   }
 
  private:
@@ -90,7 +89,7 @@ class buffer_connection {
 
     m_source.async_read_some(
         boost::asio::buffer(m_inbound_data),
-        m_strand.wrap(
+        /* m_strand.wrap( */boost::asio::bind_executor(m_source.get_executor(),
             boost::bind(&buffer_connection::handle_read, this,
                         boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred)));
@@ -107,7 +106,7 @@ class buffer_connection {
     const std::vector<char> &buffer = m_queue.front();
     boost::asio::async_write(
         m_sink, boost::asio::buffer(buffer),
-        m_strand.wrap(
+        /* m_strand.wrap( */boost::asio::bind_executor(m_source.get_executor(),
             boost::bind(&buffer_connection::handle_write, this,
                         boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred)));
@@ -173,7 +172,6 @@ class buffer_connection {
   }
 
  private:
-  boost::asio::io_service::strand m_strand;
   handler m_handle_read;
   handler m_handle_write;
   data_handler m_handle_read_data;

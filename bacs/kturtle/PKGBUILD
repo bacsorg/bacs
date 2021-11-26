@@ -1,0 +1,39 @@
+# Maintainer: Mikhail Ivchenko <ematirov@gmail.com>
+pkgname='bacs.kturtle-git'
+pkgver=943.2fcaeef
+pkgrel=1
+pkgdesc="Kturtle customized for BACS"
+arch=('i686' 'x86_64')
+url="https://github.com/EgorMatirov/kturtle"
+license=('GPL' 'LGPL')
+groups=()
+depends=(
+  'qt5-base'
+  'qt5-svg'
+)
+makedepends=(
+  'git'
+  'gcc'
+  'extra-cmake-modules'
+  'qt5-tools'
+)
+source=("$pkgname::git+https://github.com/EgorMatirov/kturtle.git")
+noextract=()
+md5sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+build() {
+  cd "$srcdir/$pkgname"
+  rm -rf build && mkdir build && cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_BINDIR=/usr/bin
+  make $MAKEFLAGS
+}
+
+package() {
+  cd "$srcdir/$pkgname/build"
+  make DESTDIR="$pkgdir/" install
+}

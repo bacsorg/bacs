@@ -1,0 +1,45 @@
+# Maintainer: Aleksey Filippov <sarum9in@gmail.com>
+pkgname='bunsan.cmake-git'
+pkgver=0.0.0
+pkgrel=1
+pkgdesc="bunsan project cmake library"
+arch=('i686' 'x86_64')
+url="https://github.com/bunsanorg/cmake"
+license=('GPL')
+groups=()
+depends=('cmake')
+makedepends=(
+  'git'
+  'cmake'
+)
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+source=("$pkgname::git+https://github.com/bunsanorg/cmake.git")
+noextract=()
+md5sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+build() {
+  cd "$srcdir/$pkgname"
+  rm -rf build && mkdir build && cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
+  make $MAKEFLAGS
+}
+
+#check() {
+#  cd "$srcdir/$pkgname/build"
+#  make test ARGS=--output-on-failure
+#}
+
+package() {
+  cd "$srcdir/$pkgname/build"
+  make DESTDIR="$pkgdir/" install
+}
